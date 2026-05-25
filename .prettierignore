@@ -1,0 +1,9 @@
+node_modules/
+dist/
+build/
+coverage/
+.turbo/
+.vite/
+
+# Existing product docs may be edited outside the code formatting workflow.
+docs/

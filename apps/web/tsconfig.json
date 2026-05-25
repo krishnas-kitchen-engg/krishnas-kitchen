@@ -1,0 +1,26 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "noEmit": true,
+    "paths": {
+      "@/*": ["src/*"],
+      "@krishnas-kitchen/types": ["../../packages/types/src/index.ts"],
+      "@krishnas-kitchen/ui": ["../../packages/ui/src/index.ts"],
+      "@krishnas-kitchen/utils": ["../../packages/utils/src/index.ts"]
+    },
+    "tsBuildInfoFile": "./tsconfig.tsbuildinfo"
+  },
+  "include": ["src", "vite.config.ts", "tailwind.config.ts", "postcss.config.cjs"],
+  "references": [
+    {
+      "path": "../../packages/types"
+    },
+    {
+      "path": "../../packages/ui"
+    },
+    {
+      "path": "../../packages/utils"
+    }
+  ]
+}

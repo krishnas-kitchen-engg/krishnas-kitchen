@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.cjs
+
+# Build outputs
+dist/
+build/
+.turbo/
+.vite/
+coverage/
+storybook-static/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!.env.example
+!.env.local.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editors and OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Local caches
+.eslintcache
+.stylelintcache
+
+# Supabase local development
+.branches/
+.temp/
+supabase/.branches/
+supabase/.temp/

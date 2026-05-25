@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Krishna's Kitchen">
+  <rect width="512" height="512" rx="112" fill="#14532d"/>
+  <path d="M128 278h256v48a101 101 0 0 1-101 101h-54a101 101 0 0 1-101-101v-48Z" fill="#fff7ed"/>
+  <path d="M176 235c-21-48 35-64 11-115M256 235c-27-59 43-75 11-136M336 235c-21-48 35-64 11-115" fill="none" stroke="#f97316" stroke-width="32" stroke-linecap="round"/>
+</svg>
