@@ -3,8 +3,7 @@ import type {
   EntityId,
   InventoryQuantityEffect,
   InventoryTransactionType,
-  ItemUnit,
-  Json
+  ItemUnit
 } from "@krishnas-kitchen/types";
 
 export type InventoryActor =
@@ -24,8 +23,8 @@ export type InventoryAuditMetadata = {
   clientRequestId?: string;
   deviceId?: string;
   reason?: string;
+  reversedTransactionId?: EntityId;
   source?: "online" | "offline_queue" | "system";
-  [key: string]: Json | undefined;
 };
 
 export type InventoryTransaction = {
@@ -69,6 +68,21 @@ export type InventoryTransactionScope = {
   templeId?: EntityId;
 };
 
+export type InventoryItemReference = {
+  defaultUnit: ItemUnit;
+  deletedAt: string | null;
+  id: EntityId;
+  organizationId: EntityId;
+  receivingUnits?: readonly ItemUnit[];
+};
+
+export type InventoryLocationReference = {
+  deletedAt: string | null;
+  id: EntityId;
+  organizationId: EntityId;
+  templeId: EntityId;
+};
+
 export type CreateInventoryTransactionInput = {
   actor: InventoryActor;
   auditMetadata?: InventoryAuditMetadata | undefined;
@@ -81,6 +95,10 @@ export type CreateInventoryTransactionInput = {
 };
 
 export type CreateLocationTransactionInput = CreateInventoryTransactionInput & {
+  locationId: EntityId;
+};
+
+export type CreateReceivingTransactionInput = CreateInventoryTransactionInput & {
   locationId: EntityId;
 };
 

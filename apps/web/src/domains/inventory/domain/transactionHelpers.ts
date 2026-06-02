@@ -5,10 +5,12 @@ import type {
 } from "@krishnas-kitchen/types";
 
 import { assertValidInventoryTransactionDraft } from "./validation";
+import { assertValidReceivingTransactionInput } from "./receivingValidation";
 import type {
   CreateAdjustmentTransactionInput,
   CreateInventoryTransactionInput,
   CreateLocationTransactionInput,
+  CreateReceivingTransactionInput,
   CreateTransferTransactionInput,
   InventoryTransaction,
   InventoryTransactionDraft
@@ -53,6 +55,12 @@ export function createReceivedTransaction(
     destinationLocationId: input.locationId,
     sourceLocationId: null
   });
+}
+
+export function createReceivingTransaction(
+  input: CreateReceivingTransactionInput
+): InventoryTransactionDraft {
+  return createReceivedTransaction(assertValidReceivingTransactionInput(input));
 }
 
 export function createConsumedTransaction(

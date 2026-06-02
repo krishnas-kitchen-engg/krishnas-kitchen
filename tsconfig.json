@@ -1,5 +1,6 @@
 {
   "files": [],
+  "include": ["vitest.config.ts", "vitest.shared.ts"],
   "references": [
     {
       "path": "./apps/web"

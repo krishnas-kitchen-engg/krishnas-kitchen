@@ -13,6 +13,10 @@
     "dev": "pnpm --filter @krishnas-kitchen/web dev",
     "build": "pnpm -r --sort build",
     "preview": "pnpm --filter @krishnas-kitchen/web preview",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:inventory": "pnpm --filter @krishnas-kitchen/web test:inventory",
+    "test:watch": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "pnpm -r --sort typecheck",
@@ -34,6 +38,7 @@
     "@types/node": "^22.10.7",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
+    "@vitest/coverage-v8": "^4.1.8",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-react-hooks": "^5.1.0",
@@ -44,6 +49,7 @@
     "prettier": "^3.4.2",
     "rimraf": "^6.0.1",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.20.0"
+    "typescript-eslint": "^8.20.0",
+    "vitest": "^4.1.8"
   }
 }

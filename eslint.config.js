@@ -29,7 +29,7 @@ export default tseslint.config(
         ...globals.node
       },
       parserOptions: {
-        project: true,
+        projectService: true,
         tsconfigRootDir: import.meta.dirname
       }
     },

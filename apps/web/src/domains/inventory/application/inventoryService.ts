@@ -1,23 +1,42 @@
 import type { EntityId } from "@krishnas-kitchen/types";
 
 import { calculateInventoryBalances } from "../domain/aggregation";
-import { createUndoTransaction } from "../domain/transactionHelpers";
+import { createReceivingTransaction, createUndoTransaction } from "../domain/transactionHelpers";
+import {
+  ReceivingValidationError,
+  validateReceivingTransactionInput
+} from "../domain/receivingValidation";
 import { assertValidInventoryTransactionDraft } from "../domain/validation";
 import type {
   CreateInventoryTransactionInput,
+  CreateReceivingTransactionInput,
   InventoryActor,
   InventoryAuditMetadata,
   InventoryBalance,
+  InventoryItemReference,
+  InventoryLocationReference,
   InventoryTransaction,
   InventoryTransactionDraft,
   InventoryTransactionScope
 } from "../domain/types";
 import type { InventoryTransactionRepository } from "./inventoryRepository";
 
+export type InventoryReceivingCatalog = {
+  findReceivingItem: (
+    itemId: EntityId,
+    scope: Pick<CreateReceivingTransactionInput, "organizationId">
+  ) => Promise<InventoryItemReference | null>;
+  findReceivingLocation: (
+    locationId: EntityId,
+    scope: Pick<CreateReceivingTransactionInput, "organizationId" | "templeId">
+  ) => Promise<InventoryLocationReference | null>;
+};
+
 export type InventoryService = {
   createTransaction: (draft: InventoryTransactionDraft) => Promise<InventoryTransaction>;
   getBalances: (scope: InventoryTransactionScope) => Promise<InventoryBalance[]>;
   getTransactions: (scope: InventoryTransactionScope) => Promise<InventoryTransaction[]>;
+  receiveInventory: (input: CreateReceivingTransactionInput) => Promise<InventoryTransaction>;
   undoTransaction: (
     transactionId: EntityId,
     input: {
@@ -29,7 +48,10 @@ export type InventoryService = {
 };
 
 export function createInventoryService(
-  repository: InventoryTransactionRepository
+  repository: InventoryTransactionRepository,
+  options: {
+    receivingCatalog?: InventoryReceivingCatalog;
+  } = {}
 ): InventoryService {
   return {
     async createTransaction(draft) {
@@ -42,6 +64,26 @@ export function createInventoryService(
 
     async getTransactions(scope) {
       return repository.listTransactions(scope);
+    },
+
+    async receiveInventory(input) {
+      const item = await options.receivingCatalog?.findReceivingItem(input.itemId, {
+        organizationId: input.organizationId
+      });
+      const location = await options.receivingCatalog?.findReceivingLocation(input.locationId, {
+        organizationId: input.organizationId,
+        templeId: input.templeId
+      });
+      const validation = validateReceivingTransactionInput(
+        input,
+        options.receivingCatalog ? { item: item ?? null, location: location ?? null } : undefined
+      );
+
+      if (!validation.ok) {
+        throw new ReceivingValidationError(validation.errors);
+      }
+
+      return repository.createTransaction(createReceivingTransaction(input));
     },
 
     async undoTransaction(transactionId, input) {

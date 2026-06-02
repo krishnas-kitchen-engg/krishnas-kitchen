@@ -11,7 +11,14 @@
     },
     "tsBuildInfoFile": "./tsconfig.tsbuildinfo"
   },
-  "include": ["src", "vite.config.ts", "tailwind.config.ts", "postcss.config.cjs"],
+  "include": [
+    "src",
+    "../../vitest.shared.ts",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "tailwind.config.ts",
+    "postcss.config.cjs"
+  ],
   "references": [
     {
       "path": "../../packages/types"
