@@ -1,7 +1,12 @@
 import type { PropsWithChildren } from "react";
 
+import { AuthProvider } from "@/features/auth";
 import { SupabaseAuthProvider } from "@/shared/integrations/supabase";
 
 export function AppProviders({ children }: PropsWithChildren) {
-  return <SupabaseAuthProvider>{children}</SupabaseAuthProvider>;
+  return (
+    <SupabaseAuthProvider>
+      <AuthProvider>{children}</AuthProvider>
+    </SupabaseAuthProvider>
+  );
 }

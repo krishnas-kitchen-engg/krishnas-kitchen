@@ -52,8 +52,7 @@ create type public.user_role as enum (
 create type public.temp_volunteer_role as enum (
   'temp_picker',
   'temp_receiver',
-  'temp_helper',
-  'temp_viewer'
+  'temp_helper'
 );
 
 create type public.location_type as enum (
@@ -83,6 +82,13 @@ create type public.inventory_transaction_type as enum (
   'wasted',
   'reservation',
   'undo'
+);
+
+create type public.inventory_quantity_effect as enum (
+  'increase',
+  'decrease',
+  'transfer',
+  'none'
 );
 
 create type public.volunteer_session_status as enum (
@@ -296,6 +302,7 @@ create table public.inventory_transactions (
   destination_location_id uuid references public.locations(id),
 
   transaction_type public.inventory_transaction_type not null,
+  quantity_effect public.inventory_quantity_effect not null,
 
   quantity numeric(12, 3) not null check (quantity > 0),
   unit public.item_unit not null,
@@ -305,11 +312,35 @@ create table public.inventory_transactions (
   actor_temp_session_id uuid,
 
   notes text,
+  audit_metadata jsonb not null default '{}'::jsonb,
 
   reversal_of_transaction_id uuid
     references public.inventory_transactions(id),
 
-  created_at timestamptz not null default timezone('utc', now())
+  created_at timestamptz not null default timezone('utc', now()),
+
+  constraint inventory_transactions_effect_matches_type check (
+    (transaction_type = 'transfer' and quantity_effect = 'transfer')
+    or (transaction_type = 'reservation' and quantity_effect = 'none')
+    or (
+      transaction_type in ('received', 'returned')
+      and quantity_effect = 'increase'
+    )
+    or (
+      transaction_type in ('consumed', 'wasted')
+      and quantity_effect = 'decrease'
+    )
+    or (
+      transaction_type in ('adjusted', 'undo')
+      and quantity_effect in ('increase', 'decrease', 'transfer', 'none')
+    )
+  ),
+  constraint inventory_transactions_locations_match_effect check (
+    (quantity_effect = 'increase' and source_location_id is null and destination_location_id is not null)
+    or (quantity_effect = 'decrease' and source_location_id is not null and destination_location_id is null)
+    or (quantity_effect = 'transfer' and source_location_id is not null and destination_location_id is not null and source_location_id <> destination_location_id)
+    or (quantity_effect = 'none' and source_location_id is null and destination_location_id is null)
+  )
 );
 
 create index idx_inventory_transactions_org_id

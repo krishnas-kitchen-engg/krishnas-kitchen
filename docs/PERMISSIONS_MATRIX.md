@@ -15,14 +15,15 @@
 
 ---
 
-# Temporary Volunteer Roles
+# Temporary Volunteer Session Types
 
-| Role | Description |
+Temporary volunteer sessions are not permanent authorization roles. They are restricted session modes that must be server-verified before production use.
+
+| Session type | Description |
 |---|---|
 | temp_picker | Pick-list helper |
 | temp_receiver | Receiving helper |
 | temp_helper | General scan helper |
-| temp_viewer | Read-only helper |
 
 ---
 
@@ -82,10 +83,17 @@
 | inventory.consume | YES | YES | YES | YES | YES | YES |
 | inventory.return | YES | YES | YES | YES | YES | YES |
 | inventory.adjust | NO | NO | NO | YES | YES | YES |
-| inventory.undo | LIMITED | LIMITED | LIMITED | YES | YES | YES |
+| inventory.undo | NO | NO | NO | YES | YES | YES |
+| items.read | YES | YES | YES | YES | YES | YES |
 | items.create | NO | NO | YES | YES | YES | YES |
 | items.edit | NO | NO | YES | YES | YES | YES |
+| items.archive | NO | NO | NO | YES | YES | YES |
+| locations.read | YES | YES | YES | YES | YES | YES |
 | locations.create | NO | NO | NO | YES | YES | YES |
+| locations.edit | NO | NO | NO | YES | YES | YES |
+| volunteer_sessions.create | YES | YES | YES | YES | YES | YES |
+| volunteer_sessions.expire | NO | NO | NO | YES | YES | YES |
+| audit.read | NO | NO | NO | NO | YES | YES |
 
 ---
 
@@ -94,19 +102,20 @@
 Temporary volunteers:
 
 - cannot edit inventory directly
+- cannot receive, transfer, consume, return, adjust, or undo inventory
 - cannot perform adjustments
 - cannot edit items
 - cannot access admin views
 - cannot access cross-temple data
 - must auto-expire
+- receive only `volunteer_sessions.create`
 
 ---
 
 # Undo Rules
 
 Standard volunteers:
-- last 5 actions only
-- configurable time window
+- cannot undo inventory transactions in the foundational permission model
 
 Inventory managers/admins:
 - unrestricted reversal authority

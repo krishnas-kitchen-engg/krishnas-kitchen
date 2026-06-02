@@ -61,10 +61,10 @@ All primary keys are UUIDs. Operational tables include `organization_id` for mul
 RLS is enabled on every foundational table, but policy definitions should be added once the first real access paths are known. Expected policy shape:
 
 - Users can read their active organization profile and role assignments.
-- Organization admins can manage temples, users, roles, locations, items, and barcodes within their organization.
+- `temple_admin` and `super_admin` users can manage temples, users, roles, locations, items, and barcodes within their allowed organization scope.
 - Volunteers can read only the operational records needed for assigned temple workflows.
 - Inventory transactions are insert-only for authorized roles and readable by authorized organization members.
-- Audit logs are readable only by owner/admin roles and writable only by trusted server-side code or controlled database functions.
+- Audit logs are readable only by `temple_admin` and `super_admin` roles and writable only by trusted server-side code or controlled database functions.
 
 ## Future Extension Notes
 
