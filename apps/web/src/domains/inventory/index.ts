@@ -1,10 +1,17 @@
 export { createInventoryBarcodeLookupService } from "./application/barcodeLookupService";
+export { createCameraScanningService } from "./application/cameraScanningService";
 export { createInventoryService } from "./application/inventoryService";
 export { createInventoryVisibilityService } from "./application/inventoryVisibilityService";
 export type {
   InventoryBarcodeLookupRepository,
   InventoryBarcodeLookupService
 } from "./application/barcodeLookupService";
+export type {
+  CameraDeviceAdapter,
+  CameraPermissionAdapter,
+  CameraScanningClock,
+  CameraScanningService
+} from "./application/cameraScanningService";
 export type {
   InventoryReceivingCatalog,
   InventoryReturnCatalog,
@@ -38,6 +45,23 @@ export type {
   InventoryBarcodeScanEvent,
   InventoryBarcodeScanInput
 } from "./domain/barcode";
+export {
+  addCameraScanEvent,
+  createCameraScanSession,
+  markCameraSessionActive,
+  markCameraSessionStopped,
+  updateCameraSessionTorch
+} from "./domain/cameraScanning";
+export type {
+  CameraPermissionState,
+  CameraScanEventInput,
+  CameraScanIgnoredReason,
+  CameraScanProcessingResult,
+  CameraScanSession,
+  CameraScanSessionInput,
+  CameraScanSessionStatus,
+  CameraTorchState
+} from "./domain/cameraScanning";
 export {
   detectLowStock,
   projectInventoryBalances,
