@@ -3,6 +3,7 @@ export { createCameraScanningService } from "./application/cameraScanningService
 export { createInventoryService } from "./application/inventoryService";
 export { createInventoryVisibilityService } from "./application/inventoryVisibilityService";
 export { createReceivingScanWorkflowService } from "./application/receivingScanWorkflowService";
+export { createReturnScanWorkflowService } from "./application/returnScanWorkflowService";
 export { createTransferScanWorkflowService } from "./application/transferScanWorkflowService";
 export type {
   InventoryBarcodeLookupRepository,
@@ -22,6 +23,7 @@ export type {
 } from "./application/inventoryService";
 export type { InventoryVisibilityService } from "./application/inventoryVisibilityService";
 export type { ReceivingScanWorkflowService } from "./application/receivingScanWorkflowService";
+export type { ReturnScanWorkflowService } from "./application/returnScanWorkflowService";
 export type { TransferScanWorkflowService } from "./application/transferScanWorkflowService";
 export type { InventoryTransactionRepository } from "./application/inventoryRepository";
 export {
@@ -71,6 +73,10 @@ export {
   validateReceivingScanPermission
 } from "./domain/receivingScanWorkflow";
 export {
+  createReturnManualItemResolution,
+  validateReturnScanPermission
+} from "./domain/returnScanWorkflow";
+export {
   createTransferManualItemResolution,
   validateTransferScanPermission
 } from "./domain/transferScanWorkflow";
@@ -84,6 +90,16 @@ export type {
   ReceivingScanResolutionInput,
   ReceivingScanResolutionResult
 } from "./domain/receivingScanWorkflow";
+export type {
+  ReturnManualItemOverrideInput,
+  ReturnResolvedItem,
+  ReturnResolvedItemSource,
+  ReturnScanPermissionResult,
+  ReturnScanResolutionInput,
+  ReturnScanResolutionResult,
+  ReturnScanReturnInput,
+  ReturnScanReturnResult
+} from "./domain/returnScanWorkflow";
 export type {
   TransferManualItemOverrideInput,
   TransferResolvedItem,
