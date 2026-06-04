@@ -3,6 +3,7 @@ export { createCameraScanningService } from "./application/cameraScanningService
 export { createInventoryService } from "./application/inventoryService";
 export { createInventoryVisibilityService } from "./application/inventoryVisibilityService";
 export { createReceivingScanWorkflowService } from "./application/receivingScanWorkflowService";
+export { createTransferScanWorkflowService } from "./application/transferScanWorkflowService";
 export type {
   InventoryBarcodeLookupRepository,
   InventoryBarcodeLookupService
@@ -21,6 +22,7 @@ export type {
 } from "./application/inventoryService";
 export type { InventoryVisibilityService } from "./application/inventoryVisibilityService";
 export type { ReceivingScanWorkflowService } from "./application/receivingScanWorkflowService";
+export type { TransferScanWorkflowService } from "./application/transferScanWorkflowService";
 export type { InventoryTransactionRepository } from "./application/inventoryRepository";
 export {
   calculateInventoryBalances,
@@ -68,6 +70,10 @@ export {
   createReceivingManualItemResolution,
   validateReceivingScanPermission
 } from "./domain/receivingScanWorkflow";
+export {
+  createTransferManualItemResolution,
+  validateTransferScanPermission
+} from "./domain/transferScanWorkflow";
 export type {
   ReceivingManualItemOverrideInput,
   ReceivingResolvedItem,
@@ -78,6 +84,16 @@ export type {
   ReceivingScanResolutionInput,
   ReceivingScanResolutionResult
 } from "./domain/receivingScanWorkflow";
+export type {
+  TransferManualItemOverrideInput,
+  TransferResolvedItem,
+  TransferResolvedItemSource,
+  TransferScanPermissionResult,
+  TransferScanResolutionInput,
+  TransferScanResolutionResult,
+  TransferScanTransferInput,
+  TransferScanTransferResult
+} from "./domain/transferScanWorkflow";
 export {
   detectLowStock,
   projectInventoryBalances,
