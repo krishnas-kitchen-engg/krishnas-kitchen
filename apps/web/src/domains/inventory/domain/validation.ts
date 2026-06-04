@@ -53,27 +53,33 @@ export function validateInventoryTransactionDraft(
 ): InventoryValidationResult {
   const baseValidation = validateBaseTransactionInput(draft);
   const errors = baseValidation.ok ? [] : [...baseValidation.errors];
+  const usesMovementEffect =
+    draft.transactionType === "returned" ||
+    draft.transactionType === "transfer" ||
+    draft.transactionType === "undo";
 
   if (!isNonEmptyString(draft.clientId)) {
     errors.push("clientId is required for offline-safe transaction drafts.");
   }
 
-  if (draft.transactionType === "transfer") {
+  if (draft.quantityEffect === "transfer") {
     if (!draft.sourceLocationId || !draft.destinationLocationId) {
-      errors.push("Transfer transactions require source and destination locations.");
+      errors.push("Movement transactions require source and destination locations.");
     }
 
     if (draft.sourceLocationId === draft.destinationLocationId) {
-      errors.push("Transfer source and destination locations must differ.");
-    }
-
-    if (draft.quantityEffect !== "transfer") {
-      errors.push("Transfer transactions must use transfer quantity effect.");
+      errors.push("Movement source and destination locations must differ.");
     }
   }
 
-  if (draft.transactionType !== "transfer" && draft.quantityEffect === "transfer") {
-    errors.push("Only transfer transactions can use transfer quantity effect.");
+  if (draft.transactionType === "transfer" || draft.transactionType === "returned") {
+    if (draft.quantityEffect !== "transfer") {
+      errors.push("Movement transactions must use transfer quantity effect.");
+    }
+  }
+
+  if (!usesMovementEffect && draft.quantityEffect === "transfer") {
+    errors.push("Only movement transactions can use transfer quantity effect.");
   }
 
   if (draft.quantityEffect === "increase" && !draft.destinationLocationId) {

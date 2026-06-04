@@ -1,6 +1,7 @@
 export { createInventoryService } from "./application/inventoryService";
 export type {
   InventoryReceivingCatalog,
+  InventoryReturnCatalog,
   InventoryService,
   InventoryTransferCatalog
 } from "./application/inventoryService";
@@ -26,6 +27,7 @@ export type {
   CreateInventoryTransactionInput,
   CreateLocationTransactionInput,
   CreateReceivingTransactionInput,
+  CreateReturnTransactionInput,
   CreateTransferTransactionInput,
   InventoryActor,
   InventoryAuditMetadata,
@@ -36,6 +38,7 @@ export type {
   InventoryTransactionDraft,
   InventoryTransactionScope,
   ReceivingInventoryTransactionDraft,
+  ReturnInventoryTransactionDraft,
   TransferInventoryTransactionDraft
 } from "./domain/types";
 export {
@@ -54,6 +57,23 @@ export type {
   ReceivingValidationErrorDetail,
   ReceivingValidationResult
 } from "./domain/receivingValidation";
+export {
+  assertValidReturnTransactionInput,
+  RETURN_MAX_QUANTITY,
+  RETURN_UNITS,
+  ReturnValidationError,
+  validateReturnDestinationLocation,
+  validateReturnItem,
+  validateReturnQuantity,
+  validateReturnSourceLocation,
+  validateReturnTransactionInput,
+  validateReturnUnit
+} from "./domain/returnValidation";
+export type {
+  ReturnValidationErrorCode,
+  ReturnValidationErrorDetail,
+  ReturnValidationResult
+} from "./domain/returnValidation";
 export {
   assertValidTransferTransactionInput,
   TRANSFER_MAX_QUANTITY,

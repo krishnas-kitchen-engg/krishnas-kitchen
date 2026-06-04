@@ -3,9 +3,11 @@ import { describe, it } from "vitest";
 
 import { calculateLocationItemBalance } from "../domain/aggregation";
 import { ReceivingValidationError } from "../domain/receivingValidation";
+import { ReturnValidationError } from "../domain/returnValidation";
 import { TransferValidationError } from "../domain/transferValidation";
 import type {
   CreateReceivingTransactionInput,
+  CreateReturnTransactionInput,
   CreateTransferTransactionInput,
   InventoryTransaction,
   InventoryTransactionDraft,
@@ -15,6 +17,7 @@ import type {
 import {
   createInventoryService,
   type InventoryReceivingCatalog,
+  type InventoryReturnCatalog,
   type InventoryTransferCatalog
 } from "./inventoryService";
 import type { InventoryTransactionRepository } from "./inventoryRepository";
@@ -50,6 +53,24 @@ const transferInput: CreateTransferTransactionInput = {
   organizationId: "org-1",
   quantity: 10,
   sourceLocationId: "trailer",
+  templeId: "temple-1",
+  unit: "kg"
+};
+
+const returnInput: CreateReturnTransactionInput = {
+  actor: {
+    type: "user",
+    userId: "manager-1"
+  },
+  auditMetadata: {
+    deviceId: "return-phone"
+  },
+  destinationLocationId: "pantry",
+  itemId: "rice",
+  notes: "unused rice returned",
+  organizationId: "org-1",
+  quantity: 8,
+  sourceLocationId: "kitchen",
   templeId: "temple-1",
   unit: "kg"
 };
@@ -133,6 +154,34 @@ const transferCatalog: InventoryTransferCatalog = {
     });
   },
   findTransferSourceLocation(locationId) {
+    return Promise.resolve({
+      deletedAt: null,
+      id: locationId,
+      organizationId: "org-1",
+      templeId: "temple-1"
+    });
+  }
+};
+
+const returnCatalog: InventoryReturnCatalog = {
+  findReturnDestinationLocation(locationId) {
+    return Promise.resolve({
+      deletedAt: null,
+      id: locationId,
+      organizationId: "org-1",
+      templeId: "temple-1"
+    });
+  },
+  findReturnItem(itemId) {
+    return Promise.resolve({
+      defaultUnit: "kg" as const,
+      deletedAt: null,
+      id: itemId,
+      organizationId: "org-1",
+      returnUnits: ["kg"] as const
+    });
+  },
+  findReturnSourceLocation(locationId) {
     return Promise.resolve({
       deletedAt: null,
       id: locationId,
@@ -277,6 +326,50 @@ describe("inventory receiving service", () => {
     });
 
     await assert.rejects(() => service.transferInventory(transferInput), TransferValidationError);
+    assert.equal(repository.transactions.length, 0);
+  });
+
+  it("creates return transactions and aggregates source to destination movement", async () => {
+    const repository = createMemoryRepository();
+    const service = createInventoryService(repository, {
+      receivingCatalog,
+      returnCatalog
+    });
+    await service.receiveInventory({
+      ...receiveInput,
+      locationId: "kitchen",
+      quantity: 12
+    });
+
+    const returned = await service.returnInventory(returnInput);
+
+    assert.equal(returned.transactionType, "returned");
+    assert.equal(returned.quantityEffect, "transfer");
+    assert.equal(returned.quantity, 8);
+    assert.equal(returned.sourceLocationId, "kitchen");
+    assert.equal(returned.destinationLocationId, "pantry");
+    assert.equal(repository.transactions.length, 2);
+    assert.equal(calculateLocationItemBalance(repository.transactions, "kitchen", "rice"), 4);
+    assert.equal(calculateLocationItemBalance(repository.transactions, "pantry", "rice"), 8);
+  });
+
+  it("rejects invalid return references before persistence", async () => {
+    const repository = createMemoryRepository();
+    const service = createInventoryService(repository, {
+      returnCatalog: {
+        ...returnCatalog,
+        findReturnDestinationLocation(locationId) {
+          return Promise.resolve({
+            deletedAt: "2026-06-01T00:00:00.000Z",
+            id: locationId,
+            organizationId: "org-1",
+            templeId: "temple-1"
+          });
+        }
+      }
+    });
+
+    await assert.rejects(() => service.returnInventory(returnInput), ReturnValidationError);
     assert.equal(repository.transactions.length, 0);
   });
 });

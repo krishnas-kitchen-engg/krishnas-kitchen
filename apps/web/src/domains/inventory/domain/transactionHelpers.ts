@@ -6,16 +6,19 @@ import type {
 
 import { assertValidInventoryTransactionDraft } from "./validation";
 import { assertValidReceivingTransactionInput } from "./receivingValidation";
+import { assertValidReturnTransactionInput } from "./returnValidation";
 import { assertValidTransferTransactionInput } from "./transferValidation";
 import type {
   CreateAdjustmentTransactionInput,
   CreateInventoryTransactionInput,
   CreateLocationTransactionInput,
   CreateReceivingTransactionInput,
+  CreateReturnTransactionInput,
   CreateTransferTransactionInput,
   InventoryTransaction,
   InventoryTransactionDraft,
   ReceivingInventoryTransactionDraft,
+  ReturnInventoryTransactionDraft,
   TransferInventoryTransactionDraft
 } from "./types";
 
@@ -79,13 +82,15 @@ export function createConsumedTransaction(
 }
 
 export function createReturnedTransaction(
-  input: CreateLocationTransactionInput
-): InventoryTransactionDraft {
+  input: CreateReturnTransactionInput
+): ReturnInventoryTransactionDraft {
+  const validInput = assertValidReturnTransactionInput(input);
+
   return assertValidInventoryTransactionDraft({
-    ...createBaseDraft(input, "returned", "increase"),
-    destinationLocationId: input.locationId,
-    sourceLocationId: null
-  });
+    ...createBaseDraft(validInput, "returned", "transfer"),
+    destinationLocationId: validInput.destinationLocationId,
+    sourceLocationId: validInput.sourceLocationId
+  }) as ReturnInventoryTransactionDraft;
 }
 
 export function createWastedTransaction(

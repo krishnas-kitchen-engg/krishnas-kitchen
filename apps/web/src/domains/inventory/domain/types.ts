@@ -65,6 +65,14 @@ export type TransferInventoryTransactionDraft = InventoryTransactionDraft & {
   transactionType: "transfer";
 };
 
+export type ReturnInventoryTransactionDraft = InventoryTransactionDraft & {
+  destinationLocationId: EntityId;
+  quantityEffect: "transfer";
+  reversalOfTransactionId: null;
+  sourceLocationId: EntityId;
+  transactionType: "returned";
+};
+
 export type InventoryBalanceKey = {
   itemId: EntityId;
   locationId: EntityId;
@@ -90,6 +98,7 @@ export type InventoryItemReference = {
   id: EntityId;
   organizationId: EntityId;
   receivingUnits?: readonly ItemUnit[];
+  returnUnits?: readonly ItemUnit[];
   transferUnits?: readonly ItemUnit[];
 };
 
@@ -120,6 +129,11 @@ export type CreateReceivingTransactionInput = CreateInventoryTransactionInput & 
 };
 
 export type CreateTransferTransactionInput = CreateInventoryTransactionInput & {
+  destinationLocationId: EntityId;
+  sourceLocationId: EntityId;
+};
+
+export type CreateReturnTransactionInput = CreateInventoryTransactionInput & {
   destinationLocationId: EntityId;
   sourceLocationId: EntityId;
 };
