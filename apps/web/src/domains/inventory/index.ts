@@ -8,6 +8,24 @@ export { createReceivingScanWorkflowService } from "./application/receivingScanW
 export { createReturnScanWorkflowService } from "./application/returnScanWorkflowService";
 export { createTransferScanWorkflowService } from "./application/transferScanWorkflowService";
 export { createUnknownBarcodeManagementService } from "./application/unknownBarcodeService";
+export { InventoryIntegrationProvider } from "./integration/InventoryIntegrationContext";
+export { useInventoryServices } from "./integration/inventoryServiceHooks";
+export { createInventoryServiceBundle } from "./integration/inventoryServiceFactory";
+export {
+  getInventoryPermissionFlags,
+  resolveInventoryActor,
+  useCameraScanning,
+  useInventoryActor,
+  useInventoryBarcodeCatalog,
+  useInventoryBarcodeLookup,
+  useInventoryCatalogQueries,
+  useInventoryPermissions,
+  useInventoryVisibility,
+  useReceivingWorkflow,
+  useReturnWorkflow,
+  useTransferWorkflow,
+  useUnknownBarcodeManagement
+} from "./integration/inventoryHooks";
 export type {
   InventoryBarcodeLookupRepository,
   InventoryBarcodeLookupService
@@ -43,6 +61,13 @@ export type {
   UnknownBarcodeManagementService,
   UnknownBarcodeRepository
 } from "./application/unknownBarcodeService";
+export type { InventoryIntegrationContextValue } from "./integration/inventoryContextValue";
+export type {
+  InventoryCameraAdapters,
+  InventoryRepositoryAdapters,
+  InventoryServiceBundle,
+  InventoryServiceFactoryInput
+} from "./integration/inventoryServiceFactory";
 export {
   calculateInventoryBalances,
   calculateItemBalance,
@@ -312,4 +337,8 @@ export {
   InventoryPersistenceError,
   mapReceivingTransactionDraftToInsert
 } from "./infrastructure/supabase/receivingPersistence";
+export {
+  createSupabaseInventoryRepositoryAdapters,
+  UnsupportedInventoryRepositoryAdapterError
+} from "./infrastructure/supabase/supabaseInventoryRepositoryAdapters";
 export { createSupabaseInventoryTransactionRepository } from "./infrastructure/supabase/supabaseInventoryTransactionRepository";
