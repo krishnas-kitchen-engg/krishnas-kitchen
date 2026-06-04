@@ -49,6 +49,14 @@ export type InventoryTransactionDraft = Omit<InventoryTransaction, "createdAt" |
   clientId: EntityId;
 };
 
+export type ReceivingInventoryTransactionDraft = InventoryTransactionDraft & {
+  destinationLocationId: EntityId;
+  quantityEffect: "increase";
+  reversalOfTransactionId: null;
+  sourceLocationId: null;
+  transactionType: "received";
+};
+
 export type InventoryBalanceKey = {
   itemId: EntityId;
   locationId: EntityId;

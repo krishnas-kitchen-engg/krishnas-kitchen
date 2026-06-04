@@ -7,7 +7,8 @@ import type {
   CreateReceivingTransactionInput,
   InventoryTransaction,
   InventoryTransactionDraft,
-  InventoryTransactionScope
+  InventoryTransactionScope,
+  ReceivingInventoryTransactionDraft
 } from "../domain/types";
 import { createInventoryService, type InventoryReceivingCatalog } from "./inventoryService";
 import type { InventoryTransactionRepository } from "./inventoryRepository";
@@ -46,6 +47,9 @@ function createMemoryRepository(): InventoryTransactionRepository & {
       transactions.push(transaction);
 
       return Promise.resolve(transaction);
+    },
+    createReceivingTransaction(draft: ReceivingInventoryTransactionDraft) {
+      return this.createTransaction(draft);
     },
     findTransactionById(id: string) {
       return Promise.resolve(transactions.find((transaction) => transaction.id === id) ?? null);

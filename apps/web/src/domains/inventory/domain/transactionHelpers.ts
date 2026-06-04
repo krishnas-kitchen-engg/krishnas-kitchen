@@ -13,7 +13,8 @@ import type {
   CreateReceivingTransactionInput,
   CreateTransferTransactionInput,
   InventoryTransaction,
-  InventoryTransactionDraft
+  InventoryTransactionDraft,
+  ReceivingInventoryTransactionDraft
 } from "./types";
 
 function createClientId(): EntityId {
@@ -59,8 +60,10 @@ export function createReceivedTransaction(
 
 export function createReceivingTransaction(
   input: CreateReceivingTransactionInput
-): InventoryTransactionDraft {
-  return createReceivedTransaction(assertValidReceivingTransactionInput(input));
+): ReceivingInventoryTransactionDraft {
+  return createReceivedTransaction(
+    assertValidReceivingTransactionInput(input)
+  ) as ReceivingInventoryTransactionDraft;
 }
 
 export function createConsumedTransaction(

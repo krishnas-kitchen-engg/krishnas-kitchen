@@ -30,7 +30,8 @@ export type {
   InventoryLocationReference,
   InventoryTransaction,
   InventoryTransactionDraft,
-  InventoryTransactionScope
+  InventoryTransactionScope,
+  ReceivingInventoryTransactionDraft
 } from "./domain/types";
 export {
   assertValidReceivingTransactionInput,
@@ -53,4 +54,9 @@ export {
   validateBaseTransactionInput,
   validateInventoryTransactionDraft
 } from "./domain/validation";
+export {
+  assertPersistableReceivingTransactionDraft,
+  InventoryPersistenceError,
+  mapReceivingTransactionDraftToInsert
+} from "./infrastructure/supabase/receivingPersistence";
 export { createSupabaseInventoryTransactionRepository } from "./infrastructure/supabase/supabaseInventoryTransactionRepository";

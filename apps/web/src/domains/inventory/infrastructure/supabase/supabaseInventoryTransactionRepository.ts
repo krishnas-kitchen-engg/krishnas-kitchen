@@ -8,26 +8,61 @@ import type {
   InventoryTransactionScope
 } from "../../domain/types";
 import {
+  type InventoryTransactionInsert,
   mapInventoryTransactionDraftToInsert,
   mapInventoryTransactionRow
 } from "./inventoryTransactionMapper";
+import {
+  InventoryPersistenceError,
+  mapReceivingTransactionDraftToInsert
+} from "./receivingPersistence";
+
+type InventoryTransactionOperation = "create_receiving_transaction" | "create_transaction";
 
 export function createSupabaseInventoryTransactionRepository(
   client: SupabaseClient<Database>
 ): InventoryTransactionRepository {
+  async function insertInventoryTransactionInsert(
+    insert: InventoryTransactionInsert,
+    operation: InventoryTransactionOperation
+  ): Promise<InventoryTransaction> {
+    const { data, error } = await client
+      .from("inventory_transactions")
+      .insert(insert)
+      .select("*")
+      .single();
+
+    if (error) {
+      throw new InventoryPersistenceError(
+        operation,
+        "Inventory transaction persistence failed.",
+        error
+      );
+    }
+
+    if (!data) {
+      throw new InventoryPersistenceError(
+        operation,
+        "Inventory transaction persistence returned no row."
+      );
+    }
+
+    return mapInventoryTransactionRow(data);
+  }
+
   return {
+    async createReceivingTransaction(draft) {
+      return insertInventoryTransactionInsert(
+        mapReceivingTransactionDraftToInsert(draft),
+        "create_receiving_transaction"
+      );
+    },
+
     async createTransaction(draft: InventoryTransactionDraft): Promise<InventoryTransaction> {
-      const { data, error } = await client
-        .from("inventory_transactions")
-        .insert(mapInventoryTransactionDraftToInsert(draft))
-        .select("*")
-        .single();
-
-      if (error) {
-        throw error;
-      }
-
-      return mapInventoryTransactionRow(data);
+      return insertInventoryTransactionInsert(
+        mapInventoryTransactionDraftToInsert(draft),
+        "create_transaction"
+      );
     },
 
     async findTransactionById(id: EntityId): Promise<InventoryTransaction | null> {

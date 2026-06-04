@@ -7,11 +7,40 @@ import type {
   InventoryTransactionDraft
 } from "../../domain/types";
 
-type InventoryTransactionRow = Database["public"]["Tables"]["inventory_transactions"]["Row"];
-type InventoryTransactionInsert = Database["public"]["Tables"]["inventory_transactions"]["Insert"];
+export type InventoryTransactionRow = Database["public"]["Tables"]["inventory_transactions"]["Row"];
+export type InventoryTransactionInsert =
+  Database["public"]["Tables"]["inventory_transactions"]["Insert"];
 
 function readAuditMetadata(value: Json): InventoryAuditMetadata {
-  return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return {};
+  }
+
+  return {
+    ...(typeof value.clientRequestId === "string"
+      ? { clientRequestId: value.clientRequestId }
+      : {}),
+    ...(typeof value.deviceId === "string" ? { deviceId: value.deviceId } : {}),
+    ...(typeof value.reason === "string" ? { reason: value.reason } : {}),
+    ...(typeof value.reversedTransactionId === "string"
+      ? { reversedTransactionId: value.reversedTransactionId }
+      : {}),
+    ...(value.source === "online" || value.source === "offline_queue" || value.source === "system"
+      ? { source: value.source }
+      : {})
+  };
+}
+
+function mapAuditMetadata(metadata: InventoryAuditMetadata): Json {
+  return {
+    ...(metadata.clientRequestId ? { clientRequestId: metadata.clientRequestId } : {}),
+    ...(metadata.deviceId ? { deviceId: metadata.deviceId } : {}),
+    ...(metadata.reason ? { reason: metadata.reason } : {}),
+    ...(metadata.reversedTransactionId
+      ? { reversedTransactionId: metadata.reversedTransactionId }
+      : {}),
+    ...(metadata.source ? { source: metadata.source } : {})
+  };
 }
 
 function mapActor(row: InventoryTransactionRow): InventoryActor {
@@ -70,7 +99,7 @@ export function mapInventoryTransactionDraftToInsert(
       draft.actor.type === "temporary_volunteer" ? draft.actor.tempSessionId : null,
     actor_type: draft.actor.type,
     actor_user_id: draft.actor.type === "user" ? draft.actor.userId : null,
-    audit_metadata: draft.auditMetadata,
+    audit_metadata: mapAuditMetadata(draft.auditMetadata),
     destination_location_id: draft.destinationLocationId,
     item_id: draft.itemId,
     notes: draft.notes,

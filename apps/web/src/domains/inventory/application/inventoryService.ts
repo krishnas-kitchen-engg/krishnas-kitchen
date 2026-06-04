@@ -83,7 +83,7 @@ export function createInventoryService(
         throw new ReceivingValidationError(validation.errors);
       }
 
-      return repository.createTransaction(createReceivingTransaction(input));
+      return repository.createReceivingTransaction(createReceivingTransaction(input));
     },
 
     async undoTransaction(transactionId, input) {
