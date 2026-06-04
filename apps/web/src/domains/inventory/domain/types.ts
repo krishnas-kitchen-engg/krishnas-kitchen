@@ -90,11 +90,54 @@ export type InventoryBalance = InventoryBalanceKey & {
   quantity: number;
 };
 
+export type InventoryItemBalance = {
+  itemId: EntityId;
+  organizationId: EntityId;
+  quantity: number;
+  templeId?: EntityId;
+  unit: ItemUnit;
+};
+
+export type InventoryLocationBalance = {
+  itemBalances: InventoryBalance[];
+  locationId: EntityId;
+  organizationId: EntityId;
+  templeId: EntityId;
+};
+
+export type InventorySummaryProjection = {
+  balanceCount: number;
+  itemCount: number;
+  locationCount: number;
+  organizationId: EntityId;
+  templeId?: EntityId;
+  transactionCount: number;
+};
+
+export type InventoryLowStockThreshold = {
+  itemId: EntityId;
+  locationId?: EntityId;
+  minimumQuantity: number;
+  organizationId: EntityId;
+  templeId?: EntityId;
+  unit: ItemUnit;
+};
+
+export type InventoryLowStockAlert = InventoryLowStockThreshold & {
+  currentQuantity: number;
+  shortageQuantity: number;
+};
+
 export type InventoryTransactionScope = {
   itemId?: EntityId;
   locationId?: EntityId;
   organizationId: EntityId;
   templeId?: EntityId;
+};
+
+export type InventoryTransactionHistoryQuery = InventoryTransactionScope & {
+  limit?: number;
+  transactionType?: InventoryTransactionType;
 };
 
 export type InventoryItemReference = {

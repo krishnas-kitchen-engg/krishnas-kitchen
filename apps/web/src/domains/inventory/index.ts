@@ -1,16 +1,26 @@
 export { createInventoryService } from "./application/inventoryService";
+export { createInventoryVisibilityService } from "./application/inventoryVisibilityService";
 export type {
   InventoryReceivingCatalog,
   InventoryReturnCatalog,
   InventoryService,
   InventoryTransferCatalog
 } from "./application/inventoryService";
+export type { InventoryVisibilityService } from "./application/inventoryVisibilityService";
 export type { InventoryTransactionRepository } from "./application/inventoryRepository";
 export {
   calculateInventoryBalances,
   calculateItemBalance,
   calculateLocationItemBalance
 } from "./domain/aggregation";
+export {
+  detectLowStock,
+  projectInventoryBalances,
+  projectInventorySummary,
+  projectItemBalances,
+  projectLocationBalances,
+  projectTransactionHistory
+} from "./domain/visibility";
 export {
   createAdjustmentTransaction,
   createConsumedTransaction,
@@ -34,10 +44,16 @@ export type {
   InventoryActor,
   InventoryAuditMetadata,
   InventoryBalance,
+  InventoryItemBalance,
   InventoryItemReference,
+  InventoryLocationBalance,
   InventoryLocationReference,
+  InventoryLowStockAlert,
+  InventoryLowStockThreshold,
+  InventorySummaryProjection,
   InventoryTransaction,
   InventoryTransactionDraft,
+  InventoryTransactionHistoryQuery,
   InventoryTransactionScope,
   ReceivingInventoryTransactionDraft,
   ReversalInventoryTransactionDraft,
