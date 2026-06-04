@@ -1,4 +1,5 @@
 export { createInventoryBarcodeLookupService } from "./application/barcodeLookupService";
+export { createInventoryBarcodeCatalogService } from "./application/barcodeCatalogService";
 export { createCameraScanningService } from "./application/cameraScanningService";
 export { createInventoryCatalogQueryService } from "./application/inventoryCatalogQueryService";
 export { createInventoryService } from "./application/inventoryService";
@@ -11,6 +12,11 @@ export type {
   InventoryBarcodeLookupRepository,
   InventoryBarcodeLookupService
 } from "./application/barcodeLookupService";
+export type {
+  InventoryBarcodeCatalogItemRepository,
+  InventoryBarcodeCatalogRepository,
+  InventoryBarcodeCatalogService
+} from "./application/barcodeCatalogService";
 export type {
   CameraDeviceAdapter,
   CameraPermissionAdapter,
@@ -62,6 +68,28 @@ export type {
   InventoryBarcodeScanEvent,
   InventoryBarcodeScanInput
 } from "./domain/barcode";
+export {
+  archiveBarcodeMapping,
+  createBarcodeMappingDraft,
+  InventoryBarcodeCatalogValidationError,
+  searchBarcodeMappings,
+  validateBarcodeMappingArchival,
+  validateBarcodeMappingCreation,
+  validateBarcodeMappingInput
+} from "./domain/barcodeCatalog";
+export type {
+  ArchiveInventoryBarcodeMappingInput,
+  CreateInventoryBarcodeMappingInput,
+  InventoryBarcodeCatalogItemReference,
+  InventoryBarcodeCatalogValidationErrorCode,
+  InventoryBarcodeCatalogValidationErrorDetail,
+  InventoryBarcodeCatalogValidationResult,
+  InventoryBarcodeMapping,
+  InventoryBarcodeMappingDraft,
+  InventoryBarcodeMappingSearchQuery,
+  InventoryBarcodeMappingStatus,
+  InventoryBarcodeMappingValidationResult
+} from "./domain/barcodeCatalog";
 export {
   filterActiveCatalogItems,
   filterActiveCatalogLocations,
