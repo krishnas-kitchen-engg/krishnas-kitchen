@@ -56,7 +56,7 @@ export function validateInventoryTransactionDraft(
   const usesMovementEffect =
     draft.transactionType === "returned" ||
     draft.transactionType === "transfer" ||
-    draft.transactionType === "undo";
+    draft.transactionType === "reversal";
 
   if (!isNonEmptyString(draft.clientId)) {
     errors.push("clientId is required for offline-safe transaction drafts.");

@@ -80,7 +80,7 @@ export type InventoryTransactionType =
   | "adjusted"
   | "wasted"
   | "reservation"
-  | "undo";
+  | "reversal";
 
 export type InventoryQuantityEffect = "increase" | "decrease" | "transfer" | "none";
 

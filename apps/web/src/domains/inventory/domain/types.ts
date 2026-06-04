@@ -73,6 +73,11 @@ export type ReturnInventoryTransactionDraft = InventoryTransactionDraft & {
   transactionType: "returned";
 };
 
+export type ReversalInventoryTransactionDraft = InventoryTransactionDraft & {
+  reversalOfTransactionId: EntityId;
+  transactionType: "reversal";
+};
+
 export type InventoryBalanceKey = {
   itemId: EntityId;
   locationId: EntityId;
@@ -137,6 +142,11 @@ export type CreateReturnTransactionInput = CreateInventoryTransactionInput & {
   destinationLocationId: EntityId;
   sourceLocationId: EntityId;
 };
+
+export type CreateReversalTransactionInput = Pick<
+  CreateInventoryTransactionInput,
+  "actor" | "auditMetadata" | "notes"
+>;
 
 export type CreateAdjustmentTransactionInput = CreateLocationTransactionInput & {
   direction: Extract<InventoryQuantityEffect, "increase" | "decrease">;

@@ -5,7 +5,7 @@ import { calculateInventoryBalances, calculateLocationItemBalance } from "./aggr
 import {
   createReceivingTransaction,
   createReturnedTransaction,
-  createUndoTransaction
+  createReversalTransaction
 } from "./transactionHelpers";
 import type {
   CreateReturnTransactionInput,
@@ -189,14 +189,14 @@ describe("return validation", () => {
     assert.equal(balances.length, 2);
   });
 
-  it("supports reversal of return movement through a separate undo transaction", () => {
+  it("supports reversal of return movement through a separate reversal transaction", () => {
     const returned = {
       ...createReturnedTransaction(baseInput),
       createdAt: "2026-06-04T07:05:00.000Z",
       id: "return-1"
     };
-    const undo = {
-      ...createUndoTransaction(returned, {
+    const reversal = {
+      ...createReversalTransaction(returned, {
         actor: {
           type: "user",
           userId: "manager-1"
@@ -206,15 +206,15 @@ describe("return validation", () => {
         }
       }),
       createdAt: "2026-06-04T07:06:00.000Z",
-      id: "undo-1"
+      id: "reversal-1"
     };
 
-    assert.equal(undo.transactionType, "undo");
-    assert.equal(undo.quantityEffect, "transfer");
-    assert.equal(undo.reversalOfTransactionId, returned.id);
-    assert.equal(undo.sourceLocationId, "pantry");
-    assert.equal(undo.destinationLocationId, "kitchen");
-    assert.equal(calculateLocationItemBalance([returned, undo], "kitchen", "rice"), 0);
-    assert.equal(calculateLocationItemBalance([returned, undo], "pantry", "rice"), 0);
+    assert.equal(reversal.transactionType, "reversal");
+    assert.equal(reversal.quantityEffect, "transfer");
+    assert.equal(reversal.reversalOfTransactionId, returned.id);
+    assert.equal(reversal.sourceLocationId, "pantry");
+    assert.equal(reversal.destinationLocationId, "kitchen");
+    assert.equal(calculateLocationItemBalance([returned, reversal], "kitchen", "rice"), 0);
+    assert.equal(calculateLocationItemBalance([returned, reversal], "pantry", "rice"), 0);
   });
 });

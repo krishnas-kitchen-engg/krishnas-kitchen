@@ -3,6 +3,7 @@ import { describe, it } from "vitest";
 
 import { calculateLocationItemBalance } from "../domain/aggregation";
 import { ReceivingValidationError } from "../domain/receivingValidation";
+import { ReversalValidationError } from "../domain/reversalValidation";
 import { ReturnValidationError } from "../domain/returnValidation";
 import { TransferValidationError } from "../domain/transferValidation";
 import type {
@@ -276,13 +277,41 @@ describe("inventory receiving service", () => {
       }
     });
 
-    assert.equal(undo.transactionType, "undo");
+    assert.equal(undo.transactionType, "reversal");
     assert.equal(undo.quantityEffect, "decrease");
     assert.equal(undo.reversalOfTransactionId, received.id);
     assert.equal(repository.transactions.length, 2);
     assert.equal(repository.transactions[0]?.transactionType, "received");
     assert.equal(repository.transactions[0]?.quantity, 25);
     assert.equal(calculateLocationItemBalance(repository.transactions, "pantry", "rice"), 0);
+  });
+
+  it("rejects duplicate undo requests without mutating transaction history", async () => {
+    const repository = createMemoryRepository();
+    const service = createInventoryService(repository, {
+      receivingCatalog
+    });
+    const received = await service.receiveInventory(receiveInput);
+
+    await service.undoTransaction(received.id, {
+      actor: {
+        type: "user",
+        userId: "manager-1"
+      }
+    });
+
+    await assert.rejects(
+      () =>
+        service.undoTransaction(received.id, {
+          actor: {
+            type: "user",
+            userId: "manager-1"
+          }
+        }),
+      ReversalValidationError
+    );
+    assert.equal(repository.transactions.length, 2);
+    assert.equal(repository.transactions[0]?.id, received.id);
   });
 
   it("creates transfer transactions and aggregates source to destination movement", async () => {
@@ -351,6 +380,57 @@ describe("inventory receiving service", () => {
     assert.equal(repository.transactions.length, 2);
     assert.equal(calculateLocationItemBalance(repository.transactions, "kitchen", "rice"), 4);
     assert.equal(calculateLocationItemBalance(repository.transactions, "pantry", "rice"), 8);
+  });
+
+  it("undoes transfer and return transactions through reversal movement", async () => {
+    const repository = createMemoryRepository();
+    const service = createInventoryService(repository, {
+      receivingCatalog,
+      returnCatalog,
+      transferCatalog
+    });
+    await service.receiveInventory({
+      ...receiveInput,
+      locationId: "trailer",
+      quantity: 20
+    });
+    const transfer = await service.transferInventory(transferInput);
+    const transferUndo = await service.undoTransaction(transfer.id, {
+      actor: {
+        type: "user",
+        userId: "manager-1"
+      },
+      auditMetadata: {
+        reason: "wrong trailer"
+      }
+    });
+
+    await service.receiveInventory({
+      ...receiveInput,
+      locationId: "kitchen",
+      quantity: 12
+    });
+    const returned = await service.returnInventory(returnInput);
+    const returnUndo = await service.undoTransaction(returned.id, {
+      actor: {
+        type: "user",
+        userId: "manager-1"
+      }
+    });
+
+    assert.equal(transferUndo.transactionType, "reversal");
+    assert.equal(transferUndo.quantityEffect, "transfer");
+    assert.equal(transferUndo.reversalOfTransactionId, transfer.id);
+    assert.equal(transferUndo.sourceLocationId, "pantry");
+    assert.equal(transferUndo.destinationLocationId, "trailer");
+    assert.equal(returnUndo.transactionType, "reversal");
+    assert.equal(returnUndo.quantityEffect, "transfer");
+    assert.equal(returnUndo.reversalOfTransactionId, returned.id);
+    assert.equal(returnUndo.sourceLocationId, "pantry");
+    assert.equal(returnUndo.destinationLocationId, "kitchen");
+    assert.equal(calculateLocationItemBalance(repository.transactions, "trailer", "rice"), 20);
+    assert.equal(calculateLocationItemBalance(repository.transactions, "pantry", "rice"), 0);
+    assert.equal(calculateLocationItemBalance(repository.transactions, "kitchen", "rice"), 12);
   });
 
   it("rejects invalid return references before persistence", async () => {

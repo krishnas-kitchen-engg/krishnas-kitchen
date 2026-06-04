@@ -2,15 +2,19 @@ import type { EntityId } from "@krishnas-kitchen/types";
 
 import { calculateInventoryBalances } from "../domain/aggregation";
 import {
+  createReversalTransaction,
   createReceivingTransaction,
   createReturnedTransaction,
-  createTransferTransaction,
-  createUndoTransaction
+  createTransferTransaction
 } from "../domain/transactionHelpers";
 import {
   ReceivingValidationError,
   validateReceivingTransactionInput
 } from "../domain/receivingValidation";
+import {
+  ReversalValidationError,
+  validateReversalTransactionInput
+} from "../domain/reversalValidation";
 import { ReturnValidationError, validateReturnTransactionInput } from "../domain/returnValidation";
 import {
   TransferValidationError,
@@ -20,10 +24,9 @@ import { assertValidInventoryTransactionDraft } from "../domain/validation";
 import type {
   CreateInventoryTransactionInput,
   CreateReceivingTransactionInput,
+  CreateReversalTransactionInput,
   CreateReturnTransactionInput,
   CreateTransferTransactionInput,
-  InventoryActor,
-  InventoryAuditMetadata,
   InventoryBalance,
   InventoryItemReference,
   InventoryLocationReference,
@@ -83,11 +86,7 @@ export type InventoryService = {
   transferInventory: (input: CreateTransferTransactionInput) => Promise<InventoryTransaction>;
   undoTransaction: (
     transactionId: EntityId,
-    input: {
-      actor: InventoryActor;
-      auditMetadata?: InventoryAuditMetadata;
-      notes?: string;
-    }
+    input: CreateReversalTransactionInput
   ) => Promise<InventoryTransaction>;
 };
 
@@ -208,14 +207,31 @@ export function createInventoryService(
       const originalTransaction = await repository.findTransactionById(transactionId);
 
       if (!originalTransaction) {
-        throw new Error("Inventory transaction was not found.");
+        const validation = validateReversalTransactionInput(null, input);
+
+        throw new ReversalValidationError(validation.errors);
       }
 
-      if (originalTransaction.transactionType === "undo") {
-        throw new Error("Undo transactions cannot be undone.");
+      const transactionChain = await repository.listTransactions({
+        itemId: originalTransaction.itemId,
+        organizationId: originalTransaction.organizationId,
+        templeId: originalTransaction.templeId
+      });
+      const existingReversal =
+        transactionChain.find(
+          (transaction) => transaction.reversalOfTransactionId === originalTransaction.id
+        ) ?? null;
+      const validation = validateReversalTransactionInput(
+        originalTransaction,
+        input,
+        existingReversal
+      );
+
+      if (!validation.ok) {
+        throw new ReversalValidationError(validation.errors);
       }
 
-      return repository.createTransaction(createUndoTransaction(originalTransaction, input));
+      return repository.createTransaction(createReversalTransaction(originalTransaction, input));
     }
   };
 }

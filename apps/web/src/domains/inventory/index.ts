@@ -17,9 +17,10 @@ export {
   createReceivedTransaction,
   createReceivingTransaction,
   createReservationTransaction,
+  createReversalTransaction,
   createReturnedTransaction,
   createTransferTransaction,
-  createUndoTransaction,
+  getReversalTargetId,
   createWastedTransaction
 } from "./domain/transactionHelpers";
 export type {
@@ -27,6 +28,7 @@ export type {
   CreateInventoryTransactionInput,
   CreateLocationTransactionInput,
   CreateReceivingTransactionInput,
+  CreateReversalTransactionInput,
   CreateReturnTransactionInput,
   CreateTransferTransactionInput,
   InventoryActor,
@@ -38,6 +40,7 @@ export type {
   InventoryTransactionDraft,
   InventoryTransactionScope,
   ReceivingInventoryTransactionDraft,
+  ReversalInventoryTransactionDraft,
   ReturnInventoryTransactionDraft,
   TransferInventoryTransactionDraft
 } from "./domain/types";
@@ -57,6 +60,18 @@ export type {
   ReceivingValidationErrorDetail,
   ReceivingValidationResult
 } from "./domain/receivingValidation";
+export {
+  assertValidReversalTransactionInput,
+  ReversalValidationError,
+  validateReversalEligibility,
+  validateReversalTransactionInput
+} from "./domain/reversalValidation";
+export type {
+  ReversalValidationErrorCode,
+  ReversalValidationErrorDetail,
+  ReversalValidationResult,
+  ReversibleInventoryTransaction
+} from "./domain/reversalValidation";
 export {
   assertValidReturnTransactionInput,
   RETURN_MAX_QUANTITY,

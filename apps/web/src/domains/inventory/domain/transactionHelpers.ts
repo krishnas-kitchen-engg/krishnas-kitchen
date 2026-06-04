@@ -6,6 +6,7 @@ import type {
 
 import { assertValidInventoryTransactionDraft } from "./validation";
 import { assertValidReceivingTransactionInput } from "./receivingValidation";
+import { assertValidReversalTransactionInput } from "./reversalValidation";
 import { assertValidReturnTransactionInput } from "./returnValidation";
 import { assertValidTransferTransactionInput } from "./transferValidation";
 import type {
@@ -13,11 +14,13 @@ import type {
   CreateInventoryTransactionInput,
   CreateLocationTransactionInput,
   CreateReceivingTransactionInput,
+  CreateReversalTransactionInput,
   CreateReturnTransactionInput,
   CreateTransferTransactionInput,
   InventoryTransaction,
   InventoryTransactionDraft,
   ReceivingInventoryTransactionDraft,
+  ReversalInventoryTransactionDraft,
   ReturnInventoryTransactionDraft,
   TransferInventoryTransactionDraft
 } from "./types";
@@ -147,45 +150,54 @@ function getInverseEffect(effect: InventoryQuantityEffect): InventoryQuantityEff
   return effect;
 }
 
-export function createUndoTransaction(
+export function createReversalTransaction(
   original: InventoryTransaction,
-  input: Pick<CreateInventoryTransactionInput, "actor" | "auditMetadata" | "notes">
-): InventoryTransactionDraft {
+  input: CreateReversalTransactionInput
+): ReversalInventoryTransactionDraft {
+  const validOriginal = assertValidReversalTransactionInput(original, input);
   const base = createBaseDraft(
     {
       actor: input.actor,
       auditMetadata: {
-        reason: "undo",
-        reversedTransactionId: original.id,
+        reason: "reversal",
+        reversedTransactionId: validOriginal.id,
         ...input.auditMetadata
       },
-      itemId: original.itemId,
+      itemId: validOriginal.itemId,
       notes: input.notes,
-      organizationId: original.organizationId,
-      quantity: original.quantity,
-      templeId: original.templeId,
-      unit: original.unit
+      organizationId: validOriginal.organizationId,
+      quantity: validOriginal.quantity,
+      templeId: validOriginal.templeId,
+      unit: validOriginal.unit
     },
-    "undo",
-    getInverseEffect(original.quantityEffect)
+    "reversal",
+    getInverseEffect(validOriginal.quantityEffect)
   );
 
   const draft: InventoryTransactionDraft =
-    original.quantityEffect === "transfer"
+    validOriginal.quantityEffect === "transfer"
       ? {
           ...base,
-          destinationLocationId: original.sourceLocationId,
-          reversalOfTransactionId: original.id,
-          sourceLocationId: original.destinationLocationId
+          destinationLocationId: validOriginal.sourceLocationId,
+          reversalOfTransactionId: validOriginal.id,
+          sourceLocationId: validOriginal.destinationLocationId
         }
       : {
           ...base,
           destinationLocationId:
-            original.quantityEffect === "decrease" ? original.sourceLocationId : null,
-          reversalOfTransactionId: original.id,
+            validOriginal.quantityEffect === "decrease" ? validOriginal.sourceLocationId : null,
+          reversalOfTransactionId: validOriginal.id,
           sourceLocationId:
-            original.quantityEffect === "increase" ? original.destinationLocationId : null
+            validOriginal.quantityEffect === "increase" ? validOriginal.destinationLocationId : null
         };
 
-  return assertValidInventoryTransactionDraft(draft);
+  return assertValidInventoryTransactionDraft(draft) as ReversalInventoryTransactionDraft;
+}
+
+export function getReversalTargetId(
+  transaction: Pick<InventoryTransactionDraft, "auditMetadata" | "reversalOfTransactionId">
+): EntityId | null {
+  return (
+    transaction.reversalOfTransactionId ?? transaction.auditMetadata.reversedTransactionId ?? null
+  );
 }
