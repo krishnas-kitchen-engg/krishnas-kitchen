@@ -1,5 +1,10 @@
+export { createInventoryBarcodeLookupService } from "./application/barcodeLookupService";
 export { createInventoryService } from "./application/inventoryService";
 export { createInventoryVisibilityService } from "./application/inventoryVisibilityService";
+export type {
+  InventoryBarcodeLookupRepository,
+  InventoryBarcodeLookupService
+} from "./application/barcodeLookupService";
 export type {
   InventoryReceivingCatalog,
   InventoryReturnCatalog,
@@ -13,6 +18,26 @@ export {
   calculateItemBalance,
   calculateLocationItemBalance
 } from "./domain/aggregation";
+export {
+  inferBarcodeFormats,
+  normalizeBarcode,
+  shouldSuppressDuplicateBarcodeScan,
+  validateBarcode,
+  validateBarcodeCandidates
+} from "./domain/barcode";
+export type {
+  BarcodeValidationErrorCode,
+  BarcodeValidationErrorDetail,
+  BarcodeValidationResult,
+  DuplicateBarcodeScanResult,
+  InventoryBarcode,
+  InventoryBarcodeFormat,
+  InventoryBarcodeItemReference,
+  InventoryBarcodeLookupQuery,
+  InventoryBarcodeLookupResult,
+  InventoryBarcodeScanEvent,
+  InventoryBarcodeScanInput
+} from "./domain/barcode";
 export {
   detectLowStock,
   projectInventoryBalances,
