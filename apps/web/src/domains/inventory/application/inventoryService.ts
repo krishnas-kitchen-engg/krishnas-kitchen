@@ -1,15 +1,24 @@
 import type { EntityId } from "@krishnas-kitchen/types";
 
 import { calculateInventoryBalances } from "../domain/aggregation";
-import { createReceivingTransaction, createUndoTransaction } from "../domain/transactionHelpers";
+import {
+  createReceivingTransaction,
+  createTransferTransaction,
+  createUndoTransaction
+} from "../domain/transactionHelpers";
 import {
   ReceivingValidationError,
   validateReceivingTransactionInput
 } from "../domain/receivingValidation";
+import {
+  TransferValidationError,
+  validateTransferTransactionInput
+} from "../domain/transferValidation";
 import { assertValidInventoryTransactionDraft } from "../domain/validation";
 import type {
   CreateInventoryTransactionInput,
   CreateReceivingTransactionInput,
+  CreateTransferTransactionInput,
   InventoryActor,
   InventoryAuditMetadata,
   InventoryBalance,
@@ -32,11 +41,27 @@ export type InventoryReceivingCatalog = {
   ) => Promise<InventoryLocationReference | null>;
 };
 
+export type InventoryTransferCatalog = {
+  findTransferDestinationLocation: (
+    locationId: EntityId,
+    scope: Pick<CreateTransferTransactionInput, "organizationId" | "templeId">
+  ) => Promise<InventoryLocationReference | null>;
+  findTransferItem: (
+    itemId: EntityId,
+    scope: Pick<CreateTransferTransactionInput, "organizationId">
+  ) => Promise<InventoryItemReference | null>;
+  findTransferSourceLocation: (
+    locationId: EntityId,
+    scope: Pick<CreateTransferTransactionInput, "organizationId" | "templeId">
+  ) => Promise<InventoryLocationReference | null>;
+};
+
 export type InventoryService = {
   createTransaction: (draft: InventoryTransactionDraft) => Promise<InventoryTransaction>;
   getBalances: (scope: InventoryTransactionScope) => Promise<InventoryBalance[]>;
   getTransactions: (scope: InventoryTransactionScope) => Promise<InventoryTransaction[]>;
   receiveInventory: (input: CreateReceivingTransactionInput) => Promise<InventoryTransaction>;
+  transferInventory: (input: CreateTransferTransactionInput) => Promise<InventoryTransaction>;
   undoTransaction: (
     transactionId: EntityId,
     input: {
@@ -51,6 +76,7 @@ export function createInventoryService(
   repository: InventoryTransactionRepository,
   options: {
     receivingCatalog?: InventoryReceivingCatalog;
+    transferCatalog?: InventoryTransferCatalog;
   } = {}
 ): InventoryService {
   return {
@@ -84,6 +110,42 @@ export function createInventoryService(
       }
 
       return repository.createReceivingTransaction(createReceivingTransaction(input));
+    },
+
+    async transferInventory(input) {
+      const item = await options.transferCatalog?.findTransferItem(input.itemId, {
+        organizationId: input.organizationId
+      });
+      const sourceLocation = await options.transferCatalog?.findTransferSourceLocation(
+        input.sourceLocationId,
+        {
+          organizationId: input.organizationId,
+          templeId: input.templeId
+        }
+      );
+      const destinationLocation = await options.transferCatalog?.findTransferDestinationLocation(
+        input.destinationLocationId,
+        {
+          organizationId: input.organizationId,
+          templeId: input.templeId
+        }
+      );
+      const validation = validateTransferTransactionInput(
+        input,
+        options.transferCatalog
+          ? {
+              destinationLocation: destinationLocation ?? null,
+              item: item ?? null,
+              sourceLocation: sourceLocation ?? null
+            }
+          : undefined
+      );
+
+      if (!validation.ok) {
+        throw new TransferValidationError(validation.errors);
+      }
+
+      return repository.createTransaction(createTransferTransaction(input));
     },
 
     async undoTransaction(transactionId, input) {

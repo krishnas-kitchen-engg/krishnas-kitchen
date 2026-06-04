@@ -6,6 +6,7 @@ import type {
 
 import { assertValidInventoryTransactionDraft } from "./validation";
 import { assertValidReceivingTransactionInput } from "./receivingValidation";
+import { assertValidTransferTransactionInput } from "./transferValidation";
 import type {
   CreateAdjustmentTransactionInput,
   CreateInventoryTransactionInput,
@@ -14,7 +15,8 @@ import type {
   CreateTransferTransactionInput,
   InventoryTransaction,
   InventoryTransactionDraft,
-  ReceivingInventoryTransactionDraft
+  ReceivingInventoryTransactionDraft,
+  TransferInventoryTransactionDraft
 } from "./types";
 
 function createClientId(): EntityId {
@@ -118,12 +120,14 @@ export function createAdjustmentTransaction(
 
 export function createTransferTransaction(
   input: CreateTransferTransactionInput
-): InventoryTransactionDraft {
+): TransferInventoryTransactionDraft {
+  const validInput = assertValidTransferTransactionInput(input);
+
   return assertValidInventoryTransactionDraft({
-    ...createBaseDraft(input, "transfer", "transfer"),
-    destinationLocationId: input.destinationLocationId,
-    sourceLocationId: input.sourceLocationId
-  });
+    ...createBaseDraft(validInput, "transfer", "transfer"),
+    destinationLocationId: validInput.destinationLocationId,
+    sourceLocationId: validInput.sourceLocationId
+  }) as TransferInventoryTransactionDraft;
 }
 
 function getInverseEffect(effect: InventoryQuantityEffect): InventoryQuantityEffect {

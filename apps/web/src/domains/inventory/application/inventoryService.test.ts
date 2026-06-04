@@ -3,14 +3,20 @@ import { describe, it } from "vitest";
 
 import { calculateLocationItemBalance } from "../domain/aggregation";
 import { ReceivingValidationError } from "../domain/receivingValidation";
+import { TransferValidationError } from "../domain/transferValidation";
 import type {
   CreateReceivingTransactionInput,
+  CreateTransferTransactionInput,
   InventoryTransaction,
   InventoryTransactionDraft,
   InventoryTransactionScope,
   ReceivingInventoryTransactionDraft
 } from "../domain/types";
-import { createInventoryService, type InventoryReceivingCatalog } from "./inventoryService";
+import {
+  createInventoryService,
+  type InventoryReceivingCatalog,
+  type InventoryTransferCatalog
+} from "./inventoryService";
 import type { InventoryTransactionRepository } from "./inventoryRepository";
 
 const receiveInput: CreateReceivingTransactionInput = {
@@ -26,6 +32,24 @@ const receiveInput: CreateReceivingTransactionInput = {
   notes: "rice delivery",
   organizationId: "org-1",
   quantity: 25,
+  templeId: "temple-1",
+  unit: "kg"
+};
+
+const transferInput: CreateTransferTransactionInput = {
+  actor: {
+    type: "user",
+    userId: "manager-1"
+  },
+  auditMetadata: {
+    deviceId: "transfer-phone"
+  },
+  destinationLocationId: "pantry",
+  itemId: "rice",
+  notes: "move to pantry",
+  organizationId: "org-1",
+  quantity: 10,
+  sourceLocationId: "trailer",
   templeId: "temple-1",
   unit: "kg"
 };
@@ -81,6 +105,34 @@ const receivingCatalog: InventoryReceivingCatalog = {
     });
   },
   findReceivingLocation(locationId) {
+    return Promise.resolve({
+      deletedAt: null,
+      id: locationId,
+      organizationId: "org-1",
+      templeId: "temple-1"
+    });
+  }
+};
+
+const transferCatalog: InventoryTransferCatalog = {
+  findTransferDestinationLocation(locationId) {
+    return Promise.resolve({
+      deletedAt: null,
+      id: locationId,
+      organizationId: "org-1",
+      templeId: "temple-1"
+    });
+  },
+  findTransferItem(itemId) {
+    return Promise.resolve({
+      defaultUnit: "kg" as const,
+      deletedAt: null,
+      id: itemId,
+      organizationId: "org-1",
+      transferUnits: ["kg"] as const
+    });
+  },
+  findTransferSourceLocation(locationId) {
     return Promise.resolve({
       deletedAt: null,
       id: locationId,
@@ -182,5 +234,49 @@ describe("inventory receiving service", () => {
     assert.equal(repository.transactions[0]?.transactionType, "received");
     assert.equal(repository.transactions[0]?.quantity, 25);
     assert.equal(calculateLocationItemBalance(repository.transactions, "pantry", "rice"), 0);
+  });
+
+  it("creates transfer transactions and aggregates source to destination movement", async () => {
+    const repository = createMemoryRepository();
+    const service = createInventoryService(repository, {
+      receivingCatalog,
+      transferCatalog
+    });
+    await service.receiveInventory({
+      ...receiveInput,
+      locationId: "trailer",
+      quantity: 20
+    });
+
+    const transfer = await service.transferInventory(transferInput);
+
+    assert.equal(transfer.transactionType, "transfer");
+    assert.equal(transfer.quantityEffect, "transfer");
+    assert.equal(transfer.quantity, 10);
+    assert.equal(transfer.sourceLocationId, "trailer");
+    assert.equal(transfer.destinationLocationId, "pantry");
+    assert.equal(repository.transactions.length, 2);
+    assert.equal(calculateLocationItemBalance(repository.transactions, "trailer", "rice"), 10);
+    assert.equal(calculateLocationItemBalance(repository.transactions, "pantry", "rice"), 10);
+  });
+
+  it("rejects invalid transfer references before persistence", async () => {
+    const repository = createMemoryRepository();
+    const service = createInventoryService(repository, {
+      transferCatalog: {
+        ...transferCatalog,
+        findTransferSourceLocation(locationId) {
+          return Promise.resolve({
+            deletedAt: "2026-06-01T00:00:00.000Z",
+            id: locationId,
+            organizationId: "org-1",
+            templeId: "temple-1"
+          });
+        }
+      }
+    });
+
+    await assert.rejects(() => service.transferInventory(transferInput), TransferValidationError);
+    assert.equal(repository.transactions.length, 0);
   });
 });
