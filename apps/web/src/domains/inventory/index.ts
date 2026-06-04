@@ -6,6 +6,7 @@ export { createInventoryVisibilityService } from "./application/inventoryVisibil
 export { createReceivingScanWorkflowService } from "./application/receivingScanWorkflowService";
 export { createReturnScanWorkflowService } from "./application/returnScanWorkflowService";
 export { createTransferScanWorkflowService } from "./application/transferScanWorkflowService";
+export { createUnknownBarcodeManagementService } from "./application/unknownBarcodeService";
 export type {
   InventoryBarcodeLookupRepository,
   InventoryBarcodeLookupService
@@ -31,6 +32,11 @@ export type { ReceivingScanWorkflowService } from "./application/receivingScanWo
 export type { ReturnScanWorkflowService } from "./application/returnScanWorkflowService";
 export type { TransferScanWorkflowService } from "./application/transferScanWorkflowService";
 export type { InventoryTransactionRepository } from "./application/inventoryRepository";
+export type {
+  UnknownBarcodeItemRepository,
+  UnknownBarcodeManagementService,
+  UnknownBarcodeRepository
+} from "./application/unknownBarcodeService";
 export {
   calculateInventoryBalances,
   calculateItemBalance,
@@ -103,6 +109,18 @@ export {
   createTransferManualItemResolution,
   validateTransferScanPermission
 } from "./domain/transferScanWorkflow";
+export {
+  createUnknownBarcodeDraft,
+  dismissUnknownBarcode,
+  linkUnknownBarcode,
+  mergeUnknownBarcodeScan,
+  sortUnknownBarcodesForReview,
+  UnknownBarcodeValidationError,
+  validateUnknownBarcodeDismissal,
+  validateUnknownBarcodeLink,
+  validateUnknownBarcodePending,
+  validateUnknownBarcodeScanInput
+} from "./domain/unknownBarcode";
 export type {
   ReceivingManualItemOverrideInput,
   ReceivingResolvedItem,
@@ -133,6 +151,20 @@ export type {
   TransferScanTransferInput,
   TransferScanTransferResult
 } from "./domain/transferScanWorkflow";
+export type {
+  DismissUnknownBarcodeInput,
+  LinkUnknownBarcodeInput,
+  RecordUnknownBarcodeInput,
+  UnknownBarcodeDraft,
+  UnknownBarcodeItemReference,
+  UnknownBarcodeQuery,
+  UnknownBarcodeRecord,
+  UnknownBarcodeStatus,
+  UnknownBarcodeValidationErrorCode,
+  UnknownBarcodeValidationErrorDetail,
+  UnknownBarcodeValidationResult,
+  UnknownBarcodeWorkflowContext
+} from "./domain/unknownBarcode";
 export {
   detectLowStock,
   projectInventoryBalances,
