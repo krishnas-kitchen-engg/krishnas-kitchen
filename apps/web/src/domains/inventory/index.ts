@@ -1,5 +1,6 @@
 export { createInventoryBarcodeLookupService } from "./application/barcodeLookupService";
 export { createCameraScanningService } from "./application/cameraScanningService";
+export { createInventoryCatalogQueryService } from "./application/inventoryCatalogQueryService";
 export { createInventoryService } from "./application/inventoryService";
 export { createInventoryVisibilityService } from "./application/inventoryVisibilityService";
 export { createReceivingScanWorkflowService } from "./application/receivingScanWorkflowService";
@@ -15,6 +16,10 @@ export type {
   CameraScanningClock,
   CameraScanningService
 } from "./application/cameraScanningService";
+export type {
+  InventoryCatalogQueryRepository,
+  InventoryCatalogQueryService
+} from "./application/inventoryCatalogQueryService";
 export type {
   InventoryReceivingCatalog,
   InventoryReturnCatalog,
@@ -51,6 +56,24 @@ export type {
   InventoryBarcodeScanEvent,
   InventoryBarcodeScanInput
 } from "./domain/barcode";
+export {
+  filterActiveCatalogItems,
+  filterActiveCatalogLocations,
+  filterCatalogBarcodes,
+  matchesCatalogSearch,
+  rankFrequentlyUsedLocations,
+  rankRecentItems
+} from "./domain/catalog";
+export type {
+  InventoryCatalogBarcode,
+  InventoryCatalogItem,
+  InventoryCatalogLocation,
+  InventoryCatalogLocationQuery,
+  InventoryCatalogSearchQuery,
+  InventoryCatalogUsageQuery,
+  InventoryFrequentLocation,
+  InventoryRecentItem
+} from "./domain/catalog";
 export {
   addCameraScanEvent,
   createCameraScanSession,
