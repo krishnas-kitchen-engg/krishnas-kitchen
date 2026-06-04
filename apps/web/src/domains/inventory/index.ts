@@ -2,6 +2,7 @@ export { createInventoryBarcodeLookupService } from "./application/barcodeLookup
 export { createCameraScanningService } from "./application/cameraScanningService";
 export { createInventoryService } from "./application/inventoryService";
 export { createInventoryVisibilityService } from "./application/inventoryVisibilityService";
+export { createReceivingScanWorkflowService } from "./application/receivingScanWorkflowService";
 export type {
   InventoryBarcodeLookupRepository,
   InventoryBarcodeLookupService
@@ -19,6 +20,7 @@ export type {
   InventoryTransferCatalog
 } from "./application/inventoryService";
 export type { InventoryVisibilityService } from "./application/inventoryVisibilityService";
+export type { ReceivingScanWorkflowService } from "./application/receivingScanWorkflowService";
 export type { InventoryTransactionRepository } from "./application/inventoryRepository";
 export {
   calculateInventoryBalances,
@@ -62,6 +64,20 @@ export type {
   CameraScanSessionStatus,
   CameraTorchState
 } from "./domain/cameraScanning";
+export {
+  createReceivingManualItemResolution,
+  validateReceivingScanPermission
+} from "./domain/receivingScanWorkflow";
+export type {
+  ReceivingManualItemOverrideInput,
+  ReceivingResolvedItem,
+  ReceivingResolvedItemSource,
+  ReceivingScanPermissionResult,
+  ReceivingScanReceiveInput,
+  ReceivingScanReceiveResult,
+  ReceivingScanResolutionInput,
+  ReceivingScanResolutionResult
+} from "./domain/receivingScanWorkflow";
 export {
   detectLowStock,
   projectInventoryBalances,
