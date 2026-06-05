@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
 import { HomeScreen } from "@/app/screens/HomeScreen";
+import { MobileAppShell } from "@/app/shell/MobileAppShell";
 import {
   AuthLoadingScreen,
   LoginScreen,
@@ -8,9 +9,15 @@ import {
   UnauthorizedScreen,
   useAuth
 } from "@/features/auth";
+import {
+  InventoryAvailabilityBoundary,
+  InventoryItemDetailScreen,
+  InventoryLocationDetailScreen,
+  InventoryLookupScreen
+} from "@/features/inventory";
 
 import { RouteGuard } from "./RouteGuard";
-import { navigateTo, useCurrentPath } from "./router";
+import { navigateTo, useCurrentRoute } from "./router";
 
 export function AppRoutes() {
   const auth = useAuth();
@@ -27,7 +34,8 @@ export function AppRoutes() {
 }
 
 function AuthenticatedRoutes() {
-  const path = useCurrentPath();
+  const route = useCurrentRoute();
+  const path = route.path;
 
   useEffect(() => {
     if (path === "/login") {
@@ -51,9 +59,52 @@ function AuthenticatedRoutes() {
     return <UnauthorizedScreen />;
   }
 
+  let screen = <HomeScreen />;
+
+  if (route.name === "inventory") {
+    screen = (
+      <InventoryAvailabilityBoundary>
+        <InventoryLookupScreen />
+      </InventoryAvailabilityBoundary>
+    );
+  }
+
+  if (route.name === "inventory_item") {
+    screen = (
+      <InventoryAvailabilityBoundary>
+        <InventoryItemDetailScreen itemId={route.itemId} />
+      </InventoryAvailabilityBoundary>
+    );
+  }
+
+  if (route.name === "inventory_location") {
+    screen = (
+      <InventoryAvailabilityBoundary>
+        <InventoryLocationDetailScreen locationId={route.locationId} />
+      </InventoryAvailabilityBoundary>
+    );
+  }
+
+  if (path === "/scan") {
+    screen = <ShellPlaceholder title="Scan" />;
+  }
+
+  if (path === "/profile") {
+    screen = <ShellPlaceholder title="Profile" />;
+  }
+
   return (
     <RouteGuard requireAuth requireTemple>
-      <HomeScreen />
+      <MobileAppShell>{screen}</MobileAppShell>
     </RouteGuard>
+  );
+}
+
+function ShellPlaceholder({ title }: { title: string }) {
+  return (
+    <section className="rounded-md border border-stone-200 bg-white p-4">
+      <h2 className="text-lg font-semibold text-brand-950">{title}</h2>
+      <p className="mt-2 text-sm leading-6 text-stone-600">This area is ready for Phase 1B.</p>
+    </section>
   );
 }

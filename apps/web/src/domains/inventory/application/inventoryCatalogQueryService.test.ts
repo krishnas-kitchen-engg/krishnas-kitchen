@@ -299,6 +299,18 @@ describe("inventory catalog query service", () => {
     assert.equal(catalogRepository.calls[0]?.organizationId, "org-1");
   });
 
+  it("finds active items by id within organization boundaries", async () => {
+    const { service } = createService();
+
+    const item = await service.findItemById("org-1", "rice");
+    const archivedItem = await service.findItemById("org-1", "archived-rice");
+    const otherOrgItem = await service.findItemById("org-1", "other-rice");
+
+    assert.equal(item?.id, "rice");
+    assert.equal(archivedItem, null);
+    assert.equal(otherOrgItem, null);
+  });
+
   it("searches locations and lists active locations within organization and temple boundaries", async () => {
     const { service } = createService();
 
@@ -321,6 +333,22 @@ describe("inventory catalog query service", () => {
       activeLocations.map((location) => location.id),
       ["kitchen", "pantry"]
     );
+  });
+
+  it("finds active locations by id within organization and temple boundaries", async () => {
+    const { service } = createService();
+
+    const location = await service.findLocationById("org-1", "temple-1", "pantry");
+    const differentTempleLocation = await service.findLocationById(
+      "org-1",
+      "temple-1",
+      "festival-storage"
+    );
+    const archivedLocation = await service.findLocationById("org-1", "temple-1", "archived-pantry");
+
+    assert.equal(location?.id, "pantry");
+    assert.equal(differentTempleLocation, null);
+    assert.equal(archivedLocation, null);
   });
 
   it("searches barcodes without exposing other organizations", async () => {

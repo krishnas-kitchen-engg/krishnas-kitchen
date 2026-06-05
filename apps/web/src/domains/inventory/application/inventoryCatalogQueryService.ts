@@ -24,6 +24,15 @@ export type InventoryCatalogQueryRepository = {
 };
 
 export type InventoryCatalogQueryService = {
+  findItemById: (
+    organizationId: EntityId,
+    itemId: EntityId
+  ) => Promise<InventoryCatalogItem | null>;
+  findLocationById: (
+    organizationId: EntityId,
+    templeId: EntityId,
+    locationId: EntityId
+  ) => Promise<InventoryCatalogLocation | null>;
   listActiveLocations: (
     query: InventoryCatalogLocationQuery
   ) => Promise<InventoryCatalogLocation[]>;
@@ -41,6 +50,27 @@ export function createInventoryCatalogQueryService(options: {
   transactionRepository: InventoryTransactionRepository;
 }): InventoryCatalogQueryService {
   return {
+    async findItemById(organizationId, itemId) {
+      const items = await options.catalogRepository.listItems(organizationId);
+
+      return (
+        filterActiveCatalogItems(items, {
+          organizationId
+        }).find((item) => item.id === itemId) ?? null
+      );
+    },
+
+    async findLocationById(organizationId, templeId, locationId) {
+      const locations = await options.catalogRepository.listLocations(organizationId);
+
+      return (
+        filterActiveCatalogLocations(locations, {
+          organizationId,
+          templeId
+        }).find((location) => location.id === locationId) ?? null
+      );
+    },
+
     async listActiveLocations(query) {
       const locations = await options.catalogRepository.listLocations(query.organizationId);
 

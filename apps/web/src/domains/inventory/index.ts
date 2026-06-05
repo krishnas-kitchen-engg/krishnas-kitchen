@@ -9,7 +9,11 @@ export { createReturnScanWorkflowService } from "./application/returnScanWorkflo
 export { createTransferScanWorkflowService } from "./application/transferScanWorkflowService";
 export { createUnknownBarcodeManagementService } from "./application/unknownBarcodeService";
 export { InventoryIntegrationProvider } from "./integration/InventoryIntegrationContext";
-export { useInventoryServices } from "./integration/inventoryServiceHooks";
+export { InventoryProviderBridge } from "./integration/InventoryProviderBridge";
+export {
+  useInventoryAvailability,
+  useInventoryServices
+} from "./integration/inventoryServiceHooks";
 export { createInventoryServiceBundle } from "./integration/inventoryServiceFactory";
 export {
   getInventoryPermissionFlags,
@@ -61,7 +65,11 @@ export type {
   UnknownBarcodeManagementService,
   UnknownBarcodeRepository
 } from "./application/unknownBarcodeService";
-export type { InventoryIntegrationContextValue } from "./integration/inventoryContextValue";
+export type {
+  InventoryAvailabilityContextValue,
+  InventoryIntegrationContextValue,
+  InventoryProviderStatus
+} from "./integration/inventoryContextValue";
 export type {
   InventoryCameraAdapters,
   InventoryRepositoryAdapters,

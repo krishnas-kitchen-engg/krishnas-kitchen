@@ -1,7 +1,12 @@
 import { useContext } from "react";
 
-import { InventoryIntegrationContext } from "./inventoryContextValue";
+import { InventoryAvailabilityContext, InventoryIntegrationContext } from "./inventoryContextValue";
 import type { InventoryServiceBundle } from "./inventoryServiceFactory";
+import type { InventoryAvailabilityContextValue } from "./inventoryContextValue";
+
+export function useInventoryAvailability(): InventoryAvailabilityContextValue {
+  return useContext(InventoryAvailabilityContext);
+}
 
 export function useInventoryServices(): InventoryServiceBundle {
   const context = useContext(InventoryIntegrationContext);
