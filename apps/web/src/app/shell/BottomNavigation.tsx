@@ -15,6 +15,10 @@ const navigationItems = [
     path: "/inventory"
   },
   {
+    label: "Receive",
+    path: "/receive"
+  },
+  {
     label: "Scan",
     path: "/scan"
   },
@@ -42,7 +46,7 @@ export function BottomNavigation({ currentPath }: BottomNavigationProps) {
       aria-label="Primary"
       className="fixed inset-x-0 bottom-0 border-t border-stone-200 bg-white/95 px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 shadow-[0_-8px_24px_rgba(28,25,23,0.08)] backdrop-blur"
     >
-      <div className="mx-auto grid max-w-md grid-cols-4 gap-1">
+      <div className="mx-auto grid max-w-md grid-cols-5 gap-1">
         {navigationItems.map((item) => {
           const isActive = isActivePath(currentPath, item.path);
 

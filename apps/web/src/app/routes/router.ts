@@ -7,6 +7,7 @@ export type AppPath =
   | `/inventory/location/${string}`
   | "/login"
   | "/profile"
+  | "/receive"
   | "/scan"
   | "/select-temple"
   | "/unauthorized";
@@ -16,6 +17,7 @@ const appPaths = [
   "/inventory",
   "/login",
   "/profile",
+  "/receive",
   "/scan",
   "/select-temple",
   "/unauthorized"
@@ -47,6 +49,10 @@ export type AppRoute =
   | {
       name: "profile";
       path: "/profile";
+    }
+  | {
+      name: "receive";
+      path: "/receive";
     }
   | {
       name: "scan";
@@ -115,6 +121,13 @@ export function getCurrentRoute(): AppRoute {
     if (pathname === "/profile") {
       return {
         name: "profile",
+        path: pathname
+      };
+    }
+
+    if (pathname === "/receive") {
+      return {
+        name: "receive",
         path: pathname
       };
     }

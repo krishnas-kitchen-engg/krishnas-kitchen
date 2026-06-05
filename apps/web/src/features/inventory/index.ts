@@ -3,3 +3,4 @@ export { InventoryUnavailableState } from "./components/InventoryUnavailableStat
 export { InventoryLookupScreen } from "./screens/InventoryLookupScreen";
 export { InventoryItemDetailScreen } from "./screens/InventoryItemDetailScreen";
 export { InventoryLocationDetailScreen } from "./screens/InventoryLocationDetailScreen";
+export { ReceiveInventoryScreen } from "./receive";

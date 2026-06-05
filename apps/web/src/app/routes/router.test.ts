@@ -63,6 +63,13 @@ describe("router", () => {
 
     stubWindow("/profile");
     assert.equal(getCurrentPath(), "/profile");
+
+    stubWindow("/receive");
+    assert.equal(getCurrentPath(), "/receive");
+    assert.deepEqual(getCurrentRoute(), {
+      name: "receive",
+      path: "/receive"
+    });
   });
 
   it("falls back to home for unknown paths", () => {

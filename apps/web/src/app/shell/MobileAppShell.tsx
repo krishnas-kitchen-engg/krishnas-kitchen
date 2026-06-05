@@ -23,6 +23,10 @@ function getRouteTitle(routeName: ReturnType<typeof useCurrentRoute>["name"]): s
     return "Profile";
   }
 
+  if (routeName === "receive") {
+    return "Receive";
+  }
+
   if (routeName === "scan") {
     return "Scan";
   }

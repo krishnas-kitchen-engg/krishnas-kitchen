@@ -85,6 +85,19 @@ describe("AppRoutes", () => {
     assert.match(markup, /Checking your session/);
   });
 
+  it("renders authenticated receive route inside the mobile shell", () => {
+    stubWindow("/receive");
+
+    const markup = renderToStaticMarkup(
+      <AuthContext.Provider value={createAuthValue()}>
+        <AppRoutes />
+      </AuthContext.Provider>
+    );
+
+    assert.match(markup, /Receive/);
+    assert.match(markup, /Inventory unavailable/);
+  });
+
   it("keeps unauthenticated users on login", () => {
     stubWindow("/");
 
