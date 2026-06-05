@@ -86,9 +86,60 @@ export type InventoryQuantityEffect = "increase" | "decrease" | "transfer" | "no
 
 export type ActorType = "user" | "temporary_volunteer" | "system";
 
+export type BarcodeFormat = "ean_13" | "ean_8" | "qr" | "upc_a" | "upc_e";
+
 export type Database = {
   public: {
     Tables: {
+      item_barcodes: {
+        Row: {
+          archived_at: string | null;
+          archived_by_actor_temp_session_id: string | null;
+          archived_by_actor_type: ActorType | null;
+          archived_by_actor_user_id: string | null;
+          archive_reason: string | null;
+          barcode_format: BarcodeFormat;
+          barcode_value: string;
+          created_at: string;
+          created_by_actor_temp_session_id: string | null;
+          created_by_actor_type: ActorType;
+          created_by_actor_user_id: string | null;
+          id: string;
+          item_id: string;
+          notes: string | null;
+          organization_id: string;
+          source_unknown_barcode_id: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          archived_at?: string | null;
+          archived_by_actor_temp_session_id?: string | null;
+          archived_by_actor_type?: ActorType | null;
+          archived_by_actor_user_id?: string | null;
+          archive_reason?: string | null;
+          barcode_format: BarcodeFormat;
+          barcode_value: string;
+          created_at?: string;
+          created_by_actor_temp_session_id?: string | null;
+          created_by_actor_type: ActorType;
+          created_by_actor_user_id?: string | null;
+          id?: string;
+          item_id: string;
+          notes?: string | null;
+          organization_id: string;
+          source_unknown_barcode_id?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          archived_at?: string | null;
+          archived_by_actor_temp_session_id?: string | null;
+          archived_by_actor_type?: ActorType | null;
+          archived_by_actor_user_id?: string | null;
+          archive_reason?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       inventory_transactions: {
         Row: {
           actor_temp_session_id: string | null;
@@ -131,11 +182,54 @@ export type Database = {
         Update: never;
         Relationships: [];
       };
+      items: {
+        Row: {
+          default_unit: ItemUnit;
+          deleted_at: string | null;
+          id: string;
+          name: string;
+          organization_id: string;
+          receiving_units: ItemUnit[] | null;
+          return_units: ItemUnit[] | null;
+          transfer_units: ItemUnit[] | null;
+        };
+        Insert: {
+          default_unit: ItemUnit;
+          deleted_at?: string | null;
+          id?: string;
+          name: string;
+          organization_id: string;
+          receiving_units?: ItemUnit[] | null;
+          return_units?: ItemUnit[] | null;
+          transfer_units?: ItemUnit[] | null;
+        };
+        Update: never;
+        Relationships: [];
+      };
+      locations: {
+        Row: {
+          deleted_at: string | null;
+          id: string;
+          name: string;
+          organization_id: string;
+          temple_id: string;
+        };
+        Insert: {
+          deleted_at?: string | null;
+          id?: string;
+          name: string;
+          organization_id: string;
+          temple_id: string;
+        };
+        Update: never;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
     Enums: {
       actor_type: ActorType;
+      barcode_format: BarcodeFormat;
       inventory_quantity_effect: InventoryQuantityEffect;
       inventory_transaction_type: InventoryTransactionType;
       item_unit: ItemUnit;
