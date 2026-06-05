@@ -10,6 +10,7 @@ export type AppPath =
   | "/receive"
   | "/scan"
   | "/select-temple"
+  | "/transfer"
   | "/unauthorized";
 
 const appPaths = [
@@ -20,6 +21,7 @@ const appPaths = [
   "/receive",
   "/scan",
   "/select-temple",
+  "/transfer",
   "/unauthorized"
 ] satisfies string[];
 
@@ -61,6 +63,10 @@ export type AppRoute =
   | {
       name: "select_temple";
       path: "/select-temple";
+    }
+  | {
+      name: "transfer";
+      path: "/transfer";
     }
   | {
       name: "unauthorized";
@@ -142,6 +148,13 @@ export function getCurrentRoute(): AppRoute {
     if (pathname === "/select-temple") {
       return {
         name: "select_temple",
+        path: pathname
+      };
+    }
+
+    if (pathname === "/transfer") {
+      return {
+        name: "transfer",
         path: pathname
       };
     }

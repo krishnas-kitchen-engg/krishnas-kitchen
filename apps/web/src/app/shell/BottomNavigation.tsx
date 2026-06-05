@@ -19,8 +19,8 @@ const navigationItems = [
     path: "/receive"
   },
   {
-    label: "Scan",
-    path: "/scan"
+    label: "Transfer",
+    path: "/transfer"
   },
   {
     label: "Profile",

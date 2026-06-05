@@ -14,7 +14,8 @@ import {
   InventoryItemDetailScreen,
   InventoryLocationDetailScreen,
   InventoryLookupScreen,
-  ReceiveInventoryScreen
+  ReceiveInventoryScreen,
+  TransferInventoryScreen
 } from "@/features/inventory";
 
 import { RouteGuard } from "./RouteGuard";
@@ -90,6 +91,14 @@ function AuthenticatedRoutes() {
     screen = (
       <InventoryAvailabilityBoundary>
         <ReceiveInventoryScreen />
+      </InventoryAvailabilityBoundary>
+    );
+  }
+
+  if (route.name === "transfer") {
+    screen = (
+      <InventoryAvailabilityBoundary>
+        <TransferInventoryScreen />
       </InventoryAvailabilityBoundary>
     );
   }

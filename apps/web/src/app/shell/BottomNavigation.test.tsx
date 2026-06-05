@@ -11,7 +11,7 @@ describe("BottomNavigation", () => {
     assert.match(markup, /Home/);
     assert.match(markup, /Inventory/);
     assert.match(markup, /Receive/);
-    assert.match(markup, /Scan/);
+    assert.match(markup, /Transfer/);
     assert.match(markup, /Profile/);
     assert.match(markup, /aria-current="page"/);
   });

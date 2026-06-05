@@ -70,6 +70,13 @@ describe("router", () => {
       name: "receive",
       path: "/receive"
     });
+
+    stubWindow("/transfer");
+    assert.equal(getCurrentPath(), "/transfer");
+    assert.deepEqual(getCurrentRoute(), {
+      name: "transfer",
+      path: "/transfer"
+    });
   });
 
   it("falls back to home for unknown paths", () => {
