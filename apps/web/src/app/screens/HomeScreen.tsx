@@ -41,6 +41,9 @@ export function HomeScreen() {
       </dl>
 
       <div className="grid gap-2">
+        <Button className="w-full" onClick={() => navigateTo("/return")} type="button">
+          Return inventory
+        </Button>
         {!auth.isTemporaryVolunteer ? (
           <Button className="w-full" onClick={() => navigateTo("/select-temple")} type="button">
             Change temple

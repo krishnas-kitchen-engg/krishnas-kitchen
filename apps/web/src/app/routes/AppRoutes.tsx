@@ -15,6 +15,7 @@ import {
   InventoryLocationDetailScreen,
   InventoryLookupScreen,
   ReceiveInventoryScreen,
+  ReturnInventoryScreen,
   TransferInventoryScreen
 } from "@/features/inventory";
 
@@ -99,6 +100,14 @@ function AuthenticatedRoutes() {
     screen = (
       <InventoryAvailabilityBoundary>
         <TransferInventoryScreen />
+      </InventoryAvailabilityBoundary>
+    );
+  }
+
+  if (route.name === "return") {
+    screen = (
+      <InventoryAvailabilityBoundary>
+        <ReturnInventoryScreen />
       </InventoryAvailabilityBoundary>
     );
   }

@@ -8,6 +8,7 @@ export type AppPath =
   | "/login"
   | "/profile"
   | "/receive"
+  | "/return"
   | "/scan"
   | "/select-temple"
   | "/transfer"
@@ -19,6 +20,7 @@ const appPaths = [
   "/login",
   "/profile",
   "/receive",
+  "/return",
   "/scan",
   "/select-temple",
   "/transfer",
@@ -55,6 +57,10 @@ export type AppRoute =
   | {
       name: "receive";
       path: "/receive";
+    }
+  | {
+      name: "return";
+      path: "/return";
     }
   | {
       name: "scan";
@@ -134,6 +140,13 @@ export function getCurrentRoute(): AppRoute {
     if (pathname === "/receive") {
       return {
         name: "receive",
+        path: pathname
+      };
+    }
+
+    if (pathname === "/return") {
+      return {
+        name: "return",
         path: pathname
       };
     }

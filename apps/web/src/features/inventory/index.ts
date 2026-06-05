@@ -4,4 +4,5 @@ export { InventoryLookupScreen } from "./screens/InventoryLookupScreen";
 export { InventoryItemDetailScreen } from "./screens/InventoryItemDetailScreen";
 export { InventoryLocationDetailScreen } from "./screens/InventoryLocationDetailScreen";
 export { ReceiveInventoryScreen } from "./receive";
+export { ReturnInventoryScreen } from "./return";
 export { TransferInventoryScreen } from "./transfer";

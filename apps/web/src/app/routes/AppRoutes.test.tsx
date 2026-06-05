@@ -111,6 +111,19 @@ describe("AppRoutes", () => {
     assert.match(markup, /Inventory unavailable/);
   });
 
+  it("renders authenticated return route inside the mobile shell", () => {
+    stubWindow("/return");
+
+    const markup = renderToStaticMarkup(
+      <AuthContext.Provider value={createAuthValue()}>
+        <AppRoutes />
+      </AuthContext.Provider>
+    );
+
+    assert.match(markup, /Return/);
+    assert.match(markup, /Inventory unavailable/);
+  });
+
   it("keeps unauthenticated users on login", () => {
     stubWindow("/");
 
