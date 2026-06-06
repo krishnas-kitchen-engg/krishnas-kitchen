@@ -1,51 +1,100 @@
 import { Button } from "@krishnas-kitchen/ui";
 
 import { navigateTo } from "@/app/routes/router";
+import { useInventoryPermissions } from "@/domains/inventory";
 import { useAuth } from "@/features/auth";
+import {
+  HomeSummaryLoading,
+  LowStockSummary,
+  PendingUnknownBarcodeSummary,
+  QuickActionsGrid,
+  RecentInventoryActivity,
+  TempleContextCard,
+  useVolunteerHomeSummary,
+  VolunteerHomeHeader,
+  type VolunteerHomeQuickAction
+} from "@/features/home";
+
+function getVisibleQuickActions(permissions: ReturnType<typeof useInventoryPermissions>) {
+  const actions: VolunteerHomeQuickAction[] = [
+    {
+      label: "Scan",
+      path: "/scan",
+      requiredPermission: "inventory.read"
+    },
+    {
+      label: "Receive",
+      path: "/receive",
+      requiredPermission: "inventory.receive"
+    },
+    {
+      label: "Transfer",
+      path: "/transfer",
+      requiredPermission: "inventory.transfer"
+    },
+    {
+      label: "Return",
+      path: "/return",
+      requiredPermission: "inventory.return"
+    },
+    {
+      label: "Inventory",
+      path: "/inventory",
+      requiredPermission: "inventory.read"
+    }
+  ];
+
+  return actions.filter((action) => {
+    if (action.requiredPermission === "inventory.read") {
+      return permissions.canReadInventory;
+    }
+
+    if (action.requiredPermission === "inventory.receive") {
+      return permissions.canReceiveInventory;
+    }
+
+    if (action.requiredPermission === "inventory.transfer") {
+      return permissions.canTransferInventory;
+    }
+
+    return permissions.canReturnInventory;
+  });
+}
 
 export function HomeScreen() {
   const auth = useAuth();
+  const permissions = useInventoryPermissions();
+  const summary = useVolunteerHomeSummary();
   const roleLabel = auth.isTemporaryVolunteer
     ? "Temporary volunteer"
     : auth.roles.length > 0
       ? auth.roles.join(", ")
       : "No role assigned";
+  const sessionLabel = auth.isTemporaryVolunteer ? "Temporary volunteer" : auth.status;
+  const quickActions = getVisibleQuickActions(permissions);
 
   return (
     <section className="flex w-full flex-col gap-5">
-      <div className="space-y-2">
-        <p className="text-sm font-medium uppercase tracking-wide text-brand-700">
-          {auth.currentOrganization?.name ?? "Krishna's Kitchen"}
-        </p>
-        <h1 className="text-3xl font-semibold text-brand-900">Kitchen access ready</h1>
-        <p className="text-sm leading-6 text-stone-700">
-          Authentication, organization scope, temple scope, and role-aware authorization are wired.
-        </p>
-      </div>
-
-      <dl className="space-y-3 rounded-md border border-stone-200 bg-white p-4 text-sm">
-        <div className="flex items-start justify-between gap-3">
-          <dt className="font-medium text-stone-600">Session</dt>
-          <dd className="text-right font-semibold text-stone-950">{auth.status}</dd>
-        </div>
-        <div className="flex items-start justify-between gap-3">
-          <dt className="font-medium text-stone-600">Role</dt>
-          <dd className="text-right font-semibold text-stone-950">{roleLabel}</dd>
-        </div>
-        <div className="flex items-start justify-between gap-3">
-          <dt className="font-medium text-stone-600">Temple</dt>
-          <dd className="text-right font-semibold text-stone-950">
-            {auth.currentTemple?.name ?? "Not selected"}
-          </dd>
-        </div>
-      </dl>
-
+      <VolunteerHomeHeader
+        organizationName={auth.currentOrganization?.name ?? "Krishna's Kitchen"}
+      />
+      <TempleContextCard
+        roleLabel={roleLabel}
+        sessionLabel={sessionLabel}
+        templeName={auth.currentTemple?.name ?? "Not selected"}
+      />
+      <QuickActionsGrid actions={quickActions} />
+      {summary.isLoading ? <HomeSummaryLoading /> : null}
+      <RecentInventoryActivity activity={summary.recentActivity} />
+      <LowStockSummary lowStock={summary.lowStock} />
+      <PendingUnknownBarcodeSummary pendingUnknownBarcodes={summary.pendingUnknownBarcodes} />
       <div className="grid gap-2">
-        <Button className="w-full" onClick={() => navigateTo("/return")} type="button">
-          Return inventory
-        </Button>
         {!auth.isTemporaryVolunteer ? (
-          <Button className="w-full" onClick={() => navigateTo("/select-temple")} type="button">
+          <Button
+            className="w-full bg-stone-900 hover:bg-stone-700"
+            onClick={() => navigateTo("/select-temple")}
+            type="button"
+          >
             Change temple
           </Button>
         ) : null}

@@ -54,6 +54,23 @@ function stubWindow(pathname: string) {
 }
 
 describe("AppRoutes", () => {
+  it("renders authenticated home route inside the mobile shell", () => {
+    stubWindow("/");
+
+    const markup = renderToStaticMarkup(
+      <AuthContext.Provider value={createAuthValue()}>
+        <AppRoutes />
+      </AuthContext.Provider>
+    );
+
+    assert.match(markup, /Volunteer home/);
+    assert.match(markup, /Home/);
+    assert.match(markup, /Inventory/);
+    assert.match(markup, /Scan/);
+    assert.match(markup, /Receive/);
+    assert.match(markup, /Transfer/);
+  });
+
   it("renders authenticated inventory route inside the mobile shell", () => {
     stubWindow("/inventory");
 
