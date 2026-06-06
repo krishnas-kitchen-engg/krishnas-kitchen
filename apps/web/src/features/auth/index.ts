@@ -10,3 +10,14 @@ export {
   hasPermission,
   isPrivilegedRole
 } from "./lib/permissions";
+export type { VolunteerSessionRepository } from "./application/volunteerSessionRepository";
+export {
+  normalizeVolunteerJoinCode,
+  type ClearVolunteerSessionClientInput,
+  type FindActiveVolunteerSessionInput,
+  type RefreshVolunteerSessionInput,
+  type ValidatedVolunteerSession,
+  type ValidateVolunteerJoinCodeInput,
+  type VolunteerJoinCode
+} from "./domain/volunteerSession";
+export { createSupabaseVolunteerSessionRepository } from "./infrastructure/supabase/supabaseVolunteerSessionRepository";
