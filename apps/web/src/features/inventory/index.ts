@@ -5,4 +5,5 @@ export { InventoryItemDetailScreen } from "./screens/InventoryItemDetailScreen";
 export { InventoryLocationDetailScreen } from "./screens/InventoryLocationDetailScreen";
 export { ReceiveInventoryScreen } from "./receive";
 export { ReturnInventoryScreen } from "./return";
+export { ScanInventoryScreen } from "./scan";
 export { TransferInventoryScreen } from "./transfer";

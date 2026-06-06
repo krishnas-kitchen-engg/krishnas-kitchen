@@ -66,7 +66,7 @@ describe("AppRoutes", () => {
     assert.match(markup, /Inventory/);
     assert.match(markup, /Inventory unavailable/);
     assert.match(markup, /Home/);
-    assert.match(markup, /Profile/);
+    assert.match(markup, /Scan/);
   });
 
   it("requires valid temple context for the inventory route", () => {
@@ -121,6 +121,19 @@ describe("AppRoutes", () => {
     );
 
     assert.match(markup, /Return/);
+    assert.match(markup, /Inventory unavailable/);
+  });
+
+  it("renders authenticated scan route inside the mobile shell", () => {
+    stubWindow("/scan");
+
+    const markup = renderToStaticMarkup(
+      <AuthContext.Provider value={createAuthValue()}>
+        <AppRoutes />
+      </AuthContext.Provider>
+    );
+
+    assert.match(markup, /Scan/);
     assert.match(markup, /Inventory unavailable/);
   });
 

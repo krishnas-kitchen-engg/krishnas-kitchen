@@ -1,32 +1,6 @@
 import { navigateTo, type AppPath } from "@/app/routes/router";
 
-export type BottomNavigationItem = {
-  label: string;
-  path: AppPath;
-};
-
-const navigationItems = [
-  {
-    label: "Home",
-    path: "/"
-  },
-  {
-    label: "Inventory",
-    path: "/inventory"
-  },
-  {
-    label: "Receive",
-    path: "/receive"
-  },
-  {
-    label: "Transfer",
-    path: "/transfer"
-  },
-  {
-    label: "Profile",
-    path: "/profile"
-  }
-] satisfies BottomNavigationItem[];
+import { bottomNavigationItems } from "./bottomNavigationItems";
 
 type BottomNavigationProps = {
   currentPath: AppPath;
@@ -47,7 +21,7 @@ export function BottomNavigation({ currentPath }: BottomNavigationProps) {
       className="fixed inset-x-0 bottom-0 border-t border-stone-200 bg-white/95 px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 shadow-[0_-8px_24px_rgba(28,25,23,0.08)] backdrop-blur"
     >
       <div className="mx-auto grid max-w-md grid-cols-5 gap-1">
-        {navigationItems.map((item) => {
+        {bottomNavigationItems.map((item) => {
           const isActive = isActivePath(currentPath, item.path);
 
           return (

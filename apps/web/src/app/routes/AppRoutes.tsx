@@ -16,6 +16,7 @@ import {
   InventoryLookupScreen,
   ReceiveInventoryScreen,
   ReturnInventoryScreen,
+  ScanInventoryScreen,
   TransferInventoryScreen
 } from "@/features/inventory";
 
@@ -112,8 +113,12 @@ function AuthenticatedRoutes() {
     );
   }
 
-  if (path === "/scan") {
-    screen = <ShellPlaceholder title="Scan" />;
+  if (route.name === "scan") {
+    screen = (
+      <InventoryAvailabilityBoundary>
+        <ScanInventoryScreen />
+      </InventoryAvailabilityBoundary>
+    );
   }
 
   if (path === "/profile") {
