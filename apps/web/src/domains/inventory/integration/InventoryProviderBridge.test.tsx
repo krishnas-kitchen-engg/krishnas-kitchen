@@ -37,7 +37,9 @@ function createAuthValue(overrides: Partial<AuthContextValue> = {}): AuthContext
     signOut() {
       return Promise.resolve();
     },
-    startTemporaryVolunteerSession() {},
+    startTemporaryVolunteerSession() {
+      return Promise.resolve();
+    },
     status: "authenticated",
     temporaryVolunteerSession: null,
     ...overrides

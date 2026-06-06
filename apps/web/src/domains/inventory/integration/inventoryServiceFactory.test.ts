@@ -196,7 +196,7 @@ describe("inventory service factory integration", () => {
       temporaryVolunteerSession: {
         displayName: "Helper",
         expiresAt: "2026-06-04T12:00:00.000Z",
-        id: "temp-1",
+        id: "volunteer-session-1",
         organizationId: "org-1",
         startedAt: "2026-06-04T08:00:00.000Z",
         templeId: "temple-1"
@@ -208,7 +208,7 @@ describe("inventory service factory integration", () => {
       userId: "profile-1"
     });
     assert.deepEqual(temporaryActor, {
-      tempSessionId: "temp-1",
+      tempSessionId: "volunteer-session-1",
       type: "temporary_volunteer"
     });
   });

@@ -1,19 +1,28 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { PropsWithChildren } from "react";
+import type { TemporaryVolunteerSession } from "@krishnas-kitchen/types";
 
 import {
-  clearTemporaryVolunteerSession,
-  createTemporaryVolunteerSession,
   getTemporaryVolunteerSessionTimeRemaining,
-  isTemporaryVolunteerSessionExpired,
-  loadTemporaryVolunteerSession,
-  saveTemporaryVolunteerSession
+  isTemporaryVolunteerSessionExpired
 } from "@/features/auth/lib/temporaryVolunteerSession";
+import {
+  completeVolunteerLogout,
+  restoreVolunteerSession,
+  validateVolunteerLogin
+} from "@/features/auth/application/volunteerSessionAuth";
 import { getAuthProfileFromUser } from "@/features/auth/lib/authMetadata";
 import {
   getPermissionsForRoles,
   getTemporaryVolunteerPermissions
 } from "@/features/auth/lib/permissions";
+import {
+  clearStoredVolunteerSession,
+  createStoredVolunteerSessionValidationInput,
+  loadStoredVolunteerSession,
+  saveStoredVolunteerSession
+} from "@/features/auth/lib/volunteerSessionStorage";
+import { createSupabaseVolunteerSessionRepository } from "@/features/auth/infrastructure/supabase/supabaseVolunteerSessionRepository";
 import { useSupabaseAuth } from "@/shared/integrations/supabase";
 
 import { AuthContext } from "./AuthContext";
@@ -22,8 +31,14 @@ import type { AuthStatus, StartTemporaryVolunteerInput } from "./AuthContext";
 export function AuthProvider({ children }: PropsWithChildren) {
   const supabaseAuth = useSupabaseAuth();
   const [selectedTempleId, setSelectedTempleId] = useState<string | null>(null);
-  const [temporaryVolunteerSession, setTemporaryVolunteerSession] = useState(() =>
-    typeof window === "undefined" ? null : loadTemporaryVolunteerSession()
+  const [temporaryVolunteerSession, setTemporaryVolunteerSession] =
+    useState<TemporaryVolunteerSession | null>(null);
+  const [isRestoringTemporarySession, setIsRestoringTemporarySession] = useState(false);
+
+  const volunteerSessionRepository = useMemo(
+    () =>
+      supabaseAuth.client ? createSupabaseVolunteerSessionRepository(supabaseAuth.client) : null,
+    [supabaseAuth.client]
   );
 
   const profile = useMemo(
@@ -46,10 +61,72 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     if (supabaseAuth.session && temporaryVolunteerSession) {
-      clearTemporaryVolunteerSession();
+      clearStoredVolunteerSession();
       setTemporaryVolunteerSession(null);
     }
   }, [supabaseAuth.session, temporaryVolunteerSession]);
+
+  useEffect(() => {
+    if (
+      typeof window === "undefined" ||
+      supabaseAuth.isLoading ||
+      supabaseAuth.session ||
+      temporaryVolunteerSession ||
+      !volunteerSessionRepository
+    ) {
+      return undefined;
+    }
+
+    const storedSession = loadStoredVolunteerSession();
+
+    if (!storedSession) {
+      return undefined;
+    }
+
+    let cancelled = false;
+    setIsRestoringTemporarySession(true);
+
+    void volunteerSessionRepository;
+    restoreVolunteerSession(
+      volunteerSessionRepository,
+      createStoredVolunteerSessionValidationInput(storedSession, new Date().toISOString())
+    )
+      .then((authSession) => {
+        if (cancelled) {
+          return;
+        }
+
+        if (!authSession) {
+          clearStoredVolunteerSession();
+          setTemporaryVolunteerSession(null);
+          return;
+        }
+
+        saveStoredVolunteerSession(authSession.storedReference);
+        setTemporaryVolunteerSession(authSession.temporarySession);
+        setSelectedTempleId(authSession.temporarySession.templeId);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          clearStoredVolunteerSession();
+          setTemporaryVolunteerSession(null);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setIsRestoringTemporarySession(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    supabaseAuth.isLoading,
+    supabaseAuth.session,
+    temporaryVolunteerSession,
+    volunteerSessionRepository
+  ]);
 
   useEffect(() => {
     if (!temporaryVolunteerSession) {
@@ -57,14 +134,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
 
     if (isTemporaryVolunteerSessionExpired(temporaryVolunteerSession)) {
-      clearTemporaryVolunteerSession();
+      clearStoredVolunteerSession();
       setTemporaryVolunteerSession(null);
       setSelectedTempleId(null);
       return undefined;
     }
 
     const timeout = window.setTimeout(() => {
-      clearTemporaryVolunteerSession();
+      clearStoredVolunteerSession();
       setTemporaryVolunteerSession(null);
       setSelectedTempleId(null);
     }, getTemporaryVolunteerSessionTimeRemaining(temporaryVolunteerSession));
@@ -129,21 +206,53 @@ export function AuthProvider({ children }: PropsWithChildren) {
   );
 
   const signOut = useCallback(async () => {
-    clearTemporaryVolunteerSession();
-    setTemporaryVolunteerSession(null);
+    const signOutAuthenticatedUser =
+      supabaseAuth.client && supabaseAuth.session
+        ? () => supabaseAuth.client!.auth.signOut().then(() => undefined)
+        : null;
 
-    if (supabaseAuth.client && supabaseAuth.session) {
-      await supabaseAuth.client.auth.signOut();
-    }
-  }, [supabaseAuth.client, supabaseAuth.session]);
+    await completeVolunteerLogout({
+      clearStoredSession: clearStoredVolunteerSession,
+      clearTemporarySession() {
+        setTemporaryVolunteerSession(null);
+      },
+      repository: volunteerSessionRepository,
+      ...(signOutAuthenticatedUser ? { signOutAuthenticatedUser } : {}),
+      temporarySession: temporaryVolunteerSession
+    });
+  }, [
+    supabaseAuth.client,
+    supabaseAuth.session,
+    temporaryVolunteerSession,
+    volunteerSessionRepository
+  ]);
 
-  const startTemporaryVolunteerSession = useCallback((input: StartTemporaryVolunteerInput) => {
-    const session = createTemporaryVolunteerSession(input);
+  const startTemporaryVolunteerSession = useCallback(
+    async (input: StartTemporaryVolunteerInput) => {
+      if (!volunteerSessionRepository) {
+        throw new Error("Supabase is not configured.");
+      }
 
-    saveTemporaryVolunteerSession(session);
-    setTemporaryVolunteerSession(session);
-    setSelectedTempleId(session.templeId);
-  }, []);
+      const clientSessionId = crypto.randomUUID();
+      const authSession = await validateVolunteerLogin(volunteerSessionRepository, {
+        clientSessionId,
+        displayName: input.displayName,
+        joinCode: input.joinCode,
+        now: new Date().toISOString()
+      });
+
+      if (!authSession) {
+        clearStoredVolunteerSession();
+        setTemporaryVolunteerSession(null);
+        throw new Error("Invalid or expired volunteer join code.");
+      }
+
+      saveStoredVolunteerSession(authSession.storedReference);
+      setTemporaryVolunteerSession(authSession.temporarySession);
+      setSelectedTempleId(authSession.temporarySession.templeId);
+    },
+    [volunteerSessionRepository]
+  );
 
   const selectTemple = useCallback((templeId: string) => {
     setSelectedTempleId(templeId);
@@ -151,6 +260,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const status = useMemo<AuthStatus>(() => {
     if (supabaseAuth.isLoading) {
+      return "loading";
+    }
+
+    if (isRestoringTemporarySession) {
       return "loading";
     }
 
@@ -163,7 +276,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
 
     return "unauthenticated";
-  }, [supabaseAuth.isLoading, supabaseAuth.session, temporaryVolunteerSession]);
+  }, [
+    isRestoringTemporarySession,
+    supabaseAuth.isLoading,
+    supabaseAuth.session,
+    temporaryVolunteerSession
+  ]);
 
   const value = useMemo(
     () => ({

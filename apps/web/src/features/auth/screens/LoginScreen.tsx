@@ -9,8 +9,7 @@ export function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [volunteerName, setVolunteerName] = useState("");
-  const [organizationId, setOrganizationId] = useState("");
-  const [templeId, setTempleId] = useState("");
+  const [joinCode, setJoinCode] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
@@ -25,21 +24,26 @@ export function LoginScreen() {
     }
   }
 
-  function handleTemporaryVolunteer(event: React.FormEvent<HTMLFormElement>) {
+  async function handleTemporaryVolunteer(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrorMessage(null);
 
-    if (!volunteerName.trim() || !organizationId.trim() || !templeId.trim()) {
-      setErrorMessage("Enter volunteer name, organization ID, and temple ID.");
+    if (!volunteerName.trim() || !joinCode.trim()) {
+      setErrorMessage("Enter volunteer name and join code.");
       return;
     }
 
-    auth.startTemporaryVolunteerSession({
-      displayName: volunteerName,
-      organizationId,
-      templeId
-    });
-    navigateTo("/");
+    try {
+      await auth.startTemporaryVolunteerSession({
+        displayName: volunteerName,
+        joinCode
+      });
+      navigateTo("/");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Unable to start volunteer session."
+      );
+    }
   }
 
   return (
@@ -93,7 +97,7 @@ export function LoginScreen() {
 
         <form
           className="space-y-3 border-t border-stone-200 pt-5"
-          onSubmit={handleTemporaryVolunteer}
+          onSubmit={(event) => void handleTemporaryVolunteer(event)}
         >
           <p className="text-sm font-semibold text-stone-900">Temporary volunteer</p>
           <input
@@ -104,15 +108,9 @@ export function LoginScreen() {
           />
           <input
             className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
-            onChange={(event) => setOrganizationId(event.target.value)}
-            placeholder="Organization ID"
-            value={organizationId}
-          />
-          <input
-            className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
-            onChange={(event) => setTempleId(event.target.value)}
-            placeholder="Temple ID"
-            value={templeId}
+            onChange={(event) => setJoinCode(event.target.value)}
+            placeholder="Join code"
+            value={joinCode}
           />
           <Button className="w-full bg-stone-900 hover:bg-stone-700" type="submit">
             Continue restricted

@@ -7,27 +7,20 @@ import { describe, it, vi } from "vitest";
 import { AuthContext } from "@/features/auth/providers/AuthContext";
 import type { AuthContextValue } from "@/features/auth/providers/AuthContext";
 
-import { MobileAppShell } from "./MobileAppShell";
+import { LoginScreen } from "./LoginScreen";
 
-function createAuthValue(): AuthContextValue {
+function createAuthValue(overrides: Partial<AuthContextValue> = {}): AuthContextValue {
   return {
     client: {} as SupabaseClient<Database>,
-    currentOrganization: {
-      id: "org-1",
-      name: "Krishna's Kitchen"
-    },
-    currentTemple: {
-      id: "temple-1",
-      name: "Main Temple",
-      organizationId: "org-1"
-    },
-    isAuthenticated: true,
+    currentOrganization: null,
+    currentTemple: null,
+    isAuthenticated: false,
     isConfigured: true,
     isLoading: false,
     isTemporaryVolunteer: false,
-    permissions: ["inventory.read"],
+    permissions: [],
     profile: null,
-    roles: ["volunteer"],
+    roles: [],
     selectTemple() {},
     session: null,
     signInWithEmail() {
@@ -39,33 +32,30 @@ function createAuthValue(): AuthContextValue {
     startTemporaryVolunteerSession() {
       return Promise.resolve();
     },
-    status: "authenticated",
-    temporaryVolunteerSession: null
+    status: "unauthenticated",
+    temporaryVolunteerSession: null,
+    ...overrides
   };
 }
 
-describe("MobileAppShell", () => {
-  it("renders top bar, content, and bottom navigation", () => {
+describe("LoginScreen", () => {
+  it("renders temporary volunteer login with display name and join code only", () => {
     vi.stubGlobal("window", {
-      addEventListener() {},
       location: {
         pathname: "/"
-      },
-      removeEventListener() {}
+      }
     });
 
     const markup = renderToStaticMarkup(
       <AuthContext.Provider value={createAuthValue()}>
-        <MobileAppShell>
-          <p>Shell content</p>
-        </MobileAppShell>
+        <LoginScreen />
       </AuthContext.Provider>
     );
 
-    assert.match(markup, /Krishna&#x27;s Kitchen/);
-    assert.match(markup, /Main Temple/);
-    assert.match(markup, /Shell content/);
-    assert.match(markup, /Home/);
-    assert.match(markup, /Inventory/);
+    assert.match(markup, /Temporary volunteer/);
+    assert.match(markup, /Display name/);
+    assert.match(markup, /Join code/);
+    assert.doesNotMatch(markup, /Organization ID/);
+    assert.doesNotMatch(markup, /Temple ID/);
   });
 });

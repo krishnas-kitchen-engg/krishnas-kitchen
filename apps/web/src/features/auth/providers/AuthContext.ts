@@ -14,8 +14,7 @@ export type AuthStatus = "loading" | "unauthenticated" | "authenticated" | "temp
 
 export type StartTemporaryVolunteerInput = {
   displayName: string;
-  organizationId: string;
-  templeId: string;
+  joinCode: string;
 };
 
 export type AuthContextValue = {
@@ -33,7 +32,7 @@ export type AuthContextValue = {
   session: Session | null;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-  startTemporaryVolunteerSession: (input: StartTemporaryVolunteerInput) => void;
+  startTemporaryVolunteerSession: (input: StartTemporaryVolunteerInput) => Promise<void>;
   status: AuthStatus;
   temporaryVolunteerSession: TemporaryVolunteerSession | null;
 };
