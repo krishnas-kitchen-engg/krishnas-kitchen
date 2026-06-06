@@ -68,7 +68,7 @@ describe("AppRoutes", () => {
     assert.match(markup, /Inventory/);
     assert.match(markup, /Scan/);
     assert.match(markup, /Receive/);
-    assert.match(markup, /Transfer/);
+    assert.match(markup, /Tasks/);
   });
 
   it("renders authenticated inventory route inside the mobile shell", () => {
@@ -151,6 +151,19 @@ describe("AppRoutes", () => {
     );
 
     assert.match(markup, /Scan/);
+    assert.match(markup, /Inventory unavailable/);
+  });
+
+  it("renders authenticated tasks route inside the mobile shell", () => {
+    stubWindow("/tasks");
+
+    const markup = renderToStaticMarkup(
+      <AuthContext.Provider value={createAuthValue()}>
+        <AppRoutes />
+      </AuthContext.Provider>
+    );
+
+    assert.match(markup, /Tasks/);
     assert.match(markup, /Inventory unavailable/);
   });
 

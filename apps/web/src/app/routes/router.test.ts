@@ -84,6 +84,13 @@ describe("router", () => {
       name: "return",
       path: "/return"
     });
+
+    stubWindow("/tasks");
+    assert.equal(getCurrentPath(), "/tasks");
+    assert.deepEqual(getCurrentRoute(), {
+      name: "tasks",
+      path: "/tasks"
+    });
   });
 
   it("falls back to home for unknown paths", () => {

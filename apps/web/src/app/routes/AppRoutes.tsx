@@ -19,6 +19,7 @@ import {
   ScanInventoryScreen,
   TransferInventoryScreen
 } from "@/features/inventory";
+import { TasksScreen } from "@/features/tasks";
 
 import { RouteGuard } from "./RouteGuard";
 import { navigateTo, useCurrentRoute } from "./router";
@@ -117,6 +118,14 @@ function AuthenticatedRoutes() {
     screen = (
       <InventoryAvailabilityBoundary>
         <ScanInventoryScreen />
+      </InventoryAvailabilityBoundary>
+    );
+  }
+
+  if (route.name === "tasks") {
+    screen = (
+      <InventoryAvailabilityBoundary>
+        <TasksScreen />
       </InventoryAvailabilityBoundary>
     );
   }

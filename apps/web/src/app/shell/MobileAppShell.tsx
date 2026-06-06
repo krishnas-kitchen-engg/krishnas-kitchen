@@ -35,6 +35,10 @@ function getRouteTitle(routeName: ReturnType<typeof useCurrentRoute>["name"]): s
     return "Scan";
   }
 
+  if (routeName === "tasks") {
+    return "Tasks";
+  }
+
   if (routeName === "transfer") {
     return "Transfer";
   }

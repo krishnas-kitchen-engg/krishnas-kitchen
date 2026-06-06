@@ -23,7 +23,7 @@ export const bottomNavigationItems = [
     path: "/receive"
   },
   {
-    label: "Transfer",
-    path: "/transfer"
+    label: "Tasks",
+    path: "/tasks"
   }
 ] satisfies BottomNavigationItem[];

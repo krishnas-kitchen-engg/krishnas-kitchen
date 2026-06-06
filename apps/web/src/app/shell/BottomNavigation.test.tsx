@@ -13,7 +13,7 @@ describe("BottomNavigation", () => {
     assert.match(markup, /Inventory/);
     assert.match(markup, /Scan/);
     assert.match(markup, /Receive/);
-    assert.match(markup, /Transfer/);
+    assert.match(markup, /Tasks/);
     assert.match(markup, /aria-current="page"/);
   });
 
@@ -24,6 +24,13 @@ describe("BottomNavigation", () => {
         label: "Scan",
         path: "/scan"
       }
+    );
+  });
+
+  it("keeps inventory and tasks in primary navigation", () => {
+    assert.deepEqual(
+      bottomNavigationItems.map((item) => item.label),
+      ["Home", "Inventory", "Scan", "Receive", "Tasks"]
     );
   });
 });
