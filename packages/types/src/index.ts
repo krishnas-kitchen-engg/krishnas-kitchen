@@ -89,6 +89,8 @@ export type ActorType = "user" | "temporary_volunteer" | "system";
 
 export type BarcodeFormat = "ean_13" | "ean_8" | "qr" | "upc_a" | "upc_e";
 
+export type UnknownBarcodeStatus = "dismissed" | "linked" | "pending";
+
 export type Database = {
   public: {
     Tables: {
@@ -227,6 +229,96 @@ export type Database = {
         Update: never;
         Relationships: [];
       };
+      unknown_barcodes: {
+        Row: {
+          actor_temp_session_id: string | null;
+          actor_type: ActorType;
+          actor_user_id: string | null;
+          barcode_format: BarcodeFormat;
+          barcode_value: string;
+          created_at: string;
+          dismissal_reason: string | null;
+          dismissed_at: string | null;
+          dismissed_by_actor_temp_session_id: string | null;
+          dismissed_by_actor_type: ActorType | null;
+          dismissed_by_actor_user_id: string | null;
+          first_seen_at: string;
+          id: string;
+          last_seen_at: string;
+          last_seen_by_actor_temp_session_id: string | null;
+          last_seen_by_actor_type: ActorType;
+          last_seen_by_actor_user_id: string | null;
+          linked_at: string | null;
+          linked_barcode_mapping_id: string | null;
+          linked_by_actor_temp_session_id: string | null;
+          linked_by_actor_type: ActorType | null;
+          linked_by_actor_user_id: string | null;
+          linked_item_id: string | null;
+          notes: string | null;
+          organization_id: string;
+          scan_count: number;
+          source_workflow: string | null;
+          status: UnknownBarcodeStatus;
+          temple_id: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          actor_temp_session_id?: string | null;
+          actor_type: ActorType;
+          actor_user_id?: string | null;
+          barcode_format: BarcodeFormat;
+          barcode_value: string;
+          created_at?: string;
+          dismissal_reason?: string | null;
+          dismissed_at?: string | null;
+          dismissed_by_actor_temp_session_id?: string | null;
+          dismissed_by_actor_type?: ActorType | null;
+          dismissed_by_actor_user_id?: string | null;
+          first_seen_at: string;
+          id?: string;
+          last_seen_at: string;
+          last_seen_by_actor_temp_session_id?: string | null;
+          last_seen_by_actor_type: ActorType;
+          last_seen_by_actor_user_id?: string | null;
+          linked_at?: string | null;
+          linked_barcode_mapping_id?: string | null;
+          linked_by_actor_temp_session_id?: string | null;
+          linked_by_actor_type?: ActorType | null;
+          linked_by_actor_user_id?: string | null;
+          linked_item_id?: string | null;
+          notes?: string | null;
+          organization_id: string;
+          scan_count?: number;
+          source_workflow?: string | null;
+          status?: UnknownBarcodeStatus;
+          temple_id?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          dismissal_reason?: string | null;
+          dismissed_at?: string | null;
+          dismissed_by_actor_temp_session_id?: string | null;
+          dismissed_by_actor_type?: ActorType | null;
+          dismissed_by_actor_user_id?: string | null;
+          last_seen_at?: string;
+          last_seen_by_actor_temp_session_id?: string | null;
+          last_seen_by_actor_type?: ActorType;
+          last_seen_by_actor_user_id?: string | null;
+          linked_at?: string | null;
+          linked_barcode_mapping_id?: string | null;
+          linked_by_actor_temp_session_id?: string | null;
+          linked_by_actor_type?: ActorType | null;
+          linked_by_actor_user_id?: string | null;
+          linked_item_id?: string | null;
+          notes?: string | null;
+          scan_count?: number;
+          source_workflow?: string | null;
+          status?: UnknownBarcodeStatus;
+          temple_id?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -236,6 +328,7 @@ export type Database = {
       inventory_quantity_effect: InventoryQuantityEffect;
       inventory_transaction_type: InventoryTransactionType;
       item_unit: ItemUnit;
+      unknown_barcode_status: UnknownBarcodeStatus;
     };
     CompositeTypes: Record<string, never>;
   };

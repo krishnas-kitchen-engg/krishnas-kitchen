@@ -70,11 +70,12 @@ function createRepositories(
 
       return Promise.resolve(record);
     },
-    findPendingUnknownBarcodeByBarcode(organizationId, barcode) {
+    findPendingUnknownBarcodeByBarcode(organizationId, barcode, templeId) {
       return Promise.resolve(
         records.find(
           (record) =>
             record.organizationId === organizationId &&
+            record.templeId === (templeId ?? null) &&
             record.status === "pending" &&
             sameBarcode(record.barcode, barcode)
         ) ?? null
@@ -145,6 +146,7 @@ function createPendingRecord(overrides: Partial<UnknownBarcodeRecord> = {}): Unk
     lastSeenAt: "2026-06-04T08:00:00.000Z",
     lastSeenBy: actor,
     linkedAt: null,
+    linkedBarcodeMappingId: null,
     linkedBy: null,
     linkedItemId: null,
     notes: null,
@@ -184,7 +186,7 @@ describe("unknown barcode management service", () => {
     assert.equal(unknownBarcodeRepository.records.length, 1);
   });
 
-  it("merges duplicate pending unknown barcode scans within an organization", async () => {
+  it("merges duplicate pending unknown barcode scans within an organization and temple", async () => {
     const existingRecord = createPendingRecord();
     const { service, unknownBarcodeRepository } = createRepositories({
       records: [existingRecord]
@@ -209,6 +211,27 @@ describe("unknown barcode management service", () => {
     assert.equal(record.sourceWorkflow, "transfer");
     assert.equal(unknownBarcodeRepository.records.length, 1);
     assert.equal(unknownBarcodeRepository.writes.length, 1);
+  });
+
+  it("does not merge duplicate pending unknown barcode scans across temples", async () => {
+    const existingRecord = createPendingRecord();
+    const { service, unknownBarcodeRepository } = createRepositories({
+      records: [existingRecord]
+    });
+
+    const record = await service.recordUnknownBarcode({
+      actor: volunteerActor,
+      clientId: "unknown-temple-2",
+      format: "upc_a",
+      organizationId: "org-1",
+      rawValue: "036000291452",
+      scannedAt: "2026-06-04T09:00:00.000Z",
+      templeId: "temple-2"
+    });
+
+    assert.equal(record.id, "unknown-temple-2");
+    assert.equal(record.scanCount, 1);
+    assert.equal(unknownBarcodeRepository.records.length, 2);
   });
 
   it("rejects invalid barcode values before persistence", async () => {
@@ -280,11 +303,13 @@ describe("unknown barcode management service", () => {
       actor,
       itemId: "rice",
       linkedAt: "2026-06-04T10:00:00.000Z",
+      linkedBarcodeMappingId: "barcode-mapping-1",
       notes: "matched rice bag",
       organizationId: "org-1"
     });
 
     assert.equal(record.status, "linked");
+    assert.equal(record.linkedBarcodeMappingId, "barcode-mapping-1");
     assert.equal(record.linkedItemId, "rice");
     assert.equal(record.linkedAt, "2026-06-04T10:00:00.000Z");
     assert.equal(record.notes, "matched rice bag");

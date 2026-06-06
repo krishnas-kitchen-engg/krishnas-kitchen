@@ -25,7 +25,8 @@ export type UnknownBarcodeRepository = {
   ) => Promise<UnknownBarcodeRecord>;
   findPendingUnknownBarcodeByBarcode: (
     organizationId: EntityId,
-    barcode: InventoryBarcode
+    barcode: InventoryBarcode,
+    templeId?: EntityId | null
   ) => Promise<UnknownBarcodeRecord | null>;
   findUnknownBarcodeById: (id: EntityId) => Promise<UnknownBarcodeRecord | null>;
   listUnknownBarcodes: (query: UnknownBarcodeQuery) => Promise<readonly UnknownBarcodeRecord[]>;
@@ -127,7 +128,8 @@ export function createUnknownBarcodeManagementService(options: {
       const existingRecord =
         await options.unknownBarcodeRepository.findPendingUnknownBarcodeByBarcode(
           input.organizationId,
-          validation.barcode
+          validation.barcode,
+          input.templeId ?? null
         );
 
       if (existingRecord) {

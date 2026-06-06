@@ -10,10 +10,7 @@ import type {
   InventoryItemRow,
   InventoryLocationRow
 } from "./inventoryCatalogMapper";
-import {
-  createSupabaseInventoryRepositoryAdapters,
-  UnsupportedInventoryRepositoryAdapterError
-} from "./supabaseInventoryRepositoryAdapters";
+import { createSupabaseInventoryRepositoryAdapters } from "./supabaseInventoryRepositoryAdapters";
 
 type TableName = "item_barcodes" | "items" | "locations";
 
@@ -368,14 +365,11 @@ function createAdapters() {
 }
 
 describe("supabase inventory repository adapters", () => {
-  it("provides transaction repository and keeps unknown barcode persistence explicit", async () => {
+  it("provides transaction and unknown barcode repositories", () => {
     const { adapters } = createAdapters();
 
     assert.equal(typeof adapters.transactionRepository.listTransactions, "function");
-    await assert.rejects(
-      () => adapters.unknownBarcodeRepository.listUnknownBarcodes({ organizationId: "org-1" }),
-      UnsupportedInventoryRepositoryAdapterError
-    );
+    assert.equal(typeof adapters.unknownBarcodeRepository.listUnknownBarcodes, "function");
   });
 
   it("lists active organization items, locations, and barcode catalog rows", async () => {

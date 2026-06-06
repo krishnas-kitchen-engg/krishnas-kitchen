@@ -31,6 +31,7 @@ export type UnknownBarcodeRecord = {
   lastSeenAt: string;
   lastSeenBy: InventoryActor;
   linkedAt: string | null;
+  linkedBarcodeMappingId: EntityId | null;
   linkedBy: InventoryActor | null;
   linkedItemId: EntityId | null;
   notes: string | null;
@@ -59,6 +60,7 @@ export type RecordUnknownBarcodeInput = InventoryBarcodeScanInput & {
 export type LinkUnknownBarcodeInput = {
   actor: InventoryActor;
   item: UnknownBarcodeItemReference | null;
+  linkedBarcodeMappingId?: EntityId;
   linkedAt: string;
   notes?: string;
   organizationId: EntityId;
@@ -298,6 +300,7 @@ export function createUnknownBarcodeDraft(
     lastSeenAt: input.scannedAt,
     lastSeenBy: input.actor,
     linkedAt: null,
+    linkedBarcodeMappingId: null,
     linkedBy: null,
     linkedItemId: null,
     notes: normalizeNotes(input.notes),
@@ -334,6 +337,7 @@ export function linkUnknownBarcode(
   return {
     ...record,
     linkedAt: input.linkedAt,
+    linkedBarcodeMappingId: input.linkedBarcodeMappingId ?? record.linkedBarcodeMappingId,
     linkedBy: input.actor,
     linkedItemId: input.item.id,
     notes: normalizeNotes(input.notes) ?? record.notes,

@@ -36,6 +36,7 @@ const unknownBarcode = {
     userId: "user-1"
   },
   linkedAt: null,
+  linkedBarcodeMappingId: null,
   linkedBy: null,
   linkedItemId: null,
   notes: null,
