@@ -91,6 +91,10 @@ export type BarcodeFormat = "ean_13" | "ean_8" | "qr" | "upc_a" | "upc_e";
 
 export type UnknownBarcodeStatus = "dismissed" | "linked" | "pending";
 
+export type TemporaryVolunteerRole = "temp_helper" | "temp_picker" | "temp_receiver";
+
+export type VolunteerSessionStatus = "active" | "expired" | "revoked";
+
 export type Database = {
   public: {
     Tables: {
@@ -366,6 +370,60 @@ export type Database = {
         };
         Relationships: [];
       };
+      volunteer_sessions: {
+        Row: {
+          client_session_id: string | null;
+          created_at: string;
+          created_by_user_id: string;
+          display_name: string | null;
+          expires_at: string;
+          id: string;
+          join_code: string;
+          last_seen_at: string | null;
+          organization_id: string;
+          revocation_reason: string | null;
+          revoked_at: string | null;
+          revoked_by_user_id: string | null;
+          role: TemporaryVolunteerRole;
+          session_name: string;
+          started_at: string | null;
+          status: VolunteerSessionStatus;
+          temple_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          client_session_id?: string | null;
+          created_at?: string;
+          created_by_user_id: string;
+          display_name?: string | null;
+          expires_at: string;
+          id?: string;
+          join_code: string;
+          last_seen_at?: string | null;
+          organization_id: string;
+          revocation_reason?: string | null;
+          revoked_at?: string | null;
+          revoked_by_user_id?: string | null;
+          role: TemporaryVolunteerRole;
+          session_name: string;
+          started_at?: string | null;
+          status?: VolunteerSessionStatus;
+          temple_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          client_session_id?: string | null;
+          display_name?: string | null;
+          last_seen_at?: string | null;
+          revocation_reason?: string | null;
+          revoked_at?: string | null;
+          revoked_by_user_id?: string | null;
+          started_at?: string | null;
+          status?: VolunteerSessionStatus;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -375,7 +433,9 @@ export type Database = {
       inventory_quantity_effect: InventoryQuantityEffect;
       inventory_transaction_type: InventoryTransactionType;
       item_unit: ItemUnit;
+      temp_volunteer_role: TemporaryVolunteerRole;
       unknown_barcode_status: UnknownBarcodeStatus;
+      volunteer_session_status: VolunteerSessionStatus;
     };
     CompositeTypes: Record<string, never>;
   };
