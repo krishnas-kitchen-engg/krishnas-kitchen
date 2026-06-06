@@ -12,12 +12,21 @@ export {
 } from "./lib/permissions";
 export type { VolunteerSessionRepository } from "./application/volunteerSessionRepository";
 export {
+  createStoredVolunteerSessionReference,
   normalizeVolunteerJoinCode,
   type ClearVolunteerSessionClientInput,
   type FindActiveVolunteerSessionInput,
   type RefreshVolunteerSessionInput,
+  type StoredVolunteerSessionReference,
   type ValidatedVolunteerSession,
   type ValidateVolunteerJoinCodeInput,
   type VolunteerJoinCode
 } from "./domain/volunteerSession";
+export {
+  clearStoredVolunteerSession,
+  createStoredVolunteerSessionValidationInput,
+  getStoredVolunteerSessionTimeRemaining,
+  loadStoredVolunteerSession,
+  saveStoredVolunteerSession
+} from "./lib/volunteerSessionStorage";
 export { createSupabaseVolunteerSessionRepository } from "./infrastructure/supabase/supabaseVolunteerSessionRepository";

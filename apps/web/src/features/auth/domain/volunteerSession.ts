@@ -14,6 +14,13 @@ export type ValidatedVolunteerSession = {
   templeId: EntityId;
 };
 
+export type StoredVolunteerSessionReference = {
+  clientSessionId: string;
+  displayName: string;
+  expiresAt: string;
+  sessionId: EntityId;
+};
+
 export type ValidateVolunteerJoinCodeInput = {
   clientSessionId: string;
   displayName: string;
@@ -41,4 +48,19 @@ export type ClearVolunteerSessionClientInput = {
 
 export function normalizeVolunteerJoinCode(joinCode: VolunteerJoinCode): VolunteerJoinCode {
   return joinCode.trim().toUpperCase().replace(/\s+/g, "");
+}
+
+export function createStoredVolunteerSessionReference(
+  session: Pick<ValidatedVolunteerSession, "clientSessionId" | "displayName" | "expiresAt" | "id">
+): StoredVolunteerSessionReference | null {
+  if (!session.clientSessionId) {
+    return null;
+  }
+
+  return {
+    clientSessionId: session.clientSessionId,
+    displayName: session.displayName,
+    expiresAt: session.expiresAt,
+    sessionId: session.id
+  };
 }
