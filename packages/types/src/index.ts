@@ -80,6 +80,7 @@ export type InventoryTransactionType =
   | "adjusted"
   | "wasted"
   | "reservation"
+  | "undo"
   | "reversal";
 
 export type InventoryQuantityEffect = "increase" | "decrease" | "transfer" | "none";
@@ -98,6 +99,7 @@ export type Database = {
           archived_by_actor_type: ActorType | null;
           archived_by_actor_user_id: string | null;
           archive_reason: string | null;
+          barcode: string | null;
           barcode_format: BarcodeFormat;
           barcode_value: string;
           created_at: string;
@@ -117,6 +119,7 @@ export type Database = {
           archived_by_actor_type?: ActorType | null;
           archived_by_actor_user_id?: string | null;
           archive_reason?: string | null;
+          barcode?: string | null;
           barcode_format: BarcodeFormat;
           barcode_value: string;
           created_at?: string;

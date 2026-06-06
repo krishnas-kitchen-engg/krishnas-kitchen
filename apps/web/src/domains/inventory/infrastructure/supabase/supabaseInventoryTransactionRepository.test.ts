@@ -3,7 +3,13 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@krishnas-kitchen/types";
 import { describe, it } from "vitest";
 
-import { createReceivingTransaction } from "../../domain/transactionHelpers";
+import {
+  createReceivingTransaction,
+  createReturnedTransaction,
+  createReversalTransaction,
+  createTransferTransaction
+} from "../../domain/transactionHelpers";
+import type { InventoryTransaction, InventoryTransactionDraft } from "../../domain/types";
 import type {
   InventoryTransactionInsert,
   InventoryTransactionRow
@@ -94,6 +100,41 @@ const receivingRow: InventoryTransactionRow = {
   unit: "kg"
 };
 
+function persisted(
+  draft: InventoryTransactionDraft,
+  id: string,
+  createdAt = "2026-06-03T07:00:00.000Z"
+): InventoryTransaction {
+  return {
+    ...draft,
+    createdAt,
+    id
+  };
+}
+
+function rowFromDraft(draft: InventoryTransactionDraft, id: string): InventoryTransactionRow {
+  return {
+    actor_temp_session_id:
+      draft.actor.type === "temporary_volunteer" ? draft.actor.tempSessionId : null,
+    actor_type: draft.actor.type,
+    actor_user_id: draft.actor.type === "user" ? draft.actor.userId : null,
+    audit_metadata: draft.auditMetadata,
+    created_at: "2026-06-03T07:00:00.000Z",
+    destination_location_id: draft.destinationLocationId,
+    id,
+    item_id: draft.itemId,
+    notes: draft.notes,
+    organization_id: draft.organizationId,
+    quantity: draft.quantity,
+    quantity_effect: draft.quantityEffect,
+    reversal_of_transaction_id: draft.reversalOfTransactionId,
+    source_location_id: draft.sourceLocationId,
+    temple_id: draft.templeId,
+    transaction_type: draft.transactionType,
+    unit: draft.unit
+  };
+}
+
 function createRepository(stub: SupabaseClientStub) {
   return createSupabaseInventoryTransactionRepository(stub as unknown as SupabaseClient<Database>);
 }
@@ -118,6 +159,104 @@ describe("Supabase inventory transaction repository", () => {
     assert.deepEqual(stub.insertQuery.inserted?.audit_metadata, receivingRow.audit_metadata);
     assert.equal(transaction.transactionType, "received");
     assert.equal(transaction.auditMetadata.clientRequestId, receivingDraft.clientId);
+  });
+
+  it("persists transfer transactions with explicit source and destination movement", async () => {
+    const draft = createTransferTransaction({
+      actor: {
+        type: "user",
+        userId: "user-1"
+      },
+      itemId: "rice",
+      organizationId: "org-1",
+      quantity: 10,
+      sourceLocationId: "trailer",
+      destinationLocationId: "pantry",
+      templeId: "temple-1",
+      unit: "kg"
+    });
+    const stub = new SupabaseClientStub({
+      data: rowFromDraft(draft, "transfer-1"),
+      error: null
+    });
+    const repository = createRepository(stub);
+
+    const transaction = await repository.createTransaction(draft);
+
+    assert.equal(stub.insertQuery.inserted?.transaction_type, "transfer");
+    assert.equal(stub.insertQuery.inserted?.quantity_effect, "transfer");
+    assert.equal(stub.insertQuery.inserted?.source_location_id, "trailer");
+    assert.equal(stub.insertQuery.inserted?.destination_location_id, "pantry");
+    assert.equal(transaction.transactionType, "transfer");
+  });
+
+  it("persists return transactions with transfer movement semantics", async () => {
+    const draft = createReturnedTransaction({
+      actor: {
+        type: "user",
+        userId: "user-1"
+      },
+      itemId: "rice",
+      organizationId: "org-1",
+      quantity: 4,
+      sourceLocationId: "kitchen",
+      destinationLocationId: "pantry",
+      templeId: "temple-1",
+      unit: "kg"
+    });
+    const stub = new SupabaseClientStub({
+      data: rowFromDraft(draft, "return-1"),
+      error: null
+    });
+    const repository = createRepository(stub);
+
+    const transaction = await repository.createTransaction(draft);
+
+    assert.equal(stub.insertQuery.inserted?.transaction_type, "returned");
+    assert.equal(stub.insertQuery.inserted?.quantity_effect, "transfer");
+    assert.equal(stub.insertQuery.inserted?.source_location_id, "kitchen");
+    assert.equal(stub.insertQuery.inserted?.destination_location_id, "pantry");
+    assert.equal(transaction.transactionType, "returned");
+  });
+
+  it("persists reversal transactions without mutating the original transaction", async () => {
+    const original = persisted(
+      createTransferTransaction({
+        actor: {
+          type: "user",
+          userId: "user-1"
+        },
+        itemId: "rice",
+        organizationId: "org-1",
+        quantity: 7,
+        sourceLocationId: "trailer",
+        destinationLocationId: "pantry",
+        templeId: "temple-1",
+        unit: "kg"
+      }),
+      "transfer-1"
+    );
+    const draft = createReversalTransaction(original, {
+      actor: {
+        type: "user",
+        userId: "user-1"
+      }
+    });
+    const stub = new SupabaseClientStub({
+      data: rowFromDraft(draft, "reversal-1"),
+      error: null
+    });
+    const repository = createRepository(stub);
+
+    const transaction = await repository.createTransaction(draft);
+
+    assert.equal(stub.insertQuery.inserted?.transaction_type, "reversal");
+    assert.equal(stub.insertQuery.inserted?.quantity_effect, "transfer");
+    assert.equal(stub.insertQuery.inserted?.source_location_id, "pantry");
+    assert.equal(stub.insertQuery.inserted?.destination_location_id, "trailer");
+    assert.equal(stub.insertQuery.inserted?.reversal_of_transaction_id, "transfer-1");
+    assert.equal(transaction.transactionType, "reversal");
+    assert.equal(transaction.reversalOfTransactionId, "transfer-1");
   });
 
   it("wraps Supabase insert failures in inventory persistence errors", async () => {
