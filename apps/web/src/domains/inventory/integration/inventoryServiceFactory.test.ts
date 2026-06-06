@@ -100,6 +100,11 @@ function createRepositoryAdapters(): InventoryRepositoryAdapters & {
         return Promise.resolve([] satisfies InventoryCatalogLocation[]);
       }
     },
+    lowStockThresholdRepository: {
+      listActiveLowStockThresholds() {
+        return Promise.resolve([]);
+      }
+    },
     transactionRepository: {
       createReceivingTransaction(_draft: ReceivingInventoryTransactionDraft) {
         throw new Error("Factory test should not create receiving transactions.");

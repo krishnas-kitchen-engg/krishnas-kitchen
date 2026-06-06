@@ -6,6 +6,7 @@ import {
   createTransferTransaction
 } from "../domain/transactionHelpers";
 import type {
+  InventoryLowStockThreshold,
   InventoryTransaction,
   InventoryTransactionDraft,
   InventoryTransactionScope,
@@ -13,6 +14,7 @@ import type {
 } from "../domain/types";
 import type { InventoryTransactionRepository } from "./inventoryRepository";
 import { createInventoryVisibilityService } from "./inventoryVisibilityService";
+import { resolveLowStockThresholdPrecedence } from "./inventoryVisibilityService";
 
 function persist(
   draft: InventoryTransactionDraft,
@@ -161,5 +163,210 @@ describe("inventory visibility service", () => {
       alerts.map((alert) => alert.shortageQuantity),
       [5]
     );
+  });
+
+  it("loads active low stock thresholds from the repository when none are supplied", async () => {
+    const repository = createMemoryRepository(transactions);
+    const thresholdScopes: InventoryTransactionScope[] = [];
+    const service = createInventoryVisibilityService(repository, {
+      lowStockThresholdRepository: {
+        listActiveLowStockThresholds(scope) {
+          thresholdScopes.push(scope);
+
+          return Promise.resolve([
+            {
+              itemId: "rice",
+              locationId: "pantry",
+              minimumQuantity: 15,
+              organizationId: "org-1",
+              templeId: "temple-1",
+              unit: "kg"
+            }
+          ] satisfies InventoryLowStockThreshold[]);
+        }
+      }
+    });
+
+    const alerts = await service.getLowStockAlerts({
+      organizationId: "org-1",
+      templeId: "temple-1"
+    });
+
+    assert.deepEqual(thresholdScopes, [
+      {
+        organizationId: "org-1",
+        templeId: "temple-1"
+      }
+    ]);
+    assert.deepEqual(
+      alerts.map((alert) => alert.shortageQuantity),
+      [5]
+    );
+  });
+
+  it("applies organization thresholds when no narrower threshold exists", () => {
+    const thresholds = resolveLowStockThresholdPrecedence(
+      [
+        {
+          itemId: "rice",
+          minimumQuantity: 20,
+          organizationId: "org-1",
+          unit: "kg"
+        }
+      ],
+      {
+        locationId: "pantry",
+        organizationId: "org-1",
+        templeId: "temple-1"
+      }
+    );
+
+    assert.deepEqual(
+      thresholds.map((threshold) => threshold.minimumQuantity),
+      [20]
+    );
+  });
+
+  it("lets temple thresholds override organization thresholds", () => {
+    const thresholds = resolveLowStockThresholdPrecedence(
+      [
+        {
+          itemId: "rice",
+          minimumQuantity: 20,
+          organizationId: "org-1",
+          unit: "kg"
+        },
+        {
+          itemId: "rice",
+          minimumQuantity: 15,
+          organizationId: "org-1",
+          templeId: "temple-1",
+          unit: "kg"
+        }
+      ],
+      {
+        locationId: "pantry",
+        organizationId: "org-1",
+        templeId: "temple-1"
+      }
+    );
+
+    assert.deepEqual(
+      thresholds.map((threshold) => threshold.minimumQuantity),
+      [15]
+    );
+  });
+
+  it("lets location thresholds override temple and organization thresholds", () => {
+    const thresholds = resolveLowStockThresholdPrecedence(
+      [
+        {
+          itemId: "rice",
+          minimumQuantity: 20,
+          organizationId: "org-1",
+          unit: "kg"
+        },
+        {
+          itemId: "rice",
+          minimumQuantity: 15,
+          organizationId: "org-1",
+          templeId: "temple-1",
+          unit: "kg"
+        },
+        {
+          itemId: "rice",
+          locationId: "pantry",
+          minimumQuantity: 10,
+          organizationId: "org-1",
+          templeId: "temple-1",
+          unit: "kg"
+        }
+      ],
+      {
+        locationId: "pantry",
+        organizationId: "org-1",
+        templeId: "temple-1"
+      }
+    );
+
+    assert.deepEqual(
+      thresholds.map((threshold) => threshold.minimumQuantity),
+      [10]
+    );
+  });
+
+  it("does not emit duplicate low-stock alerts when multiple scope levels match", async () => {
+    const repository = createMemoryRepository(transactions);
+    const service = createInventoryVisibilityService(repository, {
+      lowStockThresholdRepository: {
+        listActiveLowStockThresholds() {
+          return Promise.resolve([
+            {
+              itemId: "rice",
+              minimumQuantity: 20,
+              organizationId: "org-1",
+              unit: "kg"
+            },
+            {
+              itemId: "rice",
+              minimumQuantity: 15,
+              organizationId: "org-1",
+              templeId: "temple-1",
+              unit: "kg"
+            },
+            {
+              itemId: "rice",
+              locationId: "pantry",
+              minimumQuantity: 12,
+              organizationId: "org-1",
+              templeId: "temple-1",
+              unit: "kg"
+            }
+          ] satisfies InventoryLowStockThreshold[]);
+        }
+      }
+    });
+
+    const alerts = await service.getLowStockAlerts({
+      locationId: "pantry",
+      organizationId: "org-1",
+      templeId: "temple-1"
+    });
+
+    assert.equal(alerts.length, 1);
+    assert.equal(alerts[0]?.minimumQuantity, 12);
+    assert.equal(alerts[0]?.shortageQuantity, 2);
+  });
+
+  it("preserves explicit threshold behavior while applying precedence", async () => {
+    const repository = createMemoryRepository(transactions);
+    const service = createInventoryVisibilityService(repository);
+
+    const alerts = await service.getLowStockAlerts(
+      {
+        locationId: "pantry",
+        organizationId: "org-1",
+        templeId: "temple-1"
+      },
+      [
+        {
+          itemId: "rice",
+          minimumQuantity: 20,
+          organizationId: "org-1",
+          unit: "kg"
+        },
+        {
+          itemId: "rice",
+          locationId: "pantry",
+          minimumQuantity: 12,
+          organizationId: "org-1",
+          templeId: "temple-1",
+          unit: "kg"
+        }
+      ]
+    );
+
+    assert.equal(alerts.length, 1);
+    assert.equal(alerts[0]?.minimumQuantity, 12);
   });
 });

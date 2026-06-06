@@ -5,6 +5,7 @@ import type { InventoryRepositoryAdapters } from "../../integration/inventorySer
 
 import { createSupabaseInventoryCatalogRepositories } from "./supabaseInventoryCatalogRepository";
 import { createSupabaseInventoryTransactionRepository } from "./supabaseInventoryTransactionRepository";
+import { createSupabaseLowStockThresholdRepository } from "./supabaseLowStockThresholdRepository";
 import { createSupabaseUnknownBarcodeRepository } from "./supabaseUnknownBarcodeRepository";
 
 export class UnsupportedInventoryRepositoryAdapterError extends Error {
@@ -27,6 +28,7 @@ export function createSupabaseInventoryRepositoryAdapters(
     barcodeCatalogRepository: catalogRepositories.barcodeCatalogRepository,
     barcodeLookupRepository: catalogRepositories.barcodeLookupRepository,
     catalogQueryRepository: catalogRepositories.catalogQueryRepository,
+    lowStockThresholdRepository: createSupabaseLowStockThresholdRepository(client),
     transactionRepository: createSupabaseInventoryTransactionRepository(client),
     unknownBarcodeItemRepository: catalogRepositories.unknownBarcodeItemRepository,
     unknownBarcodeRepository: createSupabaseUnknownBarcodeRepository(client)

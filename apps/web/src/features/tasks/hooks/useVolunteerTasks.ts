@@ -106,13 +106,10 @@ export async function loadVolunteerTasks(input: {
       organizationId: input.organizationId,
       templeId: input.templeId
     }),
-    input.visibility.getLowStockAlerts(
-      {
-        organizationId: input.organizationId,
-        templeId: input.templeId
-      },
-      []
-    )
+    input.visibility.getLowStockAlerts({
+      organizationId: input.organizationId,
+      templeId: input.templeId
+    })
   ]);
 
   return {

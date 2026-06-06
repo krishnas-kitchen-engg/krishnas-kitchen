@@ -25,6 +25,7 @@ import type { InventoryTransactionRepository } from "../application/inventoryRep
 import { createInventoryService, type InventoryService } from "../application/inventoryService";
 import {
   createInventoryVisibilityService,
+  type InventoryLowStockThresholdRepository,
   type InventoryVisibilityService
 } from "../application/inventoryVisibilityService";
 import {
@@ -51,6 +52,7 @@ export type InventoryRepositoryAdapters = {
   barcodeCatalogRepository: InventoryBarcodeCatalogRepository;
   barcodeLookupRepository: InventoryBarcodeLookupRepository;
   catalogQueryRepository: InventoryCatalogQueryRepository;
+  lowStockThresholdRepository: InventoryLowStockThresholdRepository;
   transactionRepository: InventoryTransactionRepository;
   unknownBarcodeItemRepository: UnknownBarcodeItemRepository;
   unknownBarcodeRepository: UnknownBarcodeRepository;
@@ -84,7 +86,9 @@ export function createInventoryServiceBundle(
   input: InventoryServiceFactoryInput
 ): InventoryServiceBundle {
   const inventory = createInventoryService(input.repositories.transactionRepository);
-  const visibility = createInventoryVisibilityService(input.repositories.transactionRepository);
+  const visibility = createInventoryVisibilityService(input.repositories.transactionRepository, {
+    lowStockThresholdRepository: input.repositories.lowStockThresholdRepository
+  });
   const barcodeLookup = createInventoryBarcodeLookupService(
     input.repositories.barcodeLookupRepository
   );

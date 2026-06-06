@@ -95,10 +95,9 @@ function createVisibilityService(
     getLocationBalances() {
       return Promise.reject(new Error("not used"));
     },
-    getLowStockAlerts(scope, thresholds) {
+    getLowStockAlerts(scope) {
       assert.equal(scope.organizationId, "org-1");
       assert.equal(scope.templeId, "temple-1");
-      assert.deepEqual(thresholds, []);
       return Promise.resolve([lowStockAlert]);
     },
     getTransactionHistory() {

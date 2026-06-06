@@ -55,7 +55,10 @@ export type {
   InventoryService,
   InventoryTransferCatalog
 } from "./application/inventoryService";
-export type { InventoryVisibilityService } from "./application/inventoryVisibilityService";
+export type {
+  InventoryLowStockThresholdRepository,
+  InventoryVisibilityService
+} from "./application/inventoryVisibilityService";
 export type { ReceivingScanWorkflowService } from "./application/receivingScanWorkflowService";
 export type { ReturnScanWorkflowService } from "./application/returnScanWorkflowService";
 export type { TransferScanWorkflowService } from "./application/transferScanWorkflowService";

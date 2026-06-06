@@ -124,13 +124,10 @@ export async function loadVolunteerHomeSummary(input: {
       organizationId: input.organizationId,
       templeId: input.templeId
     }),
-    input.visibility.getLowStockAlerts(
-      {
-        organizationId: input.organizationId,
-        templeId: input.templeId
-      },
-      []
-    ),
+    input.visibility.getLowStockAlerts({
+      organizationId: input.organizationId,
+      templeId: input.templeId
+    }),
     input.unknownBarcodes.listPendingUnknownBarcodes({
       limit: summaryLimit,
       organizationId: input.organizationId,

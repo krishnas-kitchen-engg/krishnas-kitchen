@@ -187,6 +187,53 @@ export type Database = {
         Update: never;
         Relationships: [];
       };
+      inventory_low_stock_thresholds: {
+        Row: {
+          archived_at: string | null;
+          archived_by_actor_temp_session_id: string | null;
+          archived_by_actor_type: ActorType | null;
+          archived_by_actor_user_id: string | null;
+          created_at: string;
+          created_by_actor_temp_session_id: string | null;
+          created_by_actor_type: ActorType;
+          created_by_actor_user_id: string | null;
+          id: string;
+          item_id: string;
+          location_id: string | null;
+          minimum_quantity: number;
+          organization_id: string;
+          temple_id: string | null;
+          unit: ItemUnit;
+          updated_at: string;
+        };
+        Insert: {
+          archived_at?: string | null;
+          archived_by_actor_temp_session_id?: string | null;
+          archived_by_actor_type?: ActorType | null;
+          archived_by_actor_user_id?: string | null;
+          created_at?: string;
+          created_by_actor_temp_session_id?: string | null;
+          created_by_actor_type: ActorType;
+          created_by_actor_user_id?: string | null;
+          id?: string;
+          item_id: string;
+          location_id?: string | null;
+          minimum_quantity: number;
+          organization_id: string;
+          temple_id?: string | null;
+          unit: ItemUnit;
+          updated_at?: string;
+        };
+        Update: {
+          archived_at?: string | null;
+          archived_by_actor_temp_session_id?: string | null;
+          archived_by_actor_type?: ActorType | null;
+          archived_by_actor_user_id?: string | null;
+          minimum_quantity?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       items: {
         Row: {
           default_unit: ItemUnit;
