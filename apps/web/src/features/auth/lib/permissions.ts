@@ -103,6 +103,7 @@ const temporaryVolunteerPermissions = [
   "locations.read",
   "items.read",
   "inventory.read",
+  "inventory.receive",
   "inventory.transfer",
   "inventory.consume",
   "inventory.return"
