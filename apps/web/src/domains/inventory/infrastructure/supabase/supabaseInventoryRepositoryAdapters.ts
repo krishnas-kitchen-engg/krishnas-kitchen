@@ -7,6 +7,10 @@ import { createSupabaseInventoryCatalogRepositories } from "./supabaseInventoryC
 import { createSupabaseInventoryTransactionRepository } from "./supabaseInventoryTransactionRepository";
 import { createSupabaseLowStockThresholdRepository } from "./supabaseLowStockThresholdRepository";
 import { createSupabaseUnknownBarcodeRepository } from "./supabaseUnknownBarcodeRepository";
+import {
+  createSupabaseVolunteerInventoryReadRepositories,
+  type VolunteerInventoryReadSession
+} from "./supabaseVolunteerInventoryReadRepositories";
 
 export class UnsupportedInventoryRepositoryAdapterError extends Error {
   readonly adapter: string;
@@ -19,18 +23,40 @@ export class UnsupportedInventoryRepositoryAdapterError extends Error {
 }
 
 export function createSupabaseInventoryRepositoryAdapters(
-  client: SupabaseClient<Database>
+  client: SupabaseClient<Database>,
+  options: {
+    volunteerReadSession?: VolunteerInventoryReadSession | null;
+  } = {}
 ): InventoryRepositoryAdapters {
   const catalogRepositories = createSupabaseInventoryCatalogRepositories(client);
+  const transactionRepository = createSupabaseInventoryTransactionRepository(client);
+  const lowStockThresholdRepository = createSupabaseLowStockThresholdRepository(client);
+  const unknownBarcodeRepository = createSupabaseUnknownBarcodeRepository(client);
+  const volunteerReadRepositories = options.volunteerReadSession
+    ? createSupabaseVolunteerInventoryReadRepositories(client, options.volunteerReadSession, {
+        barcodeLookupRepository: catalogRepositories.barcodeLookupRepository,
+        catalogQueryRepository: catalogRepositories.catalogQueryRepository,
+        lowStockThresholdRepository,
+        transactionRepository,
+        unknownBarcodeRepository
+      })
+    : null;
 
   return {
     barcodeCatalogItemRepository: catalogRepositories.barcodeCatalogItemRepository,
     barcodeCatalogRepository: catalogRepositories.barcodeCatalogRepository,
-    barcodeLookupRepository: catalogRepositories.barcodeLookupRepository,
-    catalogQueryRepository: catalogRepositories.catalogQueryRepository,
-    lowStockThresholdRepository: createSupabaseLowStockThresholdRepository(client),
-    transactionRepository: createSupabaseInventoryTransactionRepository(client),
+    barcodeLookupRepository:
+      volunteerReadRepositories?.barcodeLookupRepository ??
+      catalogRepositories.barcodeLookupRepository,
+    catalogQueryRepository:
+      volunteerReadRepositories?.catalogQueryRepository ??
+      catalogRepositories.catalogQueryRepository,
+    lowStockThresholdRepository:
+      volunteerReadRepositories?.lowStockThresholdRepository ?? lowStockThresholdRepository,
+    transactionRepository:
+      volunteerReadRepositories?.transactionRepository ?? transactionRepository,
     unknownBarcodeItemRepository: catalogRepositories.unknownBarcodeItemRepository,
-    unknownBarcodeRepository: createSupabaseUnknownBarcodeRepository(client)
+    unknownBarcodeRepository:
+      volunteerReadRepositories?.unknownBarcodeRepository ?? unknownBarcodeRepository
   };
 }

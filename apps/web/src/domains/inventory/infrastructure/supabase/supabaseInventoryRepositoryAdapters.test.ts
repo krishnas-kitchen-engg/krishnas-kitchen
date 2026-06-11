@@ -373,7 +373,7 @@ describe("supabase inventory repository adapters", () => {
   });
 
   it("lists active organization items, locations, and barcode catalog rows", async () => {
-    const { adapters } = createAdapters();
+    const { adapters, stub } = createAdapters();
 
     const listedItems = await adapters.catalogQueryRepository.listItems("org-1");
     const listedLocations = await adapters.catalogQueryRepository.listLocations("org-1");
@@ -397,6 +397,7 @@ describe("supabase inventory repository adapters", () => {
       listedBarcodes.map((barcode) => barcode.itemId),
       ["rice"]
     );
+    assert.ok(stub.tables.includes("item_barcodes"));
   });
 
   it("resolves barcode lookup through active mappings and active same-organization items", async () => {

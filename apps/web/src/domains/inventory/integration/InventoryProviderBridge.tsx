@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type { PropsWithChildren } from "react";
 
-import { useAuth } from "@/features/auth";
+import { loadStoredVolunteerSession, useAuth } from "@/features/auth";
 
 import { createSupabaseInventoryRepositoryAdapters } from "../infrastructure/supabase/supabaseInventoryRepositoryAdapters";
 import { InventoryIntegrationProvider } from "./InventoryIntegrationContext";
@@ -20,11 +20,22 @@ export function InventoryProviderBridge({ children }: PropsWithChildren) {
     if (status !== "ready" || !auth.client) {
       return null;
     }
+    const storedVolunteerSession =
+      auth.isTemporaryVolunteer && typeof window !== "undefined"
+        ? loadStoredVolunteerSession()
+        : null;
 
     return createInventoryServiceBundle({
-      repositories: createSupabaseInventoryRepositoryAdapters(auth.client)
+      repositories: createSupabaseInventoryRepositoryAdapters(auth.client, {
+        volunteerReadSession: storedVolunteerSession
+          ? {
+              clientSessionId: storedVolunteerSession.clientSessionId,
+              sessionId: storedVolunteerSession.sessionId
+            }
+          : null
+      })
     });
-  }, [auth.client, status]);
+  }, [auth.client, auth.isTemporaryVolunteer, status]);
 
   if (!services) {
     return (
