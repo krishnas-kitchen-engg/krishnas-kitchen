@@ -75,7 +75,7 @@ export async function restoreVolunteerSession(
 
 export async function clearVolunteerClientSessionBestEffort(
   repository: VolunteerSessionRepository | null,
-  session: Pick<TemporaryVolunteerSession, "id"> | null
+  session: Pick<StoredVolunteerSessionReference, "clientSessionId" | "sessionId"> | null
 ): Promise<void> {
   if (!repository || !session) {
     return;
@@ -83,7 +83,8 @@ export async function clearVolunteerClientSessionBestEffort(
 
   try {
     await repository.clearClientSession({
-      sessionId: session.id
+      clientSessionId: session.clientSessionId,
+      sessionId: session.sessionId
     });
   } catch {
     // Local logout must not be blocked by best-effort server cleanup.
@@ -95,10 +96,11 @@ export async function completeVolunteerLogout(input: {
   clearTemporarySession: () => void;
   repository: VolunteerSessionRepository | null;
   signOutAuthenticatedUser?: () => Promise<void>;
+  storedSession: Pick<StoredVolunteerSessionReference, "clientSessionId" | "sessionId"> | null;
   temporarySession: Pick<TemporaryVolunteerSession, "id"> | null;
 }): Promise<void> {
   input.clearStoredSession();
   input.clearTemporarySession();
-  await clearVolunteerClientSessionBestEffort(input.repository, input.temporarySession);
+  await clearVolunteerClientSessionBestEffort(input.repository, input.storedSession);
   await input.signOutAuthenticatedUser?.();
 }

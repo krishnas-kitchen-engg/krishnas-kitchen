@@ -4,137 +4,68 @@ import type { Database } from "@krishnas-kitchen/types";
 import { describe, it } from "vitest";
 
 import { createSupabaseVolunteerSessionRepository } from "./supabaseVolunteerSessionRepository";
-import type { VolunteerSessionRow, VolunteerSessionUpdate } from "./volunteerSessionMapper";
+import type { VolunteerSessionRpcRow } from "./volunteerSessionMapper";
 
-type SupabaseResult<T> = {
-  data: T;
-  error: null;
+type RpcName =
+  | "clear_volunteer_client_session"
+  | "refresh_volunteer_session"
+  | "restore_volunteer_session"
+  | "validate_volunteer_join_code";
+
+type RpcCall = {
+  name: RpcName;
+  params: Record<string, unknown>;
 };
 
-class VolunteerSessionQuery implements PromiseLike<SupabaseResult<null>> {
-  private filters: Array<(row: VolunteerSessionRow) => boolean> = [];
-  private pendingUpdate: VolunteerSessionUpdate | null = null;
+class SupabaseRpcStub {
+  readonly calls: RpcCall[] = [];
+  nextError: Error | null = null;
 
   constructor(
-    private readonly rows: VolunteerSessionRow[],
-    private readonly stub: SupabaseClientStub
+    private readonly responses: Partial<Record<RpcName, VolunteerSessionRpcRow[]>> = {}
   ) {}
 
-  eq<K extends keyof VolunteerSessionRow>(column: K, value: VolunteerSessionRow[K]): this {
-    this.filters.push((row) => row[column] === value);
-    return this;
-  }
+  rpc<TData>(name: RpcName, params: Record<string, unknown>) {
+    this.calls.push({ name, params });
 
-  gt<K extends keyof VolunteerSessionRow>(column: K, value: VolunteerSessionRow[K]): this {
-    this.filters.push((row) => String(row[column]) > String(value));
-    return this;
-  }
-
-  maybeSingle(): Promise<SupabaseResult<VolunteerSessionRow | null>> {
-    return Promise.resolve({
-      data: this.apply()[0] ?? null,
-      error: null
-    });
-  }
-
-  select(_columns: string): this {
-    return this;
-  }
-
-  single(): Promise<SupabaseResult<VolunteerSessionRow>> {
-    const row = this.apply()[0];
-
-    if (!row) {
-      throw new Error("No volunteer_sessions row matched single query.");
-    }
-
-    return Promise.resolve({
-      data: row,
-      error: null
-    });
-  }
-
-  then<TResult1 = SupabaseResult<null>, TResult2 = never>(
-    onfulfilled?: ((value: SupabaseResult<null>) => TResult1 | PromiseLike<TResult1>) | null,
-    onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null
-  ): PromiseLike<TResult1 | TResult2> {
-    this.apply();
-
-    return Promise.resolve({
-      data: null,
-      error: null
-    }).then(onfulfilled, onrejected);
-  }
-
-  update(payload: VolunteerSessionUpdate): this {
-    this.pendingUpdate = payload;
-    this.stub.updated = payload;
-    return this;
-  }
-
-  private apply(): VolunteerSessionRow[] {
-    let values = this.rows.filter((row) => this.filters.every((filter) => filter(row)));
-
-    if (this.pendingUpdate) {
-      values = values.map((row) => {
-        const updated = {
-          ...row,
-          ...this.pendingUpdate,
-          updated_at: this.pendingUpdate?.updated_at ?? row.updated_at
-        };
-        const index = this.rows.findIndex((existingRow) => existingRow.id === row.id);
-
-        if (index >= 0) {
-          this.rows[index] = updated;
-        }
-
-        return updated;
+    if (this.nextError) {
+      return Promise.resolve({
+        data: null as TData,
+        error: this.nextError
       });
-      this.pendingUpdate = null;
     }
 
-    return values;
+    if (name === "clear_volunteer_client_session") {
+      return Promise.resolve({
+        data: null as TData,
+        error: null
+      });
+    }
+
+    return Promise.resolve({
+      data: (this.responses[name] ?? []) as TData,
+      error: null
+    });
   }
 }
 
-class SupabaseClientStub {
-  readonly tables: string[] = [];
-  updated: VolunteerSessionUpdate | null = null;
-
-  constructor(readonly rows: VolunteerSessionRow[]) {}
-
-  from(table: "volunteer_sessions"): VolunteerSessionQuery {
-    this.tables.push(table);
-    return new VolunteerSessionQuery(this.rows, this);
-  }
-}
-
-function createRow(overrides: Partial<VolunteerSessionRow> = {}): VolunteerSessionRow {
+function createRpcRow(overrides: Partial<VolunteerSessionRpcRow> = {}): VolunteerSessionRpcRow {
   return {
-    client_session_id: null,
-    created_at: "2026-06-06T08:00:00.000Z",
-    created_by_user_id: "manager-1",
-    display_name: null,
+    client_session_id: "client-1",
+    display_name: "Gopal",
     expires_at: "2026-06-06T12:00:00.000Z",
-    id: "session-1",
-    join_code: "RICE123",
-    last_seen_at: null,
-    organization_id: "org-from-db",
-    revocation_reason: null,
-    revoked_at: null,
-    revoked_by_user_id: null,
+    last_seen_at: "2026-06-06T09:00:00.000Z",
+    organization_id: "org-from-rpc",
     role: "temp_receiver",
-    session_name: "Morning receiving",
-    started_at: null,
-    status: "active",
-    temple_id: "temple-from-db",
-    updated_at: "2026-06-06T08:00:00.000Z",
+    session_id: "session-1",
+    started_at: "2026-06-06T09:00:00.000Z",
+    temple_id: "temple-from-rpc",
     ...overrides
   };
 }
 
-function createRepository(rows: VolunteerSessionRow[]) {
-  const stub = new SupabaseClientStub(rows);
+function createRepository(responses: Partial<Record<RpcName, VolunteerSessionRpcRow[]>> = {}) {
+  const stub = new SupabaseRpcStub(responses);
 
   return {
     repository: createSupabaseVolunteerSessionRepository(
@@ -145,8 +76,10 @@ function createRepository(rows: VolunteerSessionRow[]) {
 }
 
 describe("Supabase volunteer session repository", () => {
-  it("validates an active join code and persists runtime session fields", async () => {
-    const { repository, stub } = createRepository([createRow()]);
+  it("validates an active join code through the volunteer validation RPC", async () => {
+    const { repository, stub } = createRepository({
+      validate_volunteer_join_code: [createRpcRow()]
+    });
 
     const session = await repository.validateJoinCode({
       clientSessionId: "client-1",
@@ -155,93 +88,109 @@ describe("Supabase volunteer session repository", () => {
       now: "2026-06-06T09:00:00.000Z"
     });
 
-    assert.equal(stub.tables[0], "volunteer_sessions");
-    assert.equal(stub.updated?.client_session_id, "client-1");
-    assert.equal(stub.updated?.display_name, "Gopal");
-    assert.equal(stub.updated?.last_seen_at, "2026-06-06T09:00:00.000Z");
-    assert.equal(stub.updated?.started_at, "2026-06-06T09:00:00.000Z");
+    assert.deepEqual(stub.calls[0], {
+      name: "validate_volunteer_join_code",
+      params: {
+        checked_at: "2026-06-06T09:00:00.000Z",
+        input_client_session_id: "client-1",
+        raw_join_code: "RICE123",
+        volunteer_display_name: "  Gopal  "
+      }
+    });
     assert.equal(session?.id, "session-1");
     assert.equal(session?.displayName, "Gopal");
+    assert.equal(session?.organizationId, "org-from-rpc");
+    assert.equal(session?.templeId, "temple-from-rpc");
   });
 
-  it("returns null for an invalid join code", async () => {
-    const { repository, stub } = createRepository([createRow()]);
+  it("returns null for invalid, expired, and revoked join-code attempts", async () => {
+    const { repository, stub } = createRepository({
+      validate_volunteer_join_code: []
+    });
 
-    const session = await repository.validateJoinCode({
+    const invalid = await repository.validateJoinCode({
       clientSessionId: "client-1",
       displayName: "Gopal",
       joinCode: "wrong-code",
       now: "2026-06-06T09:00:00.000Z"
     });
-
-    assert.equal(session, null);
-    assert.equal(stub.updated, null);
-  });
-
-  it("rejects expired and revoked sessions during join-code validation", async () => {
-    const expired = createRow({
-      expires_at: "2026-06-06T08:59:59.000Z",
-      id: "expired"
-    });
-    const revoked = createRow({
-      id: "revoked",
-      join_code: "REVOKED123",
-      status: "revoked"
-    });
-    const { repository, stub } = createRepository([expired, revoked]);
-
-    const expiredSession = await repository.validateJoinCode({
+    const expired = await repository.validateJoinCode({
       clientSessionId: "client-1",
       displayName: "Gopal",
-      joinCode: "RICE123",
+      joinCode: "EXPIRED123",
       now: "2026-06-06T09:00:00.000Z"
     });
-    const revokedSession = await repository.validateJoinCode({
+    const revoked = await repository.validateJoinCode({
       clientSessionId: "client-1",
       displayName: "Gopal",
       joinCode: "REVOKED123",
       now: "2026-06-06T09:00:00.000Z"
     });
 
-    assert.equal(expiredSession, null);
-    assert.equal(revokedSession, null);
-    assert.equal(stub.updated, null);
+    assert.equal(invalid, null);
+    assert.equal(expired, null);
+    assert.equal(revoked, null);
+    assert.deepEqual(
+      stub.calls.map((call) => call.name),
+      [
+        "validate_volunteer_join_code",
+        "validate_volunteer_join_code",
+        "validate_volunteer_join_code"
+      ]
+    );
   });
 
-  it("restores active sessions with matching client session id", async () => {
-    const { repository } = createRepository([
-      createRow({
-        client_session_id: "client-1",
-        display_name: "Gopal",
-        last_seen_at: "2026-06-06T09:00:00.000Z",
-        started_at: "2026-06-06T09:00:00.000Z"
-      })
-    ]);
+  it("restores active sessions through the restoration RPC", async () => {
+    const { repository, stub } = createRepository({
+      restore_volunteer_session: [createRpcRow()]
+    });
 
     const session = await repository.findActiveSessionById({
       clientSessionId: "client-1",
       now: "2026-06-06T10:00:00.000Z",
       sessionId: "session-1"
     });
-    const mismatch = await repository.findActiveSessionById({
+
+    assert.deepEqual(stub.calls[0], {
+      name: "restore_volunteer_session",
+      params: {
+        checked_at: "2026-06-06T10:00:00.000Z",
+        expected_client_session_id: "client-1",
+        volunteer_session_id: "session-1"
+      }
+    });
+    assert.equal(session?.id, "session-1");
+    assert.equal(session?.clientSessionId, "client-1");
+  });
+
+  it("returns null when restoration fails or lacks a client session id", async () => {
+    const { repository, stub } = createRepository({
+      restore_volunteer_session: []
+    });
+
+    const failed = await repository.findActiveSessionById({
       clientSessionId: "other-client",
       now: "2026-06-06T10:00:00.000Z",
       sessionId: "session-1"
     });
+    const missingClientSession = await repository.findActiveSessionById({
+      now: "2026-06-06T10:00:00.000Z",
+      sessionId: "session-1"
+    });
 
-    assert.equal(session?.id, "session-1");
-    assert.equal(session?.clientSessionId, "client-1");
-    assert.equal(mismatch, null);
+    assert.equal(failed, null);
+    assert.equal(missingClientSession, null);
+    assert.equal(stub.calls.length, 1);
   });
 
-  it("refreshes last seen only for active, non-expired sessions", async () => {
-    const { repository, stub } = createRepository([
-      createRow({
-        client_session_id: "client-1",
-        display_name: "Gopal",
-        started_at: "2026-06-06T09:00:00.000Z"
-      })
-    ]);
+  it("refreshes last seen through the refresh RPC", async () => {
+    const { repository, stub } = createRepository({
+      refresh_volunteer_session: [
+        createRpcRow({
+          last_seen_at: "2026-06-06T10:30:00.000Z"
+        })
+      ]
+    });
 
     const session = await repository.refreshSession({
       clientSessionId: "client-1",
@@ -250,43 +199,63 @@ describe("Supabase volunteer session repository", () => {
       sessionId: "session-1"
     });
 
-    assert.equal(stub.updated?.last_seen_at, "2026-06-06T10:30:00.000Z");
+    assert.deepEqual(stub.calls[0], {
+      name: "refresh_volunteer_session",
+      params: {
+        expected_client_session_id: "client-1",
+        refreshed_at: "2026-06-06T10:30:00.000Z",
+        volunteer_session_id: "session-1"
+      }
+    });
     assert.equal(session?.lastSeenAt, "2026-06-06T10:30:00.000Z");
   });
 
-  it("clears client session id with optional client matching", async () => {
-    const row = createRow({
-      client_session_id: "client-1",
-      display_name: "Gopal",
-      started_at: "2026-06-06T09:00:00.000Z"
+  it("skips refresh and cleanup when no client session id is available", async () => {
+    const { repository, stub } = createRepository();
+
+    const refreshed = await repository.refreshSession({
+      lastSeenAt: "2026-06-06T10:30:00.000Z",
+      now: "2026-06-06T10:30:00.000Z",
+      sessionId: "session-1"
     });
-    const { repository, stub } = createRepository([row]);
+    await repository.clearClientSession({
+      sessionId: "session-1"
+    });
+
+    assert.equal(refreshed, null);
+    assert.equal(stub.calls.length, 0);
+  });
+
+  it("clears client session id through the logout cleanup RPC", async () => {
+    const { repository, stub } = createRepository();
 
     await repository.clearClientSession({
       clientSessionId: "client-1",
       sessionId: "session-1"
     });
 
-    assert.equal(stub.updated?.client_session_id, null);
-    assert.equal(stub.rows[0]?.client_session_id, null);
+    assert.deepEqual(stub.calls[0], {
+      name: "clear_volunteer_client_session",
+      params: {
+        expected_client_session_id: "client-1",
+        volunteer_session_id: "session-1"
+      }
+    });
   });
 
-  it("derives organization and temple from the server row", async () => {
-    const { repository } = createRepository([
-      createRow({
-        client_session_id: "client-1",
-        organization_id: "org-server",
-        temple_id: "temple-server"
-      })
-    ]);
+  it("propagates repository RPC failures", async () => {
+    const { repository, stub } = createRepository();
+    stub.nextError = new Error("rpc failed");
 
-    const session = await repository.findActiveSessionById({
-      clientSessionId: "client-1",
-      now: "2026-06-06T09:00:00.000Z",
-      sessionId: "session-1"
-    });
-
-    assert.equal(session?.organizationId, "org-server");
-    assert.equal(session?.templeId, "temple-server");
+    await assert.rejects(
+      () =>
+        repository.validateJoinCode({
+          clientSessionId: "client-1",
+          displayName: "Gopal",
+          joinCode: "ACTIVE123",
+          now: "2026-06-06T09:00:00.000Z"
+        }),
+      /rpc failed/
+    );
   });
 });

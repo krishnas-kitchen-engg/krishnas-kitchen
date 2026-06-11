@@ -35,7 +35,7 @@ function createRepository(
     joinCodeSession?: ValidatedVolunteerSession | null;
   } = {}
 ): VolunteerSessionRepository & {
-  clearCalls: string[];
+  clearCalls: Array<{ clientSessionId?: string; sessionId: string }>;
   findCalls: Array<{ clientSessionId?: string; now: string; sessionId: string }>;
   validateCalls: Array<{
     clientSessionId: string;
@@ -45,7 +45,7 @@ function createRepository(
   }>;
 } {
   const repository = {
-    clearCalls: [] as string[],
+    clearCalls: [] as Array<{ clientSessionId?: string; sessionId: string }>,
     findCalls: [] as Array<{ clientSessionId?: string; now: string; sessionId: string }>,
     validateCalls: [] as Array<{
       clientSessionId: string;
@@ -53,8 +53,8 @@ function createRepository(
       joinCode: string;
       now: string;
     }>,
-    clearClientSession(input: { sessionId: string }) {
-      repository.clearCalls.push(input.sessionId);
+    clearClientSession(input: { clientSessionId?: string; sessionId: string }) {
+      repository.clearCalls.push(input);
 
       return options.clearFails ? Promise.reject(new Error("cleanup failed")) : Promise.resolve();
     },
@@ -189,6 +189,58 @@ describe("volunteer session auth helpers", () => {
     assert.equal(authSession, null);
   });
 
+  it("passes the stored client session id during volunteer logout cleanup", async () => {
+    const repository = createRepository();
+    const events: string[] = [];
+
+    await completeVolunteerLogout({
+      clearStoredSession() {
+        events.push("clear-storage");
+      },
+      clearTemporarySession() {
+        events.push("clear-state");
+      },
+      repository,
+      storedSession: {
+        clientSessionId: "client-session-1",
+        sessionId: "volunteer-session-1"
+      },
+      temporarySession: {
+        id: "volunteer-session-1"
+      }
+    });
+
+    assert.deepEqual(events, ["clear-storage", "clear-state"]);
+    assert.deepEqual(repository.clearCalls, [
+      {
+        clientSessionId: "client-session-1",
+        sessionId: "volunteer-session-1"
+      }
+    ]);
+  });
+
+  it("does not perform server logout cleanup without a stored client session id", async () => {
+    const repository = createRepository();
+    const events: string[] = [];
+
+    await completeVolunteerLogout({
+      clearStoredSession() {
+        events.push("clear-storage");
+      },
+      clearTemporarySession() {
+        events.push("clear-state");
+      },
+      repository,
+      storedSession: null,
+      temporarySession: {
+        id: "volunteer-session-1"
+      }
+    });
+
+    assert.deepEqual(events, ["clear-storage", "clear-state"]);
+    assert.deepEqual(repository.clearCalls, []);
+  });
+
   it("clears local volunteer auth even when repository logout cleanup fails", async () => {
     const repository = createRepository({
       clearFails: true
@@ -203,13 +255,22 @@ describe("volunteer session auth helpers", () => {
         events.push("clear-state");
       },
       repository,
+      storedSession: {
+        clientSessionId: "client-session-1",
+        sessionId: "volunteer-session-1"
+      },
       temporarySession: {
         id: "volunteer-session-1"
       }
     });
 
     assert.deepEqual(events, ["clear-storage", "clear-state"]);
-    assert.deepEqual(repository.clearCalls, ["volunteer-session-1"]);
+    assert.deepEqual(repository.clearCalls, [
+      {
+        clientSessionId: "client-session-1",
+        sessionId: "volunteer-session-1"
+      }
+    ]);
   });
 
   it("keeps authenticated-user signout behavior when no temporary session exists", async () => {
@@ -227,6 +288,7 @@ describe("volunteer session auth helpers", () => {
         events.push("supabase-signout");
         return Promise.resolve();
       },
+      storedSession: null,
       temporarySession: null
     });
 

@@ -3,65 +3,55 @@ import type { Database } from "@krishnas-kitchen/types";
 
 import type { VolunteerSessionRepository } from "../../application/volunteerSessionRepository";
 import {
-  type FindActiveVolunteerSessionInput,
   normalizeVolunteerJoinCode,
   type ValidatedVolunteerSession
 } from "../../domain/volunteerSession";
-import {
-  mapVolunteerSessionRow,
-  type VolunteerSessionRow,
-  type VolunteerSessionUpdate
-} from "./volunteerSessionMapper";
+import { mapVolunteerSessionRpcRow, type VolunteerSessionRpcRow } from "./volunteerSessionMapper";
 
-function clientSessionMatches(row: VolunteerSessionRow, clientSessionId?: string): boolean {
-  return clientSessionId === undefined || row.client_session_id === clientSessionId;
+type VolunteerSessionRpcName =
+  | "clear_volunteer_client_session"
+  | "refresh_volunteer_session"
+  | "restore_volunteer_session"
+  | "validate_volunteer_join_code";
+
+type VolunteerSessionRpcClient = {
+  rpc<TData>(
+    name: VolunteerSessionRpcName,
+    params: Record<string, unknown>
+  ): Promise<{
+    data: TData;
+    error: unknown;
+  }>;
+};
+
+function getRpcClient(client: SupabaseClient<Database>): VolunteerSessionRpcClient {
+  return client as unknown as VolunteerSessionRpcClient;
 }
 
-function isActiveAt(row: VolunteerSessionRow, now: string): boolean {
-  return row.status === "active" && row.expires_at > now;
-}
-
-async function findActiveRowById(
-  client: SupabaseClient<Database>,
-  input: FindActiveVolunteerSessionInput
-): Promise<VolunteerSessionRow | null> {
-  const { data, error } = await client
-    .from("volunteer_sessions")
-    .select("*")
-    .eq("id", input.sessionId)
-    .eq("status", "active")
-    .gt("expires_at", input.now)
-    .maybeSingle();
-
-  if (error) {
+function throwRpcError(error: unknown): never {
+  if (error instanceof Error) {
     throw error;
   }
 
-  if (!data || !clientSessionMatches(data, input.clientSessionId)) {
-    return null;
-  }
-
-  return data;
+  throw new Error("Volunteer session RPC failed.", {
+    cause: error
+  });
 }
 
-async function updateVolunteerSession(
+async function readSingleVolunteerSessionRpcRow(
   client: SupabaseClient<Database>,
-  sessionId: string,
-  payload: VolunteerSessionUpdate
-): Promise<ValidatedVolunteerSession> {
-  const { data, error } = await client
-    .from("volunteer_sessions")
-    .update(payload)
-    .eq("id", sessionId)
-    .eq("status", "active")
-    .select("*")
-    .single();
+  name: Exclude<VolunteerSessionRpcName, "clear_volunteer_client_session">,
+  params: Record<string, unknown>
+): Promise<ValidatedVolunteerSession | null> {
+  const { data, error } = await getRpcClient(client).rpc<VolunteerSessionRpcRow[]>(name, params);
 
   if (error) {
-    throw error;
+    throwRpcError(error);
   }
 
-  return mapVolunteerSessionRow(data);
+  const row = data[0];
+
+  return row ? mapVolunteerSessionRpcRow(row) : null;
 }
 
 export function createSupabaseVolunteerSessionRepository(
@@ -69,65 +59,52 @@ export function createSupabaseVolunteerSessionRepository(
 ): VolunteerSessionRepository {
   return {
     async clearClientSession(input) {
-      let query = client
-        .from("volunteer_sessions")
-        .update({
-          client_session_id: null
-        })
-        .eq("id", input.sessionId);
-
-      if (input.clientSessionId) {
-        query = query.eq("client_session_id", input.clientSessionId);
+      if (!input.clientSessionId) {
+        return;
       }
 
-      const { error } = await query;
+      const { error } = await getRpcClient(client).rpc<null>("clear_volunteer_client_session", {
+        expected_client_session_id: input.clientSessionId,
+        volunteer_session_id: input.sessionId
+      });
 
       if (error) {
-        throw error;
+        throwRpcError(error);
       }
     },
 
     async findActiveSessionById(input) {
-      const row = await findActiveRowById(client, input);
-
-      return row ? mapVolunteerSessionRow(row) : null;
-    },
-
-    async refreshSession(input) {
-      const row = await findActiveRowById(client, input);
-
-      if (!row) {
+      if (!input.clientSessionId) {
         return null;
       }
 
-      return updateVolunteerSession(client, row.id, {
-        last_seen_at: input.lastSeenAt
+      return readSingleVolunteerSessionRpcRow(client, "restore_volunteer_session", {
+        checked_at: input.now,
+        expected_client_session_id: input.clientSessionId,
+        volunteer_session_id: input.sessionId
+      });
+    },
+
+    async refreshSession(input) {
+      if (!input.clientSessionId) {
+        return null;
+      }
+
+      return readSingleVolunteerSessionRpcRow(client, "refresh_volunteer_session", {
+        expected_client_session_id: input.clientSessionId,
+        refreshed_at: input.lastSeenAt,
+        volunteer_session_id: input.sessionId
       });
     },
 
     async validateJoinCode(input) {
       const normalizedJoinCode = normalizeVolunteerJoinCode(input.joinCode);
-      const { data, error } = await client
-        .from("volunteer_sessions")
-        .select("*")
-        .eq("join_code", normalizedJoinCode)
-        .eq("status", "active")
-        .gt("expires_at", input.now)
-        .maybeSingle();
 
-      if (error) {
-        throw error;
-      }
-
-      if (!data || !isActiveAt(data, input.now)) {
-        return null;
-      }
-
-      return updateVolunteerSession(client, data.id, {
-        client_session_id: input.clientSessionId,
-        display_name: input.displayName.trim(),
-        last_seen_at: input.now,
-        started_at: data.started_at ?? input.now
+      return readSingleVolunteerSessionRpcRow(client, "validate_volunteer_join_code", {
+        checked_at: input.now,
+        input_client_session_id: input.clientSessionId,
+        raw_join_code: normalizedJoinCode,
+        volunteer_display_name: input.displayName
       });
     }
   };

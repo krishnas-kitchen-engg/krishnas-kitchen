@@ -210,6 +210,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
       supabaseAuth.client && supabaseAuth.session
         ? () => supabaseAuth.client!.auth.signOut().then(() => undefined)
         : null;
+    const storedVolunteerSession =
+      typeof window === "undefined" ? null : loadStoredVolunteerSession();
 
     await completeVolunteerLogout({
       clearStoredSession: clearStoredVolunteerSession,
@@ -218,6 +220,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       },
       repository: volunteerSessionRepository,
       ...(signOutAuthenticatedUser ? { signOutAuthenticatedUser } : {}),
+      storedSession: storedVolunteerSession,
       temporarySession: temporaryVolunteerSession
     });
   }, [
