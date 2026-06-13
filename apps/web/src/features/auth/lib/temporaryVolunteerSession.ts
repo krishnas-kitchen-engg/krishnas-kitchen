@@ -1,5 +1,7 @@
 import type { TemporaryVolunteerSession } from "@krishnas-kitchen/types";
 
+import { createUuid } from "@/shared/lib/uuid";
+
 const storageKey = "krishnas-kitchen:temporary-volunteer-session";
 const sessionDurationMs = 4 * 60 * 60 * 1000;
 
@@ -23,7 +25,7 @@ export function createTemporaryVolunteerSession(
   const now = new Date();
 
   return {
-    id: crypto.randomUUID(),
+    id: createUuid(),
     displayName: input.displayName.trim(),
     organizationId: input.organizationId.trim(),
     templeId: input.templeId.trim(),

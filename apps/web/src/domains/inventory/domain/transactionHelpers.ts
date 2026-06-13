@@ -4,6 +4,8 @@ import type {
   InventoryTransactionType
 } from "@krishnas-kitchen/types";
 
+import { createUuid } from "@/shared/lib/uuid";
+
 import { assertValidInventoryTransactionDraft } from "./validation";
 import { assertValidReceivingTransactionInput } from "./receivingValidation";
 import { assertValidReversalTransactionInput } from "./reversalValidation";
@@ -26,7 +28,7 @@ import type {
 } from "./types";
 
 function createClientId(): EntityId {
-  return crypto.randomUUID();
+  return createUuid();
 }
 
 function createBaseDraft(

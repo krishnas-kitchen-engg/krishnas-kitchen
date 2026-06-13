@@ -24,6 +24,7 @@ import {
 } from "@/features/auth/lib/volunteerSessionStorage";
 import { createSupabaseVolunteerSessionRepository } from "@/features/auth/infrastructure/supabase/supabaseVolunteerSessionRepository";
 import { useSupabaseAuth } from "@/shared/integrations/supabase";
+import { createUuid } from "@/shared/lib/uuid";
 
 import { AuthContext } from "./AuthContext";
 import type { AuthStatus, StartTemporaryVolunteerInput } from "./AuthContext";
@@ -236,7 +237,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         throw new Error("Supabase is not configured.");
       }
 
-      const clientSessionId = crypto.randomUUID();
+      const clientSessionId = createUuid();
       const authSession = await validateVolunteerLogin(volunteerSessionRepository, {
         clientSessionId,
         displayName: input.displayName,
