@@ -1,6 +1,6 @@
 ---
 title: Engineering Process
-status: foundation
+status: active
 doc_type: index
 lifecycle: living
 owner: engineering
@@ -14,6 +14,7 @@ related:
   - ./SESSION_LIFECYCLE.md
   - ./POST_IMPLEMENTATION_REVIEW.md
   - ./ENGINEERING_REVIEW_CHECKLIST.md
+  - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
   - ../governance/PROJECT_CONSTITUTION.md
   - ../governance/AI_EXECUTION_PROTOCOL.md
   - ../governance/REPOSITORY_REFRESH_PROTOCOL.md
@@ -26,11 +27,11 @@ related:
 
 # Engineering Process
 
-This section will organize how engineering work is planned, built, reviewed, tested, and released.
+This section organizes how engineering work is planned, built, reviewed, tested, and prepared for commit.
 
 ## Purpose
 
-Use this section to find process documentation. During the foundation phase, it links to existing process docs rather than migrating or rewriting them.
+Use this section to find process documentation that supports the canonical operating model.
 
 ## Mandatory Process Documents
 
@@ -41,7 +42,7 @@ Use this section to find process documentation. During the foundation phase, it 
 - [Post-Implementation Review](./POST_IMPLEMENTATION_REVIEW.md)
 - [Engineering Review Checklist](./ENGINEERING_REVIEW_CHECKLIST.md)
 
-These documents define how future implementation milestones are planned, executed, reviewed, validated, documented, and prepared for commit.
+These documents support [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md), which is the canonical operational contract for planning, approval, implementation, verification, review, documentation update, commit readiness, and commit approval.
 
 ## Current Source Documents
 
@@ -54,15 +55,9 @@ These documents define how future implementation milestones are planned, execute
 - [Feature Template](../../execution/FEATURE_TEMPLATE.md)
 - [Backlog](../../execution/BACKLOG.md)
 
-## Planned Process Areas
+## Candidate Process Areas
 
-- Development workflow.
-- Delivery lifecycle.
-- Code review.
-- Testing strategy.
-- Release process.
-- Definition of done.
-- Backlog and roadmap management.
+Create or expand process pages only when active engineering work reveals a recurring process gap.
 
 ## Living Or Historical
 
@@ -83,6 +78,7 @@ Update this section when:
 ## Related Documents
 
 - [Project Constitution](../governance/PROJECT_CONSTITUTION.md)
+- [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md)
 - [AI Execution Protocol](../governance/AI_EXECUTION_PROTOCOL.md)
 - [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md)
 - [Engineering System](../governance/ENGINEERING_SYSTEM.md)

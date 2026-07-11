@@ -1,6 +1,6 @@
 ---
 title: Handbook Overview
-status: foundation
+status: stable
 doc_type: overview
 lifecycle: living
 owner: engineering
@@ -11,25 +11,27 @@ related:
   - ./reading-paths.md
   - ./conventions.md
   - ./existing-documentation.md
+  - ./governance/AI_ENGINEERING_OPERATING_MODEL.md
   - ./governance/PROJECT_CONSTITUTION.md
   - ./governance/ENGINEERING_SYSTEM.md
 ---
 
 # Handbook Overview
 
-The Engineering Handbook is the long-term knowledge system for Krishna's Kitchen engineering.
+The Engineering Handbook is the canonical knowledge system for Krishna's Kitchen engineering.
 
-The first version is intentionally a framework. It organizes how documentation should be found, owned, reviewed, and migrated over time. It does not rewrite existing architecture, feature, or process content.
+It organizes how engineering work is run, how decisions are preserved, how current state is tracked, and how existing project documentation is used without duplication.
 
 ## Purpose
 
-This page explains what belongs in the handbook and how the handbook relates to the existing repository documentation.
+This page explains what belongs in the handbook and how the handbook relates to existing repository documentation.
 
 ## Documentation Boundaries
 
-The handbook should eventually contain or link to:
+The handbook contains or links to:
 
 - Engineering governance and project constitution.
+- The AI engineering operating model.
 - Living architecture documentation.
 - Architecture Decision Records.
 - Engineering process and delivery guidance.
@@ -38,7 +40,7 @@ The handbook should eventually contain or link to:
 - Owner documentation for systems, domains, and workflows.
 - Reference documentation that must be kept current.
 
-Existing project documentation remains in place. During the migration period, handbook pages should point to existing documents and identify which future handbook section will own each topic.
+Existing project documentation remains in place unless a focused migration milestone explicitly promotes or supersedes it. Handbook pages should link to existing documents instead of duplicating their content.
 
 ## Living Or Historical
 
@@ -60,6 +62,7 @@ Update this page when:
 ## Related Documents
 
 - [Engineering Handbook Index](./README.md)
+- [AI Engineering Operating Model](./governance/AI_ENGINEERING_OPERATING_MODEL.md)
 - [Project Constitution](./governance/PROJECT_CONSTITUTION.md)
 - [Engineering System](./governance/ENGINEERING_SYSTEM.md)
 - [Reading Paths](./reading-paths.md)

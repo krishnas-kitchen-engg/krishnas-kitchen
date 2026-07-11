@@ -15,6 +15,7 @@ related:
   - ./reference/DOCUMENT_INDEX.md
   - ./reference/DOCUMENTATION_DRIFT.md
   - ./reference/HANDBOOK_HEALTH_REPORT.md
+  - ./governance/AI_ENGINEERING_OPERATING_MODEL.md
   - ./governance/PROJECT_CONSTITUTION.md
   - ./governance/AI_EXECUTION_PROTOCOL.md
   - ./governance/REPOSITORY_REFRESH_PROTOCOL.md
@@ -48,16 +49,18 @@ Start here:
 - [Handbook Overview](./overview.md)
 - [Reading Paths](./reading-paths.md)
 - [Project Constitution](./governance/PROJECT_CONSTITUTION.md)
+- [AI Engineering Operating Model](./governance/AI_ENGINEERING_OPERATING_MODEL.md)
 - [Engineering System](./governance/ENGINEERING_SYSTEM.md)
 - [Existing Documentation Map](./existing-documentation.md)
 - [Document Index](./reference/DOCUMENT_INDEX.md)
 - [Documentation Drift](./reference/DOCUMENTATION_DRIFT.md)
 - [Handbook Health Report](./reference/HANDBOOK_HEALTH_REPORT.md)
-- [Handbook Roadmap](./roadmap.md)
+- [Handbook Stewardship](./roadmap.md)
 - [Handbook Conventions](./conventions.md)
 
-Governance foundation:
+Governance:
 
+- [AI Engineering Operating Model](./governance/AI_ENGINEERING_OPERATING_MODEL.md)
 - [Project Constitution](./governance/PROJECT_CONSTITUTION.md)
 - [AI Execution Protocol](./governance/AI_EXECUTION_PROTOCOL.md)
 - [Repository Refresh Protocol](./governance/REPOSITORY_REFRESH_PROTOCOL.md)

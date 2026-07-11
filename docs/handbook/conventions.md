@@ -1,6 +1,6 @@
 ---
 title: Handbook Conventions
-status: foundation
+status: stable
 doc_type: conventions
 lifecycle: living
 owner: engineering
@@ -29,7 +29,7 @@ Every handbook document should include:
 ```yaml
 ---
 title: Document Title
-status: draft | foundation | active | superseded | archived
+status: draft | active | stable | superseded | archived
 doc_type: index | overview | architecture | adr | process | runbook | template | reference | owner
 lifecycle: living | historical
 owner: engineering | product | operations | security | area-owner
@@ -58,8 +58,8 @@ Every handbook document should explain:
 ## Status Labels
 
 - `draft`: proposed but not yet relied on.
-- `foundation`: structural placeholder or initial handbook framework.
 - `active`: current source for its topic.
+- `stable`: current source expected to change rarely.
 - `superseded`: replaced by another document.
 - `archived`: retained for history only.
 

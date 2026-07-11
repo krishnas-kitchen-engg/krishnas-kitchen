@@ -8,6 +8,7 @@ update_cadence: when session startup, repository scan, or documentation synchron
 last_reviewed: null
 related:
   - ./README.md
+  - ./AI_ENGINEERING_OPERATING_MODEL.md
   - ./PROJECT_CONSTITUTION.md
   - ./AI_EXECUTION_PROTOCOL.md
   - ./ENGINEERING_SYSTEM.md
@@ -28,7 +29,7 @@ related:
 
 # Repository Refresh Protocol
 
-This protocol defines how every engineering session reconstructs current repository knowledge before making changes.
+This protocol defines repository refresh expectations for the operating loop in [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md).
 
 ## Purpose
 
@@ -80,6 +81,10 @@ Before changing architecture-sensitive areas, reconstruct:
 - Relevant ADRs or candidate ADRs.
 
 Do not proceed from a mental model alone when repository evidence is available.
+
+## Candidate Milestone Selection
+
+Use [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md) for candidate milestone selection, scoring, approval boundaries, and blocked-state handling.
 
 ## Drift Detection
 
@@ -140,6 +145,7 @@ Externalize knowledge by:
 - Identify whether the task is documentation-only, code, tests, migrations, operations, or review.
 - Read the required handbook and project docs.
 - Identify affected files and owners.
+- Identify exactly one candidate micro-milestone when implementation work is appropriate.
 - Identify verification requirements.
 - Identify human review gates.
 
@@ -172,6 +178,7 @@ Update this document when:
 ## Related Documents
 
 - [Project Constitution](./PROJECT_CONSTITUTION.md)
+- [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md)
 - [AI Execution Protocol](./AI_EXECUTION_PROTOCOL.md)
 - [Engineering System](./ENGINEERING_SYSTEM.md)
 - [Governance Overview](./README.md)
@@ -179,7 +186,7 @@ Update this document when:
 - [Handbook Overview](../overview.md)
 - [Reading Paths](../reading-paths.md)
 - [Existing Documentation Map](../existing-documentation.md)
-- [Handbook Roadmap](../roadmap.md)
+- [Handbook Stewardship](../roadmap.md)
 - [Handbook Conventions](../conventions.md)
 - [Architecture](../architecture/README.md)
 - [ADRs](../adrs/README.md)
@@ -188,4 +195,3 @@ Update this document when:
 - [Templates](../templates/README.md)
 - [Owner Documentation](../owners/README.md)
 - [Reference](../reference/README.md)
-

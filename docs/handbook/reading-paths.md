@@ -1,6 +1,6 @@
 ---
 title: Reading Paths
-status: foundation
+status: active
 doc_type: navigation
 lifecycle: living
 owner: engineering
@@ -10,6 +10,7 @@ related:
   - ./README.md
   - ./overview.md
   - ./existing-documentation.md
+  - ./governance/AI_ENGINEERING_OPERATING_MODEL.md
   - ./governance/PROJECT_CONSTITUTION.md
   - ./governance/AI_EXECUTION_PROTOCOL.md
   - ./governance/REPOSITORY_REFRESH_PROTOCOL.md
@@ -38,12 +39,18 @@ This page defines curated paths for common readers. It references existing proje
 ## AI Session Startup Path
 
 1. [Project Constitution](./governance/PROJECT_CONSTITUTION.md)
-2. [AI Execution Protocol](./governance/AI_EXECUTION_PROTOCOL.md)
-3. [Repository Refresh Protocol](./governance/REPOSITORY_REFRESH_PROTOCOL.md)
-4. [Engineering System](./governance/ENGINEERING_SYSTEM.md)
-5. [Session Lifecycle](./process/SESSION_LIFECYCLE.md)
-6. [Existing Documentation Map](./existing-documentation.md)
-7. The relevant handbook section for the task.
+2. [AI Engineering Operating Model](./governance/AI_ENGINEERING_OPERATING_MODEL.md)
+3. [AI Execution Protocol](./governance/AI_EXECUTION_PROTOCOL.md)
+4. [Repository Refresh Protocol](./governance/REPOSITORY_REFRESH_PROTOCOL.md)
+5. [Engineering System](./governance/ENGINEERING_SYSTEM.md)
+6. [Session Lifecycle](./process/SESSION_LIFECYCLE.md)
+7. [Milestone Lifecycle](./process/MILESTONE_LIFECYCLE.md)
+8. [Current Milestone](./reference/CURRENT_MILESTONE.md)
+9. [Next Milestone](./reference/NEXT_MILESTONE.md)
+10. [Existing Documentation Map](./existing-documentation.md)
+11. The relevant handbook section for the task.
+
+This path starts with the canonical AI engineering operating contract before moving into supporting process and reference material.
 
 ## Architecture Review Path
 
@@ -59,30 +66,33 @@ This page defines curated paths for common readers. It references existing proje
 1. [MVP Scope](../MVP_SCOPE.md)
 2. [Milestone Lifecycle](./process/MILESTONE_LIFECYCLE.md)
 3. [Quality Gates](./process/QUALITY_GATES.md)
-4. [Feature Template](../execution/FEATURE_TEMPLATE.md)
-5. [Delivery Process](../execution/DELIVERY_PROCESS.md)
-6. Existing feature specs in [docs/features](../features/)
-7. [Testing Strategy](../execution/TESTING_STRATEGY.md)
+4. [Next Milestone](./reference/NEXT_MILESTONE.md)
+5. [Feature Template](../execution/FEATURE_TEMPLATE.md)
+6. [Delivery Process](../execution/DELIVERY_PROCESS.md)
+7. Existing feature specs in [docs/features](../features/)
+8. [Testing Strategy](../execution/TESTING_STRATEGY.md)
 
 ## Release And Operations Path
 
-1. [Definition of Done](./process/DEFINITION_OF_DONE.md)
-2. [Engineering Review Checklist](./process/ENGINEERING_REVIEW_CHECKLIST.md)
-3. [Release Process](../execution/RELEASE_PROCESS.md)
-4. [Testing Strategy](../execution/TESTING_STRATEGY.md)
-5. [Code Review Checklist](../execution/CODE_REVIEW_CHECKLIST.md)
-6. [Supabase README](../../infra/supabase/README.md)
-7. [Validation Seed Data](../../infra/supabase/seed/VALIDATION_SEED_DATA.md)
+1. [Quality Gates](./process/QUALITY_GATES.md)
+2. [Definition of Done](./process/DEFINITION_OF_DONE.md)
+3. [Engineering Review Checklist](./process/ENGINEERING_REVIEW_CHECKLIST.md)
+4. [Release Process](../execution/RELEASE_PROCESS.md)
+5. [Testing Strategy](../execution/TESTING_STRATEGY.md)
+6. [Code Review Checklist](../execution/CODE_REVIEW_CHECKLIST.md)
+7. [Supabase README](../../infra/supabase/README.md)
+8. [Validation Seed Data](../../infra/supabase/seed/VALIDATION_SEED_DATA.md)
 
 ## Documentation Contributor Path
 
 1. [Handbook Overview](./overview.md)
 2. [Handbook Conventions](./conventions.md)
 3. [Project Constitution](./governance/PROJECT_CONSTITUTION.md)
-4. [Governance Overview](./governance/README.md)
-5. [Templates](./templates/README.md)
-6. [ADR Guide](./adrs/ADR_GUIDE.md)
-7. [Handbook Roadmap](./roadmap.md)
+4. [AI Engineering Operating Model](./governance/AI_ENGINEERING_OPERATING_MODEL.md)
+5. [Governance Overview](./governance/README.md)
+6. [Templates](./templates/README.md)
+7. [ADR Guide](./adrs/ADR_GUIDE.md)
+8. [Handbook Stewardship](./roadmap.md)
 
 ## Living Or Historical
 
@@ -105,4 +115,4 @@ Update this page when:
 
 - [Engineering Handbook Index](./README.md)
 - [Existing Documentation Map](./existing-documentation.md)
-- [Handbook Roadmap](./roadmap.md)
+- [Handbook Stewardship](./roadmap.md)

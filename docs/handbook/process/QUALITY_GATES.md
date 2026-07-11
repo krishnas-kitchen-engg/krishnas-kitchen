@@ -11,6 +11,7 @@ related:
   - ./DEFINITION_OF_DONE.md
   - ./MILESTONE_LIFECYCLE.md
   - ./ENGINEERING_REVIEW_CHECKLIST.md
+  - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
   - ../governance/PROJECT_CONSTITUTION.md
   - ../governance/AI_EXECUTION_PROTOCOL.md
   - ../governance/REPOSITORY_REFRESH_PROTOCOL.md
@@ -20,6 +21,8 @@ related:
 # Quality Gates
 
 Quality gates define the progressive checks that every milestone must pass before it can be considered complete.
+
+The canonical operating loop and state machine live in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md). This document defines pass/fail gates used inside that model.
 
 ## Purpose
 
@@ -32,7 +35,9 @@ Pass when:
 - The objective is clear.
 - Constraints are recorded.
 - Out-of-scope areas are identified.
-- Human review requirements are known.
+- Exactly one candidate micro-milestone is identified when implementation work is appropriate.
+- The candidate is marked with Status: Candidate and Approval: Pending Human Approval until approved.
+- Human approval and review requirements are known.
 
 ## Gate 2: Repository Refresh Gate
 
@@ -66,6 +71,7 @@ Pass when:
 
 Pass when:
 
+- Human approval to implement the candidate milestone has been given.
 - The change is cohesive and scoped.
 - Existing patterns are followed.
 - Unrelated files are untouched.
@@ -120,8 +126,8 @@ Update this document when:
 - [Definition of Done](./DEFINITION_OF_DONE.md)
 - [Milestone Lifecycle](./MILESTONE_LIFECYCLE.md)
 - [Engineering Review Checklist](./ENGINEERING_REVIEW_CHECKLIST.md)
+- [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md)
 - [Project Constitution](../governance/PROJECT_CONSTITUTION.md)
 - [AI Execution Protocol](../governance/AI_EXECUTION_PROTOCOL.md)
 - [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md)
 - [Engineering System](../governance/ENGINEERING_SYSTEM.md)
-

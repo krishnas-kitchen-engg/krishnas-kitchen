@@ -1,6 +1,6 @@
 ---
 title: Operations
-status: foundation
+status: active
 doc_type: index
 lifecycle: living
 owner: engineering
@@ -14,11 +14,11 @@ related:
 
 # Operations
 
-This section will hold runbooks and operational guidance for environments, deployment support, validation, data safety, and incident response.
+This section navigates runbooks and operational guidance for environments, deployment support, validation, data safety, and incident response.
 
 ## Purpose
 
-Use this section to navigate operational documentation. It should eventually distinguish routine operations from emergency procedures.
+Use this section to find current operational source documents without duplicating them.
 
 ## Current Source Documents
 
@@ -27,15 +27,9 @@ Use this section to navigate operational documentation. It should eventually dis
 - [Release Process](../../execution/RELEASE_PROCESS.md)
 - [Testing Strategy](../../execution/TESTING_STRATEGY.md)
 
-## Planned Operations Areas
+## Candidate Operations Areas
 
-- Local development environment.
-- Supabase operations.
-- Staging validation.
-- Seed data and reset procedures.
-- Release support.
-- Rollback support.
-- Incident response.
+Create new runbooks only when actual operations require stable instructions that existing documents do not provide.
 
 ## Living Or Historical
 
@@ -59,4 +53,3 @@ Update this section when:
 - [Engineering Process](../process/README.md)
 - [Architecture](../architecture/README.md)
 - [Existing Documentation Map](../existing-documentation.md)
-

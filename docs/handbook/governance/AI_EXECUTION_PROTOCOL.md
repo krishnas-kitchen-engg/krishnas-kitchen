@@ -8,6 +8,7 @@ update_cadence: when AI-assisted engineering workflow changes
 last_reviewed: null
 related:
   - ./README.md
+  - ./AI_ENGINEERING_OPERATING_MODEL.md
   - ./PROJECT_CONSTITUTION.md
   - ./REPOSITORY_REFRESH_PROTOCOL.md
   - ./ENGINEERING_SYSTEM.md
@@ -28,13 +29,15 @@ related:
 
 # AI Execution Protocol
 
-This protocol governs AI-assisted engineering work in Krishna's Kitchen.
+This protocol defines AI-specific execution rules for Krishna's Kitchen.
 
-It applies to documentation, code, tests, migrations, operations, and review tasks. Current task constraints always matter; when a user says documentation-only, implementation must remain documentation-only.
+The canonical operating loop, state machine, scoring framework, approval boundaries, confidence thresholds, and escalation rules live in [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md).
+
+This document applies those rules to AI behavior. Current task constraints always matter; when a user says documentation-only, implementation must remain documentation-only.
 
 ## Purpose
 
-Use this document to keep AI sessions repository-first, bounded, verifiable, and aligned with the project constitution.
+Use this document to keep AI behavior repository-first, bounded, verifiable, and aligned with the operating model and project constitution.
 
 ## Repository-First Development
 
@@ -48,19 +51,17 @@ Required behavior:
 - Prefer local patterns over invented abstractions.
 - Preserve user work and unrelated changes.
 
-## Micro-Milestone Workflow
+## Operating Model
 
-AI-assisted work should be split into small milestones:
+Follow [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md) for:
 
-1. Understand the request and constraints.
-2. Scan the repository and documentation.
-3. Reconstruct the affected architecture.
-4. Identify the smallest safe change.
-5. Implement or document only that milestone.
-6. Verify the milestone.
-7. Report what changed, what was not changed, and remaining risks.
-
-Long tasks should produce progress updates at milestone boundaries.
+- The engineering operating loop.
+- AI and human responsibilities.
+- Candidate milestone selection.
+- Milestone scoring.
+- Human approval and commit approval boundaries.
+- State transitions.
+- Review, escalation, confidence, and failure recovery rules.
 
 ## Required Planning
 
@@ -72,6 +73,8 @@ Before implementation, an AI session must identify:
 - Tests or checks needed.
 - Security and data-integrity risks.
 - Whether human review is required before proceeding.
+- Whether the candidate milestone has been approved for implementation.
+- Why this candidate is the next highest-priority implementation milestone.
 
 For small documentation-only changes, the plan may be brief, but the repository scan still matters.
 
@@ -79,6 +82,7 @@ For small documentation-only changes, the plan may be brief, but the repository 
 
 Implementation must:
 
+- Begin only after the candidate milestone is approved.
 - Stay within the requested scope.
 - Respect explicit prohibitions on code, tests, migrations, file moves, deletion, or commits.
 - Avoid broad rewrites unless explicitly requested and reviewed.
@@ -131,6 +135,8 @@ Documentation changes must follow [Handbook Conventions](../conventions.md).
 
 AI must not commit unless explicitly asked.
 
+Implementation approval and commit approval are separate gates. Approval to implement a candidate milestone does not authorize a commit.
+
 Before committing, AI must:
 
 - Summarize intended changes.
@@ -142,15 +148,7 @@ When committing is approved, commit only the intended scope.
 
 ## Conditions Requiring Human Review
 
-Pause and request human review when:
-
-- Instructions conflict.
-- Documentation conflicts with implementation and the correct source is unclear.
-- The work changes a non-negotiable invariant from [Project Constitution](./PROJECT_CONSTITUTION.md).
-- A migration, destructive action, or data rewrite is required.
-- Security boundaries may change.
-- A new dependency, framework, or architecture pattern is proposed.
-- Tests reveal behavior that contradicts the requested change.
+Use the escalation rules in [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md). Pause and request human review whenever the operating model requires escalation.
 
 ## Prohibited Behaviors
 
@@ -160,6 +158,7 @@ AI must not:
 - Modify tests or migrations when prohibited.
 - Move or delete files without explicit instruction.
 - Commit without explicit approval.
+- Begin implementation before candidate milestone approval.
 - Rewrite canonical documentation without a migration plan.
 - Duplicate architecture or feature content instead of linking to it.
 - Hide failed checks.
@@ -186,6 +185,7 @@ Update this document when:
 ## Related Documents
 
 - [Project Constitution](./PROJECT_CONSTITUTION.md)
+- [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md)
 - [Repository Refresh Protocol](./REPOSITORY_REFRESH_PROTOCOL.md)
 - [Engineering System](./ENGINEERING_SYSTEM.md)
 - [Governance Overview](./README.md)
@@ -193,7 +193,7 @@ Update this document when:
 - [Handbook Overview](../overview.md)
 - [Reading Paths](../reading-paths.md)
 - [Existing Documentation Map](../existing-documentation.md)
-- [Handbook Roadmap](../roadmap.md)
+- [Handbook Stewardship](../roadmap.md)
 - [Handbook Conventions](../conventions.md)
 - [Architecture](../architecture/README.md)
 - [ADRs](../adrs/README.md)
@@ -202,4 +202,3 @@ Update this document when:
 - [Templates](../templates/README.md)
 - [Owner Documentation](../owners/README.md)
 - [Reference](../reference/README.md)
-

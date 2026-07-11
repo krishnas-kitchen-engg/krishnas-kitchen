@@ -1,6 +1,6 @@
 ---
 title: Templates
-status: foundation
+status: active
 doc_type: index
 lifecycle: living
 owner: engineering
@@ -31,13 +31,13 @@ Templates make recurring documentation consistent without forcing every document
 
 ## Purpose
 
-This section will hold templates for handbook pages, ADRs, owner pages, runbooks, and feature specifications.
+This section holds templates for repeatable documentation.
 
 ## Current Source Documents
 
 - [Feature Template](../../execution/FEATURE_TEMPLATE.md)
 
-## Planned Templates
+## Templates
 
 - [ADR Template](./ADR_TEMPLATE.md)
 - [Architecture Document Template](./ARCHITECTURE_DOCUMENT_TEMPLATE.md)

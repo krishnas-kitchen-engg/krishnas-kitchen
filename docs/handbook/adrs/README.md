@@ -1,6 +1,6 @@
 ---
 title: Architecture Decision Records
-status: foundation
+status: active
 doc_type: index
 lifecycle: living
 owner: engineering
@@ -30,7 +30,7 @@ ADRs capture important engineering decisions and the context behind them.
 
 ## Purpose
 
-This section will hold decision records for architectural choices that should remain understandable after the implementation changes.
+This section holds decision records for architectural choices that should remain understandable after implementation changes.
 
 Do not use ADRs to duplicate architecture docs. Use ADRs to explain why a decision was made, what alternatives were considered, and what consequences follow.
 
@@ -85,7 +85,7 @@ When a decision changes:
 2. Mark the old ADR as superseded.
 3. Link the old ADR to the new ADR.
 4. Link the new ADR to the old ADR.
-5. Update this index, relevant architecture documents, and related roadmap items.
+5. Update this index and relevant architecture or stewardship documents.
 
 ## Living Or Historical
 

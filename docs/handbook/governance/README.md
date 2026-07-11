@@ -1,6 +1,6 @@
 ---
 title: Governance Overview
-status: foundation
+status: active
 doc_type: overview
 lifecycle: living
 owner: engineering
@@ -10,6 +10,7 @@ related:
   - ../README.md
   - ../conventions.md
   - ../roadmap.md
+  - ./AI_ENGINEERING_OPERATING_MODEL.md
   - ./PROJECT_CONSTITUTION.md
   - ./AI_EXECUTION_PROTOCOL.md
   - ./REPOSITORY_REFRESH_PROTOCOL.md
@@ -22,23 +23,29 @@ Governance explains how handbook documents become trusted, stay current, and avo
 
 ## Purpose
 
-This section will define documentation ownership, review expectations, lifecycle labels, archival rules, and canonical source rules.
+Use this section to find governance documents and the canonical AI engineering operating contract.
 
-## Planned Contents
+## Governance Scope
 
-- Documentation ownership model.
-- Review cadence and stale document policy.
-- Canonical source policy.
-- Historical document policy.
-- Documentation change review checklist.
-- Cross-reference maintenance rules.
+- Mission, principles, and decision hierarchy.
+- AI engineering operating model.
+- AI-specific execution rules.
+- Repository refresh expectations.
+- Engineering system relationships.
 
 ## Governance Documents
 
+- [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md)
 - [Project Constitution](./PROJECT_CONSTITUTION.md)
 - [AI Execution Protocol](./AI_EXECUTION_PROTOCOL.md)
 - [Repository Refresh Protocol](./REPOSITORY_REFRESH_PROTOCOL.md)
 - [Engineering System](./ENGINEERING_SYSTEM.md)
+
+## Approval Flow
+
+[AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md) is the single operational contract for AI-assisted engineering sessions. It defines the operating loop, state machine, milestone scoring framework, AI responsibilities, human responsibilities, approval boundaries, review expectations, escalation rules, and failure recovery.
+
+Other governance documents support that operating model. They should not duplicate the operating loop.
 
 ## Living Or Historical
 
@@ -56,9 +63,11 @@ Update this section when:
 - Canonical source rules change.
 - Ownership expectations change.
 - Archival policy is introduced.
+- The operating model changes.
 
 ## Related Documents
 
 - [Handbook Conventions](../conventions.md)
-- [Handbook Roadmap](../roadmap.md)
+- [Handbook Stewardship](../roadmap.md)
 - [Existing Documentation Map](../existing-documentation.md)
+- [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md)

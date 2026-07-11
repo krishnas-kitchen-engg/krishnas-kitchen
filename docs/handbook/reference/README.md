@@ -1,6 +1,6 @@
 ---
 title: Reference
-status: foundation
+status: active
 doc_type: index
 lifecycle: living
 owner: engineering
@@ -21,6 +21,7 @@ related:
   - ./DOCUMENT_INDEX.md
   - ./DOCUMENTATION_DRIFT.md
   - ./HANDBOOK_HEALTH_REPORT.md
+  - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
   - ../../DATABASE_SCHEMA.md
   - ../../PERMISSIONS_MATRIX.md
   - ../../AUTH_ROLE_MIGRATION_NOTES.md
@@ -35,6 +36,10 @@ Reference documentation should provide concise, current facts that contributors 
 This section holds the living memory of the project: current state, active and next milestones, scorecard, technical debt, security status, limitations, open decisions, changelog summary, and architectural invariants.
 
 Use these documents before planning or implementing work. They describe current reality and must be updated as milestones change that reality.
+
+[Next Milestone](./NEXT_MILESTONE.md) records the highest-priority candidate implementation milestone. Candidate milestones are planning artifacts until a human explicitly approves implementation.
+
+[AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) defines how these living references are used during repository refresh, audit, candidate scoring, implementation, review, and commit readiness.
 
 ## Reading Order
 
@@ -82,7 +87,7 @@ For historical orientation:
 
 - Update [Current State](./CURRENT_STATE.md) after every implementation milestone or major documentation milestone.
 - Update [Current Milestone](./CURRENT_MILESTONE.md) when a milestone starts, pauses, completes, or changes scope.
-- Update [Next Milestone](./NEXT_MILESTONE.md) only when the next implementation milestone is approved.
+- Update [Next Milestone](./NEXT_MILESTONE.md) when the highest-priority candidate implementation milestone changes, is approved, is rejected, or is replaced.
 - Update [Project Scorecard](./PROJECT_SCORECARD.md) when project health evidence changes.
 - Update [Technical Debt](./TECH_DEBT.md) when debt is found, changed, resolved, or accepted.
 - Update [Security Status](./SECURITY_STATUS.md) after security-sensitive milestones or reviews.
@@ -101,14 +106,9 @@ For historical orientation:
 - [Auth Role Migration Notes](../../AUTH_ROLE_MIGRATION_NOTES.md)
 - [Project README environment variables](../../../README.md#environment-variables)
 
-## Planned Reference Areas
+## Candidate Reference Areas
 
-- Glossary and terminology.
-- Permission and role reference.
-- Database schema reference.
-- Environment variable reference.
-- Inventory transaction type reference.
-- Migration reference.
+Create new reference pages only when active work needs a concise current source that existing documentation cannot provide.
 
 ## Living Or Historical
 
@@ -130,4 +130,5 @@ Update this section when:
 
 - [Architecture](../architecture/README.md)
 - [ADR Index](../adrs/README.md)
+- [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md)
 - [Existing Documentation Map](../existing-documentation.md)

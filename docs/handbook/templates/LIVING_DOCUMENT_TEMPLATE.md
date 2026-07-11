@@ -20,7 +20,7 @@ Use this template for documents that must remain current as the system changes.
 
 ## When To Use
 
-Use for architecture, process, operations, ownership, reference, or roadmap documents that future contributors should rely on.
+Use for architecture, process, operations, ownership, reference, or stewardship documents that future contributors should rely on.
 
 ## Owner
 
@@ -39,7 +39,7 @@ Living documents stay current until superseded or archived.
 ```markdown
 ---
 title: <Title>
-status: draft | foundation | active | superseded | archived
+status: draft | active | stable | superseded | archived
 doc_type: <type>
 lifecycle: living
 owner: <owner>
@@ -85,4 +85,3 @@ related:
 - [Handbook Conventions](../conventions.md)
 - [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md)
 - [Existing Documentation Map](../existing-documentation.md)
-

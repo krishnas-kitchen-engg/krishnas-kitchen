@@ -1,6 +1,6 @@
 ---
 title: Existing Documentation Map
-status: foundation
+status: active
 doc_type: map
 lifecycle: living
 owner: engineering
@@ -14,11 +14,11 @@ related:
 
 # Existing Documentation Map
 
-This map distinguishes existing project documentation from the new handbook framework.
+This map points to existing project documentation that remains useful source material, reference material, or historical context.
 
 ## Purpose
 
-Use this page to find current authoritative source documents during the handbook migration period. This page should prevent duplicate documentation by pointing readers to existing sources.
+Use this page to find existing repository documents without duplicating their content in the handbook. For classification and canonical replacement information, use [Document Index](./reference/DOCUMENT_INDEX.md).
 
 ## Current Project Documentation
 
@@ -62,24 +62,23 @@ Infrastructure and operations:
 
 ## Living Or Historical
 
-This page is living documentation. The documents it references may be living, historical, or pending classification.
+This page is living documentation. The documents it references may be living, historical, reference, or archive candidates as classified in [Document Index](./reference/DOCUMENT_INDEX.md).
 
 ## Who Updates It
 
-Engineering updates this page during documentation creation, migration, classification, or retirement.
+Engineering updates this page when existing documentation entry points change.
 
 ## When To Update It
 
 Update this page when:
 
 - A new tracked project document is created.
-- A document is promoted into the handbook.
-- A document becomes historical or superseded.
+- A document is promoted into the handbook or superseded.
 - A canonical source changes.
 
 ## Related Documents
 
 - [Reading Paths](./reading-paths.md)
-- [Handbook Roadmap](./roadmap.md)
+- [Document Index](./reference/DOCUMENT_INDEX.md)
+- [Handbook Stewardship](./roadmap.md)
 - [Handbook Conventions](./conventions.md)
-

@@ -68,7 +68,7 @@ Proposed | Accepted | Rejected | Superseded
 
 ## Related Documents
 
-- <Architecture docs, process docs, roadmap items, feature specs, or prior ADRs>
+- <Architecture docs, process docs, stewardship items, feature specs, or prior ADRs>
 
 ## Supersession
 
@@ -90,7 +90,7 @@ Proposed | Accepted | Rejected | Superseded
 - The context explains why a decision was necessary.
 - Alternatives are real options, not straw choices.
 - Consequences include tradeoffs.
-- Related architecture and roadmap documents are linked.
+- Related architecture and stewardship documents are linked.
 - Supersession status is clear.
 
 ## Related Handbook Documents
@@ -100,4 +100,3 @@ Proposed | Accepted | Rejected | Superseded
 - [Architecture](../architecture/README.md)
 - [Quality Gates](../process/QUALITY_GATES.md)
 - [Engineering Review Checklist](../process/ENGINEERING_REVIEW_CHECKLIST.md)
-

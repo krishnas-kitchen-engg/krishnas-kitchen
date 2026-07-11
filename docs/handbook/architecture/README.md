@@ -1,6 +1,6 @@
 ---
 title: Architecture
-status: foundation
+status: active
 doc_type: index
 lifecycle: living
 owner: engineering
@@ -17,11 +17,11 @@ related:
 
 # Architecture
 
-This section will become the home for living architecture documentation.
+This section is the navigation point for architecture documentation.
 
 ## Purpose
 
-Use this section to navigate architecture topics without duplicating the existing architecture documents. Existing architecture docs remain the current source material until promoted or superseded.
+Use this section to navigate architecture topics without duplicating existing architecture documents. Existing architecture docs remain current source material until a focused milestone promotes or supersedes them.
 
 ## Current Source Documents
 
@@ -32,16 +32,9 @@ Use this section to navigate architecture topics without duplicating the existin
 - [Database Schema](../../DATABASE_SCHEMA.md)
 - [Supabase README](../../../infra/supabase/README.md)
 
-## Planned Architecture Areas
+## Candidate Architecture Areas
 
-- System overview.
-- Inventory architecture.
-- Authentication and authorization.
-- Permissions and role model.
-- Data model and schema.
-- Offline sync.
-- UI application boundaries.
-- Audit and observability.
+Create new architecture pages only when application work needs a living architecture source that existing documents cannot provide.
 
 ## Living Or Historical
 
@@ -65,4 +58,3 @@ Update this section when:
 - [ADR Index](../adrs/README.md)
 - [Existing Documentation Map](../existing-documentation.md)
 - [Handbook Conventions](../conventions.md)
-

@@ -12,6 +12,7 @@ related:
   - ./DOCUMENTATION_DRIFT.md
   - ./PROJECT_SCORECARD.md
   - ../README.md
+  - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
   - ../governance/README.md
   - ../process/README.md
   - ../templates/README.md
@@ -31,18 +32,18 @@ Scores use a 1-5 scale where 5 means strong and currently usable, 3 means usable
 
 | Area | Score | Evidence | Remaining Work |
 |---|---:|---|---|
-| Governance | 5 | Constitution, AI protocol, repository refresh protocol, and engineering system exist and are cross-linked. | Review after real implementation milestones prove the workflow. |
-| Process | 5 | Definition of Done, quality gates, milestone/session lifecycle, review checklist, and review template exist. | Classify older execution docs as historical/source material in practice. |
-| Architecture | 3 | Architecture landing page and ADRs exist, but living architecture pages are still mostly placeholders pointing to older docs. | Create current-state living architecture pages for inventory, auth/RLS, offline sync, UI boundaries, and RPC boundaries. |
-| Reference | 4 | Current state, milestones, scorecard, debt, security status, limitations, open decisions, changelog, invariants, drift, and index exist. | Add dedicated schema, permission, terminology, and migration references. |
-| Templates | 5 | Template library covers ADRs, architecture, features, living docs, reviews, RCA, security, tests, validation, release, roadmap, and debt. | Add owner-page and migration-note templates if needed. |
+| Governance | 5 | Constitution, AI Engineering Operating Model, AI protocol, repository refresh protocol, and engineering system exist and are cross-linked. | Keep the operating model as the single workflow contract. |
+| Process | 5 | Process docs now support the operating model instead of duplicating it. Definition of Done, quality gates, milestone/session lifecycle, review checklist, and review template exist. | Update only when real implementation milestones reveal a process gap. |
+| Architecture | 4 | Architecture landing page and ADRs exist and point to current source documents without duplicating them. | Create living architecture pages only when active application work requires them. |
+| Reference | 4 | Current state, milestones, scorecard, debt, security status, limitations, open decisions, changelog, invariants, drift, and index exist. | Add focused schema, permission, terminology, or migration references only when needed. |
+| Templates | 5 | Template library covers ADRs, architecture, features, living docs, reviews, RCA, security, tests, validation, release, future work, and debt. | Avoid adding templates without repeated need. |
 | ADRs | 4 | Ten initial ADRs capture implemented/documented decisions and are indexed with reading order. | Add ADRs only when new durable decisions are made; resolve terminology drift through ADR or reference updates. |
 | Living Docs | 4 | Living reference layer exists and records current state and known gaps. | Keep updated after every milestone; add latest verification baseline. |
-| Navigation | 4 | Handbook README, reading paths, section indexes, and reference README provide entry points. | Add bidirectional links from older docs only when migration begins. |
-| Cross-linking | 4 | Handbook pages link to governance, process, templates, ADRs, reference, and existing source docs. | Continue improving cross-links as living architecture docs are created. |
-| Consistency | 3 | Handbook conventions are consistent, but older docs contain known drift. | Resolve documented contradictions in `DOCUMENTATION_DRIFT.md`. |
-| Completeness | 4 | Governance/process/template/ADR/reference infrastructure is complete enough for use. | Missing living architecture pages and canonical schema/permission references. |
-| Maintainability | 4 | Front matter, owners, cadence, related docs, and lifecycle expectations exist. | Add automated documentation checks if the project later adopts docs tooling. |
+| Navigation | 5 | Handbook README and reading paths route future AI sessions through the operating model before supporting docs. | Maintain only when entry points change. |
+| Cross-linking | 5 | Handbook pages link to governance, operating model, process, templates, ADRs, reference, and existing source docs. | Repair stale links when found. |
+| Consistency | 4 | Handbook workflow is consolidated around the operating model; known project-document drift remains recorded. | Resolve documented contradictions in `DOCUMENTATION_DRIFT.md` through focused milestones. |
+| Completeness | 4 | Governance/process/template/ADR/reference infrastructure is complete enough for stable use. | Add living architecture or reference pages only when application work needs them. |
+| Maintainability | 5 | Front matter, owners, cadence, related docs, lifecycle expectations, stewardship policy, and operating model exist. | Keep future handbook changes narrow. |
 
 ## Audit Results
 
@@ -55,10 +56,9 @@ Scores use a 1-5 scale where 5 means strong and currently usable, 3 means usable
 
 ## Remaining Handbook Gaps
 
-- Living architecture pages are not yet fully built.
-- Older docs are classified but not physically migrated.
 - Documentation drift is recorded but unresolved.
-- Latest full verification result is not captured.
+- Latest full verification result is not captured in living docs.
+- Older docs remain in place by design and should be migrated only through focused milestones.
 
 ## Owner
 
@@ -77,6 +77,6 @@ This is living documentation.
 - [Document Index](./DOCUMENT_INDEX.md)
 - [Documentation Drift](./DOCUMENTATION_DRIFT.md)
 - [Project Scorecard](./PROJECT_SCORECARD.md)
+- [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md)
 - [Engineering Handbook](../README.md)
 - [Architecture](../architecture/README.md)
-

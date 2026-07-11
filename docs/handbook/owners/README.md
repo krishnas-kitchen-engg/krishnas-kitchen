@@ -1,6 +1,6 @@
 ---
 title: Owner Documentation
-status: foundation
+status: active
 doc_type: index
 lifecycle: living
 owner: engineering
@@ -18,17 +18,11 @@ Owner documentation explains who is responsible for a system, domain, workflow, 
 
 ## Purpose
 
-This section will help contributors find the right owner for architecture questions, operational procedures, backlog decisions, and documentation upkeep.
+Use this section to find or define ownership for architecture questions, operational procedures, backlog decisions, and documentation upkeep.
 
-## Planned Owner Areas
+## Candidate Owner Areas
 
-- Inventory domain.
-- Authentication and permissions.
-- Supabase schema and RLS.
-- Mobile inventory workflows.
-- Barcode and camera scanning.
-- Release and validation operations.
-- Documentation governance.
+Create owner pages only when lack of ownership creates review, escalation, or maintenance risk.
 
 ## Living Or Historical
 
@@ -52,4 +46,3 @@ Update this section when:
 - [Architecture](../architecture/README.md)
 - [Operations](../operations/README.md)
 - [Governance Overview](../governance/README.md)
-

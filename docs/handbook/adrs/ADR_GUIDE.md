@@ -22,7 +22,7 @@ This guide defines how Krishna's Kitchen records architecture decisions.
 
 ## Purpose
 
-Use this guide to decide when an ADR is required, how to number it, how to review it, and how ADRs relate to architecture, implementation, and roadmap documents.
+Use this guide to decide when an ADR is required, how to number it, how to review it, and how ADRs relate to architecture, implementation, and stewardship documents.
 
 ## When ADRs Are Required
 
@@ -54,7 +54,7 @@ When a decision changes:
 - Create a new ADR with the new decision.
 - Mark the old ADR as superseded.
 - Link both ADRs to each other.
-- Update affected architecture docs and roadmap items.
+- Update affected architecture or stewardship documents.
 
 ## ADR Numbering
 
@@ -75,7 +75,7 @@ Before acceptance:
 - Review alternatives and consequences.
 - Check the decision against [Project Constitution](../governance/PROJECT_CONSTITUTION.md).
 - Check applicable [Quality Gates](../process/QUALITY_GATES.md).
-- Link related architecture, roadmap, feature, and implementation documents.
+- Link related architecture, stewardship, feature, and implementation documents.
 - Get human review for security, database, migration, or authorization decisions.
 
 ## Relationship To Architecture Docs
@@ -92,7 +92,7 @@ Code comments should not replace ADRs. Use code comments for local implementatio
 
 ## Relationship To Roadmap
 
-Roadmap items may identify candidate ADRs. Accepted ADRs may create roadmap work when implementation, migration, documentation, or operational changes are needed.
+Stewardship or implementation work may identify candidate ADRs. Accepted ADRs may create follow-up work when implementation, migration, documentation, or operational changes are needed.
 
 Use [Roadmap Item Template](../templates/ROADMAP_ITEM_TEMPLATE.md) when a decision produces follow-up work.
 
@@ -111,15 +111,14 @@ Update this guide when:
 - ADR policy changes.
 - Numbering changes.
 - Review requirements change.
-- ADR relationships with architecture, implementation, or roadmap change.
+- ADR relationships with architecture, implementation, or stewardship change.
 
 ## Related Documents
 
 - [ADR Index](./README.md)
 - [ADR Template](../templates/ADR_TEMPLATE.md)
 - [Architecture](../architecture/README.md)
-- [Handbook Roadmap](../roadmap.md)
+- [Handbook Stewardship](../roadmap.md)
 - [Quality Gates](../process/QUALITY_GATES.md)
 - [Engineering Review Checklist](../process/ENGINEERING_REVIEW_CHECKLIST.md)
 - [Project Constitution](../governance/PROJECT_CONSTITUTION.md)
-

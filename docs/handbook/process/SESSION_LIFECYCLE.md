@@ -11,6 +11,7 @@ related:
   - ./MILESTONE_LIFECYCLE.md
   - ./DEFINITION_OF_DONE.md
   - ./QUALITY_GATES.md
+  - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
   - ../governance/AI_EXECUTION_PROTOCOL.md
   - ../governance/REPOSITORY_REFRESH_PROTOCOL.md
   - ../governance/ENGINEERING_SYSTEM.md
@@ -19,7 +20,7 @@ related:
 
 # Session Lifecycle
 
-This document defines how every AI-assisted or contributor engineering session begins, proceeds, and ends.
+This document summarizes session lifecycle expectations. The canonical state machine, operating loop, and approval boundaries live in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md).
 
 ## Purpose
 
@@ -32,59 +33,11 @@ Use this document to keep each session grounded in repository context and to ens
 - Check current repository status.
 - Identify prohibited actions.
 
-## Repository Reconstruction
+## Operating States
 
-- Read required governance documents.
-- Read relevant handbook sections.
-- Read existing source documents linked from the handbook.
-- Inspect affected code, tests, migrations, or operations files when the task allows.
-- Reconstruct the current state before making changes.
+Use the state machine in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) for session states, inputs, outputs, exit conditions, and failure conditions.
 
-Use [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md).
-
-## Planning
-
-- Define the smallest safe milestone.
-- Identify quality gates.
-- Identify verification commands.
-- Identify documentation updates.
-- Identify required human review.
-
-## Implementation
-
-- Work within the stated scope.
-- Preserve unrelated changes.
-- Follow existing repository patterns.
-- Avoid broad rewrites.
-- Keep progress aligned with the plan.
-
-## Verification
-
-- Run applicable checks.
-- Validate documentation links and front matter for docs work.
-- Run tests, lint, typecheck, and build when applicable.
-- Document checks that were not run.
-
-## Documentation
-
-- Update living documents when permitted and required.
-- Link rather than duplicate source material.
-- Identify documentation drift when it cannot be fixed in scope.
-
-## Review
-
-- Apply [Engineering Review Checklist](./ENGINEERING_REVIEW_CHECKLIST.md).
-- Confirm [Quality Gates](./QUALITY_GATES.md).
-- Confirm [Definition of Done](./DEFINITION_OF_DONE.md).
-- Request human review when required.
-
-## Completion
-
-- Summarize files changed.
-- Summarize validation.
-- Summarize risks and follow-up.
-- Confirm prohibited areas were not modified.
-- Do not commit unless explicitly approved.
+Use [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md) for refresh details, [Quality Gates](./QUALITY_GATES.md) for pass/fail gates, and [Definition of Done](./DEFINITION_OF_DONE.md) for completion criteria.
 
 ## Knowledge Externalization
 
@@ -92,7 +45,7 @@ Use [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md).
 - Update living docs when allowed.
 - Report unresolved drift.
 - Name assumptions and risks.
-- Recommend the next milestone.
+- Recommend exactly one next candidate milestone when appropriate.
 
 ## Living Or Historical
 
@@ -117,8 +70,8 @@ Update this document when:
 - [Quality Gates](./QUALITY_GATES.md)
 - [Definition of Done](./DEFINITION_OF_DONE.md)
 - [Engineering Review Checklist](./ENGINEERING_REVIEW_CHECKLIST.md)
+- [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md)
 - [Project Constitution](../governance/PROJECT_CONSTITUTION.md)
 - [AI Execution Protocol](../governance/AI_EXECUTION_PROTOCOL.md)
 - [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md)
 - [Engineering System](../governance/ENGINEERING_SYSTEM.md)
-

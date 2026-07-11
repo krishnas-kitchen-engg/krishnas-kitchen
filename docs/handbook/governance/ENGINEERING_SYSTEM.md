@@ -8,6 +8,7 @@ update_cadence: when engineering lifecycle, governance model, or knowledge syste
 last_reviewed: null
 related:
   - ./README.md
+  - ./AI_ENGINEERING_OPERATING_MODEL.md
   - ./PROJECT_CONSTITUTION.md
   - ./AI_EXECUTION_PROTOCOL.md
   - ./REPOSITORY_REFRESH_PROTOCOL.md
@@ -36,15 +37,7 @@ Use this document to understand how the repository's engineering knowledge fits 
 
 ## How Krishna's Kitchen Is Engineered
 
-Krishna's Kitchen is engineered through a repository-first loop:
-
-1. Understand the mission and constraints.
-2. Read the current source material.
-3. Reconstruct the architecture from docs, code, tests, and migrations.
-4. Make the smallest coherent change.
-5. Verify the change.
-6. Update or recommend updates to living knowledge.
-7. Preserve decisions through ADRs when they have lasting architectural impact.
+Krishna's Kitchen is engineered through the repository-first operating loop defined in [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md).
 
 ## Relationship Between Knowledge Sources
 
@@ -54,7 +47,7 @@ ADRs record durable decisions and their consequences.
 
 Architecture documentation explains the current intended design.
 
-The roadmap explains planned documentation evolution and, when promoted, engineering direction.
+Handbook stewardship explains when documentation changes are warranted.
 
 Code implements behavior.
 
@@ -68,20 +61,7 @@ When these sources disagree, use the decision hierarchy in [Project Constitution
 
 ## Milestone Lifecycle
 
-A milestone should move through:
-
-1. Problem clarification.
-2. Repository refresh.
-3. Scope boundary.
-4. Architecture and security review.
-5. Implementation plan.
-6. Focused implementation.
-7. Verification.
-8. Documentation update or gap report.
-9. Human review when required.
-10. Commit only after approval.
-
-Milestones should be small enough to review and reverse.
+Milestones follow the state machine and scoring framework in [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md). They should be small enough to review, verify, and reverse.
 
 ## Review Lifecycle
 
@@ -116,6 +96,7 @@ Use [Handbook Conventions](../conventions.md) for lifecycle labels and required 
 Governance is layered:
 
 - [Project Constitution](./PROJECT_CONSTITUTION.md) defines mission, principles, hierarchy, and invariants.
+- [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md) defines the canonical engineering operating loop.
 - [AI Execution Protocol](./AI_EXECUTION_PROTOCOL.md) governs AI-assisted work.
 - [Repository Refresh Protocol](./REPOSITORY_REFRESH_PROTOCOL.md) governs startup context and drift detection.
 - [Handbook Conventions](../conventions.md) govern documentation structure.
@@ -156,6 +137,7 @@ Update this document when:
 ## Related Documents
 
 - [Project Constitution](./PROJECT_CONSTITUTION.md)
+- [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md)
 - [AI Execution Protocol](./AI_EXECUTION_PROTOCOL.md)
 - [Repository Refresh Protocol](./REPOSITORY_REFRESH_PROTOCOL.md)
 - [Governance Overview](./README.md)
@@ -163,7 +145,7 @@ Update this document when:
 - [Handbook Overview](../overview.md)
 - [Reading Paths](../reading-paths.md)
 - [Existing Documentation Map](../existing-documentation.md)
-- [Handbook Roadmap](../roadmap.md)
+- [Handbook Stewardship](../roadmap.md)
 - [Handbook Conventions](../conventions.md)
 - [Architecture](../architecture/README.md)
 - [ADRs](../adrs/README.md)
@@ -172,4 +154,3 @@ Update this document when:
 - [Templates](../templates/README.md)
 - [Owner Documentation](../owners/README.md)
 - [Reference](../reference/README.md)
-

@@ -12,6 +12,7 @@ related:
   - ./PROJECT_SCORECARD.md
   - ./KNOWN_LIMITATIONS.md
   - ./OPEN_DECISIONS.md
+  - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
   - ../adrs/0001-immutable-inventory-ledger.md
   - ../adrs/0003-supabase-auth-and-rls-boundary.md
   - ../adrs/0005-mobile-first-offline-pwa.md
@@ -47,7 +48,7 @@ The project is not documented as production-ready.
 - Inventory architecture is documented around immutable transactions.
 - Supabase foundational schema and later additive migrations exist.
 - Inventory domain services, repository adapters, visibility, barcode, scan, receive, transfer, return, unknown barcode, and low-stock work are present in source and tests.
-- Engineering Handbook foundation, governance, process, template, and ADR layers exist in `docs/handbook`.
+- Engineering Handbook foundation, governance, operating model, process, template, and ADR layers exist in `docs/handbook`.
 
 ## Implemented Domains
 
@@ -100,7 +101,7 @@ This document does not assert the test suite currently passes; tests were not ru
 
 Existing project docs cover product vision, MVP scope, system architecture, inventory architecture, auth architecture, permissions, execution process, feature specs, Supabase notes, and validation seed data.
 
-The handbook now contains governance, process, templates, ADR framework, initial ADRs, living reference documents, document index, drift register, and health report.
+The handbook now contains governance, the canonical AI Engineering Operating Model, process, templates, ADR framework, initial ADRs, living reference documents, document index, drift register, and health report.
 
 ## Known Gaps
 
@@ -129,6 +130,7 @@ This is living documentation.
 - [Project Scorecard](./PROJECT_SCORECARD.md)
 - [Known Limitations](./KNOWN_LIMITATIONS.md)
 - [Open Decisions](./OPEN_DECISIONS.md)
+- [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md)
 - [Document Index](./DOCUMENT_INDEX.md)
 - [Documentation Drift](./DOCUMENTATION_DRIFT.md)
 - [Handbook Health Report](./HANDBOOK_HEALTH_REPORT.md)

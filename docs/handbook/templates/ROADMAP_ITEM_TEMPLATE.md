@@ -20,7 +20,7 @@ Use this template to describe planned work before it becomes a feature spec or i
 
 ## When To Use
 
-Use for roadmap items that need enough context to prioritize, sequence, or de-risk future work.
+Use only when a substantial future work item needs enough context to prioritize, sequence, or de-risk implementation.
 
 ## Owner
 
@@ -78,7 +78,6 @@ Roadmap items are living while planned and historical after completion, cancella
 
 ## Related Handbook Documents
 
-- [Handbook Roadmap](../roadmap.md)
+- [Handbook Stewardship](../roadmap.md)
 - [Milestone Lifecycle](../process/MILESTONE_LIFECYCLE.md)
 - [Feature Specification Template](./FEATURE_SPECIFICATION_TEMPLATE.md)
-

@@ -56,7 +56,7 @@ Engineering decisions should serve that mission by preserving trust in inventory
 Architecture must be:
 
 - Consistent with the current authoritative documentation listed in [Existing Documentation Map](../existing-documentation.md).
-- Incremental and compatible with the [Handbook Roadmap](../roadmap.md).
+- Incremental and compatible with [Handbook Stewardship](../roadmap.md).
 - Captured in living architecture pages or ADRs when decisions have lasting consequences.
 - Simple enough for future contributors to reconstruct from code, tests, and documentation.
 - Aligned with the operational constraints described in the current architecture and process documents.
@@ -156,7 +156,7 @@ Update this document when:
 - [Handbook Overview](../overview.md)
 - [Reading Paths](../reading-paths.md)
 - [Existing Documentation Map](../existing-documentation.md)
-- [Handbook Roadmap](../roadmap.md)
+- [Handbook Stewardship](../roadmap.md)
 - [Handbook Conventions](../conventions.md)
 - [Architecture](../architecture/README.md)
 - [ADRs](../adrs/README.md)
@@ -165,4 +165,3 @@ Update this document when:
 - [Templates](../templates/README.md)
 - [Owner Documentation](../owners/README.md)
 - [Reference](../reference/README.md)
-

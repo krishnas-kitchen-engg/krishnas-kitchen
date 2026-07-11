@@ -12,6 +12,7 @@ related:
   - ./CURRENT_STATE.md
   - ../adrs/README.md
   - ../architecture/README.md
+  - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
   - ../process/MILESTONE_LIFECYCLE.md
 ---
 
@@ -37,6 +38,9 @@ Add entries for completed milestones that change architecture, process, operatio
 | RLS and RPC security foundation | RLS helpers, authenticated read policies, and controlled volunteer RPC surfaces added through migrations | [Security Status](./SECURITY_STATUS.md) |
 | Engineering Handbook foundation | Handbook navigation, governance, process, templates, ADR framework, initial ADRs, and living reference layer established | [Engineering Handbook](../README.md) |
 | Engineering Handbook 1.0 finalization | Repository-owned Markdown classified, documentation drift recorded, health report created, and handbook marked stable/canonical | [Document Index](./DOCUMENT_INDEX.md); [Documentation Drift](./DOCUMENTATION_DRIFT.md); [Handbook Health Report](./HANDBOOK_HEALTH_REPORT.md) |
+| Candidate milestone approval workflow | Handbook process corrected so repository refresh leads to repository audit, exactly one candidate micro-milestone, human approval, implementation, verification, engineering review, living documentation update, commit approval, and commit | [Next Milestone](./NEXT_MILESTONE.md); [AI Execution Protocol](../governance/AI_EXECUTION_PROTOCOL.md); [Milestone Lifecycle](../process/MILESTONE_LIFECYCLE.md); [Reading Paths](../reading-paths.md) |
+| AI Engineering Operating Model | Created the canonical AI engineering operating contract, including state machine, milestone scoring framework, approval boundaries, confidence thresholds, escalation rules, failure recovery, and drift detection | [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md); [Reading Paths](../reading-paths.md); [Project Scorecard](./PROJECT_SCORECARD.md) |
+| Handbook freeze-readiness review | Simplified freeze-facing handbook pages, removed migration-era expansion language, corrected milestone scoring guidance, refreshed health/index references, and preserved the operating model as the single workflow contract | [Handbook Health Report](./HANDBOOK_HEALTH_REPORT.md); [Handbook Stewardship](../roadmap.md); [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) |
 
 ## Owner
 
@@ -54,5 +58,6 @@ This is living documentation.
 
 - [Current Milestone](./CURRENT_MILESTONE.md)
 - [Current State](./CURRENT_STATE.md)
+- [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md)
 - [ADR Index](../adrs/README.md)
 - [Milestone Lifecycle](../process/MILESTONE_LIFECYCLE.md)

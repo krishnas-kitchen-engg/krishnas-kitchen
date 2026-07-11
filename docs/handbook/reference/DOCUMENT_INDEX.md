@@ -42,7 +42,7 @@ Classifications are intentionally exact: each document has one classification.
 | `docs/PERMISSIONS_MATRIX.md` | Reference | Engineering | Active source material with drift | Future permission/role reference | When permissions change |
 | `docs/PRODUCT_VISION.md` | Reference | Product | Active source material | None | When product vision changes |
 | `docs/SYSTEM_ARCHITECTURE.md` | Reference | Engineering | Active source material with drift | Future living system architecture page | When system architecture changes |
-| `docs/execution/BACKLOG.md` | Archive Candidate | Engineering | Superseded by living milestone docs | `docs/handbook/reference/CURRENT_MILESTONE.md`; `docs/handbook/reference/NEXT_MILESTONE.md` | Reclassify during roadmap cleanup |
+| `docs/execution/BACKLOG.md` | Archive Candidate | Engineering | Superseded by living milestone docs | `docs/handbook/reference/CURRENT_MILESTONE.md`; `docs/handbook/reference/NEXT_MILESTONE.md` | Reclassify during backlog cleanup |
 | `docs/execution/CODE_REVIEW_CHECKLIST.md` | Historical | Engineering | Superseded source material | `docs/handbook/process/ENGINEERING_REVIEW_CHECKLIST.md` | Revisit during process migration |
 | `docs/execution/DEFINITION_OF_DONE.md` | Historical | Engineering | Superseded source material | `docs/handbook/process/DEFINITION_OF_DONE.md` | Revisit during process migration |
 | `docs/execution/DELIVERY_PROCESS.md` | Historical | Engineering | Superseded source material | `docs/handbook/process/MILESTONE_LIFECYCLE.md` | Revisit during process migration |
@@ -73,9 +73,10 @@ Classifications are intentionally exact: each document has one classification.
 | `docs/handbook/overview.md` | Canonical | Engineering | Active | None | When handbook scope changes |
 | `docs/handbook/reading-paths.md` | Canonical | Engineering | Active | None | When reading paths change |
 | `docs/handbook/existing-documentation.md` | Reference | Engineering | Active | `docs/handbook/reference/DOCUMENT_INDEX.md` for classification | When docs are migrated or superseded |
-| `docs/handbook/roadmap.md` | Living | Engineering | Active | None | When handbook migration roadmap changes |
-| `docs/handbook/conventions.md` | Canonical | Engineering | Active | None | When documentation conventions change |
+| `docs/handbook/roadmap.md` | Living | Engineering | Stable | None | When handbook stewardship policy changes |
+| `docs/handbook/conventions.md` | Canonical | Engineering | Stable | None | When documentation conventions change |
 | `docs/handbook/governance/README.md` | Canonical | Engineering | Active | None | When governance navigation changes |
+| `docs/handbook/governance/AI_ENGINEERING_OPERATING_MODEL.md` | Canonical | Engineering | Active | None | When AI engineering operating model changes |
 | `docs/handbook/governance/PROJECT_CONSTITUTION.md` | Canonical | Engineering | Active | None | When mission, hierarchy, or invariants change |
 | `docs/handbook/governance/AI_EXECUTION_PROTOCOL.md` | Canonical | Engineering | Active | None | When AI workflow changes |
 | `docs/handbook/governance/REPOSITORY_REFRESH_PROTOCOL.md` | Canonical | Engineering | Active | None | When repository refresh expectations change |
@@ -112,13 +113,13 @@ Classifications are intentionally exact: each document has one classification.
 | `docs/handbook/adrs/0008-domain-driven-package-organization.md` | Historical | Engineering | Accepted ADR | None | Update only supersession metadata |
 | `docs/handbook/adrs/0009-auditability-and-reversibility.md` | Historical | Engineering | Accepted ADR | None | Update only supersession metadata |
 | `docs/handbook/adrs/0010-security-review-before-commit.md` | Historical | Engineering | Accepted ADR | None | Update only supersession metadata |
-| `docs/handbook/architecture/README.md` | Canonical | Engineering | Landing page | Future living architecture pages | When architecture navigation changes |
-| `docs/handbook/operations/README.md` | Canonical | Engineering/Operations | Landing page | Future operations runbooks | When operations navigation changes |
-| `docs/handbook/owners/README.md` | Canonical | Engineering | Landing page | Future owner pages | When ownership navigation changes |
+| `docs/handbook/architecture/README.md` | Canonical | Engineering | Active | None | When architecture navigation changes |
+| `docs/handbook/operations/README.md` | Canonical | Engineering/Operations | Active | None | When operations navigation changes |
+| `docs/handbook/owners/README.md` | Canonical | Engineering | Active | None | When ownership navigation changes |
 | `docs/handbook/reference/README.md` | Reference | Engineering | Active | None | When reference navigation changes |
 | `docs/handbook/reference/CURRENT_STATE.md` | Living | Engineering | Active | None | After every implementation or major documentation milestone |
 | `docs/handbook/reference/CURRENT_MILESTONE.md` | Living | Engineering | Active | None | At milestone start, pause, completion, or scope change |
-| `docs/handbook/reference/NEXT_MILESTONE.md` | Living | Engineering | Active | None | When next approved milestone changes |
+| `docs/handbook/reference/NEXT_MILESTONE.md` | Living | Engineering | Active | None | When candidate milestone changes, is approved, is rejected, or is replaced |
 | `docs/handbook/reference/PROJECT_SCORECARD.md` | Living | Engineering | Active | None | After scorecard-impacting changes |
 | `docs/handbook/reference/TECH_DEBT.md` | Living | Engineering | Active | None | When debt changes |
 | `docs/handbook/reference/SECURITY_STATUS.md` | Living | Engineering | Active | None | After security-sensitive milestones or review |

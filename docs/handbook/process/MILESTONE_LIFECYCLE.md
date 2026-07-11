@@ -12,6 +12,7 @@ related:
   - ./DEFINITION_OF_DONE.md
   - ./POST_IMPLEMENTATION_REVIEW.md
   - ./ENGINEERING_REVIEW_CHECKLIST.md
+  - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
   - ../governance/PROJECT_CONSTITUTION.md
   - ../governance/AI_EXECUTION_PROTOCOL.md
   - ../governance/REPOSITORY_REFRESH_PROTOCOL.md
@@ -20,93 +21,28 @@ related:
 
 # Milestone Lifecycle
 
-This document defines the standard lifecycle for executing an engineering milestone.
+This document summarizes the milestone lifecycle. The canonical operating loop, state machine, scoring framework, and approval boundaries live in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md).
 
 ## Purpose
 
 Use this document to plan and run implementation work from initial request through completion and next-step planning.
 
-## 1. Planning
+## Lifecycle Summary
 
-- Clarify the objective.
-- Identify constraints and prohibited actions.
-- Define success criteria.
-- Identify required human review.
-- Identify expected outputs.
+Use the state machine in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md):
 
-## 2. Repository Refresh
+1. Repository refresh.
+2. Repository audit.
+3. Candidate micro-milestone proposal.
+4. Human approval.
+5. Implementation.
+6. Verification.
+7. Engineering review.
+8. Living documentation update.
+9. Commit approval.
+10. Commit.
 
-- Check repository status.
-- Read relevant handbook and existing documentation.
-- Inspect affected files and tests.
-- Identify current implementation patterns.
-- Note drift, dirty worktree risk, and unknowns.
-
-Use [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md).
-
-## 3. Architecture Reconstruction
-
-- Reconstruct affected architecture from documentation, code, tests, and migrations.
-- Identify domain boundaries, persistence boundaries, and security boundaries.
-- Check relevant ADRs and candidate ADR needs.
-- Confirm the milestone does not introduce hidden architecture changes.
-
-## 4. Implementation
-
-- Make the smallest coherent change.
-- Follow existing patterns.
-- Keep unrelated changes out.
-- Preserve user work.
-- Update docs alongside behavior when allowed.
-
-For AI-assisted work, use [AI Execution Protocol](../governance/AI_EXECUTION_PROTOCOL.md).
-
-## 5. Testing
-
-- Run the checks required by scope and risk.
-- Add or update tests when behavior changes.
-- Use manual validation when automated tests are insufficient.
-- Document any check that cannot be run.
-
-## 6. Review
-
-- Use [Engineering Review Checklist](./ENGINEERING_REVIEW_CHECKLIST.md).
-- Validate architecture, security, tests, documentation, maintainability, and operational risk.
-- Request human review when required by governance or risk.
-
-## 7. Documentation
-
-- Update living documents affected by the milestone.
-- Link to existing sources instead of duplicating them.
-- Recommend ADRs for durable decisions.
-- Record unresolved drift and follow-up work.
-
-## 8. Commit
-
-- Confirm [Definition of Done](./DEFINITION_OF_DONE.md).
-- Confirm commit approval.
-- Stage only intended files.
-- Commit with a focused message.
-- Do not include unrelated dirty worktree changes.
-
-## 9. Validation
-
-- Reconfirm final repository state.
-- Verify outputs match the milestone objective.
-- Summarize checks and manual validation.
-- Identify residual risks.
-
-## 10. Retrospective
-
-- Capture lessons learned.
-- Identify process, docs, tests, or architecture gaps.
-- Convert durable lessons into living documentation when appropriate.
-
-## 11. Next Milestone Planning
-
-- Identify the next smallest valuable milestone.
-- List prerequisites and review gates.
-- Keep future work separate from the completed milestone.
+Use [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md) for refresh details, [Quality Gates](./QUALITY_GATES.md) for pass/fail gates, [Engineering Review Checklist](./ENGINEERING_REVIEW_CHECKLIST.md) for review detail, and [Definition of Done](./DEFINITION_OF_DONE.md) for commit readiness.
 
 ## Living Or Historical
 
@@ -132,8 +68,8 @@ Update this document when:
 - [Session Lifecycle](./SESSION_LIFECYCLE.md)
 - [Post-Implementation Review](./POST_IMPLEMENTATION_REVIEW.md)
 - [Engineering Review Checklist](./ENGINEERING_REVIEW_CHECKLIST.md)
+- [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md)
 - [Project Constitution](../governance/PROJECT_CONSTITUTION.md)
 - [AI Execution Protocol](../governance/AI_EXECUTION_PROTOCOL.md)
 - [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md)
 - [Engineering System](../governance/ENGINEERING_SYSTEM.md)
-

@@ -1,87 +1,75 @@
 ---
-title: Handbook Roadmap
-status: foundation
+title: Handbook Stewardship
+status: stable
 doc_type: roadmap
 lifecycle: living
 owner: engineering
-update_cadence: at the start or end of each documentation migration phase
+update_cadence: when a genuine handbook governance, process, reference, or architecture gap is discovered
 last_reviewed: null
 related:
   - ./README.md
   - ./existing-documentation.md
   - ./governance/README.md
   - ./governance/PROJECT_CONSTITUTION.md
+  - ./governance/AI_ENGINEERING_OPERATING_MODEL.md
   - ./governance/AI_EXECUTION_PROTOCOL.md
   - ./governance/REPOSITORY_REFRESH_PROTOCOL.md
   - ./governance/ENGINEERING_SYSTEM.md
 ---
 
-# Handbook Roadmap
+# Handbook Stewardship
 
-This roadmap tracks how the Engineering Handbook should mature from a framework into the primary knowledge system.
+The Engineering Handbook is stable. Future work should primarily extend application functionality, not expand handbook infrastructure.
 
 ## Purpose
 
-Use this page to plan documentation migration without moving, rewriting, or duplicating existing documents prematurely.
+Use this page to decide whether a proposed handbook change is necessary. Do not use it as a standing roadmap for handbook expansion.
 
-## Phase 1: Foundation
+## Stewardship Rules
 
-- Create handbook structure and navigation.
-- Define document lifecycle conventions.
-- Establish engineering governance documents.
-- Map existing documentation.
-- Establish section landing pages.
-- Identify candidate ADRs and living documents.
+- Add handbook infrastructure only when a real governance, process, reference, architecture, ownership, or operations gap blocks engineering work.
+- Prefer updating the smallest existing living document.
+- Link existing project documentation instead of migrating it by default.
+- Preserve historical source documents unless an explicit cleanup milestone is approved.
+- Record unresolved contradictions in [Documentation Drift](./reference/DOCUMENTATION_DRIFT.md).
 
-## Phase 2: Classification
+## Accepted Future Work
 
-- Classify existing documents as living, historical, reference, process, feature, migration, or roadmap.
-- Mark current canonical sources.
-- Identify contradictions and unresolved terminology.
-- Add ownership and review expectations to migrated documents.
+Future handbook work is appropriate when it:
 
-## Phase 3: Canonicalization
+- Resolves documented drift.
+- Captures a new durable decision in an ADR.
+- Updates living state after implementation.
+- Adds an operations runbook required by actual operations.
+- Clarifies ownership for an active engineering area.
+- Repairs broken navigation or stale cross-references.
 
-- Promote selected architecture documents into handbook architecture.
-- Create ADRs for settled decisions.
-- Convert stable process docs into handbook process pages.
-- Create operations runbooks from infrastructure and validation notes.
+## Deferred Work
 
-## Phase 4: Consolidation
-
-- Consolidate duplicate feature and workflow documents.
-- Add cross-links between related architecture, ADR, feature, and process docs.
-- Identify superseded documents without deleting them until the team agrees on archival rules.
-
-## Phase 5: Stewardship
-
-- Add periodic documentation review.
-- Track stale documents.
-- Maintain owner pages for domains and operational systems.
-- Keep reading paths current as the handbook exceeds 100 documents.
+Do not create new handbook sections, templates, or process layers unless a concrete need appears during application work.
 
 ## Living Or Historical
 
-This is living documentation. It should describe the current migration plan.
+This is living documentation. It should keep handbook stewardship narrow and practical.
 
 ## Who Updates It
 
-Engineering updates this roadmap. Area owners should update or request updates when their documentation migration phase changes.
+Engineering updates this page. Area owners should request updates only when handbook stewardship affects active work.
 
 ## When To Update It
 
 Update this page when:
 
-- A migration phase starts or completes.
-- New risks or blockers are discovered.
-- A major document becomes canonical.
-- Documentation ownership changes.
+- A real handbook gap blocks or risks engineering work.
+- A handbook expansion proposal is accepted or rejected.
+- The project changes how it stewards documentation.
 
 ## Related Documents
 
 - [Engineering Handbook Index](./README.md)
 - [Existing Documentation Map](./existing-documentation.md)
 - [Governance Overview](./governance/README.md)
+- [AI Engineering Operating Model](./governance/AI_ENGINEERING_OPERATING_MODEL.md)
 - [Project Constitution](./governance/PROJECT_CONSTITUTION.md)
 - [AI Execution Protocol](./governance/AI_EXECUTION_PROTOCOL.md)
 - [Repository Refresh Protocol](./governance/REPOSITORY_REFRESH_PROTOCOL.md)

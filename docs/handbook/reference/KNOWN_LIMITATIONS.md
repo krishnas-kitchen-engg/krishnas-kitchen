@@ -45,7 +45,7 @@ Engineering owns this document.
 
 ## Update Cadence
 
-Update when limitations are discovered, resolved, or reclassified as technical debt or roadmap work.
+Update when limitations are discovered, resolved, or reclassified as technical debt or approved future work.
 
 ## Lifecycle
 
@@ -59,4 +59,3 @@ This is living documentation.
 - [ADR-0004: Temporary Volunteer Session Model](../adrs/0004-temporary-volunteer-session-model.md)
 - [ADR-0005: Mobile-First Offline PWA](../adrs/0005-mobile-first-offline-pwa.md)
 - [ADR-0009: Auditability And Reversibility](../adrs/0009-auditability-and-reversibility.md)
-
