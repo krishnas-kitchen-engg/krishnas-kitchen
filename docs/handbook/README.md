@@ -16,6 +16,7 @@ related:
   - ./reference/DOCUMENTATION_DRIFT.md
   - ./reference/HANDBOOK_HEALTH_REPORT.md
   - ./governance/AI_ENGINEERING_OPERATING_MODEL.md
+  - ./governance/ENGINEERING_PRINCIPLES.md
   - ./governance/PROJECT_CONSTITUTION.md
   - ./governance/AI_EXECUTION_PROTOCOL.md
   - ./governance/REPOSITORY_REFRESH_PROTOCOL.md
@@ -24,15 +25,15 @@ related:
 
 # Krishna's Kitchen Engineering Handbook
 
-Engineering Handbook Version: 1.0
+Engineering Handbook Version: 1.2
 
 Status: Stable
 
-This handbook is the canonical engineering system for Krishna's Kitchen.
+This handbook is the canonical engineering system for Krishna's Kitchen. The Engineering Operating System is Stable as of v1.2.
 
 Existing project documentation remains valuable source material, reference material, or historical context, but future engineering work should begin from the handbook. When older documentation conflicts with the handbook, use the decision hierarchy in [Project Constitution](./governance/PROJECT_CONSTITUTION.md) and record unresolved drift in [Documentation Drift](./reference/DOCUMENTATION_DRIFT.md).
 
-Future work should primarily extend application functionality rather than expanding handbook infrastructure unless a genuine governance, process, reference, or architecture gap is discovered.
+Future work should primarily extend application functionality rather than expanding handbook infrastructure. Future EOS changes require implementation-driven justification, such as a real governance, process, reference, or architecture gap discovered during application work.
 
 ## Purpose
 
@@ -49,6 +50,7 @@ Start here:
 - [Handbook Overview](./overview.md)
 - [Reading Paths](./reading-paths.md)
 - [Project Constitution](./governance/PROJECT_CONSTITUTION.md)
+- [Engineering Principles](./governance/ENGINEERING_PRINCIPLES.md)
 - [AI Engineering Operating Model](./governance/AI_ENGINEERING_OPERATING_MODEL.md)
 - [Engineering System](./governance/ENGINEERING_SYSTEM.md)
 - [Existing Documentation Map](./existing-documentation.md)
@@ -61,6 +63,7 @@ Start here:
 Governance:
 
 - [AI Engineering Operating Model](./governance/AI_ENGINEERING_OPERATING_MODEL.md)
+- [Engineering Principles](./governance/ENGINEERING_PRINCIPLES.md)
 - [Project Constitution](./governance/PROJECT_CONSTITUTION.md)
 - [AI Execution Protocol](./governance/AI_EXECUTION_PROTOCOL.md)
 - [Repository Refresh Protocol](./governance/REPOSITORY_REFRESH_PROTOCOL.md)
@@ -95,7 +98,7 @@ Reusable documentation standards:
 
 ## Lifecycle
 
-This is a living index for the stable 1.0 handbook. Update it whenever handbook sections, navigation paths, or canonical documentation locations change.
+This is a living index for the stable v1.2 handbook. Update it whenever handbook sections, navigation paths, or canonical documentation locations change.
 
 ## Update Ownership
 

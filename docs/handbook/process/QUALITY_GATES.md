@@ -35,8 +35,9 @@ Pass when:
 - The objective is clear.
 - Constraints are recorded.
 - Out-of-scope areas are identified.
-- Exactly one candidate micro-milestone is identified when implementation work is appropriate.
-- The candidate is marked with Status: Candidate and Approval: Pending Human Approval until approved.
+- Top three candidate micro-milestones are identified when implementation work is appropriate.
+- One candidate is recommended with confidence, assumptions, uncertainties, and alternative rationale.
+- Candidate options remain pending human approval until one is approved.
 - Human approval and review requirements are known.
 
 ## Gate 2: Repository Refresh Gate

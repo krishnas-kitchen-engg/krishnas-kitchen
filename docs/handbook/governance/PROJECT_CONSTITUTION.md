@@ -8,6 +8,7 @@ update_cadence: when mission, invariants, or decision hierarchy changes
 last_reviewed: null
 related:
   - ./README.md
+  - ./ENGINEERING_PRINCIPLES.md
   - ./ENGINEERING_SYSTEM.md
   - ./AI_EXECUTION_PROTOCOL.md
   - ./REPOSITORY_REFRESH_PROTOCOL.md
@@ -43,6 +44,8 @@ Krishna's Kitchen exists to make temple kitchen operations more reliable, audita
 Engineering decisions should serve that mission by preserving trust in inventory, reducing volunteer friction, and keeping the system understandable over time.
 
 ## Engineering Philosophy
+
+Use [Engineering Principles](./ENGINEERING_PRINCIPLES.md) for the concise, enduring philosophy. This constitution preserves the mission, decision hierarchy, and non-negotiable commitments.
 
 - Build operational infrastructure, not novelty for its own sake.
 - Prefer explicit, reviewable, typed, and testable designs.
@@ -149,6 +152,7 @@ Update this document when:
 ## Related Documents
 
 - [Governance Overview](./README.md)
+- [Engineering Principles](./ENGINEERING_PRINCIPLES.md)
 - [Engineering System](./ENGINEERING_SYSTEM.md)
 - [AI Execution Protocol](./AI_EXECUTION_PROTOCOL.md)
 - [Repository Refresh Protocol](./REPOSITORY_REFRESH_PROTOCOL.md)

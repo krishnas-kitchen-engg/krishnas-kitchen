@@ -145,7 +145,7 @@ Externalize knowledge by:
 - Identify whether the task is documentation-only, code, tests, migrations, operations, or review.
 - Read the required handbook and project docs.
 - Identify affected files and owners.
-- Identify exactly one candidate micro-milestone when implementation work is appropriate.
+- Identify top three candidate micro-milestones and one recommendation when implementation work is appropriate.
 - Identify verification requirements.
 - Identify human review gates.
 

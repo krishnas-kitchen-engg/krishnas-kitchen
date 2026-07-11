@@ -9,6 +9,9 @@ last_reviewed: null
 related:
   - ./README.md
   - ./CURRENT_STATE.md
+  - ./PROJECT_MEMORY.md
+  - ./IMPLEMENTATION_PATTERNS.md
+  - ./COMMON_FAILURES.md
   - ./SECURITY_STATUS.md
   - ./TECH_DEBT.md
   - ./KNOWN_LIMITATIONS.md
@@ -28,20 +31,26 @@ This document tracks measurable health indicators for Krishna's Kitchen.
 
 ## Current Guidance
 
-Use status, evidence, confidence, and next improvement to make project health visible without inventing precision.
+Track only health indicators that help choose, review, or de-risk engineering work. Prefer qualitative status when objective measurements are unavailable.
 
-| Area | Current Status | Evidence | Confidence | Next Improvement |
-|---|---|---|---|---|
-| Architecture | Established foundation with gaps | Architecture docs and ADRs exist for inventory, auth/RLS, PWA, repositories, RPCs, package organization | Medium | Create living architecture pages for current-state areas |
-| Security | Implemented foundations, review needed | RLS enabled, helper functions, authenticated read policies, volunteer RPCs, security ADRs | Medium | Consolidate security/RLS architecture and resolve permission drift |
-| Testing | Broad automated coverage exists | Vitest scripts and many domain, repository, migration, auth, and UI tests exist | Medium | Run full suite and record latest verification result |
-| Documentation | Freeze-ready handbook with canonical operating model | Governance, AI Engineering Operating Model, simplified section indexes, process, templates, ADRs, reference layer, document index, drift register, and health report exist | High | Resolve documented drift only through focused milestones |
-| Performance | Requirements documented, status not measured | Performance goals exist in system architecture | Low | Add measured performance validation for critical workflows |
-| Offline | Architecture requirement exists, implementation incomplete | PWA/offline docs exist; offline queue remains a documented gap | Medium | Create living offline sync architecture and implementation plan |
-| Accessibility | Review requirement exists, status not measured | Process checklist includes accessibility | Low | Add accessibility validation expectations to relevant runbooks |
-| Technical Debt | Initial register created | `TECH_DEBT.md` exists | Medium | Prioritize and assign debt items |
-| Maintainability | Strong structural patterns | Domain/features/shared/package boundaries, repository pattern, ADRs | Medium | Add owner docs for major areas |
-| Developer Experience | Handbook operating model and scripts exist | pnpm scripts, AI Engineering Operating Model, process docs, templates, reading paths | High | Add current verification baseline and onboarding runbook |
+| Area | Health | Evidence | Next Improvement |
+|---|---|---|---|
+| Architecture Health | Good with known gaps | ADRs and architecture references establish inventory ledger, auth/RLS boundary, PWA direction, repositories, RPC boundaries, and package organization | Create focused living architecture pages only when implementation work needs them |
+| Security Health | Watch | RLS, helper functions, authenticated read policies, volunteer RPCs, and security ADRs exist; temporary volunteer permissions still have documented drift | Resolve temporary volunteer permission drift before expanding volunteer capability |
+| Testing Health | Watch | Vitest coverage exists across domain, repository, migration, auth, UI, and utilities; latest full-suite result is not recorded in living docs | Run and record verification during the next implementation milestone |
+| Documentation Health | Good | Handbook contains canonical operating model, governance, process, templates, ADRs, living references, document index, drift register, and memory pages | Freeze EOS changes unless implementation reveals a real gap |
+| Technical Debt Trend | Watch | [Technical Debt](./TECH_DEBT.md), [Documentation Drift](./DOCUMENTATION_DRIFT.md), and [Common Failures and Engineering Lessons](./COMMON_FAILURES.md) identify known issues | Address debt through approved micro-milestones instead of broad cleanup |
+| Roadmap Progress | Conditional | [Next Milestone](./NEXT_MILESTONE.md) ranks three candidates and recommends auth/routing diagnostic resolution | Human approval is required before implementation |
+| Build Stability | Unknown | This documentation-only milestone did not run app typecheck, lint, tests, or build | Re-run full verification after the next implementation milestone |
+
+## EOS Freeze Status
+
+| Indicator | Status | Evidence |
+|---|---|---|
+| EOS Version | v1.2 | [Engineering Handbook](../README.md) |
+| EOS Status | Stable | [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) |
+| Handbook Maturity Score | 92/100 | Final EOS v1.2 freeze review |
+| Future EOS Changes | Implementation-driven only | Future changes require a real deficiency discovered during application work |
 
 ## Owner
 
@@ -58,6 +67,9 @@ This is living documentation.
 ## Related Documents
 
 - [Current State](./CURRENT_STATE.md)
+- [Project Memory](./PROJECT_MEMORY.md)
+- [Implementation Patterns](./IMPLEMENTATION_PATTERNS.md)
+- [Common Failures and Engineering Lessons](./COMMON_FAILURES.md)
 - [Security Status](./SECURITY_STATUS.md)
 - [Technical Debt](./TECH_DEBT.md)
 - [Known Limitations](./KNOWN_LIMITATIONS.md)

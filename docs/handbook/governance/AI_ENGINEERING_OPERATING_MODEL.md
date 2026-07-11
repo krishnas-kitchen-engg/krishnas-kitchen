@@ -1,6 +1,6 @@
 ---
 title: AI Engineering Operating Model
-status: active
+status: stable
 doc_type: governance
 lifecycle: living
 owner: engineering
@@ -8,6 +8,7 @@ update_cadence: when the canonical engineering workflow, approval boundaries, st
 last_reviewed: null
 related:
   - ./README.md
+  - ./ENGINEERING_PRINCIPLES.md
   - ./PROJECT_CONSTITUTION.md
   - ./AI_EXECUTION_PROTOCOL.md
   - ./REPOSITORY_REFRESH_PROTOCOL.md
@@ -20,11 +21,14 @@ related:
   - ../reference/CURRENT_MILESTONE.md
   - ../reference/NEXT_MILESTONE.md
   - ../reference/PROJECT_SCORECARD.md
+  - ../reference/PROJECT_MEMORY.md
+  - ../reference/IMPLEMENTATION_PATTERNS.md
+  - ../reference/COMMON_FAILURES.md
 ---
 
 # AI Engineering Operating Model
 
-This document is the canonical operational contract for every future AI-assisted engineering session in Krishna's Kitchen.
+This document is the canonical operational contract for every future AI-assisted engineering session in Krishna's Kitchen. The Engineering Operating System is Stable as of v1.2.
 
 ## Purpose
 
@@ -53,8 +57,9 @@ AI is responsible for:
 
 - Reconstructing repository state from current files, documentation, tests, migrations, and git status.
 - Auditing partially completed work, dirty worktree risk, documentation drift, relevant technical debt, and known limitations.
-- Selecting exactly one candidate micro-milestone.
-- Explaining why that candidate is next using the scoring framework in this document.
+- Presenting the top three candidate micro-milestones.
+- Recommending exactly one candidate for approval.
+- Explaining why the recommendation is next using the scoring framework in this document.
 - Waiting for human approval before implementation.
 - Implementing only the approved milestone.
 - Running applicable verification.
@@ -98,19 +103,25 @@ Approval to inspect, plan, or propose does not authorize implementation. Approva
 
 ## Candidate Milestone Selection
 
-After repository refresh and audit, propose exactly one candidate micro-milestone.
+After repository refresh and audit, present the top three candidate micro-milestones and recommend exactly one for approval.
 
-The candidate must be:
+Each candidate must be:
 
-- The highest-priority next implementation step supported by repository evidence.
 - Small enough for one engineering session.
 - Independently verifiable.
 - Independently reversible.
 - Consistent with accepted ADRs and architectural invariants.
 - Explicitly scored using the milestone scoring framework.
-- Recorded in [Next Milestone](../reference/NEXT_MILESTONE.md) with Status: Candidate and Approval: Pending Human Approval when living documentation updates are in scope.
+- Recorded in [Next Milestone](../reference/NEXT_MILESTONE.md) when living documentation updates are in scope.
 
-If no safe candidate can be identified, enter Blocked and request human direction.
+The recommendation must include:
+
+- Confidence percentage.
+- Assumptions.
+- Uncertainties.
+- Reasons alternative candidates were not recommended.
+
+If no safe candidate can be recommended, enter Blocked and request human direction.
 
 ## Engineering Session State Machine
 
@@ -118,7 +129,7 @@ If no safe candidate can be identified, enter Blocked and request human directio
 |---|---|---|---|---|
 | Repository Reconstruction | User request, git status, handbook reading paths, current docs | Reconstructed project state and constraints | Required sources read and current state understood | Required sources unavailable or instructions conflict |
 | Repository Audit | Reconstructed state, git diff/status, relevant docs/code/tests/migrations | Audit findings, dirty worktree risks, drift, technical debt | Risks and relevant unfinished work identified | Unsafe dirty worktree or contradictory authority cannot be resolved |
-| Candidate Generation | Audit findings, roadmap, ADRs, invariants, scorecard | Exactly one candidate micro-milestone and score | Candidate is small, verifiable, reversible, and justified | No safe candidate or insufficient product/security intent |
+| Candidate Generation | Audit findings, stewardship, ADRs, invariants, scorecard, project memory, implementation patterns, common failures | Top three candidate micro-milestones, scores, and one recommendation | Candidates are small, verifiable, reversible, and justified | No safe recommendation or insufficient product/security intent |
 | Human Approval Pending | Candidate proposal and score | Approval, rejection, or redirection | Human approves implementation | Human rejects, redirects, or does not provide required decision |
 | Implementation | Approved candidate, affected files, local patterns | Focused implementation changes | Scope implemented without unrelated changes | Scope expands, architecture changes needed, or blocked dependency appears |
 | Testing | Implemented changes and verification plan | Typecheck, lint, tests, build, or scoped checks | Applicable checks pass or documented not applicable | Failing checks not understood or cannot be fixed in scope |
@@ -154,6 +165,8 @@ Recommendation:
 - Defer: value is lower than risk, complexity, blast radius, or dependencies.
 - Block: implementation would violate an invariant, require unapproved architecture change, or proceed without required authority.
 
+Every recommendation must state confidence percentage, assumptions, uncertainties, and why the other candidates were not recommended.
+
 ## Review Requirements
 
 Self-review checks scope, correctness, maintainability, and verification evidence.
@@ -187,6 +200,22 @@ Use Medium confidence when the change is supported but some validation or docume
 Use Low confidence when product intent, security posture, architecture, tests, or current implementation evidence is unclear.
 
 Do not implement with Low confidence without human approval that explicitly accepts the uncertainty.
+
+## Stop Conditions
+
+Stop and request human guidance when:
+
+- An ADR is required before safe implementation.
+- Roadmap priorities conflict.
+- Product intent is unclear.
+- Security requirements are ambiguous.
+- The implementation would exceed one approved micro-milestone.
+- Verification repeatedly fails without a clear root cause.
+- Repository state is inconsistent or dirty worktree ownership is unclear.
+- Handbook guidance conflicts and the decision hierarchy does not resolve it.
+- Confidence falls below the threshold required for the work.
+
+When a stop condition is met, report the blocker, evidence, options if known, and the smallest decision needed to continue.
 
 ## Escalation Rules
 
@@ -236,6 +265,9 @@ Minimum reconstruction sources:
 - [Current State](../reference/CURRENT_STATE.md)
 - [Current Milestone](../reference/CURRENT_MILESTONE.md)
 - [Next Milestone](../reference/NEXT_MILESTONE.md)
+- [Project Memory](../reference/PROJECT_MEMORY.md)
+- [Implementation Patterns](../reference/IMPLEMENTATION_PATTERNS.md)
+- [Common Failures and Engineering Lessons](../reference/COMMON_FAILURES.md)
 - Relevant ADRs, architecture docs, process docs, code, tests, and migrations for the task
 
 ## Living Or Historical
@@ -256,9 +288,12 @@ Update this document when:
 - The milestone scoring framework changes.
 - Repeated engineering sessions reveal missing escalation or recovery rules.
 
+Do not update this document for speculative improvement. Future EOS changes require implementation-driven justification.
+
 ## Related Documents
 
 - [Governance Overview](./README.md)
+- [Engineering Principles](./ENGINEERING_PRINCIPLES.md)
 - [Project Constitution](./PROJECT_CONSTITUTION.md)
 - [AI Execution Protocol](./AI_EXECUTION_PROTOCOL.md)
 - [Repository Refresh Protocol](./REPOSITORY_REFRESH_PROTOCOL.md)
@@ -271,3 +306,6 @@ Update this document when:
 - [Current Milestone](../reference/CURRENT_MILESTONE.md)
 - [Next Milestone](../reference/NEXT_MILESTONE.md)
 - [Project Scorecard](../reference/PROJECT_SCORECARD.md)
+- [Project Memory](../reference/PROJECT_MEMORY.md)
+- [Implementation Patterns](../reference/IMPLEMENTATION_PATTERNS.md)
+- [Common Failures and Engineering Lessons](../reference/COMMON_FAILURES.md)

@@ -77,6 +77,7 @@ Classifications are intentionally exact: each document has one classification.
 | `docs/handbook/conventions.md` | Canonical | Engineering | Stable | None | When documentation conventions change |
 | `docs/handbook/governance/README.md` | Canonical | Engineering | Active | None | When governance navigation changes |
 | `docs/handbook/governance/AI_ENGINEERING_OPERATING_MODEL.md` | Canonical | Engineering | Active | None | When AI engineering operating model changes |
+| `docs/handbook/governance/ENGINEERING_PRINCIPLES.md` | Canonical | Engineering | Active | None | Rarely; when enduring engineering philosophy changes |
 | `docs/handbook/governance/PROJECT_CONSTITUTION.md` | Canonical | Engineering | Active | None | When mission, hierarchy, or invariants change |
 | `docs/handbook/governance/AI_EXECUTION_PROTOCOL.md` | Canonical | Engineering | Active | None | When AI workflow changes |
 | `docs/handbook/governance/REPOSITORY_REFRESH_PROTOCOL.md` | Canonical | Engineering | Active | None | When repository refresh expectations change |
@@ -119,7 +120,10 @@ Classifications are intentionally exact: each document has one classification.
 | `docs/handbook/reference/README.md` | Reference | Engineering | Active | None | When reference navigation changes |
 | `docs/handbook/reference/CURRENT_STATE.md` | Living | Engineering | Active | None | After every implementation or major documentation milestone |
 | `docs/handbook/reference/CURRENT_MILESTONE.md` | Living | Engineering | Active | None | At milestone start, pause, completion, or scope change |
-| `docs/handbook/reference/NEXT_MILESTONE.md` | Living | Engineering | Active | None | When candidate milestone changes, is approved, is rejected, or is replaced |
+| `docs/handbook/reference/NEXT_MILESTONE.md` | Living | Engineering | Active | None | When candidate milestones change, are approved, are rejected, or are replaced |
+| `docs/handbook/reference/PROJECT_MEMORY.md` | Living | Engineering | Active | None | When durable project memory changes |
+| `docs/handbook/reference/IMPLEMENTATION_PATTERNS.md` | Living | Engineering | Active | None | When reusable implementation patterns change |
+| `docs/handbook/reference/COMMON_FAILURES.md` | Living | Engineering | Active | None | When recurring failures or engineering discoveries change |
 | `docs/handbook/reference/PROJECT_SCORECARD.md` | Living | Engineering | Active | None | After scorecard-impacting changes |
 | `docs/handbook/reference/TECH_DEBT.md` | Living | Engineering | Active | None | When debt changes |
 | `docs/handbook/reference/SECURITY_STATUS.md` | Living | Engineering | Active | None | After security-sensitive milestones or review |

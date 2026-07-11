@@ -9,6 +9,9 @@ last_reviewed: null
 related:
   - ./README.md
   - ./CURRENT_MILESTONE.md
+  - ./PROJECT_MEMORY.md
+  - ./IMPLEMENTATION_PATTERNS.md
+  - ./COMMON_FAILURES.md
   - ./PROJECT_SCORECARD.md
   - ./KNOWN_LIMITATIONS.md
   - ./OPEN_DECISIONS.md
@@ -101,7 +104,9 @@ This document does not assert the test suite currently passes; tests were not ru
 
 Existing project docs cover product vision, MVP scope, system architecture, inventory architecture, auth architecture, permissions, execution process, feature specs, Supabase notes, and validation seed data.
 
-The handbook now contains governance, the canonical AI Engineering Operating Model, process, templates, ADR framework, initial ADRs, living reference documents, document index, drift register, and health report.
+The handbook now contains governance, the canonical AI Engineering Operating Model, engineering principles, process, templates, ADR framework, initial ADRs, living reference documents, project memory, implementation patterns, common failures and engineering lessons, document index, drift register, and health report.
+
+The Engineering Operating System is Stable at v1.2. Future EOS changes require implementation-driven justification rather than speculative improvement.
 
 ## Known Gaps
 
@@ -127,6 +132,9 @@ This is living documentation.
 ## Related Documents
 
 - [Current Milestone](./CURRENT_MILESTONE.md)
+- [Project Memory](./PROJECT_MEMORY.md)
+- [Implementation Patterns](./IMPLEMENTATION_PATTERNS.md)
+- [Common Failures and Engineering Lessons](./COMMON_FAILURES.md)
 - [Project Scorecard](./PROJECT_SCORECARD.md)
 - [Known Limitations](./KNOWN_LIMITATIONS.md)
 - [Open Decisions](./OPEN_DECISIONS.md)

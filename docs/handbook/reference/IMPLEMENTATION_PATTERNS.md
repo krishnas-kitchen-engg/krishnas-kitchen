@@ -1,0 +1,58 @@
+---
+title: Implementation Patterns
+status: active
+doc_type: reference
+lifecycle: living
+owner: engineering
+update_cadence: when reusable implementation patterns are discovered, changed, or retired
+last_reviewed: null
+related:
+  - ./README.md
+  - ./PROJECT_MEMORY.md
+  - ./COMMON_FAILURES.md
+  - ./ARCHITECTURAL_INVARIANTS.md
+  - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
+  - ../adrs/0006-repository-pattern.md
+  - ../adrs/0008-domain-driven-package-organization.md
+---
+
+# Implementation Patterns
+
+## Purpose
+
+This document records reusable implementation patterns and conventions that future application work should follow.
+
+Keep this page concise. Link to ADRs, architecture docs, source files, and tests instead of restating implementation details.
+
+## Patterns
+
+| Pattern | Guidance | References |
+|---|---|---|
+| Repository-first work | Read current docs, code, tests, migrations, and git status before implementation. | [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) |
+| Domain before UI | Keep core domain rules in `apps/web/src/domains`; keep user-facing workflows in `apps/web/src/features`. | [ADR-0008](../adrs/0008-domain-driven-package-organization.md) |
+| Repository boundary | UI and application services should depend on repository contracts, not raw persistence details. | [ADR-0006](../adrs/0006-repository-pattern.md) |
+| Supabase boundary | Browser code must not treat client-side permission checks as authoritative. Use RLS/RPC boundaries for protected data. | [ADR-0003](../adrs/0003-supabase-auth-and-rls-boundary.md), [ADR-0007](../adrs/0007-rpc-boundaries-and-browser-trust.md) |
+| Inventory changes | Inventory-changing work must preserve immutable transactions, positive quantities, derived balances, and reversibility. | [Architectural Invariants](./ARCHITECTURAL_INVARIANTS.md) |
+| Living docs | Update only living docs affected by the approved milestone. Do not expand handbook infrastructure unless stewardship rules allow it. | [Handbook Stewardship](../roadmap.md) |
+| Verification | Use scoped checks during repair, then full typecheck, lint, tests, and build before commit readiness for implementation milestones. | [Quality Gates](../process/QUALITY_GATES.md), [Definition of Done](../process/DEFINITION_OF_DONE.md) |
+
+## Owner
+
+Engineering owns this document.
+
+## Update Cadence
+
+Update when repeated implementation work reveals a reusable pattern or an existing pattern becomes stale.
+
+## Lifecycle
+
+This is living documentation.
+
+## Related Documents
+
+- [Project Memory](./PROJECT_MEMORY.md)
+- [Common Failures and Engineering Lessons](./COMMON_FAILURES.md)
+- [Architectural Invariants](./ARCHITECTURAL_INVARIANTS.md)
+- [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md)
+- [ADR-0006: Repository Pattern](../adrs/0006-repository-pattern.md)
+- [ADR-0008: Domain-Driven Package Organization](../adrs/0008-domain-driven-package-organization.md)

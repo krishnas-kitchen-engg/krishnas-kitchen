@@ -4,11 +4,14 @@ status: active
 doc_type: reference
 lifecycle: living
 owner: engineering
-update_cadence: when the highest-priority candidate implementation milestone changes, is approved, is rejected, or is replaced
+update_cadence: when candidate implementation milestones change, are approved, are rejected, or are replaced
 last_reviewed: null
 related:
   - ./README.md
   - ./CURRENT_MILESTONE.md
+  - ./PROJECT_MEMORY.md
+  - ./IMPLEMENTATION_PATTERNS.md
+  - ./COMMON_FAILURES.md
   - ./OPEN_DECISIONS.md
   - ./TECH_DEBT.md
   - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
@@ -22,85 +25,183 @@ related:
 
 ## Purpose
 
-This document records the highest-priority candidate implementation milestone.
+This document records the top three candidate implementation micro-milestones and the single recommended candidate for human approval.
 
 ## Current Guidance
 
-Do not use this page as a broad roadmap. It should contain exactly one candidate micro-milestone.
+Do not use this page as a broad roadmap. It should contain three candidates when enough repository evidence exists.
 
-The candidate must be marked:
+Each candidate should include recommendation, rationale, confidence, estimated effort, dependencies, risk, expected value, architecture impact, security impact, and testing strategy. The recommended candidate must also include assumptions, uncertainties, and why alternatives were not recommended.
 
-- Status: Candidate
-- Approval: Pending Human Approval
-
-AI sessions must use [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) to score and justify this candidate after repository refresh and audit. Implementation must not begin until the human approves the candidate. Commit approval remains a separate later gate.
+Implementation must not begin until the human approves one candidate. Commit approval remains a separate later gate.
 
 ## Status
 
-Candidate
+Candidate Options
 
 ## Approval
 
 Pending Human Approval
 
-## Objective
+## Recommended Candidate
 
-Resolve the current temporary volunteer login diagnostic work into a clean, verified micro-milestone.
+Candidate 1: Resolve temporary volunteer login diagnostic work.
 
-This candidate exists because the current working tree contains temporary volunteer login and navigation debug instrumentation in auth/routing files. The candidate is not approved for implementation.
+Recommendation: Request Human Decision.
 
-## Scope
+Confidence: 72%.
 
-- Inspect the existing temporary volunteer login diagnostic changes.
-- Decide whether the debug instrumentation should be removed, replaced by a tested fix, or preserved for an explicitly approved debugging session.
-- Keep the milestone limited to the temporary volunteer login/navigation path.
-- Do not change the temporary volunteer permission model.
-- Do not change RLS, RPCs, migrations, or architecture.
-- Expected affected areas if approved: `apps/web/src/features/auth/providers/AuthProvider.tsx`, `apps/web/src/features/auth/screens/LoginScreen.tsx`, `apps/web/src/app/routes/router.ts`, and existing relevant auth or route tests only if behavior changes.
+Rationale: This candidate addresses the current dirty worktree in auth/routing files before new application development. It is narrow, reversible, and removes ambiguity around temporary volunteer login diagnostics.
 
-## Dependencies
+Estimated Effort: Small.
 
-- Human approval of this candidate milestone.
-- Milestone scoring using [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md).
+Assumptions:
+
+- The debug instrumentation was temporary and should not remain as-is.
+- The affected flow is temporary volunteer login/navigation.
+- No permission-model change is intended.
+
+Uncertainties:
+
+- Whether the debug logs reveal an actual behavior bug or only unfinished diagnostics.
+- Whether the current dirty files are user-owned work that should be preserved.
+
+Reasons Alternatives Were Not Recommended:
+
+- Candidate 2 is valuable but should follow cleanup of the current dirty auth/routing work.
+- Candidate 3 is important but has broader architecture dependencies and lower implementation readiness.
+
+## Candidate 1: Resolve Temporary Volunteer Login Diagnostic Work
+
+Recommendation: Request Human Decision.
+
+Rationale: The current working tree contains temporary volunteer login and navigation debug instrumentation in auth/routing files. Resolving that state is the smallest safe step before new application development.
+
+Confidence: 72%.
+
+Estimated Effort: Small.
+
+Dependencies:
+
+- Human approval of this candidate.
 - Review of current dirty worktree changes before editing.
 - Relevant auth, route, and temporary volunteer session tests.
 - Security review because the area touches authentication/session flow.
 
-## Risks
+Risk:
 
 - Auth/session flow is security-sensitive.
 - Current dirty worktree changes may be user work and must be preserved unless the user approves changing them.
 - Temporary volunteer permissions are documented as drift and must not be silently redefined.
 
-## Expected Deliverables
+Expected Value: High. This clears the current dirty auth/routing state before new application work and reduces risk of mixing unrelated changes.
+
+Architecture Impact: Low if limited to diagnostic cleanup or narrowly restoring intended behavior. Stop if a session model or permission boundary change is required.
+
+Security Impact: Medium because authentication/session flow is involved. Security review is required before commit readiness.
+
+Testing Strategy:
+
+- Review existing auth, route guard, and temporary volunteer session tests.
+- Add or adjust only focused tests required by the approved implementation.
+- Run relevant scoped tests, then typecheck, lint, full tests, and build before commit readiness.
+
+Expected Deliverables:
 
 - Clean temporary volunteer login/navigation behavior.
 - No stray debug logging unless explicitly approved as a diagnostic artifact.
 - Updated or confirmed tests for affected auth/routing behavior.
 - Living documentation updates only if behavior, risk, or milestone status changes.
 
-## Milestone Score
-
-| Criterion | Score | Rationale |
-|---|---:|---|
-| Architecture Alignment | 4 | Candidate stays within existing auth/routing boundaries and does not change architecture. |
-| Roadmap Alignment | 4 | Candidate addresses current unfinished auth/session diagnostic work before new application development. |
-| Security Risk | 3 | Auth/session flow is security-sensitive and requires review, but scope is narrow. |
-| Complexity | 4 | Expected change is small if limited to diagnostic cleanup or focused fix. |
-| Blast Radius | 4 | Expected files are localized to login, auth provider, and router behavior. |
-| Testability | 4 | Relevant auth, route, and volunteer session tests exist or can be run. |
-| Reversibility | 4 | Diagnostic cleanup or focused auth/routing change should be easy to revert. |
-| Dependencies | 4 | Main dependency is human approval and current dirty worktree review. |
-| Expected Value | 4 | Resolving unfinished auth diagnostic work reduces risk before further development. |
-| Confidence | 3 | Repository evidence shows dirty debug instrumentation; final behavior intent still requires approval. |
-
-Recommendation: Request Human Decision. The candidate is likely the right next implementation step, but it touches auth/session flow and current dirty worktree changes.
-
-## Validation Plan
+Validation Plan:
 
 - Run relevant auth and route tests.
 - Run typecheck, lint, full tests, and build before commit readiness if implementation is approved.
-- Manually validate temporary volunteer login/navigation if a local app run is required by the implemented change.
+- Manually validate temporary volunteer login/navigation if required by the implemented change.
+
+## Candidate 2: Reconcile Temporary Volunteer Permission Drift
+
+Recommendation: Defer.
+
+Rationale: Temporary volunteer permission drift is high-value and security-sensitive, but it should not be mixed with unresolved dirty auth/routing diagnostic work.
+
+Confidence: 64%.
+
+Estimated Effort: Medium.
+
+Dependencies:
+
+- Review [Documentation Drift](./DOCUMENTATION_DRIFT.md), [Open Decisions](./OPEN_DECISIONS.md), [Auth Architecture](../../AUTH_ARCHITECTURE.md), and [Permissions Matrix](../../PERMISSIONS_MATRIX.md).
+- Human product/security decision on intended temporary volunteer capabilities.
+
+Risk:
+
+- High security risk if permissions are changed without explicit decision authority.
+- Existing docs conflict and cannot be silently reconciled by implementation.
+
+Expected Value: High. Resolving permission drift would reduce security ambiguity and make volunteer work safer to extend.
+
+Architecture Impact: Medium. May require canonical permission documentation or an ADR before code changes.
+
+Security Impact: High. Temporary volunteer access must remain narrow, server-derived, and reviewable.
+
+Testing Strategy:
+
+- No implementation tests until product/security decision is approved.
+- If later approved for implementation, run permission/RLS/RPC tests and full verification.
+
+Why Not Recommended Now:
+
+- It depends on a human product/security decision.
+- It should follow cleanup or ownership resolution for the current dirty auth/routing worktree.
+
+Expected Deliverables:
+
+- Canonical temporary volunteer permission decision or documented unresolved decision.
+- Updated living docs and affected references if approved.
+- No RLS/RPC or app permission changes without explicit implementation approval.
+
+## Candidate 3: Define Offline Queue Architecture
+
+Recommendation: Defer.
+
+Rationale: Offline queue architecture is a known gap, but implementation readiness is lower because storage, replay, idempotency, and conflict behavior need focused design before code.
+
+Confidence: 58%.
+
+Estimated Effort: Medium.
+
+Dependencies:
+
+- Review [ADR-0005](../adrs/0005-mobile-first-offline-pwa.md), inventory repository boundaries, and current PWA/offline behavior.
+- Human approval for architecture work before implementation.
+
+Risk:
+
+- Medium-to-high architecture risk if offline writes proceed without a canonical queue design.
+- Could affect repository contracts, persistence behavior, and retry/idempotency assumptions.
+
+Expected Value: Medium to high. Offline architecture is important, but current implementation readiness is lower than auth/routing cleanup.
+
+Architecture Impact: High. Queue storage, replay, idempotency, conflict handling, and repository boundaries need explicit design.
+
+Security Impact: Medium. Offline write replay must not bypass server authorization or auditability.
+
+Testing Strategy:
+
+- Architecture-only validation first.
+- Later implementation should include unit tests for queue behavior and integration tests for replay/idempotency where feasible.
+
+Why Not Recommended Now:
+
+- It requires architecture approval before implementation.
+- It has broader dependencies and lower confidence than resolving current dirty auth/routing work.
+
+Expected Deliverables:
+
+- Focused offline queue architecture proposal or living architecture update.
+- Explicit storage, replay, idempotency, and conflict assumptions.
+- No offline write implementation until architecture is approved.
 
 ## Owner
 
@@ -108,7 +209,7 @@ Engineering owns this document.
 
 ## Update Cadence
 
-Update when the highest-priority candidate implementation milestone changes, is approved, is rejected, or is replaced.
+Update when candidate implementation milestones change, are approved, are rejected, or are replaced.
 
 ## Lifecycle
 
@@ -117,6 +218,9 @@ This is living documentation.
 ## Related Documents
 
 - [Current Milestone](./CURRENT_MILESTONE.md)
+- [Project Memory](./PROJECT_MEMORY.md)
+- [Implementation Patterns](./IMPLEMENTATION_PATTERNS.md)
+- [Common Failures and Engineering Lessons](./COMMON_FAILURES.md)
 - [Open Decisions](./OPEN_DECISIONS.md)
 - [Technical Debt](./TECH_DEBT.md)
 - [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md)

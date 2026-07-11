@@ -10,6 +10,7 @@ related:
   - ../README.md
   - ../conventions.md
   - ../roadmap.md
+  - ./ENGINEERING_PRINCIPLES.md
   - ./AI_ENGINEERING_OPERATING_MODEL.md
   - ./PROJECT_CONSTITUTION.md
   - ./AI_EXECUTION_PROTOCOL.md
@@ -28,6 +29,7 @@ Use this section to find governance documents and the canonical AI engineering o
 ## Governance Scope
 
 - Mission, principles, and decision hierarchy.
+- Timeless engineering philosophy.
 - AI engineering operating model.
 - AI-specific execution rules.
 - Repository refresh expectations.
@@ -36,6 +38,7 @@ Use this section to find governance documents and the canonical AI engineering o
 ## Governance Documents
 
 - [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md)
+- [Engineering Principles](./ENGINEERING_PRINCIPLES.md)
 - [Project Constitution](./PROJECT_CONSTITUTION.md)
 - [AI Execution Protocol](./AI_EXECUTION_PROTOCOL.md)
 - [Repository Refresh Protocol](./REPOSITORY_REFRESH_PROTOCOL.md)
@@ -46,6 +49,8 @@ Use this section to find governance documents and the canonical AI engineering o
 [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md) is the single operational contract for AI-assisted engineering sessions. It defines the operating loop, state machine, milestone scoring framework, AI responsibilities, human responsibilities, approval boundaries, review expectations, escalation rules, and failure recovery.
 
 Other governance documents support that operating model. They should not duplicate the operating loop.
+
+[Engineering Principles](./ENGINEERING_PRINCIPLES.md) captures enduring philosophy and should change rarely.
 
 ## Living Or Historical
 
@@ -70,4 +75,5 @@ Update this section when:
 - [Handbook Conventions](../conventions.md)
 - [Handbook Stewardship](../roadmap.md)
 - [Existing Documentation Map](../existing-documentation.md)
+- [Engineering Principles](./ENGINEERING_PRINCIPLES.md)
 - [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md)

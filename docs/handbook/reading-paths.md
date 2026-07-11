@@ -11,6 +11,7 @@ related:
   - ./overview.md
   - ./existing-documentation.md
   - ./governance/AI_ENGINEERING_OPERATING_MODEL.md
+  - ./governance/ENGINEERING_PRINCIPLES.md
   - ./governance/PROJECT_CONSTITUTION.md
   - ./governance/AI_EXECUTION_PROTOCOL.md
   - ./governance/REPOSITORY_REFRESH_PROTOCOL.md
@@ -39,16 +40,20 @@ This page defines curated paths for common readers. It references existing proje
 ## AI Session Startup Path
 
 1. [Project Constitution](./governance/PROJECT_CONSTITUTION.md)
-2. [AI Engineering Operating Model](./governance/AI_ENGINEERING_OPERATING_MODEL.md)
-3. [AI Execution Protocol](./governance/AI_EXECUTION_PROTOCOL.md)
-4. [Repository Refresh Protocol](./governance/REPOSITORY_REFRESH_PROTOCOL.md)
-5. [Engineering System](./governance/ENGINEERING_SYSTEM.md)
-6. [Session Lifecycle](./process/SESSION_LIFECYCLE.md)
-7. [Milestone Lifecycle](./process/MILESTONE_LIFECYCLE.md)
-8. [Current Milestone](./reference/CURRENT_MILESTONE.md)
-9. [Next Milestone](./reference/NEXT_MILESTONE.md)
-10. [Existing Documentation Map](./existing-documentation.md)
-11. The relevant handbook section for the task.
+2. [Engineering Principles](./governance/ENGINEERING_PRINCIPLES.md)
+3. [AI Engineering Operating Model](./governance/AI_ENGINEERING_OPERATING_MODEL.md)
+4. [AI Execution Protocol](./governance/AI_EXECUTION_PROTOCOL.md)
+5. [Repository Refresh Protocol](./governance/REPOSITORY_REFRESH_PROTOCOL.md)
+6. [Engineering System](./governance/ENGINEERING_SYSTEM.md)
+7. [Session Lifecycle](./process/SESSION_LIFECYCLE.md)
+8. [Milestone Lifecycle](./process/MILESTONE_LIFECYCLE.md)
+9. [Current Milestone](./reference/CURRENT_MILESTONE.md)
+10. [Project Memory](./reference/PROJECT_MEMORY.md)
+11. [Implementation Patterns](./reference/IMPLEMENTATION_PATTERNS.md)
+12. [Common Failures and Engineering Lessons](./reference/COMMON_FAILURES.md)
+13. [Next Milestone](./reference/NEXT_MILESTONE.md)
+14. [Existing Documentation Map](./existing-documentation.md)
+15. The relevant handbook section for the task.
 
 This path starts with the canonical AI engineering operating contract before moving into supporting process and reference material.
 
@@ -88,11 +93,12 @@ This path starts with the canonical AI engineering operating contract before mov
 1. [Handbook Overview](./overview.md)
 2. [Handbook Conventions](./conventions.md)
 3. [Project Constitution](./governance/PROJECT_CONSTITUTION.md)
-4. [AI Engineering Operating Model](./governance/AI_ENGINEERING_OPERATING_MODEL.md)
-5. [Governance Overview](./governance/README.md)
-6. [Templates](./templates/README.md)
-7. [ADR Guide](./adrs/ADR_GUIDE.md)
-8. [Handbook Stewardship](./roadmap.md)
+4. [Engineering Principles](./governance/ENGINEERING_PRINCIPLES.md)
+5. [AI Engineering Operating Model](./governance/AI_ENGINEERING_OPERATING_MODEL.md)
+6. [Governance Overview](./governance/README.md)
+7. [Templates](./templates/README.md)
+8. [ADR Guide](./adrs/ADR_GUIDE.md)
+9. [Handbook Stewardship](./roadmap.md)
 
 ## Living Or Historical
 

@@ -31,26 +31,30 @@ Update this document whenever a milestone starts, pauses, completes, or changes 
 
 ## Current Active Milestone
 
-Review and simplify the Engineering Handbook for freeze readiness.
+Finalize Engineering Operating System v1.2.
 
 ## Goal
 
-Review the entire Engineering Handbook for duplication, contradictions, unnecessary complexity, missing cross-references, unclear ownership, and future AI drift risk. Simplify the handbook so it can remain stable while application development resumes.
+Complete, simplify, stabilize, and freeze the Engineering Operating System before returning to application development.
 
 ## Status
 
-Ready for review. Freeze-facing handbook pages have been simplified, the operating model remains the single workflow contract, stale expansion language has been removed, and health/index references have been refreshed.
+Approved for freeze. Engineering principles, stop conditions, lessons learned, broadened engineering lessons, candidate recommendation requirements, scorecard simplification, and v1.2 Stable status have been added.
 
 ## Scope
 
-- Review the handbook for freeze readiness.
-- Remove or reduce placeholder, expansion, and migration-era language.
-- Preserve the AI Engineering Operating Model as the single operating contract.
-- Update section indexes to behave as stable navigation, not planned build-out prompts.
-- Refresh health and index references after simplification.
+- Create `ENGINEERING_PRINCIPLES.md`.
+- Add stop conditions to `AI_ENGINEERING_OPERATING_MODEL.md`.
+- Add durable lessons learned to `PROJECT_MEMORY.md`.
+- Broaden `COMMON_FAILURES.md` into common failures and engineering lessons.
+- Ensure `NEXT_MILESTONE.md` records expected value, architecture impact, security impact, testing strategy, and reasons alternatives were not recommended.
+- Simplify `PROJECT_SCORECARD.md` to high-value health indicators.
+- Mark the EOS Stable at v1.2.
+- Cross-reference affected handbook documents and remove stale prior EOS framing.
 - Do not modify application code.
 - Do not modify tests.
 - Do not modify migrations.
+- Do not modify build or package configuration.
 - Do not move or delete files.
 - Do not commit.
 
@@ -61,34 +65,16 @@ Ready for review. Freeze-facing handbook pages have been simplified, the operati
 - `docs/handbook/reference/CHANGELOG_SUMMARY.md`
 - `docs/handbook/reference/README.md`
 - `docs/handbook/reference/NEXT_MILESTONE.md`
+- `docs/handbook/reference/PROJECT_MEMORY.md`
+- `docs/handbook/reference/COMMON_FAILURES.md`
 - `docs/handbook/reference/DOCUMENT_INDEX.md`
 - `docs/handbook/reference/PROJECT_SCORECARD.md`
-- `docs/handbook/reference/HANDBOOK_HEALTH_REPORT.md`
-- `docs/handbook/reference/KNOWN_LIMITATIONS.md`
 - `docs/handbook/README.md`
-- `docs/handbook/overview.md`
-- `docs/handbook/roadmap.md`
-- `docs/handbook/conventions.md`
-- `docs/handbook/existing-documentation.md`
 - `docs/handbook/reading-paths.md`
-- `docs/handbook/architecture/README.md`
-- `docs/handbook/operations/README.md`
-- `docs/handbook/owners/README.md`
-- `docs/handbook/adrs/README.md`
-- `docs/handbook/adrs/ADR_GUIDE.md`
-- `docs/handbook/templates/README.md`
-- `docs/handbook/templates/ADR_TEMPLATE.md`
-- `docs/handbook/templates/LIVING_DOCUMENT_TEMPLATE.md`
-- `docs/handbook/templates/ROADMAP_ITEM_TEMPLATE.md`
 - `docs/handbook/governance/README.md`
+- `docs/handbook/governance/PROJECT_CONSTITUTION.md`
 - `docs/handbook/governance/AI_ENGINEERING_OPERATING_MODEL.md`
-- `docs/handbook/governance/AI_EXECUTION_PROTOCOL.md`
-- `docs/handbook/governance/REPOSITORY_REFRESH_PROTOCOL.md`
-- `docs/handbook/governance/ENGINEERING_SYSTEM.md`
-- `docs/handbook/process/MILESTONE_LIFECYCLE.md`
-- `docs/handbook/process/README.md`
-- `docs/handbook/process/SESSION_LIFECYCLE.md`
-- `docs/handbook/process/QUALITY_GATES.md`
+- `docs/handbook/governance/ENGINEERING_PRINCIPLES.md`
 
 ## Known Blockers
 
@@ -98,11 +84,11 @@ None for this documentation/process milestone.
 
 Completed documentation/process review:
 
-- Handbook links resolve.
-- The operating model remains the single workflow contract.
-- Placeholder and migration-era language was reduced across section indexes.
-- The scoring-framework contradiction was corrected.
-- The health report now reflects the simplified operating model.
+- New governance document includes front matter, owner, update cadence, and related links.
+- `NEXT_MILESTONE.md` presents three candidates and the required recommendation fields.
+- `PROJECT_SCORECARD.md` tracks only high-value health indicators.
+- The operating model records stop conditions and remains the canonical workflow contract.
+- EOS v1.2 is marked Stable.
 - Changed scope remains documentation/process only.
 
 Application tests are not required for this documentation-only milestone.
