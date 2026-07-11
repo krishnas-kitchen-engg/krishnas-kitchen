@@ -1,0 +1,133 @@
+---
+title: Reference
+status: foundation
+doc_type: index
+lifecycle: living
+owner: engineering
+update_cadence: when canonical reference material changes
+last_reviewed: null
+related:
+  - ../README.md
+  - ./CURRENT_STATE.md
+  - ./CURRENT_MILESTONE.md
+  - ./NEXT_MILESTONE.md
+  - ./PROJECT_SCORECARD.md
+  - ./TECH_DEBT.md
+  - ./SECURITY_STATUS.md
+  - ./KNOWN_LIMITATIONS.md
+  - ./OPEN_DECISIONS.md
+  - ./CHANGELOG_SUMMARY.md
+  - ./ARCHITECTURAL_INVARIANTS.md
+  - ./DOCUMENT_INDEX.md
+  - ./DOCUMENTATION_DRIFT.md
+  - ./HANDBOOK_HEALTH_REPORT.md
+  - ../../DATABASE_SCHEMA.md
+  - ../../PERMISSIONS_MATRIX.md
+  - ../../AUTH_ROLE_MIGRATION_NOTES.md
+---
+
+# Reference
+
+Reference documentation should provide concise, current facts that contributors can rely on while building or reviewing changes.
+
+## Purpose
+
+This section holds the living memory of the project: current state, active and next milestones, scorecard, technical debt, security status, limitations, open decisions, changelog summary, and architectural invariants.
+
+Use these documents before planning or implementing work. They describe current reality and must be updated as milestones change that reality.
+
+## Reading Order
+
+For session startup:
+
+1. [Current State](./CURRENT_STATE.md)
+2. [Current Milestone](./CURRENT_MILESTONE.md)
+3. [Next Milestone](./NEXT_MILESTONE.md)
+4. [Architectural Invariants](./ARCHITECTURAL_INVARIANTS.md)
+5. [Document Index](./DOCUMENT_INDEX.md)
+6. [Documentation Drift](./DOCUMENTATION_DRIFT.md)
+7. [Open Decisions](./OPEN_DECISIONS.md)
+
+For risk review:
+
+1. [Project Scorecard](./PROJECT_SCORECARD.md)
+2. [Security Status](./SECURITY_STATUS.md)
+3. [Technical Debt](./TECH_DEBT.md)
+4. [Known Limitations](./KNOWN_LIMITATIONS.md)
+5. [Handbook Health Report](./HANDBOOK_HEALTH_REPORT.md)
+
+For historical orientation:
+
+1. [Changelog Summary](./CHANGELOG_SUMMARY.md)
+2. [ADR Index](../adrs/README.md)
+3. [Existing Documentation Map](../existing-documentation.md)
+
+## Living Documents
+
+- [Current State](./CURRENT_STATE.md)
+- [Current Milestone](./CURRENT_MILESTONE.md)
+- [Next Milestone](./NEXT_MILESTONE.md)
+- [Project Scorecard](./PROJECT_SCORECARD.md)
+- [Technical Debt](./TECH_DEBT.md)
+- [Security Status](./SECURITY_STATUS.md)
+- [Known Limitations](./KNOWN_LIMITATIONS.md)
+- [Open Decisions](./OPEN_DECISIONS.md)
+- [Changelog Summary](./CHANGELOG_SUMMARY.md)
+- [Architectural Invariants](./ARCHITECTURAL_INVARIANTS.md)
+- [Document Index](./DOCUMENT_INDEX.md)
+- [Documentation Drift](./DOCUMENTATION_DRIFT.md)
+- [Handbook Health Report](./HANDBOOK_HEALTH_REPORT.md)
+
+## Living-Document Responsibilities
+
+- Update [Current State](./CURRENT_STATE.md) after every implementation milestone or major documentation milestone.
+- Update [Current Milestone](./CURRENT_MILESTONE.md) when a milestone starts, pauses, completes, or changes scope.
+- Update [Next Milestone](./NEXT_MILESTONE.md) only when the next implementation milestone is approved.
+- Update [Project Scorecard](./PROJECT_SCORECARD.md) when project health evidence changes.
+- Update [Technical Debt](./TECH_DEBT.md) when debt is found, changed, resolved, or accepted.
+- Update [Security Status](./SECURITY_STATUS.md) after security-sensitive milestones or reviews.
+- Update [Known Limitations](./KNOWN_LIMITATIONS.md) when limitations are discovered or resolved.
+- Update [Open Decisions](./OPEN_DECISIONS.md) when decisions are opened, resolved, or deferred.
+- Update [Changelog Summary](./CHANGELOG_SUMMARY.md) after meaningful engineering milestones.
+- Update [Architectural Invariants](./ARCHITECTURAL_INVARIANTS.md) when ADRs change invariants.
+- Update [Document Index](./DOCUMENT_INDEX.md) when repository-owned Markdown documents are added, reclassified, or superseded.
+- Update [Documentation Drift](./DOCUMENTATION_DRIFT.md) when contradictions are discovered, resolved, or reclassified.
+- Update [Handbook Health Report](./HANDBOOK_HEALTH_REPORT.md) after handbook structure changes or documentation audits.
+
+## Current Source Documents
+
+- [Database Schema](../../DATABASE_SCHEMA.md)
+- [Permissions Matrix](../../PERMISSIONS_MATRIX.md)
+- [Auth Role Migration Notes](../../AUTH_ROLE_MIGRATION_NOTES.md)
+- [Project README environment variables](../../../README.md#environment-variables)
+
+## Planned Reference Areas
+
+- Glossary and terminology.
+- Permission and role reference.
+- Database schema reference.
+- Environment variable reference.
+- Inventory transaction type reference.
+- Migration reference.
+
+## Living Or Historical
+
+This section landing page is living documentation. Reference pages should normally be living documents. Migration notes may be historical after completion.
+
+## Who Updates It
+
+Engineering updates this section. Area owners should keep reference pages current with implementation and architecture decisions.
+
+## When To Update It
+
+Update this section when:
+
+- A canonical reference changes.
+- A role, permission, schema entity, transaction type, or environment variable changes.
+- A migration note is completed or superseded.
+
+## Related Documents
+
+- [Architecture](../architecture/README.md)
+- [ADR Index](../adrs/README.md)
+- [Existing Documentation Map](../existing-documentation.md)
