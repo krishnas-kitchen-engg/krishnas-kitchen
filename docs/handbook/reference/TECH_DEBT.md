@@ -34,7 +34,7 @@ Add debt when a known weakness is accepted temporarily. Do not use this register
 | TD-002 | Undo versus reversal terminology remains inconsistent across docs, schema history, and feature docs | Future implementation may confuse event types and user-facing action names | Medium | High | Engineering | Open | Not assigned |
 | TD-003 | Offline queue architecture is required but not yet captured as a detailed living architecture document | Offline work may proceed without a canonical plan | Medium | Medium | Engineering | Open | Not assigned |
 | TD-004 | Existing older documentation contains duplication and encoding artifacts | Contributors may struggle to identify canonical guidance | Low | Medium | Engineering | Open | Not assigned |
-| TD-005 | Latest full verification result is not recorded in living docs | Project health is harder to assess between sessions | Medium | Medium | Engineering | Open | Not assigned |
+| TD-005 | Latest full verification results must be refreshed during each implementation milestone | Project health is harder to assess if sessions reuse stale verification evidence | Medium | Medium | Engineering | Open | Not assigned |
 
 ## Owner
 
@@ -56,4 +56,3 @@ This is living documentation.
 - [ADR-0004: Temporary Volunteer Session Model](../adrs/0004-temporary-volunteer-session-model.md)
 - [ADR-0005: Mobile-First Offline PWA](../adrs/0005-mobile-first-offline-pwa.md)
 - [ADR-0009: Auditability And Reversibility](../adrs/0009-auditability-and-reversibility.md)
-

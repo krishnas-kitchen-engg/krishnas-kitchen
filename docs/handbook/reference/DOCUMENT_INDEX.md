@@ -131,6 +131,7 @@ Classifications are intentionally exact: each document has one classification.
 | `docs/handbook/reference/KNOWN_LIMITATIONS.md` | Living | Engineering | Active | None | When limitations change |
 | `docs/handbook/reference/OPEN_DECISIONS.md` | Living | Engineering | Active | None | When decisions open or close |
 | `docs/handbook/reference/CHANGELOG_SUMMARY.md` | Living | Engineering | Active | None | After meaningful engineering milestones |
+| `docs/handbook/reference/EVIDENCE_REPORT.md` | Living | Engineering | Active | None | After repository reconstruction, implementation, verification, or commit-readiness milestones |
 | `docs/handbook/reference/ARCHITECTURAL_INVARIANTS.md` | Living | Engineering | Active | None | When ADRs change invariants |
 | `docs/handbook/reference/DOCUMENT_INDEX.md` | Living | Engineering | Active | None | When documents are added or reclassified |
 | `docs/handbook/reference/DOCUMENTATION_DRIFT.md` | Living | Engineering | Active | None | When drift changes |

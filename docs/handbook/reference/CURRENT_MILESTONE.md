@@ -31,59 +31,79 @@ Update this document whenever a milestone starts, pauses, completes, or changes 
 
 ## Current Active Milestone
 
-Refresh Living Milestone State.
+Reconcile Temporary Volunteer Permission Drift.
 
 ## Goal
 
-Refresh living planning and status references after the completed temporary volunteer login diagnostic cleanup so future EOS sessions start from accurate repository state.
+Establish the canonical temporary volunteer permission policy and align the affected documentation, code, and tests only as authorized by the approved product/security decision.
 
 ## Status
 
-Completed. Human review and commit approval received.
+Approved for implementation. Documentation handoff and evidence report commit requested before implementation begins.
 
 ## Scope
 
-- Update stale living planning/status references created after the completed diagnostic cleanup.
-- Refresh `NEXT_MILESTONE.md` with three current candidate micro-milestones and one recommendation.
-- Correct scorecard and limitation references that still describe verification or roadmap status as stale.
-- Do not modify application code.
-- Do not modify tests.
-- Do not modify migrations.
-- Do not resolve temporary volunteer permission drift, undo/reversal terminology drift, offline queue architecture, or security architecture ownership in this milestone.
-- Do not commit without explicit separate commit approval.
+- Confirm the intended temporary volunteer capability policy.
+- Reconcile contradictions between `AUTH_ARCHITECTURE.md`, `PERMISSIONS_MATRIX.md`, current permission helpers, and affected workflow tests.
+- Preserve the invariant that client-side permission helpers are usability signals, not final authorization.
+- Do not modify RLS, RPC, migrations, or database authorization boundaries unless a separate approved milestone explicitly includes that work.
+- Do not resolve undo/reversal terminology drift, offline queue architecture, or security architecture ownership in this milestone.
+- Keep the implementation to the smallest independently verifiable vertical slice.
+- Do not commit implementation changes without explicit separate commit approval after verification and review.
 
 ## Files Affected
 
+- Implementation not started.
+- Expected documentation/code areas for the approved milestone:
+  - `docs/AUTH_ARCHITECTURE.md`
+  - `docs/PERMISSIONS_MATRIX.md`
+  - `docs/handbook/reference/DOCUMENTATION_DRIFT.md`
+  - `docs/handbook/reference/OPEN_DECISIONS.md`
+  - `docs/handbook/reference/TECH_DEBT.md`
+  - `apps/web/src/features/auth/lib/permissions.ts`
+  - affected temporary-volunteer workflow tests if behavior changes
+- Documentation handoff files updated before implementation:
 - `docs/handbook/reference/CURRENT_MILESTONE.md`
-- `docs/handbook/reference/NEXT_MILESTONE.md`
-- `docs/handbook/reference/PROJECT_SCORECARD.md`
-- `docs/handbook/reference/KNOWN_LIMITATIONS.md`
 - `docs/handbook/reference/PROJECT_MEMORY.md`
 - `docs/handbook/reference/CURRENT_STATE.md`
 - `docs/handbook/reference/CHANGELOG_SUMMARY.md`
 - `docs/handbook/reference/IMPLEMENTATION_PATTERNS.md`
 - `docs/handbook/reference/COMMON_FAILURES.md`
+- `docs/handbook/reference/NEXT_MILESTONE.md`
+- `docs/handbook/reference/PROJECT_RECONSTRUCTION.md`
+- `docs/handbook/reference/TECH_DEBT.md`
+- `docs/handbook/reference/EVIDENCE_REPORT.md`
 
 ## Known Blockers
 
-None for this documentation/status refresh milestone.
+Implementation requires the approved product/security decision to be applied narrowly. If repository evidence remains ambiguous after reading the permission sources, stop and request the smallest missing decision instead of guessing.
 
 ## Verification Status
 
-Completed final verification for this milestone:
+Pending for implementation. Documentation handoff verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
 
-- Living-document self-review completed.
-- `corepack pnpm@9.15.4 format` passed.
-- `corepack pnpm@9.15.4 typecheck` passed.
-- `corepack pnpm@9.15.4 lint` passed.
-- `corepack pnpm@9.15.4 test` passed with 59 test files and 295 tests.
-- `corepack pnpm@9.15.4 build` passed with the existing Vite chunk-size warning.
+Documentation handoff verification passed:
 
-Security review: no authorization or permission-model change. Architecture review: no application architecture or ADR boundary change.
+- `corepack pnpm@9.15.4 format`
+- `corepack pnpm@9.15.4 typecheck`
+- `corepack pnpm@9.15.4 lint`
+- `corepack pnpm@9.15.4 test` with 59 test files and 295 tests passing.
+- `corepack pnpm@9.15.4 build` with the existing Vite chunk-size warning.
+
+Expected implementation verification:
+
+- Targeted permission helper tests.
+- Affected receive, transfer, return, and auth route tests if behavior changes.
+- `corepack pnpm@9.15.4 typecheck`
+- `corepack pnpm@9.15.4 lint`
+- `corepack pnpm@9.15.4 test`
+- `corepack pnpm@9.15.4 build`
+
+Security review is required before commit readiness because the approved milestone touches authorization expectations.
 
 ## Next Review
 
-Commit approved by the user after verification and living documentation updates.
+Implement only the approved temporary volunteer permission drift milestone.
 
 ## Owner
 

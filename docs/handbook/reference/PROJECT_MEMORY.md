@@ -37,6 +37,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 - Offline capability is an architectural requirement, but detailed offline queue architecture remains incomplete.
 - Temporary volunteer login diagnostic instrumentation was resolved and should not be reintroduced as permanent behavior.
 - Living planning/status references must be refreshed after completed milestones so `CURRENT_MILESTONE.md`, `NEXT_MILESTONE.md`, scorecard, and limitations do not keep pointing future sessions at completed work.
+- The next approved implementation milestone is temporary volunteer permission drift reconciliation. Implementation should not guess the policy; it must align docs, permission helpers, and tests to the approved product/security decision.
 
 ## Lessons Learned
 
@@ -48,6 +49,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 | Temporary volunteer auth/routing diagnostics remained in the dirty worktree | Documentation-only milestones can coexist with unfinished app work | Future implementation could accidentally mix unrelated changes | Repository audit must identify dirty worktree ownership, isolate the approved milestone before editing, and verify temporary diagnostics are removed before commit readiness |
 | Completed milestones remained active in living planning docs | Current milestone, next milestone, scorecard, and limitations can drift after a successful commit | Future EOS sessions may recommend completed work or understate current verification evidence | After each completed milestone, refresh planning/status docs before recommending the next candidate |
 | Temporary volunteer permissions and undo/reversal terminology remained inconsistent across older docs | Historical documents preserve useful context but may not represent current authority | Silent reconciliation would hide product/security decisions | Record drift, propose focused milestones, and stop when product or security authority is needed |
+| Repository reconstruction found stale milestone state outside the main candidate page | `PROJECT_RECONSTRUCTION.md` still carried an older ranked table after `NEXT_MILESTONE.md` was refreshed | Future sessions could restart from completed work despite the current candidate page being correct | Validate reconstruction docs against current milestone and next milestone during every resume |
 
 ## Memory Update Rules
 

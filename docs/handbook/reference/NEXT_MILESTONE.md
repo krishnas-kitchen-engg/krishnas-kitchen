@@ -37,17 +37,19 @@ Implementation must not begin until the human approves one candidate. Commit app
 
 ## Status
 
-Candidate Options
+Candidate Approved
 
 ## Approval
 
-Pending Human Approval
+Approved by the human for implementation: Candidate 1, Reconcile Temporary Volunteer Permission Drift.
 
 ## Recommended Candidate
 
 Candidate 1: Reconcile Temporary Volunteer Permission Drift.
 
 Recommendation: Request Human Decision.
+
+Approval Note: The human approved this candidate after repository reconstruction. Implementation must still follow the documented dependencies, stay within the smallest vertical slice, and receive separate commit approval after verification.
 
 Confidence: 68%.
 

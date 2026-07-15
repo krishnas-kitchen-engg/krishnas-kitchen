@@ -55,6 +55,7 @@ The project is not documented as production-ready.
 - Engineering Handbook foundation, governance, operating model, process, template, and ADR layers exist in `docs/handbook`.
 - Temporary volunteer login diagnostic instrumentation has been removed from the auth/routing worktree, returning those application files to repository behavior.
 - Living planning/status references have been refreshed so the next candidate set no longer points to completed diagnostic cleanup work.
+- Repository reconstruction identified the temporary volunteer permission drift milestone as the next approved implementation milestone.
 
 ## Implemented Domains
 
@@ -69,7 +70,7 @@ Supabase Auth is documented as the browser session source. `SupabaseAuthProvider
 
 Temporary volunteer login/navigation diagnostic logging has been resolved. No `KK_LOGIN_DEBUG` or `console.info` instrumentation remains in `apps/web/src`.
 
-Known gap: temporary volunteer permission documentation is inconsistent across current source documents.
+Known gap: temporary volunteer permission documentation and implementation expectations are inconsistent across current source documents. The next approved milestone is to reconcile this drift without broadening authorization scope.
 
 ## Inventory Status
 
@@ -103,8 +104,9 @@ Known gaps remain in documentation synchronization and explicit security status 
 
 Vitest is configured. Tests exist for inventory domain logic, repository adapters, migrations, auth volunteer sessions, UI reducers/screens, shell navigation, and shared utilities.
 
-Latest verification for the temporary volunteer login diagnostic resolution passed:
+Latest verification for the temporary volunteer permission milestone documentation handoff passed:
 
+- `corepack pnpm@9.15.4 format`
 - `corepack pnpm@9.15.4 typecheck`
 - `corepack pnpm@9.15.4 lint`
 - `corepack pnpm@9.15.4 test` with 59 test files and 295 tests passing
@@ -118,7 +120,7 @@ Existing project docs cover product vision, MVP scope, system architecture, inve
 
 The handbook now contains governance, the canonical AI Engineering Operating Model, engineering principles, process, templates, ADR framework, initial ADRs, living reference documents, project reconstruction, project memory, implementation patterns, common failures and engineering lessons, document index, drift register, and health report.
 
-The current candidate set in [Next Milestone](./NEXT_MILESTONE.md) recommends resolving temporary volunteer permission drift through a human product/security decision.
+The current candidate set in [Next Milestone](./NEXT_MILESTONE.md) has approved resolving temporary volunteer permission drift as the next implementation milestone.
 
 The Engineering Operating System is Stable at v1.2. Future EOS changes require implementation-driven justification rather than speculative improvement.
 

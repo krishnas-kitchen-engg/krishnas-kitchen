@@ -21,6 +21,7 @@ related:
   - ./KNOWN_LIMITATIONS.md
   - ./OPEN_DECISIONS.md
   - ./CHANGELOG_SUMMARY.md
+  - ./EVIDENCE_REPORT.md
   - ./ARCHITECTURAL_INVARIANTS.md
   - ./DOCUMENT_INDEX.md
   - ./DOCUMENTATION_DRIFT.md
@@ -37,7 +38,7 @@ Reference documentation should provide concise, current facts that contributors 
 
 ## Purpose
 
-This section holds the living memory of the project: current state, project reconstruction, active and next milestones, project memory, implementation patterns, common failures and engineering lessons, scorecard, technical debt, security status, limitations, open decisions, changelog summary, and architectural invariants.
+This section holds the living memory of the project: current state, project reconstruction, active and next milestones, project memory, implementation patterns, common failures and engineering lessons, scorecard, technical debt, security status, limitations, open decisions, changelog summary, evidence reports, and architectural invariants.
 
 Use these documents before planning or implementing work. They describe current reality and must be updated as milestones change that reality.
 
@@ -69,7 +70,8 @@ For risk review:
 2. [Security Status](./SECURITY_STATUS.md)
 3. [Technical Debt](./TECH_DEBT.md)
 4. [Known Limitations](./KNOWN_LIMITATIONS.md)
-5. [Handbook Health Report](./HANDBOOK_HEALTH_REPORT.md)
+5. [Evidence Report](./EVIDENCE_REPORT.md)
+6. [Handbook Health Report](./HANDBOOK_HEALTH_REPORT.md)
 
 For historical orientation:
 
@@ -92,6 +94,7 @@ For historical orientation:
 - [Known Limitations](./KNOWN_LIMITATIONS.md)
 - [Open Decisions](./OPEN_DECISIONS.md)
 - [Changelog Summary](./CHANGELOG_SUMMARY.md)
+- [Evidence Report](./EVIDENCE_REPORT.md)
 - [Architectural Invariants](./ARCHITECTURAL_INVARIANTS.md)
 - [Document Index](./DOCUMENT_INDEX.md)
 - [Documentation Drift](./DOCUMENTATION_DRIFT.md)
@@ -112,6 +115,7 @@ For historical orientation:
 - Update [Known Limitations](./KNOWN_LIMITATIONS.md) when limitations are discovered or resolved.
 - Update [Open Decisions](./OPEN_DECISIONS.md) when decisions are opened, resolved, or deferred.
 - Update [Changelog Summary](./CHANGELOG_SUMMARY.md) after meaningful engineering milestones.
+- Update [Evidence Report](./EVIDENCE_REPORT.md) after repository reconstruction, implementation, verification, or commit-readiness milestones.
 - Update [Architectural Invariants](./ARCHITECTURAL_INVARIANTS.md) when ADRs change invariants.
 - Update [Document Index](./DOCUMENT_INDEX.md) when repository-owned Markdown documents are added, reclassified, or superseded.
 - Update [Documentation Drift](./DOCUMENTATION_DRIFT.md) when contradictions are discovered, resolved, or reclassified.
