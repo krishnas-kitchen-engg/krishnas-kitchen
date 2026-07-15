@@ -33,6 +33,7 @@ Keep this page concise. Link to ADRs, architecture docs, source files, and tests
 | Repository boundary | UI and application services should depend on repository contracts, not raw persistence details. | [ADR-0006](../adrs/0006-repository-pattern.md) |
 | Supabase boundary | Browser code must not treat client-side permission checks as authoritative. Use RLS/RPC boundaries for protected data. | [ADR-0003](../adrs/0003-supabase-auth-and-rls-boundary.md), [ADR-0007](../adrs/0007-rpc-boundaries-and-browser-trust.md) |
 | Inventory changes | Inventory-changing work must preserve immutable transactions, positive quantities, derived balances, and reversibility. | [Architectural Invariants](./ARCHITECTURAL_INVARIANTS.md) |
+| Diagnostic cleanup | Temporary diagnostic logging in auth, routing, security, or inventory flows should be removed or converted to an explicit approved observability pattern before commit readiness. Verify with targeted search and scoped diff review. | [Common Failures and Engineering Lessons](./COMMON_FAILURES.md), [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) |
 | Living docs | Update only living docs affected by the approved milestone. Do not expand handbook infrastructure unless stewardship rules allow it. | [Handbook Stewardship](../roadmap.md) |
 | Verification | Use scoped checks during repair, then full typecheck, lint, tests, and build before commit readiness for implementation milestones. | [Quality Gates](../process/QUALITY_GATES.md), [Definition of Done](../process/DEFINITION_OF_DONE.md) |
 

@@ -9,6 +9,7 @@ last_reviewed: null
 related:
   - ./README.md
   - ./CURRENT_MILESTONE.md
+  - ./PROJECT_RECONSTRUCTION.md
   - ./PROJECT_MEMORY.md
   - ./IMPLEMENTATION_PATTERNS.md
   - ./COMMON_FAILURES.md
@@ -52,6 +53,7 @@ The project is not documented as production-ready.
 - Supabase foundational schema and later additive migrations exist.
 - Inventory domain services, repository adapters, visibility, barcode, scan, receive, transfer, return, unknown barcode, and low-stock work are present in source and tests.
 - Engineering Handbook foundation, governance, operating model, process, template, and ADR layers exist in `docs/handbook`.
+- Temporary volunteer login diagnostic instrumentation has been removed from the auth/routing worktree, returning those application files to repository behavior.
 
 ## Implemented Domains
 
@@ -63,6 +65,8 @@ The project is not documented as production-ready.
 ## Authentication Status
 
 Supabase Auth is documented as the browser session source. `SupabaseAuthProvider`, `AuthProvider`, and `RouteGuard` exist in the app structure. Temporary volunteer session storage and Supabase volunteer session repository tests exist.
+
+Temporary volunteer login/navigation diagnostic logging has been resolved. No `KK_LOGIN_DEBUG` or `console.info` instrumentation remains in `apps/web/src`.
 
 Known gap: temporary volunteer permission documentation is inconsistent across current source documents.
 
@@ -98,13 +102,20 @@ Known gaps remain in documentation synchronization and explicit security status 
 
 Vitest is configured. Tests exist for inventory domain logic, repository adapters, migrations, auth volunteer sessions, UI reducers/screens, shell navigation, and shared utilities.
 
-This document does not assert the test suite currently passes; tests were not run as part of this documentation-only update.
+Latest verification for the temporary volunteer login diagnostic resolution passed:
+
+- `corepack pnpm@9.15.4 typecheck`
+- `corepack pnpm@9.15.4 lint`
+- `corepack pnpm@9.15.4 test` with 59 test files and 295 tests passing
+- `corepack pnpm@9.15.4 build`
+
+The production build emitted the existing Vite chunk-size warning, but completed successfully.
 
 ## Documentation Status
 
 Existing project docs cover product vision, MVP scope, system architecture, inventory architecture, auth architecture, permissions, execution process, feature specs, Supabase notes, and validation seed data.
 
-The handbook now contains governance, the canonical AI Engineering Operating Model, engineering principles, process, templates, ADR framework, initial ADRs, living reference documents, project memory, implementation patterns, common failures and engineering lessons, document index, drift register, and health report.
+The handbook now contains governance, the canonical AI Engineering Operating Model, engineering principles, process, templates, ADR framework, initial ADRs, living reference documents, project reconstruction, project memory, implementation patterns, common failures and engineering lessons, document index, drift register, and health report.
 
 The Engineering Operating System is Stable at v1.2. Future EOS changes require implementation-driven justification rather than speculative improvement.
 
@@ -132,6 +143,7 @@ This is living documentation.
 ## Related Documents
 
 - [Current Milestone](./CURRENT_MILESTONE.md)
+- [Project Reconstruction](./PROJECT_RECONSTRUCTION.md)
 - [Project Memory](./PROJECT_MEMORY.md)
 - [Implementation Patterns](./IMPLEMENTATION_PATTERNS.md)
 - [Common Failures and Engineering Lessons](./COMMON_FAILURES.md)

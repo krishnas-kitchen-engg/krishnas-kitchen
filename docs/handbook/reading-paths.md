@@ -16,6 +16,7 @@ related:
   - ./governance/AI_EXECUTION_PROTOCOL.md
   - ./governance/REPOSITORY_REFRESH_PROTOCOL.md
   - ./governance/ENGINEERING_SYSTEM.md
+  - ./reference/PROJECT_RECONSTRUCTION.md
 ---
 
 # Reading Paths
@@ -48,12 +49,13 @@ This page defines curated paths for common readers. It references existing proje
 7. [Session Lifecycle](./process/SESSION_LIFECYCLE.md)
 8. [Milestone Lifecycle](./process/MILESTONE_LIFECYCLE.md)
 9. [Current Milestone](./reference/CURRENT_MILESTONE.md)
-10. [Project Memory](./reference/PROJECT_MEMORY.md)
-11. [Implementation Patterns](./reference/IMPLEMENTATION_PATTERNS.md)
-12. [Common Failures and Engineering Lessons](./reference/COMMON_FAILURES.md)
-13. [Next Milestone](./reference/NEXT_MILESTONE.md)
-14. [Existing Documentation Map](./existing-documentation.md)
-15. The relevant handbook section for the task.
+10. [Project Reconstruction](./reference/PROJECT_RECONSTRUCTION.md)
+11. [Project Memory](./reference/PROJECT_MEMORY.md)
+12. [Implementation Patterns](./reference/IMPLEMENTATION_PATTERNS.md)
+13. [Common Failures and Engineering Lessons](./reference/COMMON_FAILURES.md)
+14. [Next Milestone](./reference/NEXT_MILESTONE.md)
+15. [Existing Documentation Map](./existing-documentation.md)
+16. The relevant handbook section for the task.
 
 This path starts with the canonical AI engineering operating contract before moving into supporting process and reference material.
 

@@ -120,6 +120,7 @@ Classifications are intentionally exact: each document has one classification.
 | `docs/handbook/reference/README.md` | Reference | Engineering | Active | None | When reference navigation changes |
 | `docs/handbook/reference/CURRENT_STATE.md` | Living | Engineering | Active | None | After every implementation or major documentation milestone |
 | `docs/handbook/reference/CURRENT_MILESTONE.md` | Living | Engineering | Active | None | At milestone start, pause, completion, or scope change |
+| `docs/handbook/reference/PROJECT_RECONSTRUCTION.md` | Living | Engineering | Active | None | After major implementation milestones or material reconstruction changes |
 | `docs/handbook/reference/NEXT_MILESTONE.md` | Living | Engineering | Active | None | When candidate milestones change, are approved, are rejected, or are replaced |
 | `docs/handbook/reference/PROJECT_MEMORY.md` | Living | Engineering | Active | None | When durable project memory changes |
 | `docs/handbook/reference/IMPLEMENTATION_PATTERNS.md` | Living | Engineering | Active | None | When reusable implementation patterns change |

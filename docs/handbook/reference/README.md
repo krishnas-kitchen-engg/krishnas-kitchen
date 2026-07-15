@@ -10,6 +10,7 @@ related:
   - ../README.md
   - ./CURRENT_STATE.md
   - ./CURRENT_MILESTONE.md
+  - ./PROJECT_RECONSTRUCTION.md
   - ./NEXT_MILESTONE.md
   - ./PROJECT_MEMORY.md
   - ./IMPLEMENTATION_PATTERNS.md
@@ -36,11 +37,13 @@ Reference documentation should provide concise, current facts that contributors 
 
 ## Purpose
 
-This section holds the living memory of the project: current state, active and next milestones, project memory, implementation patterns, common failures and engineering lessons, scorecard, technical debt, security status, limitations, open decisions, changelog summary, and architectural invariants.
+This section holds the living memory of the project: current state, project reconstruction, active and next milestones, project memory, implementation patterns, common failures and engineering lessons, scorecard, technical debt, security status, limitations, open decisions, changelog summary, and architectural invariants.
 
 Use these documents before planning or implementing work. They describe current reality and must be updated as milestones change that reality.
 
 [Next Milestone](./NEXT_MILESTONE.md) records the top three candidate implementation micro-milestones and the recommended candidate. Candidate milestones are planning artifacts until a human explicitly approves implementation.
+
+[Project Reconstruction](./PROJECT_RECONSTRUCTION.md) is the primary engineering snapshot for future repository refresh and AI session startup.
 
 [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) defines how these living references are used during repository refresh, audit, candidate scoring, implementation, review, and commit readiness.
 
@@ -50,14 +53,15 @@ For session startup:
 
 1. [Current State](./CURRENT_STATE.md)
 2. [Current Milestone](./CURRENT_MILESTONE.md)
-3. [Project Memory](./PROJECT_MEMORY.md)
-4. [Implementation Patterns](./IMPLEMENTATION_PATTERNS.md)
-5. [Common Failures and Engineering Lessons](./COMMON_FAILURES.md)
-6. [Next Milestone](./NEXT_MILESTONE.md)
-7. [Architectural Invariants](./ARCHITECTURAL_INVARIANTS.md)
-8. [Document Index](./DOCUMENT_INDEX.md)
-9. [Documentation Drift](./DOCUMENTATION_DRIFT.md)
-10. [Open Decisions](./OPEN_DECISIONS.md)
+3. [Project Reconstruction](./PROJECT_RECONSTRUCTION.md)
+4. [Project Memory](./PROJECT_MEMORY.md)
+5. [Implementation Patterns](./IMPLEMENTATION_PATTERNS.md)
+6. [Common Failures and Engineering Lessons](./COMMON_FAILURES.md)
+7. [Next Milestone](./NEXT_MILESTONE.md)
+8. [Architectural Invariants](./ARCHITECTURAL_INVARIANTS.md)
+9. [Document Index](./DOCUMENT_INDEX.md)
+10. [Documentation Drift](./DOCUMENTATION_DRIFT.md)
+11. [Open Decisions](./OPEN_DECISIONS.md)
 
 For risk review:
 
@@ -77,6 +81,7 @@ For historical orientation:
 
 - [Current State](./CURRENT_STATE.md)
 - [Current Milestone](./CURRENT_MILESTONE.md)
+- [Project Reconstruction](./PROJECT_RECONSTRUCTION.md)
 - [Next Milestone](./NEXT_MILESTONE.md)
 - [Project Memory](./PROJECT_MEMORY.md)
 - [Implementation Patterns](./IMPLEMENTATION_PATTERNS.md)
@@ -95,6 +100,7 @@ For historical orientation:
 ## Living-Document Responsibilities
 
 - Update [Current State](./CURRENT_STATE.md) after every implementation milestone or major documentation milestone.
+- Update [Project Reconstruction](./PROJECT_RECONSTRUCTION.md) after major implementation milestones or when repository reconstruction evidence materially changes.
 - Update [Current Milestone](./CURRENT_MILESTONE.md) when a milestone starts, pauses, completes, or changes scope.
 - Update [Next Milestone](./NEXT_MILESTONE.md) when candidate implementation milestones change, are approved, are rejected, or are replaced.
 - Update [Project Memory](./PROJECT_MEMORY.md) when durable project understanding changes.

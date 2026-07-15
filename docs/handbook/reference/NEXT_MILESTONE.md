@@ -37,21 +37,21 @@ Implementation must not begin until the human approves one candidate. Commit app
 
 ## Status
 
-Candidate Options
+Prior Candidate Completed
 
 ## Approval
 
-Pending Human Approval
+Implementation and Commit Approved
 
 ## Recommended Candidate
 
 Candidate 1: Resolve temporary volunteer login diagnostic work.
 
-Recommendation: Request Human Decision.
+Recommendation: Completed.
 
-Confidence: 72%.
+Confidence: 78%.
 
-Rationale: This candidate addresses the current dirty worktree in auth/routing files before new application development. It is narrow, reversible, and removes ambiguity around temporary volunteer login diagnostics.
+Rationale: This candidate addressed the dirty auth/routing diagnostic worktree state before new application development. It was narrow, reversible, and removed ambiguity around temporary volunteer login diagnostics.
 
 Estimated Effort: Small.
 
@@ -68,62 +68,63 @@ Uncertainties:
 
 Reasons Alternatives Were Not Recommended:
 
-- Candidate 2 is valuable but should follow cleanup of the current dirty auth/routing work.
+- Candidate 2 is valuable but requires an explicit product/security decision.
 - Candidate 3 is important but has broader architecture dependencies and lower implementation readiness.
 
 ## Candidate 1: Resolve Temporary Volunteer Login Diagnostic Work
 
-Recommendation: Request Human Decision.
+Recommendation: Completed.
 
-Rationale: The current working tree contains temporary volunteer login and navigation debug instrumentation in auth/routing files. Resolving that state is the smallest safe step before new application development.
+Rationale: The working tree contained temporary volunteer login and navigation debug instrumentation in auth/routing files. Resolving that state was the smallest safe step before new application development.
 
-Confidence: 72%.
+Confidence: 78%.
 
 Estimated Effort: Small.
 
 Dependencies:
 
 - Human approval of this candidate.
-- Review of current dirty worktree changes before editing.
+- Review of dirty worktree changes before editing.
 - Relevant auth, route, and temporary volunteer session tests.
 - Security review because the area touches authentication/session flow.
 
 Risk:
 
 - Auth/session flow is security-sensitive.
-- Current dirty worktree changes may be user work and must be preserved unless the user approves changing them.
 - Temporary volunteer permissions are documented as drift and must not be silently redefined.
 
-Expected Value: High. This clears the current dirty auth/routing state before new application work and reduces risk of mixing unrelated changes.
+Expected Value: High. This cleared the dirty auth/routing state before new application work and reduced risk of mixing unrelated changes.
 
-Architecture Impact: Low if limited to diagnostic cleanup or narrowly restoring intended behavior. Stop if a session model or permission boundary change is required.
+Architecture Impact: Low. The completed work removed diagnostics only and made no session model or permission boundary change.
 
-Security Impact: Medium because authentication/session flow is involved. Security review is required before commit readiness.
+Security Impact: Medium because authentication/session flow is involved. Security review found no authorization or permission-model change.
 
 Testing Strategy:
 
-- Review existing auth, route guard, and temporary volunteer session tests.
-- Add or adjust only focused tests required by the approved implementation.
-- Run relevant scoped tests, then typecheck, lint, full tests, and build before commit readiness.
+- Reviewed existing auth, route guard, and temporary volunteer session tests.
+- No new tests were required because behavior was preserved.
+- Typecheck, lint, full tests, and build passed before commit readiness.
 
 Expected Deliverables:
 
 - Clean temporary volunteer login/navigation behavior.
-- No stray debug logging unless explicitly approved as a diagnostic artifact.
-- Updated or confirmed tests for affected auth/routing behavior.
-- Living documentation updates only if behavior, risk, or milestone status changes.
+- No stray debug logging.
+- Confirmed tests for affected auth/routing behavior.
+- Living documentation updates for milestone, state, memory, changelog, patterns, engineering lessons, and reconstruction.
 
 Validation Plan:
 
-- Run relevant auth and route tests.
-- Run typecheck, lint, full tests, and build before commit readiness if implementation is approved.
-- Manually validate temporary volunteer login/navigation if required by the implemented change.
+- `rg "KK_LOGIN_DEBUG|console\\.info" apps\web\src` found no matches.
+- `corepack pnpm@9.15.4 typecheck` passed.
+- `corepack pnpm@9.15.4 lint` passed.
+- `corepack pnpm@9.15.4 test` passed with 59 test files and 295 tests.
+- `corepack pnpm@9.15.4 build` passed with the existing Vite chunk-size warning.
 
 ## Candidate 2: Reconcile Temporary Volunteer Permission Drift
 
-Recommendation: Defer.
+Recommendation: Request Human Decision.
 
-Rationale: Temporary volunteer permission drift is high-value and security-sensitive, but it should not be mixed with unresolved dirty auth/routing diagnostic work.
+Rationale: Temporary volunteer permission drift is high-value and security-sensitive. It should be considered during the next fresh EOS candidate refresh now that auth/routing diagnostics are resolved.
 
 Confidence: 64%.
 
@@ -150,10 +151,10 @@ Testing Strategy:
 - No implementation tests until product/security decision is approved.
 - If later approved for implementation, run permission/RLS/RPC tests and full verification.
 
-Why Not Recommended Now:
+Why Not Automatically Recommended Now:
 
 - It depends on a human product/security decision.
-- It should follow cleanup or ownership resolution for the current dirty auth/routing worktree.
+- It should be reconsidered after a fresh repository refresh and candidate comparison.
 
 Expected Deliverables:
 
@@ -195,7 +196,7 @@ Testing Strategy:
 Why Not Recommended Now:
 
 - It requires architecture approval before implementation.
-- It has broader dependencies and lower confidence than resolving current dirty auth/routing work.
+- It has broader dependencies and lower confidence than the completed diagnostic cleanup had.
 
 Expected Deliverables:
 

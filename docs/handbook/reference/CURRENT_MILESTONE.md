@@ -31,71 +31,58 @@ Update this document whenever a milestone starts, pauses, completes, or changes 
 
 ## Current Active Milestone
 
-Finalize Engineering Operating System v1.2.
+Resolve Temporary Volunteer Login Diagnostic Work.
 
 ## Goal
 
-Complete, simplify, stabilize, and freeze the Engineering Operating System before returning to application development.
+Resolve the temporary volunteer login/navigation diagnostic worktree state without changing auth, session, permission, or routing behavior.
 
 ## Status
 
-Approved for freeze. Engineering principles, stop conditions, lessons learned, broadened engineering lessons, candidate recommendation requirements, scorecard simplification, and v1.2 Stable status have been added.
+Completed. Temporary `KK_LOGIN_DEBUG` instrumentation was removed from the auth/routing worktree and the affected application files now match repository behavior.
 
 ## Scope
 
-- Create `ENGINEERING_PRINCIPLES.md`.
-- Add stop conditions to `AI_ENGINEERING_OPERATING_MODEL.md`.
-- Add durable lessons learned to `PROJECT_MEMORY.md`.
-- Broaden `COMMON_FAILURES.md` into common failures and engineering lessons.
-- Ensure `NEXT_MILESTONE.md` records expected value, architecture impact, security impact, testing strategy, and reasons alternatives were not recommended.
-- Simplify `PROJECT_SCORECARD.md` to high-value health indicators.
-- Mark the EOS Stable at v1.2.
-- Cross-reference affected handbook documents and remove stale prior EOS framing.
-- Do not modify application code.
-- Do not modify tests.
-- Do not modify migrations.
-- Do not modify build or package configuration.
-- Do not move or delete files.
-- Do not commit.
+- Review the dirty auth/routing diagnostics in `router.ts`, `AuthProvider.tsx`, and `LoginScreen.tsx`.
+- Remove only temporary diagnostic logging.
+- Preserve existing temporary volunteer auth/session/navigation behavior.
+- Do not resolve temporary volunteer permission drift in this milestone.
+- Do not modify tests, migrations, build configuration, package configuration, or unrelated application code.
+- Update living documentation required by the completed milestone.
 
 ## Files Affected
 
+- `apps/web/src/app/routes/router.ts` was returned to repository behavior with no final diff.
+- `apps/web/src/features/auth/providers/AuthProvider.tsx` was returned to repository behavior with no final diff.
+- `apps/web/src/features/auth/screens/LoginScreen.tsx` was returned to repository behavior with no final diff.
 - `docs/handbook/reference/CURRENT_MILESTONE.md`
 - `docs/handbook/reference/CURRENT_STATE.md`
-- `docs/handbook/reference/CHANGELOG_SUMMARY.md`
-- `docs/handbook/reference/README.md`
-- `docs/handbook/reference/NEXT_MILESTONE.md`
 - `docs/handbook/reference/PROJECT_MEMORY.md`
+- `docs/handbook/reference/CHANGELOG_SUMMARY.md`
+- `docs/handbook/reference/IMPLEMENTATION_PATTERNS.md`
 - `docs/handbook/reference/COMMON_FAILURES.md`
-- `docs/handbook/reference/DOCUMENT_INDEX.md`
-- `docs/handbook/reference/PROJECT_SCORECARD.md`
-- `docs/handbook/README.md`
-- `docs/handbook/reading-paths.md`
-- `docs/handbook/governance/README.md`
-- `docs/handbook/governance/PROJECT_CONSTITUTION.md`
-- `docs/handbook/governance/AI_ENGINEERING_OPERATING_MODEL.md`
-- `docs/handbook/governance/ENGINEERING_PRINCIPLES.md`
+- `docs/handbook/reference/PROJECT_RECONSTRUCTION.md`
 
 ## Known Blockers
 
-None for this documentation/process milestone.
+None for this completed milestone.
 
 ## Verification Status
 
-Completed documentation/process review:
+Completed implementation and documentation review:
 
-- New governance document includes front matter, owner, update cadence, and related links.
-- `NEXT_MILESTONE.md` presents three candidates and the required recommendation fields.
-- `PROJECT_SCORECARD.md` tracks only high-value health indicators.
-- The operating model records stop conditions and remains the canonical workflow contract.
-- EOS v1.2 is marked Stable.
-- Changed scope remains documentation/process only.
+- `rg "KK_LOGIN_DEBUG|console\\.info" apps\web\src` found no matches.
+- `git diff -- apps/web/src/app/routes/router.ts apps/web/src/features/auth/providers/AuthProvider.tsx apps/web/src/features/auth/screens/LoginScreen.tsx` was empty after cleanup.
+- `corepack pnpm@9.15.4 typecheck` passed.
+- `corepack pnpm@9.15.4 lint` passed.
+- `corepack pnpm@9.15.4 test` passed with 59 test files and 295 tests.
+- `corepack pnpm@9.15.4 build` passed with the existing Vite chunk-size warning.
 
-Application tests are not required for this documentation-only milestone.
+Security review found no authorization or permission-model change. Architecture review found no boundary change.
 
 ## Next Review
 
-User review of the updated workflow before any commit approval.
+Commit approved by the user after verification and living documentation updates.
 
 ## Owner
 
