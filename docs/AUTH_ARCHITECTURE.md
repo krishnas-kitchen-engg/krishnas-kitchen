@@ -48,23 +48,21 @@ Inventory permissions are intentionally granular:
 - `inventory.adjust`
 - `inventory.undo`
 
-Temporary volunteer sessions are local, time-limited, and restricted to limited operational permissions:
+Temporary volunteer sessions are time-limited, server-verified session modes. In the browser they receive only read/session permissions:
 
 - `locations.read`
 - `items.read`
 - `inventory.read`
-- `inventory.transfer`
-- `inventory.consume`
-- `inventory.return`
+- `volunteer_sessions.create`
 
-They do not receive `inventory.adjust`, `inventory.undo`, item editing, audit, user, role, temple, organization, or other administrative permissions. Expired or malformed temporary sessions are cleared during hydration, and active temporary sessions are cleared automatically when their expiration time is reached.
+They do not receive `inventory.receive`, `inventory.transfer`, `inventory.consume`, `inventory.return`, `inventory.adjust`, `inventory.undo`, item editing, audit, user, role, temple, organization, or other administrative permissions. Expired or malformed temporary sessions are cleared during hydration, and active temporary sessions are cleared automatically when their expiration time is reached.
 
 ## Assumptions
 
 - Supabase `app_metadata` will eventually include `organization_id`, `organization_name`, `profile_id`, `roles`, and `temples`.
 - Temple selection is local session context for now. RLS remains the final source of authorization.
 - No business workflows, inventory screens, or recipe flows are included in this foundation.
-- Temporary volunteer sessions are a UI scaffold until a server-verified volunteer check-in flow exists.
+- Temporary volunteer sessions are server-verified, but operational write permissions remain out of scope until an approved server-enforced write model exists.
 
 ## Future Extension Notes
 

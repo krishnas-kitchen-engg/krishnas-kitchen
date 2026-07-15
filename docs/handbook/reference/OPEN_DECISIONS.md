@@ -30,7 +30,6 @@ Only include decisions that are unresolved. When resolved, create or link an ADR
 
 | Decision | Context | Options | Required Information | Decision Owner | Target Milestone |
 |---|---|---|---|---|---|
-| OD-001 Temporary volunteer operational permissions | Current docs conflict on whether temporary volunteers can receive, transfer, consume, or return inventory | Restrict to read/session only; allow scoped operational permissions; split by session type | Confirm intended product behavior and server enforcement model | Engineering | Not assigned |
 | OD-002 Undo versus reversal terminology | Docs and schema history use both `undo` and `reversal` | Canonicalize event type as reversal and UI action as undo; retain both terms with explicit meanings; choose another mapping | Confirm current implementation and desired user-facing language | Engineering | Not assigned |
 | OD-003 Offline queue architecture | Offline is required, but detailed living architecture is absent | Client-side queue through repository contract; service-worker-backed flow; defer writes until online-only milestone | Confirm storage, replay, idempotency, and conflict strategy | Engineering | Not assigned |
 | OD-004 Living security architecture ownership | Security status is distributed across docs, migrations, and ADRs | Create a dedicated auth/RLS/security architecture page; keep status only in reference docs | Confirm owner and scope | Engineering | Not assigned |
@@ -56,4 +55,3 @@ This is living documentation.
 - [ADR-0004: Temporary Volunteer Session Model](../adrs/0004-temporary-volunteer-session-model.md)
 - [ADR-0005: Mobile-First Offline PWA](../adrs/0005-mobile-first-offline-pwa.md)
 - [ADR-0009: Auditability And Reversibility](../adrs/0009-auditability-and-reversibility.md)
-

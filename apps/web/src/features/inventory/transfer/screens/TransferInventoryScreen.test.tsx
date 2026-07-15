@@ -80,10 +80,16 @@ function renderScreen(auth: AuthContextValue) {
 }
 
 describe("TransferInventoryScreen", () => {
-  it("allows temporary volunteers with inventory.transfer permission", () => {
+  it("blocks temporary volunteers without inventory.transfer permission", () => {
     const markup = renderScreen(
       createAuthValue({
         isTemporaryVolunteer: true,
+        permissions: [
+          "locations.read",
+          "items.read",
+          "inventory.read",
+          "volunteer_sessions.create"
+        ],
         profile: null,
         temporaryVolunteerSession: {
           displayName: "Festival Volunteer",
@@ -96,9 +102,8 @@ describe("TransferInventoryScreen", () => {
       })
     );
 
-    assert.match(markup, /Transfer inventory/);
-    assert.match(markup, /Move stock/);
-    assert.doesNotMatch(markup, /Transfer unavailable/);
+    assert.match(markup, /Transfer unavailable/);
+    assert.doesNotMatch(markup, /Move stock/);
   });
 
   it("blocks users without transfer permission", () => {

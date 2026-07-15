@@ -50,11 +50,11 @@ Implementation maturity: active development. Repository evidence shows implement
 
 Engineering maturity: strong. The Engineering Operating System is Stable at v1.2, with a canonical operating model, governance, process docs, templates, ADRs, living references, and a scorecard. Future EOS changes require implementation-driven justification.
 
-Security maturity: foundation implemented, production posture still needs review. RLS is enabled on foundational tables, helper functions and controlled volunteer RPCs exist, authenticated inventory read policies exist, and security ADRs are accepted. Temporary volunteer permission drift and the absence of a consolidated living security architecture remain known risks. See [Security Status](./SECURITY_STATUS.md).
+Security maturity: foundation implemented, production posture still needs review. RLS is enabled on foundational tables, helper functions and controlled volunteer RPCs exist, authenticated inventory read policies exist, and security ADRs are accepted. Temporary volunteer browser permissions are now restricted to read/session capabilities; the absence of a consolidated living security architecture remains a known risk. See [Security Status](./SECURITY_STATUS.md).
 
 Documentation maturity: high for engineering process and reconstruction, medium for application-state documentation. Canonical handbook docs exist, but older docs still contain drift, duplication, and some encoding artifacts. See [Document Index](./DOCUMENT_INDEX.md) and [Documentation Drift](./DOCUMENTATION_DRIFT.md).
 
-Overall project status: ready to continue controlled application development. The temporary volunteer login diagnostic worktree state has been resolved; remaining high-priority risks are documented permission drift, undo/reversal terminology drift, and incomplete offline queue architecture.
+Overall project status: ready to continue controlled application development. The temporary volunteer login diagnostic worktree state and temporary volunteer permission drift have been resolved; remaining high-priority risks include undo/reversal terminology drift and incomplete offline queue architecture.
 
 ## Product Vision Summary
 
@@ -138,7 +138,6 @@ Volunteer security model: temporary volunteers use session records rather than p
 
 Known remaining security work:
 
-- Reconcile temporary volunteer permission documentation and implementation expectations.
 - Consolidate RLS/security architecture into a living architecture document.
 - Record latest security review results.
 - Add explicit policies for new write paths before production use.
@@ -179,7 +178,7 @@ Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Projec
 | [ADR-0001 Immutable Inventory Ledger](../adrs/0001-immutable-inventory-ledger.md) | Accepted | Implemented | Domain helpers, aggregation, migrations, and docs support immutable transaction history. |
 | [ADR-0002 Positive Quantities And Quantity Effects](../adrs/0002-positive-quantities-and-quantity-effects.md) | Accepted | Implemented with drift | Quantity/effect model exists; return semantics drift is recorded in DD-003. |
 | [ADR-0003 Supabase Auth And RLS Boundary](../adrs/0003-supabase-auth-and-rls-boundary.md) | Accepted | Partially Implemented | Supabase Auth, RLS helpers, policies, and auth providers exist; production security review remains needed. |
-| [ADR-0004 Temporary Volunteer Session Model](../adrs/0004-temporary-volunteer-session-model.md) | Accepted | Partially Implemented / Needs Review | Session storage, repository, RPCs, and tests exist; permission drift remains. Temporary auth/routing diagnostics have been resolved. |
+| [ADR-0004 Temporary Volunteer Session Model](../adrs/0004-temporary-volunteer-session-model.md) | Accepted | Partially Implemented / Needs Review | Session storage, repository, RPCs, tests, and read/session-only browser permissions exist. Temporary auth/routing diagnostics have been resolved. |
 | [ADR-0005 Mobile-First Offline PWA](../adrs/0005-mobile-first-offline-pwa.md) | Accepted | Partially Implemented | PWA stack exists; offline queue architecture is incomplete. |
 | [ADR-0006 Repository Pattern](../adrs/0006-repository-pattern.md) | Accepted | Implemented | Repository contracts and Supabase adapters exist. |
 | [ADR-0007 RPC Boundaries And Browser Trust](../adrs/0007-rpc-boundaries-and-browser-trust.md) | Accepted | Partially Implemented | Volunteer RPC surfaces exist; future protected operations must preserve boundary. |
@@ -203,7 +202,6 @@ Templates: handbook templates exist under `docs/handbook/templates` and should b
 
 Intentional or accepted technical debt from [Technical Debt](./TECH_DEBT.md) and [Known Limitations](./KNOWN_LIMITATIONS.md):
 
-- Temporary volunteer permission drift: high priority because it affects security-sensitive authorization.
 - Undo versus reversal terminology drift: high priority because it affects inventory correction semantics.
 - Offline queue architecture gap: medium priority because offline is an architectural requirement but not fully specified.
 - Older documentation duplication and encoding artifacts: medium priority, mostly contributor-experience risk.
@@ -215,7 +213,7 @@ Deferred work reasons: these items require focused, approved milestones. They sh
 
 Genuine blockers before permission-changing application development resumes:
 
-- Temporary volunteer permission intent requires human product/security decision before permission expansion or cleanup that changes authorization semantics.
+- Future temporary volunteer write capability requires a separate approved server-enforced write model before permissions are expanded.
 
 Not blockers, but important gaps: offline queue architecture, undo/reversal terminology cleanup, return semantics documentation drift, and older documentation drift.
 
@@ -225,22 +223,22 @@ Use the EOS candidate flow in [AI Engineering Operating Model](../governance/AI_
 
 | Rank | Candidate | Recommendation | Confidence | Effort | Dependencies | Risk | Why Alternatives Were Rejected |
 |---|---|---|---|---|---|---|---|
-| 1 | Reconcile temporary volunteer permission drift | Approved for implementation | 68% | Medium | Human product/security decision; review drift/open decisions/auth docs/permissions matrix/current tests | High security risk | Highest-value known blocker before expanding temporary volunteer capability. |
+| 1 | Reconcile temporary volunteer permission drift | Completed | 68% | Medium | Human product/security decision; review drift/open decisions/auth docs/permissions matrix/current tests | Security-sensitive | Resolved before expanding temporary volunteer capability. |
 | 2 | Define offline queue architecture | Defer | 60% | Medium | ADR-0005 review, inventory repository boundary review, architecture approval | Medium-to-high architecture risk | Important, but offline writes should not outrank active authorization ambiguity. |
 | 3 | Canonicalize undo/reversal terminology | Defer | 66% | Small to Medium | ADR-0009 review, transaction helper/reversal validation review, feature doc review | Medium inventory-semantics risk | Important, but lower immediate security impact than temporary volunteer permissions. |
 
-Recommended next action: implement only the approved temporary volunteer permission drift milestone. Do not implement offline or reversal work until a separate candidate milestone is approved.
+Recommended next action: refresh candidate options after this commit. Do not implement offline or reversal work until a separate candidate milestone is approved.
 
 ## Engineering Health
 
 | Area | Health | Evidence |
 |---|---|---|
 | Architecture | Good with known gaps | ADRs and architecture references establish core boundaries; offline/security living architecture pages remain gaps. |
-| Security | Watch | RLS/RPC foundations exist; temporary volunteer permission drift remains unresolved. |
-| Testing | Watch | Many tests exist across domain, repository, migration, auth, UI, and utilities; latest recorded full-suite result passed for the diagnostic cleanup milestone, and future implementation milestones must rerun verification. |
+| Security | Watch | RLS/RPC foundations exist; temporary volunteer browser permissions are restricted to read/session capabilities. |
+| Testing | Watch | Many tests exist across domain, repository, migration, auth, UI, and utilities; latest recorded full-suite result passed for the temporary volunteer permission milestone, and future implementation milestones must rerun verification. |
 | Documentation | Good | EOS v1.2 is Stable; document index, drift register, ADRs, templates, and living references exist. |
-| Roadmap | Conditional | The prior diagnostic cleanup candidate is complete; temporary volunteer permission drift is approved as the next implementation milestone. |
-| Technical Debt | Watch | High-priority auth permission and undo/reversal drift remain open. |
+| Roadmap | Conditional | Temporary volunteer permission drift is complete; next candidate selection should happen after this commit. |
+| Technical Debt | Watch | High-priority undo/reversal drift and offline queue architecture remain open. |
 | Overall | Good for controlled development | The project has enough governance and implementation structure to resume application work after candidate approval. |
 
 ## Repository Health
@@ -249,11 +247,11 @@ Working tree at latest reconstruction update:
 
 - No auth/routing application diff remains after temporary diagnostic cleanup.
 - Living documentation updates are present for the reconstruction, milestone, memory, state, changelog, implementation patterns, and engineering lessons.
-- Temporary volunteer permission drift is the approved next implementation milestone; implementation has not started in this documentation handoff.
+- Temporary volunteer permission drift is implemented and approved for commit.
 
 Resolved debug work: [Project Memory](./PROJECT_MEMORY.md), [Common Failures and Engineering Lessons](./COMMON_FAILURES.md), and [Current Milestone](./CURRENT_MILESTONE.md) record that temporary volunteer login diagnostic instrumentation was removed and verified.
 
-Attention before development resumes: implement only the approved temporary volunteer permission drift milestone and avoid mixing offline or reversal decisions into that work.
+Attention before development resumes: refresh candidate options and avoid mixing offline or reversal decisions into unrelated work.
 
 ## Known Assumptions
 
@@ -295,14 +293,14 @@ They should avoid changing:
 
 - Inventory immutability and derived-balance rules without a new ADR.
 - Authorization/RLS/RPC boundaries without explicit security review and human approval.
-- Temporary volunteer permissions without resolving documented drift.
+- Temporary volunteer write capability without an approved server-enforced write model.
 - Offline write behavior without approved architecture.
 - EOS governance without implementation-driven justification.
 
 They should plan next:
 
-- Implement the approved temporary volunteer permission drift milestone.
-- Keep the selected milestone small, independently verifiable, and reversible.
+- Refresh candidate options after this commit.
+- Keep any follow-up milestone small, independently verifiable, and reversible.
 - Preserve separate approval gates for implementation review and commit.
 
 ## Owner

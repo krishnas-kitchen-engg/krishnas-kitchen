@@ -103,10 +103,7 @@ const temporaryVolunteerPermissions = [
   "locations.read",
   "items.read",
   "inventory.read",
-  "inventory.receive",
-  "inventory.transfer",
-  "inventory.consume",
-  "inventory.return"
+  "volunteer_sessions.create"
 ] satisfies Permission[];
 
 const privilegedRoles: readonly AppRole[] = ["inventory_manager", "temple_admin", "super_admin"];

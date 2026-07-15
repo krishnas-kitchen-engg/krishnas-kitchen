@@ -80,10 +80,16 @@ function renderScreen(auth: AuthContextValue) {
 }
 
 describe("ReturnInventoryScreen", () => {
-  it("allows temporary volunteers with inventory.return permission", () => {
+  it("blocks temporary volunteers without inventory.return permission", () => {
     const markup = renderScreen(
       createAuthValue({
         isTemporaryVolunteer: true,
+        permissions: [
+          "locations.read",
+          "items.read",
+          "inventory.read",
+          "volunteer_sessions.create"
+        ],
         profile: null,
         temporaryVolunteerSession: {
           displayName: "Festival Volunteer",
@@ -96,9 +102,8 @@ describe("ReturnInventoryScreen", () => {
       })
     );
 
-    assert.match(markup, /Return inventory/);
-    assert.match(markup, /Return stock/);
-    assert.doesNotMatch(markup, /Return unavailable/);
+    assert.match(markup, /Return unavailable/);
+    assert.doesNotMatch(markup, /Return stock/);
   });
 
   it("blocks users without return permission", () => {

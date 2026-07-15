@@ -30,15 +30,15 @@ Date: 2026-07-15.
 
 Milestone: Reconcile Temporary Volunteer Permission Drift.
 
-Status: Approved for implementation. This report documents the pre-implementation repository reconstruction and documentation handoff; it does not claim the permission drift has been implemented.
+Status: Implemented, verified, reviewed, and approved for commit.
 
 ## Repository Evidence
 
 - Branch: `docs/engineering-handbook`.
 - Working tree before documentation updates: clean.
-- Latest commit before this report: `96a57a6 docs(handbook): refresh milestone state`.
-- Source files under `apps/web/src`: 243.
-- Test files under `apps/web/src`: 59.
+- Latest committed handoff before implementation: `bdc1220 docs(handbook): record approved permission milestone`.
+- Source files under `apps/web/src`: 244.
+- Test files under `apps/web/src`: 60.
 - Supabase migration files: 12.
 - Diagnostic instrumentation search: no `KK_LOGIN_DEBUG` or `console.info` matches under `apps/web/src`.
 
@@ -50,34 +50,40 @@ Status: Approved for implementation. This report documents the pre-implementatio
 
 ## Permission Drift Evidence
 
-- `docs/AUTH_ARCHITECTURE.md` describes temporary volunteers with limited inventory permissions including transfer, consume, and return.
-- `docs/PERMISSIONS_MATRIX.md` says temporary volunteers cannot receive, transfer, consume, return, adjust, or undo inventory and receive only `volunteer_sessions.create`.
-- `apps/web/src/features/auth/lib/permissions.ts` grants temporary volunteers `inventory.read`, `inventory.receive`, `inventory.transfer`, `inventory.consume`, and `inventory.return`.
-- Receive, transfer, and return workflow tests include cases allowing temporary volunteers with the corresponding inventory permissions.
+- Before implementation, `docs/AUTH_ARCHITECTURE.md` described temporary volunteers with limited inventory permissions including transfer, consume, and return.
+- Before implementation, `docs/PERMISSIONS_MATRIX.md` said temporary volunteers could not receive, transfer, consume, return, adjust, or undo inventory and received only `volunteer_sessions.create`.
+- Before implementation, `apps/web/src/features/auth/lib/permissions.ts` granted temporary volunteers `inventory.read`, `inventory.receive`, `inventory.transfer`, `inventory.consume`, and `inventory.return`.
+- Before implementation, receive, transfer, and return workflow tests included cases allowing temporary volunteers with the corresponding inventory permissions.
+- After implementation, temporary volunteer browser permissions are `locations.read`, `items.read`, `inventory.read`, and `volunteer_sessions.create`.
+- After implementation, receive, transfer, and return screen tests assert temporary volunteers without operational permissions are blocked from operational workflows.
 
 ## Documentation Validation
 
-- `CURRENT_MILESTONE.md`, `NEXT_MILESTONE.md`, `CURRENT_STATE.md`, `PROJECT_MEMORY.md`, `IMPLEMENTATION_PATTERNS.md`, `COMMON_FAILURES.md`, and `CHANGELOG_SUMMARY.md` were updated for the approved milestone handoff.
-- `PROJECT_RECONSTRUCTION.md` was updated because it still carried an older ranked candidate table.
-- `TECH_DEBT.md` was updated because its verification-debt wording implied no latest verification result was recorded, while current state already records the latest full verification.
+- `AUTH_ARCHITECTURE.md` and `PERMISSIONS_MATRIX.md` were aligned to the read/session-only temporary volunteer browser permission policy.
+- `DOCUMENTATION_DRIFT.md`, `OPEN_DECISIONS.md`, and `TECH_DEBT.md` no longer list temporary volunteer permission drift as open.
+- Living status, memory, changelog, scorecard, limitation, reconstruction, and evidence references were updated for the implemented milestone.
 
 ## Verification Results
 
-Passed for this documentation handoff:
+Targeted implementation verification passed:
+
+- `corepack pnpm@9.15.4 vitest run apps/web/src/features/auth/lib/permissions.test.ts apps/web/src/features/inventory/receive/screens/ReceiveInventoryScreen.test.tsx apps/web/src/features/inventory/transfer/screens/TransferInventoryScreen.test.tsx apps/web/src/features/inventory/return/screens/ReturnInventoryScreen.test.tsx` with 4 test files and 7 tests passing.
+
+Full implementation verification results:
 
 - `corepack pnpm@9.15.4 format`
 - `corepack pnpm@9.15.4 typecheck`
 - `corepack pnpm@9.15.4 lint`
-- `corepack pnpm@9.15.4 test` with 59 test files and 295 tests passing.
+- `corepack pnpm@9.15.4 test` with 60 test files and 296 tests passing.
 - `corepack pnpm@9.15.4 build`
 
-Build note: production build completed successfully and emitted the existing Vite chunk-size warning for `dist/assets/index-C64LQRk1.js` at 590.38 kB.
+Build note: production build completed successfully and emitted the existing Vite chunk-size warning for `dist/assets/index-CG86QxKA.js` at 590.33 kB.
 
 ## Residual Risks
 
 - The approved milestone is security-sensitive because it affects temporary volunteer authorization expectations.
-- No RLS, RPC, migration, or permission behavior changes are included in this documentation handoff.
-- The implementation phase must not infer the product/security policy from stale docs alone.
+- No RLS, RPC, or migration changes are included.
+- Temporary volunteers still have controlled inventory/barcode read surfaces; future write capabilities require a separate approved server-enforced design.
 
 ## Evidence Location
 

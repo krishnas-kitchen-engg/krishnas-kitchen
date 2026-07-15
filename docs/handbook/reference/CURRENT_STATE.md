@@ -55,7 +55,7 @@ The project is not documented as production-ready.
 - Engineering Handbook foundation, governance, operating model, process, template, and ADR layers exist in `docs/handbook`.
 - Temporary volunteer login diagnostic instrumentation has been removed from the auth/routing worktree, returning those application files to repository behavior.
 - Living planning/status references have been refreshed so the next candidate set no longer points to completed diagnostic cleanup work.
-- Repository reconstruction identified the temporary volunteer permission drift milestone as the next approved implementation milestone.
+- Temporary volunteer permission drift was reconciled by restricting temporary volunteer browser permissions to read/session capabilities.
 
 ## Implemented Domains
 
@@ -70,7 +70,7 @@ Supabase Auth is documented as the browser session source. `SupabaseAuthProvider
 
 Temporary volunteer login/navigation diagnostic logging has been resolved. No `KK_LOGIN_DEBUG` or `console.info` instrumentation remains in `apps/web/src`.
 
-Known gap: temporary volunteer permission documentation and implementation expectations are inconsistent across current source documents. The next approved milestone is to reconcile this drift without broadening authorization scope.
+Temporary volunteer browser permissions are restricted to `locations.read`, `items.read`, `inventory.read`, and `volunteer_sessions.create`. Temporary volunteers do not receive receive, transfer, consume, return, adjust, or undo permissions.
 
 ## Inventory Status
 
@@ -104,12 +104,12 @@ Known gaps remain in documentation synchronization and explicit security status 
 
 Vitest is configured. Tests exist for inventory domain logic, repository adapters, migrations, auth volunteer sessions, UI reducers/screens, shell navigation, and shared utilities.
 
-Latest verification for the temporary volunteer permission milestone documentation handoff passed:
+Latest verification for the temporary volunteer permission milestone passed:
 
 - `corepack pnpm@9.15.4 format`
 - `corepack pnpm@9.15.4 typecheck`
 - `corepack pnpm@9.15.4 lint`
-- `corepack pnpm@9.15.4 test` with 59 test files and 295 tests passing
+- `corepack pnpm@9.15.4 test` with 60 test files and 296 tests passing
 - `corepack pnpm@9.15.4 build`
 
 The production build emitted the existing Vite chunk-size warning, but completed successfully.
@@ -120,13 +120,12 @@ Existing project docs cover product vision, MVP scope, system architecture, inve
 
 The handbook now contains governance, the canonical AI Engineering Operating Model, engineering principles, process, templates, ADR framework, initial ADRs, living reference documents, project reconstruction, project memory, implementation patterns, common failures and engineering lessons, document index, drift register, and health report.
 
-The current candidate set in [Next Milestone](./NEXT_MILESTONE.md) has approved resolving temporary volunteer permission drift as the next implementation milestone.
+Temporary volunteer permission drift has been reconciled. The next candidate set should be refreshed after human review.
 
 The Engineering Operating System is Stable at v1.2. Future EOS changes require implementation-driven justification rather than speculative improvement.
 
 ## Known Gaps
 
-- Temporary volunteer permissions need reconciliation.
 - Undo versus reversal terminology needs canonicalization.
 - Offline queue architecture is required but not fully described as a living architecture document.
 - RLS/security architecture should be consolidated into a living architecture page.

@@ -39,11 +39,11 @@ Establish the canonical temporary volunteer permission policy and align the affe
 
 ## Status
 
-Approved for implementation. Documentation handoff and evidence report commit requested before implementation begins.
+Completed. Human review and commit approval received.
 
 ## Scope
 
-- Confirm the intended temporary volunteer capability policy.
+- Confirm the intended temporary volunteer capability policy as read/session-only for browser permissions.
 - Reconcile contradictions between `AUTH_ARCHITECTURE.md`, `PERMISSIONS_MATRIX.md`, current permission helpers, and affected workflow tests.
 - Preserve the invariant that client-side permission helpers are usability signals, not final authorization.
 - Do not modify RLS, RPC, migrations, or database authorization boundaries unless a separate approved milestone explicitly includes that work.
@@ -53,7 +53,6 @@ Approved for implementation. Documentation handoff and evidence report commit re
 
 ## Files Affected
 
-- Implementation not started.
 - Expected documentation/code areas for the approved milestone:
   - `docs/AUTH_ARCHITECTURE.md`
   - `docs/PERMISSIONS_MATRIX.md`
@@ -62,48 +61,46 @@ Approved for implementation. Documentation handoff and evidence report commit re
   - `docs/handbook/reference/TECH_DEBT.md`
   - `apps/web/src/features/auth/lib/permissions.ts`
   - affected temporary-volunteer workflow tests if behavior changes
+- Implementation files updated:
+  - `apps/web/src/features/auth/lib/permissions.ts`
+  - `apps/web/src/features/auth/lib/permissions.test.ts`
+  - `apps/web/src/features/inventory/receive/screens/ReceiveInventoryScreen.test.tsx`
+  - `apps/web/src/features/inventory/transfer/screens/TransferInventoryScreen.test.tsx`
+  - `apps/web/src/features/inventory/return/screens/ReturnInventoryScreen.test.tsx`
 - Documentation handoff files updated before implementation:
-- `docs/handbook/reference/CURRENT_MILESTONE.md`
-- `docs/handbook/reference/PROJECT_MEMORY.md`
-- `docs/handbook/reference/CURRENT_STATE.md`
-- `docs/handbook/reference/CHANGELOG_SUMMARY.md`
-- `docs/handbook/reference/IMPLEMENTATION_PATTERNS.md`
-- `docs/handbook/reference/COMMON_FAILURES.md`
-- `docs/handbook/reference/NEXT_MILESTONE.md`
-- `docs/handbook/reference/PROJECT_RECONSTRUCTION.md`
-- `docs/handbook/reference/TECH_DEBT.md`
-- `docs/handbook/reference/EVIDENCE_REPORT.md`
+  - `docs/handbook/reference/CURRENT_MILESTONE.md`
+  - `docs/handbook/reference/PROJECT_MEMORY.md`
+  - `docs/handbook/reference/CURRENT_STATE.md`
+  - `docs/handbook/reference/CHANGELOG_SUMMARY.md`
+  - `docs/handbook/reference/IMPLEMENTATION_PATTERNS.md`
+  - `docs/handbook/reference/COMMON_FAILURES.md`
+  - `docs/handbook/reference/NEXT_MILESTONE.md`
+  - `docs/handbook/reference/PROJECT_RECONSTRUCTION.md`
+  - `docs/handbook/reference/TECH_DEBT.md`
+  - `docs/handbook/reference/EVIDENCE_REPORT.md`
 
 ## Known Blockers
 
-Implementation requires the approved product/security decision to be applied narrowly. If repository evidence remains ambiguous after reading the permission sources, stop and request the smallest missing decision instead of guessing.
+None known for this milestone.
 
 ## Verification Status
 
-Pending for implementation. Documentation handoff verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
+Implementation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
 
-Documentation handoff verification passed:
+Implementation verification:
 
-- `corepack pnpm@9.15.4 format`
-- `corepack pnpm@9.15.4 typecheck`
-- `corepack pnpm@9.15.4 lint`
-- `corepack pnpm@9.15.4 test` with 59 test files and 295 tests passing.
-- `corepack pnpm@9.15.4 build` with the existing Vite chunk-size warning.
-
-Expected implementation verification:
-
-- Targeted permission helper tests.
-- Affected receive, transfer, return, and auth route tests if behavior changes.
-- `corepack pnpm@9.15.4 typecheck`
-- `corepack pnpm@9.15.4 lint`
-- `corepack pnpm@9.15.4 test`
-- `corepack pnpm@9.15.4 build`
+- Targeted permission helper and affected receive, transfer, and return screen tests passed.
+- `corepack pnpm@9.15.4 format` passed.
+- `corepack pnpm@9.15.4 typecheck` passed.
+- `corepack pnpm@9.15.4 lint` passed.
+- `corepack pnpm@9.15.4 test` passed with 60 test files and 296 tests.
+- `corepack pnpm@9.15.4 build` passed with the existing Vite chunk-size warning.
 
 Security review is required before commit readiness because the approved milestone touches authorization expectations.
 
 ## Next Review
 
-Implement only the approved temporary volunteer permission drift milestone.
+Fresh EOS candidate selection after this commit.
 
 ## Owner
 

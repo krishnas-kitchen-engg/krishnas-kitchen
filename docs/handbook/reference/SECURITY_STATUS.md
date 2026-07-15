@@ -43,7 +43,6 @@ Use this page before security-sensitive milestones. It is a status document, not
 
 ## Remaining Security Work
 
-- Reconcile temporary volunteer permission documentation and implementation expectations.
 - Consolidate RLS/security architecture into a living architecture document.
 - Record latest security review results for security-sensitive areas.
 - Continue adding explicit policies for new write paths before production use.
@@ -62,7 +61,7 @@ Supabase Auth supports authenticated sessions. Temporary volunteers use session 
 
 ## Authorization
 
-Server/database-derived authorization is the authoritative boundary. Client-side permission helpers are not final enforcement.
+Server/database-derived authorization is the authoritative boundary. Client-side permission helpers are not final enforcement. Temporary volunteer browser permissions are limited to read/session capabilities and do not include inventory-changing operations.
 
 ## Audit
 
@@ -70,7 +69,6 @@ The foundational schema includes immutable `audit_logs`. Inventory transactions 
 
 ## Known Risks
 
-- Temporary volunteer permission drift remains unresolved.
 - Security status is distributed across docs, ADRs, and migrations rather than a dedicated living security architecture page.
 - Latest full security review result is not recorded.
 
@@ -98,4 +96,3 @@ This is living documentation.
 - [Auth Architecture](../../AUTH_ARCHITECTURE.md)
 - [Permissions Matrix](../../PERMISSIONS_MATRIX.md)
 - [Supabase README](../../../infra/supabase/README.md)
-

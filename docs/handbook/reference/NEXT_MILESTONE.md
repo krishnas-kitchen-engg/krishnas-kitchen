@@ -37,23 +37,23 @@ Implementation must not begin until the human approves one candidate. Commit app
 
 ## Status
 
-Candidate Approved
+Implemented
 
 ## Approval
 
-Approved by the human for implementation: Candidate 1, Reconcile Temporary Volunteer Permission Drift.
+Candidate 1, Reconcile Temporary Volunteer Permission Drift, has been implemented and approved for commit.
 
 ## Recommended Candidate
 
 Candidate 1: Reconcile Temporary Volunteer Permission Drift.
 
-Recommendation: Request Human Decision.
+Recommendation: Implemented.
 
-Approval Note: The human approved this candidate after repository reconstruction. Implementation must still follow the documented dependencies, stay within the smallest vertical slice, and receive separate commit approval after verification.
+Implementation Note: Temporary volunteer browser permissions were reconciled to read/session-only access. The next session should refresh candidate options before implementation work resumes.
 
 Confidence: 68%.
 
-Rationale: Temporary volunteer permissions are the highest-priority documented security/product ambiguity. The repository shows conflict between `AUTH_ARCHITECTURE.md`, `PERMISSIONS_MATRIX.md`, mobile UI docs, current permission helpers, and workflow tests. Resolving the intended policy is the safest next blocker to clear before expanding temporary volunteer capability.
+Rationale: Temporary volunteer permissions were the highest-priority documented security/product ambiguity. The implementation resolves the conflict by restricting temporary volunteer browser permissions to read/session capabilities.
 
 Estimated Effort: Medium.
 
@@ -61,13 +61,12 @@ Assumptions:
 
 - Temporary volunteer access must remain scoped, attributable, expiring, and server-reviewable.
 - Client-side permission helpers are usability signals, not final authorization.
-- The next step may be decision documentation first if product/security intent is not yet explicit.
+- Future temporary volunteer write capability requires a separate approved server-enforced write model.
 
 Uncertainties:
 
-- Whether temporary volunteers should be read/session-only or allowed scoped receive, transfer, consume, and return permissions.
 - Whether session type should determine operational capability.
-- Whether implementation changes are safe before an explicit product/security decision.
+- Whether future session types should add server-enforced write capabilities.
 
 Reasons Alternatives Were Not Recommended:
 
@@ -76,9 +75,9 @@ Reasons Alternatives Were Not Recommended:
 
 ## Candidate 1: Reconcile Temporary Volunteer Permission Drift
 
-Recommendation: Request Human Decision.
+Recommendation: Implemented.
 
-Rationale: Temporary volunteer permission drift is documented in [Documentation Drift](./DOCUMENTATION_DRIFT.md), [Open Decisions](./OPEN_DECISIONS.md), [Technical Debt](./TECH_DEBT.md), and [Security Status](./SECURITY_STATUS.md). Current source grants temporary volunteers operational inventory permissions, while the permissions matrix says they cannot perform those operations.
+Rationale: Temporary volunteer permission drift was documented in [Documentation Drift](./DOCUMENTATION_DRIFT.md), [Open Decisions](./OPEN_DECISIONS.md), [Technical Debt](./TECH_DEBT.md), and [Security Status](./SECURITY_STATUS.md). Current source granted temporary volunteers operational inventory permissions, while the permissions matrix said they could not perform those operations.
 
 Confidence: 68%.
 
@@ -96,25 +95,24 @@ Risk:
 
 Expected Value: Very high. Resolving this removes the main security/product ambiguity before volunteer workflow expansion.
 
-Architecture Impact: Medium. May require a canonical permission reference, ADR update, or targeted implementation change depending on the approved decision.
+Architecture Impact: Medium. Canonical docs now describe read/session-only temporary volunteer browser permissions.
 
 Security Impact: High. Temporary volunteer authority must remain narrow and server-enforced.
 
 Testing Strategy:
 
-- If documentation-only decision: metadata/link review plus targeted permission evidence review.
-- If implementation is approved: focused permission helper tests, affected receive/transfer/return screen tests, route/auth tests, then typecheck, lint, full tests, and build.
+- Focused permission helper tests, affected receive/transfer/return screen tests, then typecheck, lint, full tests, and build.
 
 Expected Deliverables:
 
-- Canonical temporary volunteer permission decision or explicitly documented unresolved decision.
-- Updated affected living docs and older source docs as needed.
-- No RLS/RPC or app permission behavior changes unless explicitly included in the approved milestone.
+- Canonical temporary volunteer permission decision.
+- Updated affected living docs and older source docs.
+- No RLS/RPC or migration changes.
 
 Validation Plan:
 
-- Verify `AUTH_ARCHITECTURE.md`, `PERMISSIONS_MATRIX.md`, `DOCUMENTATION_DRIFT.md`, `OPEN_DECISIONS.md`, and source permission helpers no longer contradict the approved decision.
-- Run applicable checks based on whether implementation is documentation-only or code-changing.
+- Verify `AUTH_ARCHITECTURE.md`, `PERMISSIONS_MATRIX.md`, `DOCUMENTATION_DRIFT.md`, `OPEN_DECISIONS.md`, and source permission helpers no longer contradict the implemented policy.
+- Run full verification before commit readiness.
 
 ## Candidate 2: Define Offline Queue Architecture
 

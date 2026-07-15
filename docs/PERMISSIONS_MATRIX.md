@@ -108,7 +108,7 @@ Temporary volunteers:
 - cannot access admin views
 - cannot access cross-temple data
 - must auto-expire
-- receive only `volunteer_sessions.create`
+- receive only `locations.read`, `items.read`, `inventory.read`, and `volunteer_sessions.create`
 
 ---
 

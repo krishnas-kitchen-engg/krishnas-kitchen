@@ -81,10 +81,16 @@ function renderScreen(auth: AuthContextValue) {
 }
 
 describe("ReceiveInventoryScreen", () => {
-  it("allows temporary volunteers with inventory.receive permission", () => {
+  it("blocks temporary volunteers without inventory.receive permission", () => {
     const markup = renderScreen(
       createAuthValue({
         isTemporaryVolunteer: true,
+        permissions: [
+          "locations.read",
+          "items.read",
+          "inventory.read",
+          "volunteer_sessions.create"
+        ],
         profile: null,
         temporaryVolunteerSession: {
           expiresAt: "2026-06-05T12:00:00.000Z",
@@ -97,9 +103,8 @@ describe("ReceiveInventoryScreen", () => {
       })
     );
 
-    assert.match(markup, /Receive inventory/);
-    assert.match(markup, /Add stock/);
-    assert.doesNotMatch(markup, /Receiving unavailable/);
+    assert.match(markup, /Receiving unavailable/);
+    assert.doesNotMatch(markup, /Add stock/);
   });
 
   it("blocks users without receiving permission", () => {

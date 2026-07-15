@@ -30,7 +30,6 @@ Add debt when a known weakness is accepted temporarily. Do not use this register
 
 | Identifier | Description | Impact | Risk | Priority | Owner | Status | Planned Milestone |
 |---|---|---|---|---|---|---|---|
-| TD-001 | Temporary volunteer permission documentation drift between auth architecture, permissions matrix, and current screen tests | Future authorization work may use the wrong source | High | High | Engineering | Open | Not assigned |
 | TD-002 | Undo versus reversal terminology remains inconsistent across docs, schema history, and feature docs | Future implementation may confuse event types and user-facing action names | Medium | High | Engineering | Open | Not assigned |
 | TD-003 | Offline queue architecture is required but not yet captured as a detailed living architecture document | Offline work may proceed without a canonical plan | Medium | Medium | Engineering | Open | Not assigned |
 | TD-004 | Existing older documentation contains duplication and encoding artifacts | Contributors may struggle to identify canonical guidance | Low | Medium | Engineering | Open | Not assigned |

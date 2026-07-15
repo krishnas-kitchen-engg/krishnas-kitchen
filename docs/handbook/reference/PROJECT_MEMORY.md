@@ -32,12 +32,13 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 - Existing project documentation remains useful source material; do not duplicate it into the handbook without a focused milestone.
 - The inventory model is an immutable event ledger. Balances are derived from transactions.
 - Browser clients are not authoritative for protected authorization decisions.
-- Temporary volunteer permissions remain a known documentation and product-intent drift area.
+- Temporary volunteer browser permissions are read/session-only: `locations.read`, `items.read`, `inventory.read`, and `volunteer_sessions.create`.
 - Undo and reversal terminology remains a known drift area.
 - Offline capability is an architectural requirement, but detailed offline queue architecture remains incomplete.
 - Temporary volunteer login diagnostic instrumentation was resolved and should not be reintroduced as permanent behavior.
 - Living planning/status references must be refreshed after completed milestones so `CURRENT_MILESTONE.md`, `NEXT_MILESTONE.md`, scorecard, and limitations do not keep pointing future sessions at completed work.
-- The next approved implementation milestone is temporary volunteer permission drift reconciliation. Implementation should not guess the policy; it must align docs, permission helpers, and tests to the approved product/security decision.
+- Temporary volunteer permission drift was reconciled by aligning docs, permission helpers, and workflow tests to the read/session-only browser permission policy.
+- Permission-sensitive tests should set exact permission arrays instead of relying on broad auth fixture defaults.
 
 ## Lessons Learned
 
@@ -50,6 +51,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 | Completed milestones remained active in living planning docs | Current milestone, next milestone, scorecard, and limitations can drift after a successful commit | Future EOS sessions may recommend completed work or understate current verification evidence | After each completed milestone, refresh planning/status docs before recommending the next candidate |
 | Temporary volunteer permissions and undo/reversal terminology remained inconsistent across older docs | Historical documents preserve useful context but may not represent current authority | Silent reconciliation would hide product/security decisions | Record drift, propose focused milestones, and stop when product or security authority is needed |
 | Repository reconstruction found stale milestone state outside the main candidate page | `PROJECT_RECONSTRUCTION.md` still carried an older ranked table after `NEXT_MILESTONE.md` was refreshed | Future sessions could restart from completed work despite the current candidate page being correct | Validate reconstruction docs against current milestone and next milestone during every resume |
+| Temporary volunteer workflow tests relied on default operational permissions in auth fixtures | Fixture defaults made temporary-session tests pass as though temporary volunteers had write permissions | The permission drift could persist without a helper-level test | In permission-sensitive tests, pass the exact permissions being asserted and add a direct helper test near the permission source |
 
 ## Memory Update Rules
 
