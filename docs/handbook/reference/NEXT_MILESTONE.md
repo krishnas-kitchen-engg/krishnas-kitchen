@@ -37,172 +37,164 @@ Implementation must not begin until the human approves one candidate. Commit app
 
 ## Status
 
-Prior Candidate Completed
+Candidate Options
 
 ## Approval
 
-Implementation and Commit Approved
+Pending Human Approval
 
 ## Recommended Candidate
 
-Candidate 1: Resolve temporary volunteer login diagnostic work.
-
-Recommendation: Completed.
-
-Confidence: 78%.
-
-Rationale: This candidate addressed the dirty auth/routing diagnostic worktree state before new application development. It was narrow, reversible, and removed ambiguity around temporary volunteer login diagnostics.
-
-Estimated Effort: Small.
-
-Assumptions:
-
-- The debug instrumentation was temporary and should not remain as-is.
-- The affected flow is temporary volunteer login/navigation.
-- No permission-model change is intended.
-
-Uncertainties:
-
-- Whether the debug logs reveal an actual behavior bug or only unfinished diagnostics.
-- Whether the current dirty files are user-owned work that should be preserved.
-
-Reasons Alternatives Were Not Recommended:
-
-- Candidate 2 is valuable but requires an explicit product/security decision.
-- Candidate 3 is important but has broader architecture dependencies and lower implementation readiness.
-
-## Candidate 1: Resolve Temporary Volunteer Login Diagnostic Work
-
-Recommendation: Completed.
-
-Rationale: The working tree contained temporary volunteer login and navigation debug instrumentation in auth/routing files. Resolving that state was the smallest safe step before new application development.
-
-Confidence: 78%.
-
-Estimated Effort: Small.
-
-Dependencies:
-
-- Human approval of this candidate.
-- Review of dirty worktree changes before editing.
-- Relevant auth, route, and temporary volunteer session tests.
-- Security review because the area touches authentication/session flow.
-
-Risk:
-
-- Auth/session flow is security-sensitive.
-- Temporary volunteer permissions are documented as drift and must not be silently redefined.
-
-Expected Value: High. This cleared the dirty auth/routing state before new application work and reduced risk of mixing unrelated changes.
-
-Architecture Impact: Low. The completed work removed diagnostics only and made no session model or permission boundary change.
-
-Security Impact: Medium because authentication/session flow is involved. Security review found no authorization or permission-model change.
-
-Testing Strategy:
-
-- Reviewed existing auth, route guard, and temporary volunteer session tests.
-- No new tests were required because behavior was preserved.
-- Typecheck, lint, full tests, and build passed before commit readiness.
-
-Expected Deliverables:
-
-- Clean temporary volunteer login/navigation behavior.
-- No stray debug logging.
-- Confirmed tests for affected auth/routing behavior.
-- Living documentation updates for milestone, state, memory, changelog, patterns, engineering lessons, and reconstruction.
-
-Validation Plan:
-
-- `rg "KK_LOGIN_DEBUG|console\\.info" apps\web\src` found no matches.
-- `corepack pnpm@9.15.4 typecheck` passed.
-- `corepack pnpm@9.15.4 lint` passed.
-- `corepack pnpm@9.15.4 test` passed with 59 test files and 295 tests.
-- `corepack pnpm@9.15.4 build` passed with the existing Vite chunk-size warning.
-
-## Candidate 2: Reconcile Temporary Volunteer Permission Drift
+Candidate 1: Reconcile Temporary Volunteer Permission Drift.
 
 Recommendation: Request Human Decision.
 
-Rationale: Temporary volunteer permission drift is high-value and security-sensitive. It should be considered during the next fresh EOS candidate refresh now that auth/routing diagnostics are resolved.
+Confidence: 68%.
 
-Confidence: 64%.
+Rationale: Temporary volunteer permissions are the highest-priority documented security/product ambiguity. The repository shows conflict between `AUTH_ARCHITECTURE.md`, `PERMISSIONS_MATRIX.md`, mobile UI docs, current permission helpers, and workflow tests. Resolving the intended policy is the safest next blocker to clear before expanding temporary volunteer capability.
+
+Estimated Effort: Medium.
+
+Assumptions:
+
+- Temporary volunteer access must remain scoped, attributable, expiring, and server-reviewable.
+- Client-side permission helpers are usability signals, not final authorization.
+- The next step may be decision documentation first if product/security intent is not yet explicit.
+
+Uncertainties:
+
+- Whether temporary volunteers should be read/session-only or allowed scoped receive, transfer, consume, and return permissions.
+- Whether session type should determine operational capability.
+- Whether implementation changes are safe before an explicit product/security decision.
+
+Reasons Alternatives Were Not Recommended:
+
+- Candidate 2 is important, but offline writes should not outrank an active authorization ambiguity.
+- Candidate 3 is important, but terminology cleanup has lower immediate security impact than temporary volunteer permissions.
+
+## Candidate 1: Reconcile Temporary Volunteer Permission Drift
+
+Recommendation: Request Human Decision.
+
+Rationale: Temporary volunteer permission drift is documented in [Documentation Drift](./DOCUMENTATION_DRIFT.md), [Open Decisions](./OPEN_DECISIONS.md), [Technical Debt](./TECH_DEBT.md), and [Security Status](./SECURITY_STATUS.md). Current source grants temporary volunteers operational inventory permissions, while the permissions matrix says they cannot perform those operations.
+
+Confidence: 68%.
 
 Estimated Effort: Medium.
 
 Dependencies:
 
-- Review [Documentation Drift](./DOCUMENTATION_DRIFT.md), [Open Decisions](./OPEN_DECISIONS.md), [Auth Architecture](../../AUTH_ARCHITECTURE.md), and [Permissions Matrix](../../PERMISSIONS_MATRIX.md).
 - Human product/security decision on intended temporary volunteer capabilities.
+- Review of [ADR-0004](../adrs/0004-temporary-volunteer-session-model.md), [ADR-0007](../adrs/0007-rpc-boundaries-and-browser-trust.md), [Auth Architecture](../../AUTH_ARCHITECTURE.md), [Permissions Matrix](../../PERMISSIONS_MATRIX.md), and affected workflow tests.
 
 Risk:
 
-- High security risk if permissions are changed without explicit decision authority.
-- Existing docs conflict and cannot be silently reconciled by implementation.
+- High security risk if implementation silently expands or contracts temporary volunteer authority.
+- Medium documentation risk because multiple older docs conflict.
 
-Expected Value: High. Resolving permission drift would reduce security ambiguity and make volunteer work safer to extend.
+Expected Value: Very high. Resolving this removes the main security/product ambiguity before volunteer workflow expansion.
 
-Architecture Impact: Medium. May require canonical permission documentation or an ADR before code changes.
+Architecture Impact: Medium. May require a canonical permission reference, ADR update, or targeted implementation change depending on the approved decision.
 
-Security Impact: High. Temporary volunteer access must remain narrow, server-derived, and reviewable.
+Security Impact: High. Temporary volunteer authority must remain narrow and server-enforced.
 
 Testing Strategy:
 
-- No implementation tests until product/security decision is approved.
-- If later approved for implementation, run permission/RLS/RPC tests and full verification.
-
-Why Not Automatically Recommended Now:
-
-- It depends on a human product/security decision.
-- It should be reconsidered after a fresh repository refresh and candidate comparison.
+- If documentation-only decision: metadata/link review plus targeted permission evidence review.
+- If implementation is approved: focused permission helper tests, affected receive/transfer/return screen tests, route/auth tests, then typecheck, lint, full tests, and build.
 
 Expected Deliverables:
 
-- Canonical temporary volunteer permission decision or documented unresolved decision.
-- Updated living docs and affected references if approved.
-- No RLS/RPC or app permission changes without explicit implementation approval.
+- Canonical temporary volunteer permission decision or explicitly documented unresolved decision.
+- Updated affected living docs and older source docs as needed.
+- No RLS/RPC or app permission behavior changes unless explicitly included in the approved milestone.
 
-## Candidate 3: Define Offline Queue Architecture
+Validation Plan:
+
+- Verify `AUTH_ARCHITECTURE.md`, `PERMISSIONS_MATRIX.md`, `DOCUMENTATION_DRIFT.md`, `OPEN_DECISIONS.md`, and source permission helpers no longer contradict the approved decision.
+- Run applicable checks based on whether implementation is documentation-only or code-changing.
+
+## Candidate 2: Define Offline Queue Architecture
 
 Recommendation: Defer.
 
-Rationale: Offline queue architecture is a known gap, but implementation readiness is lower because storage, replay, idempotency, and conflict behavior need focused design before code.
+Rationale: Offline capability is an architectural requirement, but detailed queue storage, replay, idempotency, and conflict behavior are not yet captured in a living architecture document.
 
-Confidence: 58%.
+Confidence: 60%.
 
 Estimated Effort: Medium.
 
 Dependencies:
 
-- Review [ADR-0005](../adrs/0005-mobile-first-offline-pwa.md), inventory repository boundaries, and current PWA/offline behavior.
+- Review [ADR-0005](../adrs/0005-mobile-first-offline-pwa.md), inventory repository contracts, transaction audit metadata, and current PWA behavior.
 - Human approval for architecture work before implementation.
 
 Risk:
 
-- Medium-to-high architecture risk if offline writes proceed without a canonical queue design.
-- Could affect repository contracts, persistence behavior, and retry/idempotency assumptions.
+- Medium-to-high architecture risk if offline writes proceed without canonical replay and authorization rules.
+- Medium security risk because offline replay must not bypass server authorization or auditability.
 
-Expected Value: Medium to high. Offline architecture is important, but current implementation readiness is lower than auth/routing cleanup.
+Expected Value: High for future offline implementation, but less urgent than resolving current temporary volunteer authorization drift.
 
-Architecture Impact: High. Queue storage, replay, idempotency, conflict handling, and repository boundaries need explicit design.
+Architecture Impact: High. Queue boundaries, storage, replay, idempotency, and conflict handling need explicit design.
 
-Security Impact: Medium. Offline write replay must not bypass server authorization or auditability.
+Security Impact: Medium. Offline write replay must preserve RLS/RPC boundaries and immutable audit history.
 
 Testing Strategy:
 
 - Architecture-only validation first.
-- Later implementation should include unit tests for queue behavior and integration tests for replay/idempotency where feasible.
-
-Why Not Recommended Now:
-
-- It requires architecture approval before implementation.
-- It has broader dependencies and lower confidence than the completed diagnostic cleanup had.
+- Future implementation should include queue unit tests, replay/idempotency tests, and integration coverage where feasible.
 
 Expected Deliverables:
 
-- Focused offline queue architecture proposal or living architecture update.
-- Explicit storage, replay, idempotency, and conflict assumptions.
+- Focused offline queue architecture/status page or ADR proposal.
+- Explicit current/future separation for offline capability.
 - No offline write implementation until architecture is approved.
+
+Validation Plan:
+
+- Confirm offline docs distinguish requirement, current implementation, and future queue work.
+- Confirm architecture preserves repository boundaries and server authorization.
+
+## Candidate 3: Canonicalize Undo/Reversal Terminology
+
+Recommendation: Defer.
+
+Rationale: Undo/reversal terminology drift affects inventory correction semantics, documentation, and future UI wording. The implementation already has reversal validation and compatibility migrations, but docs still use mixed language.
+
+Confidence: 66%.
+
+Estimated Effort: Small to Medium.
+
+Dependencies:
+
+- Review [ADR-0009](../adrs/0009-auditability-and-reversibility.md), inventory architecture, transaction compatibility migration, reversal validation, transaction helpers, and feature docs.
+
+Risk:
+
+- Medium inventory-correctness risk if terminology cleanup accidentally changes semantics.
+- Low-to-medium implementation risk if kept documentation/reference-only.
+
+Expected Value: High for maintainability and future correction workflows, but lower immediate security value than temporary volunteer permission drift.
+
+Architecture Impact: Medium if the milestone creates a canonical transaction terminology reference; low if only documentation language is clarified.
+
+Security Impact: Low. Main concern is auditability and inventory integrity rather than authorization.
+
+Testing Strategy:
+
+- Documentation/reference validation for terminology-only work.
+- If code names or behavior change, run reversal validation tests, inventory service tests, typecheck, lint, full tests, and build.
+
+Expected Deliverables:
+
+- Canonical distinction between user-facing undo action, domain reversal event, database transaction type, and legacy compatibility.
+- Updated affected docs without changing immutable ledger semantics.
+
+Validation Plan:
+
+- Confirm references no longer conflict on `undo` versus `reversal`.
+- Confirm no historical transaction mutation or signed-quantity behavior is introduced.
 
 ## Owner
 

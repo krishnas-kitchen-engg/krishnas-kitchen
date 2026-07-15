@@ -36,6 +36,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 - Undo and reversal terminology remains a known drift area.
 - Offline capability is an architectural requirement, but detailed offline queue architecture remains incomplete.
 - Temporary volunteer login diagnostic instrumentation was resolved and should not be reintroduced as permanent behavior.
+- Living planning/status references must be refreshed after completed milestones so `CURRENT_MILESTONE.md`, `NEXT_MILESTONE.md`, scorecard, and limitations do not keep pointing future sessions at completed work.
 
 ## Lessons Learned
 
@@ -45,6 +46,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 | EOS documents began accumulating workflow guidance in multiple places | Duplicate process language made drift likely | Future AI sessions could follow the wrong page or miss the canonical contract | Keep operating behavior in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md); supporting docs should point to it |
 | Documentation infrastructure kept expanding after the handbook became usable | New docs can become maintenance burden if they do not reduce future work | The project needs to return to application delivery after governance stabilizes | Prefer simplifying existing docs; create new handbook pages only for durable gaps |
 | Temporary volunteer auth/routing diagnostics remained in the dirty worktree | Documentation-only milestones can coexist with unfinished app work | Future implementation could accidentally mix unrelated changes | Repository audit must identify dirty worktree ownership, isolate the approved milestone before editing, and verify temporary diagnostics are removed before commit readiness |
+| Completed milestones remained active in living planning docs | Current milestone, next milestone, scorecard, and limitations can drift after a successful commit | Future EOS sessions may recommend completed work or understate current verification evidence | After each completed milestone, refresh planning/status docs before recommending the next candidate |
 | Temporary volunteer permissions and undo/reversal terminology remained inconsistent across older docs | Historical documents preserve useful context but may not represent current authority | Silent reconciliation would hide product/security decisions | Record drift, propose focused milestones, and stop when product or security authority is needed |
 
 ## Memory Update Rules

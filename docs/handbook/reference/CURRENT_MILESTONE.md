@@ -31,54 +31,55 @@ Update this document whenever a milestone starts, pauses, completes, or changes 
 
 ## Current Active Milestone
 
-Resolve Temporary Volunteer Login Diagnostic Work.
+Refresh Living Milestone State.
 
 ## Goal
 
-Resolve the temporary volunteer login/navigation diagnostic worktree state without changing auth, session, permission, or routing behavior.
+Refresh living planning and status references after the completed temporary volunteer login diagnostic cleanup so future EOS sessions start from accurate repository state.
 
 ## Status
 
-Completed. Temporary `KK_LOGIN_DEBUG` instrumentation was removed from the auth/routing worktree and the affected application files now match repository behavior.
+Completed. Human review and commit approval received.
 
 ## Scope
 
-- Review the dirty auth/routing diagnostics in `router.ts`, `AuthProvider.tsx`, and `LoginScreen.tsx`.
-- Remove only temporary diagnostic logging.
-- Preserve existing temporary volunteer auth/session/navigation behavior.
-- Do not resolve temporary volunteer permission drift in this milestone.
-- Do not modify tests, migrations, build configuration, package configuration, or unrelated application code.
-- Update living documentation required by the completed milestone.
+- Update stale living planning/status references created after the completed diagnostic cleanup.
+- Refresh `NEXT_MILESTONE.md` with three current candidate micro-milestones and one recommendation.
+- Correct scorecard and limitation references that still describe verification or roadmap status as stale.
+- Do not modify application code.
+- Do not modify tests.
+- Do not modify migrations.
+- Do not resolve temporary volunteer permission drift, undo/reversal terminology drift, offline queue architecture, or security architecture ownership in this milestone.
+- Do not commit without explicit separate commit approval.
 
 ## Files Affected
 
-- `apps/web/src/app/routes/router.ts` was returned to repository behavior with no final diff.
-- `apps/web/src/features/auth/providers/AuthProvider.tsx` was returned to repository behavior with no final diff.
-- `apps/web/src/features/auth/screens/LoginScreen.tsx` was returned to repository behavior with no final diff.
 - `docs/handbook/reference/CURRENT_MILESTONE.md`
-- `docs/handbook/reference/CURRENT_STATE.md`
+- `docs/handbook/reference/NEXT_MILESTONE.md`
+- `docs/handbook/reference/PROJECT_SCORECARD.md`
+- `docs/handbook/reference/KNOWN_LIMITATIONS.md`
 - `docs/handbook/reference/PROJECT_MEMORY.md`
+- `docs/handbook/reference/CURRENT_STATE.md`
 - `docs/handbook/reference/CHANGELOG_SUMMARY.md`
 - `docs/handbook/reference/IMPLEMENTATION_PATTERNS.md`
 - `docs/handbook/reference/COMMON_FAILURES.md`
-- `docs/handbook/reference/PROJECT_RECONSTRUCTION.md`
 
 ## Known Blockers
 
-None for this completed milestone.
+None for this documentation/status refresh milestone.
 
 ## Verification Status
 
-Completed implementation and documentation review:
+Completed final verification for this milestone:
 
-- `rg "KK_LOGIN_DEBUG|console\\.info" apps\web\src` found no matches.
-- `git diff -- apps/web/src/app/routes/router.ts apps/web/src/features/auth/providers/AuthProvider.tsx apps/web/src/features/auth/screens/LoginScreen.tsx` was empty after cleanup.
+- Living-document self-review completed.
+- `corepack pnpm@9.15.4 format` passed.
 - `corepack pnpm@9.15.4 typecheck` passed.
 - `corepack pnpm@9.15.4 lint` passed.
 - `corepack pnpm@9.15.4 test` passed with 59 test files and 295 tests.
 - `corepack pnpm@9.15.4 build` passed with the existing Vite chunk-size warning.
 
-Security review found no authorization or permission-model change. Architecture review found no boundary change.
+Security review: no authorization or permission-model change. Architecture review: no application architecture or ADR boundary change.
 
 ## Next Review
 

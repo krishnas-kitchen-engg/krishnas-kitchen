@@ -33,7 +33,7 @@ Record reality only. Do not turn this page into a roadmap.
 - Temporary volunteer permission documentation is inconsistent across current docs and observed tests.
 - Undo and reversal terminology is not fully canonical across docs and schema history.
 - Offline queueing is an architectural requirement, but detailed living architecture for offline sync is not present.
-- Latest full test, lint, typecheck, and build results are not recorded in the living reference layer.
+- Latest full test, lint, typecheck, and build results are recorded for the diagnostic cleanup milestone, but verification freshness still depends on rerunning checks during each future implementation milestone.
 - Existing older docs include duplication and encoding artifacts.
 - Security status exists across multiple docs and migrations, but a dedicated living security architecture page is not yet present.
 - Accessibility status is not measured in current living docs.

@@ -54,6 +54,7 @@ The project is not documented as production-ready.
 - Inventory domain services, repository adapters, visibility, barcode, scan, receive, transfer, return, unknown barcode, and low-stock work are present in source and tests.
 - Engineering Handbook foundation, governance, operating model, process, template, and ADR layers exist in `docs/handbook`.
 - Temporary volunteer login diagnostic instrumentation has been removed from the auth/routing worktree, returning those application files to repository behavior.
+- Living planning/status references have been refreshed so the next candidate set no longer points to completed diagnostic cleanup work.
 
 ## Implemented Domains
 
@@ -116,6 +117,8 @@ The production build emitted the existing Vite chunk-size warning, but completed
 Existing project docs cover product vision, MVP scope, system architecture, inventory architecture, auth architecture, permissions, execution process, feature specs, Supabase notes, and validation seed data.
 
 The handbook now contains governance, the canonical AI Engineering Operating Model, engineering principles, process, templates, ADR framework, initial ADRs, living reference documents, project reconstruction, project memory, implementation patterns, common failures and engineering lessons, document index, drift register, and health report.
+
+The current candidate set in [Next Milestone](./NEXT_MILESTONE.md) recommends resolving temporary volunteer permission drift through a human product/security decision.
 
 The Engineering Operating System is Stable at v1.2. Future EOS changes require implementation-driven justification rather than speculative improvement.
 

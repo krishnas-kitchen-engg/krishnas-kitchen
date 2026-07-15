@@ -35,6 +35,7 @@ Keep this page concise. Link to ADRs, architecture docs, source files, and tests
 | Inventory changes | Inventory-changing work must preserve immutable transactions, positive quantities, derived balances, and reversibility. | [Architectural Invariants](./ARCHITECTURAL_INVARIANTS.md) |
 | Diagnostic cleanup | Temporary diagnostic logging in auth, routing, security, or inventory flows should be removed or converted to an explicit approved observability pattern before commit readiness. Verify with targeted search and scoped diff review. | [Common Failures and Engineering Lessons](./COMMON_FAILURES.md), [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) |
 | Living docs | Update only living docs affected by the approved milestone. Do not expand handbook infrastructure unless stewardship rules allow it. | [Handbook Stewardship](../roadmap.md) |
+| Milestone state refresh | After a milestone completes, refresh current milestone, next milestone, scorecard, and limitation references before treating the next planning cycle as current. | [Current Milestone](./CURRENT_MILESTONE.md), [Next Milestone](./NEXT_MILESTONE.md), [Project Scorecard](./PROJECT_SCORECARD.md) |
 | Verification | Use scoped checks during repair, then full typecheck, lint, tests, and build before commit readiness for implementation milestones. | [Quality Gates](../process/QUALITY_GATES.md), [Definition of Done](../process/DEFINITION_OF_DONE.md) |
 
 ## Owner

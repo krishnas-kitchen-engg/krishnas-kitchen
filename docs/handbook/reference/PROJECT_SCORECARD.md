@@ -37,11 +37,11 @@ Track only health indicators that help choose, review, or de-risk engineering wo
 |---|---|---|---|
 | Architecture Health | Good with known gaps | ADRs and architecture references establish inventory ledger, auth/RLS boundary, PWA direction, repositories, RPC boundaries, and package organization | Create focused living architecture pages only when implementation work needs them |
 | Security Health | Watch | RLS, helper functions, authenticated read policies, volunteer RPCs, and security ADRs exist; temporary volunteer permissions still have documented drift | Resolve temporary volunteer permission drift before expanding volunteer capability |
-| Testing Health | Watch | Vitest coverage exists across domain, repository, migration, auth, UI, and utilities; latest full-suite result is not recorded in living docs | Run and record verification during the next implementation milestone |
+| Testing Health | Watch | Vitest coverage exists across domain, repository, migration, auth, UI, and utilities; latest full-suite result is recorded in [Current State](./CURRENT_STATE.md) for the diagnostic cleanup milestone | Keep recording full verification during implementation milestones |
 | Documentation Health | Good | Handbook contains canonical operating model, governance, process, templates, ADRs, living references, document index, drift register, and memory pages | Freeze EOS changes unless implementation reveals a real gap |
 | Technical Debt Trend | Watch | [Technical Debt](./TECH_DEBT.md), [Documentation Drift](./DOCUMENTATION_DRIFT.md), and [Common Failures and Engineering Lessons](./COMMON_FAILURES.md) identify known issues | Address debt through approved micro-milestones instead of broad cleanup |
-| Roadmap Progress | Conditional | [Next Milestone](./NEXT_MILESTONE.md) ranks three candidates and recommends auth/routing diagnostic resolution | Human approval is required before implementation |
-| Build Stability | Unknown | This documentation-only milestone did not run app typecheck, lint, tests, or build | Re-run full verification after the next implementation milestone |
+| Roadmap Progress | Conditional | [Next Milestone](./NEXT_MILESTONE.md) ranks three current candidates and recommends resolving temporary volunteer permission drift through human product/security decision | Human approval is required before implementation |
+| Build Stability | Watch | Latest recorded verification in [Current State](./CURRENT_STATE.md) passed typecheck, lint, tests, and build with the existing Vite chunk-size warning | Continue running full verification before commit readiness |
 
 ## EOS Freeze Status
 

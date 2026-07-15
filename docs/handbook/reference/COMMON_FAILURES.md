@@ -42,6 +42,7 @@ Use it to prevent repeated mistakes and surface practical lessons. Keep durable 
 | Candidate milestones need explicit comparison | A single candidate can hide better or safer alternatives | Present the top three candidates and explain why only one is recommended |
 | Scorecards should be qualitative unless measurements are current | Stale or invented metrics create false confidence | Track only high-value health indicators with evidence and confidence |
 | Stop conditions must be explicit | AI sessions can otherwise continue through ambiguity | Stop on ADR need, conflicting priorities, unclear product/security intent, scope expansion, repeated verification failure, inconsistent repository state, conflicting handbook guidance, or low confidence |
+| Completed milestone state can remain sticky | If living status docs are not refreshed after a commit, future sessions may start from stale recommendations | Treat current milestone, next milestone, scorecard, and limitations as a linked status set during milestone closeout |
 
 ## Owner
 
