@@ -21,6 +21,7 @@ related:
   - ../adrs/0010-security-review-before-commit.md
   - ../architecture/README.md
   - ../architecture/offline-sync.md
+  - ../architecture/security.md
 ---
 
 # Next Milestone
@@ -41,104 +42,55 @@ Implementation must not begin until the human approves one candidate. Commit app
 
 ## Status
 
-Implemented and verified for the approved candidate. Human review pending.
+Implemented for the approved candidate. Human review pending.
 
 ## Approval
 
-Candidate 1, Define Offline Queue Architecture, was approved for implementation.
+Candidate 1, Consolidate Security Architecture Ownership, was approved for implementation.
 
 ## Recommended Candidate
 
-Candidate 1: Define Offline Queue Architecture.
+Candidate 1: Consolidate Security Architecture Ownership.
 
 Recommendation: Implemented, pending human review.
 
-Strategic Alignment: Strengthens Horizon 1 production readiness by defining the offline-ready architecture required for trustworthy inventory workflows.
+Strategic Alignment: Strengthens Horizon 1 production readiness by giving auth, permission, RLS, RPC, temporary volunteer, inventory auditability, and offline replay security boundaries one canonical living architecture source.
 
 Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
 
-Reason It Belongs To This Horizon: Horizon 1 includes mobile-first PWA, offline-ready architecture, audit trail, repository architecture, testing, and engineering documentation.
+Reason It Belongs To This Horizon: Horizon 1 includes authentication, role-based permissions, temporary volunteers, security, RLS, RPC boundaries, audit trail, repository architecture, testing, and engineering documentation.
 
-Evidence Value: High. The milestone resolves the gap between offline-ready architecture requirements and the absence of a canonical queue/replay boundary.
+Evidence Value: High. The milestone resolves the gap between existing security evidence and the absence of one durable security architecture owner.
 
-Future Horizon Support Without Scope Expansion: Keeps future kitchen operations and intelligence features compatible with offline inventory evidence while explicitly excluding queue implementation, planning, forecasting, and analytics scope.
+Future Horizon Support Without Scope Expansion: Keeps future planning, procurement, analytics, and operations capabilities compatible with clear authorization boundaries while explicitly excluding higher-horizon implementation.
 
-Implementation Note: Offline sync now has a living architecture source that defines current non-implementation status, future queue boundary, replay/idempotency requirements, conflict policy, audit metadata, and security constraints without changing runtime behavior.
+Implementation Note: Security architecture now has a living architecture source without changing runtime behavior, permissions, migrations, RLS policies, RPCs, or repository contracts.
 
-Confidence: 78%.
+Confidence: 82%.
 
-Rationale: Offline capability is required by ADR and product architecture, and source already contains PWA tooling plus offline-safe inventory metadata. The missing piece was a canonical architecture boundary before any queue or replay implementation.
+Rationale: Security ownership was the remaining active open decision and is a prerequisite for safe future volunteer write capability, offline replay, and production hardening.
 
-Estimated Effort: Medium.
+Estimated Effort: Low to medium.
 
 Assumptions:
 
-- Offline writes should enter through inventory domain validation and repository boundaries.
-- Server/database authorization must remain authoritative at replay time.
-- Future queue storage, replay workers, and server idempotency constraints require separate approval.
+- Existing ADRs, security status, auth docs, permissions docs, Supabase docs, and migrations accurately represent the current security boundary.
+- Security Status remains posture/review tracking, while Security Architecture owns durable architecture.
+- Future write paths and offline replay require separate approval and enforcement work.
 
 Uncertainties:
 
-- The exact local storage mechanism, background sync mechanism, and server idempotency implementation are intentionally unresolved for future implementation milestones.
+- Latest full security review results are not recorded and remain future work.
+- Production hardening may identify additional RLS/RPC policy gaps.
 
 Reasons Alternatives Were Not Recommended:
 
-- Candidate 2 is important, but security architecture ownership can follow this milestone because the offline page already preserves server/RLS/RPC authority without changing the security model.
-- Candidate 3 is useful, but scanning documentation overlap is less blocking than queue/replay/idempotency architecture.
+- Candidate 2 is useful, but scanning documentation overlap is less foundational than security ownership.
+- Candidate 3 is useful, but stack documentation drift has lower security and production-readiness impact.
 
-## Candidate 1: Define Offline Queue Architecture
+## Candidate 1: Consolidate Security Architecture Ownership
 
 Recommendation: Implemented, pending human review.
-
-Strategic Alignment: Defines an offline architecture prerequisite for production-grade Horizon 1 inventory workflows.
-
-Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
-
-Reason It Belongs To This Horizon: Horizon 1 includes mobile-first PWA, offline-ready architecture, audit trail, repository architecture, testing, and engineering documentation.
-
-Rationale: Offline capability is an architectural requirement, but detailed queue storage, replay, idempotency, conflict, and authorization behavior were not captured in a living architecture document.
-
-Confidence: 78%.
-
-Estimated Effort: Medium.
-
-Dependencies:
-
-- Review [ADR-0005](../adrs/0005-mobile-first-offline-pwa.md), inventory repository contracts, transaction audit metadata, current PWA behavior, and Supabase/RPC boundaries.
-
-Risk:
-
-- Medium architecture/security risk if future offline writes proceed without replay and authorization rules.
-- Low implementation risk because the completed slice is documentation/reference-only.
-
-Expected Value: High. Future offline implementation now has a canonical boundary and constraints.
-
-Evidence Value: High. It converts existing PWA tooling, offline-safe transaction metadata, and repository-boundary evidence into a verifiable architecture source.
-
-Future Horizon Support Without Scope Expansion: Preserves a clean sync boundary for future operational planning and analytics while keeping implementation limited to Horizon 1 offline-ready architecture documentation.
-
-Architecture Impact: High. A living offline-sync architecture page now defines queue and replay boundaries.
-
-Security Impact: Medium. Offline replay must not bypass server authorization or auditability.
-
-Testing Strategy:
-
-- Documentation/reference validation.
-- Full format, typecheck, lint, test, and build before human review.
-
-Expected Deliverables:
-
-- Canonical offline sync architecture.
-- Updated affected living docs without changing runtime behavior, permissions, migrations, or repository contracts.
-
-Validation Plan:
-
-- Confirm references no longer describe offline architecture as absent.
-- Confirm no source, migration, or runtime behavior changed.
-
-## Candidate 2: Consolidate Security Architecture Ownership
-
-Recommendation: Defer.
 
 Strategic Alignment: Consolidates Horizon 1 authorization knowledge before production hardening.
 
@@ -146,15 +98,20 @@ Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
 
 Reason It Belongs To This Horizon: Horizon 1 includes authentication, role-based permissions, temporary volunteers, security, RLS, RPC boundaries, and engineering documentation.
 
-Rationale: Security status is distributed across auth architecture, permissions, Supabase docs, ADRs, migrations, and status references. A living security architecture page would reduce future authorization and RLS drift.
+Rationale: Security status was distributed across auth architecture, permissions, Supabase docs, ADRs, migrations, and status references. A living security architecture page reduces future authorization and RLS drift.
 
-Confidence: 62%.
+Confidence: 82%.
 
-Estimated Effort: Medium.
+Estimated Effort: Low to medium.
 
 Dependencies:
 
-- Review [Security Status](./SECURITY_STATUS.md), [Auth Architecture](../../AUTH_ARCHITECTURE.md), [Permissions Matrix](../../PERMISSIONS_MATRIX.md), [Supabase README](../../../infra/supabase/README.md), ADR-0003, ADR-0004, ADR-0007, ADR-0010, and current migrations.
+- [Security Status](./SECURITY_STATUS.md)
+- [Auth Architecture](../../AUTH_ARCHITECTURE.md)
+- [Permissions Matrix](../../PERMISSIONS_MATRIX.md)
+- [Supabase README](../../../infra/supabase/README.md)
+- ADR-0003, ADR-0004, ADR-0007, ADR-0010
+- Current Supabase migrations
 
 Risk:
 
@@ -162,9 +119,9 @@ Risk:
 
 Expected Value: High before future volunteer write capability or offline replay implementation.
 
-Evidence Value: High. Security architecture ownership would consolidate existing RLS/RPC/auth evidence before production hardening.
+Evidence Value: High. Security architecture ownership consolidates existing RLS/RPC/auth evidence before production hardening.
 
-Future Horizon Support Without Scope Expansion: Makes later procurement, planning, and analytics safer to authorize without implementing those future capabilities now.
+Future Horizon Support Without Scope Expansion: Makes later procurement, planning, analytics, and operations features safer to authorize without implementing those future capabilities now.
 
 Architecture Impact: Medium.
 
@@ -173,9 +130,19 @@ Security Impact: Medium.
 Testing Strategy:
 
 - Documentation/reference validation.
-- No code verification unless implementation scope changes.
+- Full format, typecheck, lint, test, and build before human review.
 
-## Candidate 3: Canonicalize Scanning Architecture Boundary
+Expected Deliverables:
+
+- Canonical security architecture page.
+- Updated affected living docs without changing runtime behavior, permissions, migrations, policies, RPCs, or repository contracts.
+
+Validation Plan:
+
+- Confirm references no longer describe security architecture ownership as absent.
+- Confirm no source, migration, policy, permission, RPC, or runtime behavior changed.
+
+## Candidate 2: Canonicalize Scanning Architecture Boundary
 
 Recommendation: Defer.
 
@@ -201,11 +168,50 @@ Risk:
 
 Expected Value: Medium for future scan workflow implementation.
 
-Evidence Value: Medium. It would reduce workflow-boundary drift but is less blocking than security and offline implementation prerequisites.
+Evidence Value: Medium. It would reduce workflow-boundary drift but is less foundational than security ownership.
 
 Future Horizon Support Without Scope Expansion: Leaves future operational workflows with a cleaner scan boundary while avoiding menu planning, kitchen planning, and analytics scope.
 
 Architecture Impact: Medium.
+
+Security Impact: Low.
+
+Testing Strategy:
+
+- Documentation/reference validation.
+- No code verification unless implementation scope changes.
+
+## Candidate 3: Reconcile Stack Documentation Against Package Manifests
+
+Recommendation: Defer.
+
+Strategic Alignment: Keeps Horizon 1 repository architecture and onboarding guidance aligned with repository reality.
+
+Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
+
+Reason It Belongs To This Horizon: Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation.
+
+Rationale: Stack documentation lists dependencies that package manifests do not show.
+
+Confidence: 70%.
+
+Estimated Effort: Low.
+
+Dependencies:
+
+- Review root and app package manifests, system architecture docs, and handbook stack references.
+
+Risk:
+
+- Low documentation risk; the main risk is mistaking planned dependencies for implemented dependencies.
+
+Expected Value: Medium-low. It improves onboarding and architecture reconstruction, but has lower production-readiness impact than security ownership.
+
+Evidence Value: Medium-low. It reduces false assumptions but does not directly harden runtime behavior.
+
+Future Horizon Support Without Scope Expansion: Gives future contributors accurate dependency truth before larger product domains are added.
+
+Architecture Impact: Low.
 
 Security Impact: Low.
 
@@ -237,3 +243,4 @@ This is living documentation.
 - [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md)
 - [Milestone Lifecycle](../process/MILESTONE_LIFECYCLE.md)
 - [Quality Gates](../process/QUALITY_GATES.md)
+- [Security Architecture](../architecture/security.md)

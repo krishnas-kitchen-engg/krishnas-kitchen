@@ -34,7 +34,7 @@ Record reality only. Do not turn this page into a roadmap.
 - Offline queueing is not implemented. The living offline-sync architecture defines the future queue and replay boundary.
 - Latest full format, typecheck, lint, test, and build results are recorded in [Evidence Report](./EVIDENCE_REPORT.md); verification freshness still depends on rerunning checks during each future implementation milestone.
 - Existing older docs include duplication and encoding artifacts.
-- Security status exists across multiple docs and migrations, but a dedicated living security architecture page is not yet present.
+- Latest full security review results are not recorded.
 - Accessibility status is not measured in current living docs.
 - Performance status is not measured in current living docs.
 

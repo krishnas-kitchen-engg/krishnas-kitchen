@@ -21,6 +21,7 @@ related:
   - ./CHANGELOG_SUMMARY.md
   - ./ARCHITECTURAL_INVARIANTS.md
   - ../architecture/offline-sync.md
+  - ../architecture/security.md
   - ../README.md
   - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
   - ../governance/ENGINEERING_PRINCIPLES.md
@@ -52,11 +53,11 @@ Implementation maturity: active development. Repository evidence shows implement
 
 Engineering maturity: strong. The Engineering Operating System is Stable at v1.3, with a canonical operating model, Product Horizons, governance, process docs, templates, ADRs, living references, and a scorecard. Future EOS changes require implementation-driven justification.
 
-Security maturity: foundation implemented, production posture still needs review. RLS is enabled on foundational tables, helper functions and controlled volunteer RPCs exist, authenticated inventory read policies exist, and security ADRs are accepted. Temporary volunteer browser permissions are now restricted to read/session capabilities; the absence of a consolidated living security architecture remains a known risk. See [Security Status](./SECURITY_STATUS.md).
+Security maturity: foundation implemented, production posture still needs review. RLS is enabled on foundational tables, helper functions and controlled volunteer RPCs exist, authenticated inventory read policies exist, security ADRs are accepted, and durable security boundaries are consolidated in [Security Architecture](../architecture/security.md). Temporary volunteer browser permissions are restricted to read/session capabilities. See [Security Status](./SECURITY_STATUS.md).
 
 Documentation maturity: high for engineering process and reconstruction, medium for application-state documentation. Canonical handbook docs exist, but older docs still contain drift, duplication, and some encoding artifacts. See [Document Index](./DOCUMENT_INDEX.md) and [Documentation Drift](./DOCUMENTATION_DRIFT.md).
 
-Overall project status: ready to continue controlled application development. The temporary volunteer login diagnostic worktree state, temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, and offline architecture drift have been resolved; remaining high-priority risks include unimplemented offline queue/replay behavior and distributed security architecture ownership.
+Overall project status: ready to continue controlled application development. The temporary volunteer login diagnostic worktree state, temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, and security architecture ownership gap have been resolved; remaining high-priority risks include unimplemented offline queue/replay behavior and unrecorded full security review results.
 
 ## Product Vision Summary
 
@@ -124,7 +125,7 @@ Repository pattern: [ADR-0006](../adrs/0006-repository-pattern.md) and [Inventor
 
 Supabase: migrations live under `infra/supabase/migrations`; seed assets live under `infra/supabase/seed`. The schema includes inventory, volunteer session, RLS helper, read-policy, and volunteer RPC milestones.
 
-RPC boundaries: [ADR-0007](../adrs/0007-rpc-boundaries-and-browser-trust.md) and [Security Status](./SECURITY_STATUS.md) establish that browser clients are not authoritative for protected authorization decisions. Temporary volunteer inventory/barcode read surfaces use controlled RPCs.
+RPC boundaries: [ADR-0007](../adrs/0007-rpc-boundaries-and-browser-trust.md), [Security Architecture](../architecture/security.md), and [Security Status](./SECURITY_STATUS.md) establish that browser clients are not authoritative for protected authorization decisions. Temporary volunteer inventory/barcode read surfaces use controlled RPCs.
 
 RLS: RLS is enabled on foundational tables, authenticated inventory read policies exist, and helper functions derive authenticated organization/role/temple context.
 
@@ -140,11 +141,10 @@ Current RLS coverage: foundational migrations enable RLS. Authenticated inventor
 
 Current RPC usage: volunteer session validation/restoration/refresh/logout cleanup and volunteer inventory/barcode read surfaces use controlled security-definer RPCs, according to [Security Status](./SECURITY_STATUS.md) and migration files.
 
-Volunteer security model: temporary volunteers use session records rather than permanent roles. The intended permission model is security-sensitive and currently drifted across docs. Do not expand temporary volunteer capabilities without human product/security approval.
+Volunteer security model: temporary volunteers use session records rather than permanent roles. Temporary volunteer browser permissions are read/session-only. Do not expand temporary volunteer capabilities without human product/security approval and a separate server-enforced write model.
 
 Known remaining security work:
 
-- Consolidate RLS/security architecture into a living architecture document.
 - Record latest security review results.
 - Add explicit policies for new write paths before production use.
 
@@ -153,6 +153,7 @@ Completed security milestones:
 - Volunteer session security architecture commits and migrations appear in git history.
 - RLS helper functions, volunteer session RPCs, authenticated inventory read policies, volunteer inventory read RPCs, and volunteer inventory barcode catalog RPC migrations exist.
 - [ADR-0010](../adrs/0010-security-review-before-commit.md) requires security review before security-sensitive commit readiness.
+- [Security Architecture](../architecture/security.md) now owns durable Horizon 1 auth/RLS/RPC/temporary-volunteer security boundaries.
 
 ## Milestone Timeline
 
@@ -176,7 +177,7 @@ This timeline is reconstructed from [Changelog Summary](./CHANGELOG_SUMMARY.md),
 | EOS freeze | Stable Engineering Operating System v1.2 | `e5f2fe7`, `2aaaad5 docs(eos): freeze Engineering Operating System v1.2` |
 | Engineering Handbook v1.3 freeze | Product Horizons integration, active-horizon milestone gating, offline-sync architecture, and final handbook consistency pass | Pending current commit |
 
-Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Define Offline Queue Architecture as the active implemented milestone pending human review.
+Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Consolidate Security Architecture Ownership as the active implemented milestone pending human review.
 
 ## ADR Status
 
@@ -221,7 +222,7 @@ Genuine blockers before permission-changing application development resumes:
 
 - Future temporary volunteer write capability requires a separate approved server-enforced write model before permissions are expanded.
 
-Not blockers, but important gaps: offline queue implementation, security architecture ownership, scanning documentation drift, schema reference drift, and older documentation drift.
+Not blockers, but important gaps: offline queue implementation, missing latest full security review results, scanning documentation drift, schema reference drift, and older documentation drift.
 
 ## Recommended Next Engineering Milestone
 
@@ -229,22 +230,22 @@ Use the EOS candidate flow in [AI Engineering Operating Model](../governance/AI_
 
 | Rank | Candidate | Strategic Alignment | Current Horizon | Reason It Belongs | Evidence Value | Future Horizon Support Without Scope Expansion | Recommendation |
 |---|---|---|---|---|---|---|---|
-| 1 | Define offline queue architecture | Strengthens production-ready inventory reliability | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes mobile-first PWA, offline-ready architecture, audit trail, repository architecture, testing, and engineering documentation | High: converts PWA tooling, offline-safe metadata, and repository-boundary evidence into architecture | Preserves a sync boundary future operations can use without implementing future planning, forecasting, or analytics | Implemented, pending human review |
-| 2 | Consolidate security architecture ownership | Consolidates authorization knowledge before production hardening | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes authentication, permissions, temporary volunteers, security, RLS, RPC boundaries, and engineering documentation | High: consolidates RLS/RPC/auth evidence | Makes later procurement, planning, and analytics safer to authorize without implementing them now | Defer |
-| 3 | Canonicalize scanning architecture boundary | Clarifies scan-first inventory workflow ownership | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes inventory workflows, barcode lookup, barcode catalog, unknown barcode workflow, inventory visibility, and mobile-first PWA | Medium: reduces scan workflow drift | Keeps future operational workflows compatible with a cleaner scan boundary without expanding scope | Defer |
+| 1 | Consolidate security architecture ownership | Consolidates authorization knowledge before production hardening | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes authentication, permissions, temporary volunteers, security, RLS, RPC boundaries, and engineering documentation | High: consolidates RLS/RPC/auth evidence | Makes later procurement, planning, and analytics safer to authorize without implementing them now | Implemented, pending human review |
+| 2 | Canonicalize scanning architecture boundary | Clarifies scan-first inventory workflow ownership | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes inventory workflows, barcode lookup, barcode catalog, unknown barcode workflow, inventory visibility, and mobile-first PWA | Medium: reduces scan workflow drift | Keeps future operational workflows compatible with a cleaner scan boundary without expanding scope | Defer |
+| 3 | Reconcile stack documentation against package manifests | Keeps repository architecture guidance aligned with package manifests | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation | Medium-low: reduces false stack assumptions | Gives future contributors accurate dependency truth before larger product domains are added | Defer |
 
-Recommended next action: human review of the implemented offline architecture milestone. Do not implement offline queue storage, replay, idempotency constraints, security architecture ownership, or scanning architecture work until a separate candidate milestone is approved.
+Recommended next action: human review of the implemented security architecture milestone. Do not implement offline queue storage, replay, idempotency constraints, permission expansion, scanning architecture work, or stack documentation reconciliation until a separate candidate milestone is approved.
 
 ## Engineering Health
 
 | Area | Health | Evidence |
 |---|---|---|
-| Architecture | Good with known gaps | ADRs and architecture references establish core boundaries; offline sync architecture now exists; security living architecture remains a gap. |
-| Security | Watch | RLS/RPC foundations exist; temporary volunteer browser permissions are restricted to read/session capabilities. |
+| Architecture | Good with known gaps | ADRs and architecture references establish core boundaries; offline sync architecture and security architecture now exist. |
+| Security | Watch | RLS/RPC foundations exist; temporary volunteer browser permissions are restricted to read/session capabilities; latest full security review result remains unrecorded. |
 | Testing | Watch | Many tests exist across domain, repository, migration, auth, UI, and utilities; latest verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md), and future implementation milestones must rerun verification. |
 | Documentation | Good | EOS v1.3 is Stable; Product Horizons, document index, drift register, ADRs, templates, and living references exist. |
 | Roadmap | Conditional | Temporary volunteer permission drift, undo/reversal terminology drift, and return semantics drift are complete; next candidate selection should happen after this commit. |
-| Technical Debt | Watch | Offline queue implementation and security architecture ownership remain open. |
+| Technical Debt | Watch | Offline queue implementation, scanning documentation drift, schema reference drift, and older documentation drift remain open. |
 | Overall | Good for controlled development | The project has enough governance and implementation structure to resume application work after candidate approval. |
 
 ## Repository Health
@@ -257,7 +258,7 @@ Working tree at latest reconstruction update:
 
 Resolved debug work: [Project Memory](./PROJECT_MEMORY.md), [Common Failures and Engineering Lessons](./COMMON_FAILURES.md), and [Current Milestone](./CURRENT_MILESTONE.md) record that temporary volunteer login diagnostic instrumentation was removed and verified.
 
-Attention before development resumes: finish review/commit handling for the offline architecture milestone, then refresh candidate options and avoid mixing offline implementation or security architecture decisions into unrelated work.
+Attention before development resumes: finish review/commit handling for the security architecture milestone, then refresh candidate options and avoid mixing offline implementation, permission changes, scanning architecture, or stack documentation decisions into unrelated work.
 
 ## Known Assumptions
 
@@ -331,6 +332,7 @@ This is living documentation and should remain concise. Prefer links to canonica
 - [Next Milestone](./NEXT_MILESTONE.md)
 - [Project Scorecard](./PROJECT_SCORECARD.md)
 - [Security Status](./SECURITY_STATUS.md)
+- [Security Architecture](../architecture/security.md)
 - [Technical Debt](./TECH_DEBT.md)
 - [Known Limitations](./KNOWN_LIMITATIONS.md)
 - [Documentation Drift](./DOCUMENTATION_DRIFT.md)

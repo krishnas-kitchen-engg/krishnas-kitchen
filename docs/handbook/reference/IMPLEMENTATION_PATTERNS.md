@@ -12,6 +12,7 @@ related:
   - ./COMMON_FAILURES.md
   - ./ARCHITECTURAL_INVARIANTS.md
   - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
+  - ../architecture/security.md
   - ../adrs/0006-repository-pattern.md
   - ../adrs/0008-domain-driven-package-organization.md
 ---
@@ -33,6 +34,7 @@ Keep this page concise. Link to ADRs, architecture docs, source files, and tests
 | Domain before UI | Keep core domain rules in `apps/web/src/domains`; keep user-facing workflows in `apps/web/src/features`. | [ADR-0008](../adrs/0008-domain-driven-package-organization.md) |
 | Repository boundary | UI and application services should depend on repository contracts, not raw persistence details. | [ADR-0006](../adrs/0006-repository-pattern.md) |
 | Supabase boundary | Browser code must not treat client-side permission checks as authoritative. Use RLS/RPC boundaries for protected data. | [ADR-0003](../adrs/0003-supabase-auth-and-rls-boundary.md), [ADR-0007](../adrs/0007-rpc-boundaries-and-browser-trust.md) |
+| Security architecture ownership | Durable auth, permission, RLS, RPC, temporary volunteer, inventory auditability, and offline replay security boundaries belong in Security Architecture. Use Security Status for posture and review evidence. | [Security Architecture](../architecture/security.md), [Security Status](./SECURITY_STATUS.md) |
 | Permission drift reconciliation | When permission docs, helpers, and tests conflict, first identify the approved product/security policy, then align only the affected sources. Do not treat existing helper behavior as authoritative for server authorization. | [Documentation Drift](./DOCUMENTATION_DRIFT.md), [Open Decisions](./OPEN_DECISIONS.md), [Security Status](./SECURITY_STATUS.md) |
 | Permission-sensitive tests | Set exact permission arrays in auth fixtures and add a direct helper test near the permission source so broad fixture defaults cannot mask restricted-session behavior. | `apps/web/src/features/auth/lib/permissions.test.ts`, [Current Milestone](./CURRENT_MILESTONE.md) |
 | Inventory changes | Inventory-changing work must preserve immutable transactions, positive quantities, derived balances, and reversibility. | [Architectural Invariants](./ARCHITECTURAL_INVARIANTS.md) |
@@ -62,5 +64,6 @@ This is living documentation.
 - [Common Failures and Engineering Lessons](./COMMON_FAILURES.md)
 - [Architectural Invariants](./ARCHITECTURAL_INVARIANTS.md)
 - [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md)
+- [Security Architecture](../architecture/security.md)
 - [ADR-0006: Repository Pattern](../adrs/0006-repository-pattern.md)
 - [ADR-0008: Domain-Driven Package Organization](../adrs/0008-domain-driven-package-organization.md)

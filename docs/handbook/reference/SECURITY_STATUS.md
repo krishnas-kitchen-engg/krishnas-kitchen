@@ -16,6 +16,7 @@ related:
   - ../adrs/0007-rpc-boundaries-and-browser-trust.md
   - ../adrs/0010-security-review-before-commit.md
   - ../architecture/README.md
+  - ../architecture/security.md
   - ../../AUTH_ARCHITECTURE.md
   - ../../PERMISSIONS_MATRIX.md
   - ../../../infra/supabase/README.md
@@ -29,7 +30,7 @@ This document summarizes current security mechanisms and known security work.
 
 ## Current Guidance
 
-Use this page before security-sensitive milestones. It is a status document, not a replacement for security review.
+Use this page before security-sensitive milestones. It is a status document, not a replacement for security review. Durable security architecture belongs in [Security Architecture](../architecture/security.md).
 
 ## Implemented Security Mechanisms
 
@@ -43,7 +44,6 @@ Use this page before security-sensitive milestones. It is a status document, not
 
 ## Remaining Security Work
 
-- Consolidate RLS/security architecture into a living architecture document.
 - Record latest security review results for security-sensitive areas.
 - Continue adding explicit policies for new write paths before production use.
 
@@ -69,7 +69,6 @@ The foundational schema includes immutable `audit_logs`. Inventory transactions 
 
 ## Known Risks
 
-- Security status is distributed across docs, ADRs, and migrations rather than a dedicated living security architecture page.
 - Latest full security review result is not recorded.
 
 ## Owner
@@ -93,6 +92,7 @@ This is living documentation.
 - [ADR-0004: Temporary Volunteer Session Model](../adrs/0004-temporary-volunteer-session-model.md)
 - [ADR-0007: RPC Boundaries And Browser Trust](../adrs/0007-rpc-boundaries-and-browser-trust.md)
 - [ADR-0010: Security Review Before Commit](../adrs/0010-security-review-before-commit.md)
+- [Security Architecture](../architecture/security.md)
 - [Auth Architecture](../../AUTH_ARCHITECTURE.md)
 - [Permissions Matrix](../../PERMISSIONS_MATRIX.md)
 - [Supabase README](../../../infra/supabase/README.md)

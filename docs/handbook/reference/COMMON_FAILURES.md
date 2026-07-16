@@ -13,6 +13,7 @@ related:
   - ./DOCUMENTATION_DRIFT.md
   - ./TECH_DEBT.md
   - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
+  - ../architecture/security.md
 ---
 
 # Common Failures and Engineering Lessons
@@ -36,6 +37,7 @@ Use it to prevent repeated mistakes and surface practical lessons. Keep durable 
 | Undo/reversal terminology drifts | Historical docs and migrations use different terminology | Canonical terms now distinguish user-facing undo action, persisted reversal transaction, and legacy undo compatibility | Check [ADR-0009](../adrs/0009-auditability-and-reversibility.md) and [Inventory Architecture](../../INVENTORY_ARCHITECTURE.md) before correction workflow work |
 | Return semantics drift | Feature docs and migration compatibility can make current return behavior look broader than it is | Canonical terms now define current returns as `returned` plus `transfer`; `returned` plus `increase` is compatibility only | Check [ADR-0002](../adrs/0002-positive-quantities-and-quantity-effects.md), [Inventory Architecture](../../INVENTORY_ARCHITECTURE.md), and return validation tests before return workflow work |
 | Offline implementation starts without architecture | Offline was required before detailed queue architecture existed | Offline sync architecture now defines queue, replay, idempotency, conflict, and authorization constraints | Implement local queue storage, replay, and idempotency only through separately approved milestones that follow [Offline Sync Architecture](../architecture/offline-sync.md) |
+| Security ownership is split across status and source material | ADRs, migrations, auth docs, permission docs, and status notes described security boundaries without one living architecture owner | Security Architecture now owns durable auth/RLS/RPC/temporary-volunteer boundaries; Security Status tracks posture and review evidence | Update Security Architecture for boundary changes and Security Status for review outcomes |
 | Future horizon expands implementation scope | Long-term product vision can be mistaken for current implementation authority | Product Horizons now defines the active horizon and horizon rules | Reject implementation candidates outside the active horizon; allow future horizons to influence architecture only |
 
 ## Engineering Discoveries
@@ -52,6 +54,7 @@ Use it to prevent repeated mistakes and surface practical lessons. Keep durable 
 | Terminology fixes can look like behavior work | The words "undo" and "reversal" span UI, service, domain, schema, and legacy data contexts | First classify each reference as user action, domain event, persisted transaction type, or compatibility history; change behavior only under a separate approved milestone |
 | Compatibility constraints look like current behavior | Migrations may permit historical or transitional row shapes that new application code should not create | Separate current creation semantics from read/schema compatibility in architecture docs and tests |
 | Offline requirements look like current implementation | Product and architecture docs require offline capability, while source currently has only PWA tooling and offline-safe metadata | Separate requirement, current status, and future implementation in living architecture before writing queue code |
+| Security posture and security architecture are different documents | A status page can age quickly, while architecture should hold durable boundaries | Keep implementation-independent security boundaries in [Security Architecture](../architecture/security.md) and record review freshness in [Security Status](./SECURITY_STATUS.md) |
 | Product vision looks like milestone scope | Future horizons describe legitimate long-term direction but are not active implementation scope | Include Horizon, reason it belongs to the horizon, and evidence value in every milestone recommendation |
 
 ## Owner
@@ -73,3 +76,4 @@ This is living documentation.
 - [Documentation Drift](./DOCUMENTATION_DRIFT.md)
 - [Technical Debt](./TECH_DEBT.md)
 - [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md)
+- [Security Architecture](../architecture/security.md)

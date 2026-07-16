@@ -9,6 +9,7 @@ last_reviewed: null
 related:
   - ../README.md
   - ./offline-sync.md
+  - ./security.md
   - ../../SYSTEM_ARCHITECTURE.md
   - ../../INVENTORY_ARCHITECTURE.md
   - ../../AUTH_ARCHITECTURE.md
@@ -29,6 +30,7 @@ Use this section to navigate architecture topics without duplicating existing ar
 - [System Architecture](../../SYSTEM_ARCHITECTURE.md)
 - [Inventory Architecture](../../INVENTORY_ARCHITECTURE.md)
 - [Offline Sync Architecture](./offline-sync.md)
+- [Security Architecture](./security.md)
 - [Authentication and Authorization Architecture](../../AUTH_ARCHITECTURE.md)
 - [Permissions Matrix](../../PERMISSIONS_MATRIX.md)
 - [Database Schema](../../DATABASE_SCHEMA.md)

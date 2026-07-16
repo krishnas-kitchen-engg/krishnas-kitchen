@@ -17,6 +17,7 @@ related:
   - ../adrs/0009-auditability-and-reversibility.md
   - ../architecture/README.md
   - ../architecture/offline-sync.md
+  - ../architecture/security.md
 ---
 
 # Technical Debt Register
@@ -35,6 +36,7 @@ Add debt when a known weakness is accepted temporarily. Do not use this register
 | TD-003 | Offline queue architecture was required but not captured as a detailed living architecture document | Offline work could proceed without a canonical plan | Medium | Medium | Engineering | Resolved | Define Offline Queue Architecture |
 | TD-004 | Existing older documentation contains duplication and encoding artifacts | Contributors may struggle to identify canonical guidance | Low | Medium | Engineering | Open | Not assigned |
 | TD-005 | Latest full verification results must be refreshed during each implementation milestone | Project health is harder to assess if sessions reuse stale verification evidence | Medium | Medium | Engineering | Open | Not assigned |
+| TD-006 | Security architecture ownership was distributed across status docs, ADRs, older architecture docs, and migrations | Future security-sensitive work could miss the canonical auth/RLS/RPC boundary | Medium | High | Engineering | Resolved | Consolidate Security Architecture Ownership |
 
 ## Owner
 
@@ -57,3 +59,4 @@ This is living documentation.
 - [ADR-0005: Mobile-First Offline PWA](../adrs/0005-mobile-first-offline-pwa.md)
 - [ADR-0009: Auditability And Reversibility](../adrs/0009-auditability-and-reversibility.md)
 - [Offline Sync Architecture](../architecture/offline-sync.md)
+- [Security Architecture](../architecture/security.md)

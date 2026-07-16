@@ -25,6 +25,7 @@ related:
   - ../adrs/0008-domain-driven-package-organization.md
   - ../architecture/README.md
   - ../architecture/offline-sync.md
+  - ../architecture/security.md
   - ../../SYSTEM_ARCHITECTURE.md
   - ../../INVENTORY_ARCHITECTURE.md
   - ../../AUTH_ARCHITECTURE.md
@@ -107,9 +108,9 @@ Supabase migrations exist for:
 
 ## Security Status
 
-RLS is enabled on foundational tables. Authenticated read policies exist for inventory-facing tables. Security-definer helper functions and controlled volunteer RPCs exist. Browser trust boundaries are documented in ADRs.
+RLS is enabled on foundational tables. Authenticated read policies exist for inventory-facing tables. Security-definer helper functions and controlled volunteer RPCs exist. Browser trust boundaries are documented in ADRs and consolidated in [Security Architecture](../architecture/security.md).
 
-Known gaps remain in documentation synchronization and explicit security status tracking.
+Known gaps remain in explicit security review result tracking.
 
 Offline architecture is now documented in [Offline Sync Architecture](../architecture/offline-sync.md). Offline queue implementation remains future work.
 
@@ -117,7 +118,7 @@ Offline architecture is now documented in [Offline Sync Architecture](../archite
 
 Vitest is configured. Tests exist for inventory domain logic, repository adapters, migrations, auth volunteer sessions, UI reducers/screens, shell navigation, and shared utilities.
 
-Latest full verification before this milestone was recorded for the return semantics milestone. Verification for the offline architecture milestone is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
+Latest full verification before this milestone was recorded for the handbook finalization milestone. Verification for the security architecture milestone is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
 
 - `corepack pnpm@9.15.4 format`
 - `corepack pnpm@9.15.4 typecheck`
@@ -142,7 +143,6 @@ The Engineering Operating System is Stable at v1.3. Future EOS changes require i
 ## Known Gaps
 
 - Offline queue implementation is not present; the living architecture defines the future queue and replay boundary.
-- RLS/security architecture should be consolidated into a living architecture page.
 - Existing docs still contain duplication and some encoding artifacts.
 - Older docs are classified in the document index, but content has not been physically migrated.
 
@@ -173,6 +173,7 @@ This is living documentation.
 - [Documentation Drift](./DOCUMENTATION_DRIFT.md)
 - [Handbook Health Report](./HANDBOOK_HEALTH_REPORT.md)
 - [Architecture](../architecture/README.md)
+- [Security Architecture](../architecture/security.md)
 - [ADR Index](../adrs/README.md)
 - [Project README](../../../README.md)
 - [System Architecture](../../SYSTEM_ARCHITECTURE.md)

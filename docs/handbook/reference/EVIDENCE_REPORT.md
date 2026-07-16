@@ -14,6 +14,7 @@ related:
   - ./PROJECT_MEMORY.md
   - ./IMPLEMENTATION_PATTERNS.md
   - ./COMMON_FAILURES.md
+  - ../architecture/security.md
   - ../architecture/offline-sync.md
   - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
   - ../process/QUALITY_GATES.md
@@ -29,7 +30,7 @@ This document records evidence gathered during the latest repository reconstruct
 
 Date: 2026-07-16.
 
-Milestone: Engineering Handbook Finalization.
+Milestone: Consolidate Security Architecture Ownership.
 
 Status: Implemented, verified, reviewed, and approved for commit.
 
@@ -37,41 +38,33 @@ Status: Implemented, verified, reviewed, and approved for commit.
 
 - Branch: `docs/engineering-handbook`.
 - Working tree before implementation: clean.
-- Latest committed baseline before implementation: `25d5506 docs(inventory): canonicalize return semantics`.
-- Source files under `apps/web/src`: 244.
-- Test files under `apps/web/src`: 60.
-- Supabase migration files: 12.
-- Offline-related repository evidence includes Vite PWA tooling, inventory draft `clientId` validation, audit metadata support for `clientRequestId`, `deviceId`, and `source = "offline_queue"`, and repository contracts around inventory persistence.
+- Latest committed baseline before implementation: `9275155 docs(handbook): freeze engineering handbook v1.3`.
 - Product Horizons identifies Horizon 1, Core Kitchen Inventory Platform, as active.
+- The milestone is inside Horizon 1 because Horizon 1 includes authentication, role-based permissions, temporary volunteers, security, RLS, RPC boundaries, audit trail, repository architecture, testing, and engineering documentation.
 
 ## Architecture Evidence
 
-- [Offline Sync Architecture](../architecture/offline-sync.md) now defines the canonical offline queue and replay boundary.
-- [Product Horizons](../../PRODUCT_HORIZONS.md) is now integrated as the canonical long-term roadmap and active-horizon source.
-- [ADR-0005](../adrs/0005-mobile-first-offline-pwa.md) remains the accepted mobile-first offline PWA decision record.
-- Offline queue implementation is explicitly not present in this milestone.
-- Future queued inventory writes must preserve domain validation, immutable transaction semantics, audit/client request metadata, repository boundaries, idempotent replay, fail-closed conflict handling, and server/database authorization.
-- The Engineering Operating System is frozen as v1.3.
+- [Security Architecture](../architecture/security.md) now owns durable Horizon 1 auth, permission, RLS, RPC, temporary volunteer, inventory auditability, and offline replay security boundaries.
+- [Security Status](./SECURITY_STATUS.md) remains the posture and review-tracking document.
+- ADR-0003, ADR-0004, ADR-0007, and ADR-0010 remain the historical decision records for Supabase Auth/RLS, temporary volunteer sessions, RPC/browser trust boundaries, and security review before commit.
+- [Offline Sync Architecture](../architecture/offline-sync.md) remains the canonical offline queue/replay architecture source; offline queue implementation is unchanged and still future work.
 
 ## Implementation Evidence
 
 - No TypeScript source, tests, migrations, RLS policies, RPCs, permissions, or runtime behavior were changed.
-- `docs/handbook/architecture/offline-sync.md` was added as the living offline architecture source.
-- `docs/handbook/architecture/README.md` now links the offline architecture page.
-- `docs/PRODUCT_HORIZONS.md` is classified as the canonical long-term product roadmap.
-- Candidate milestone selection now requires active-horizon alignment and rejects out-of-horizon recommendations.
-- `DOCUMENTATION_DRIFT.md` records DD-004 as resolved.
-- `TECH_DEBT.md` records TD-003 as resolved.
-- `OPEN_DECISIONS.md` records OD-003 as resolved.
-- Living state, milestone, next milestone, memory, implementation patterns, common failures, limitations, changelog, scorecard, reconstruction, and evidence references were updated for the implemented milestone.
+- `docs/handbook/architecture/security.md` was added as the living security architecture source.
+- `docs/handbook/architecture/README.md` now links the security architecture page.
+- `SECURITY_STATUS.md` no longer describes security architecture ownership as absent and now points to the architecture page.
+- `OPEN_DECISIONS.md` records OD-004 as resolved.
+- `TECH_DEBT.md` records security architecture ownership as resolved debt.
+- Living state, milestone, next milestone, memory, changelog, scorecard, reconstruction, limitations, and evidence references were updated for the implemented milestone.
 
 ## Documentation Validation
 
-- Active drift no longer lists offline architecture as absent.
-- Offline architecture now separates requirement, current non-implementation status, and future queue/replay constraints.
-- Product Horizons is read during repository reconstruction and feature planning.
-- Milestone recommendations now include strategic alignment, current horizon, horizon fit, evidence value, and future-horizon support without scope expansion.
-- Remaining open drift/debt is outside this milestone: security architecture ownership, mobile UI duplication, scanning documentation overlap, stack docs drift, schema reference drift, naming drift, and historical process overlap.
+- Active references no longer describe security architecture ownership as absent.
+- The security architecture page does not expand implementation scope beyond Horizon 1.
+- Future horizons are mentioned only as architectural influence, not implementation scope.
+- Remaining open work is outside this milestone: latest full security review result, offline queue implementation, scanning documentation overlap, stack docs drift, schema reference drift, naming drift, historical process overlap, and older documentation duplication.
 
 ## Verification Results
 
@@ -88,8 +81,9 @@ Build note: production build completed successfully and emitted the existing Vit
 ## Residual Risks
 
 - The milestone is documentation-only and depends on current code behavior remaining unchanged.
+- Latest full security review result is not recorded.
 - Offline queue storage, replay workers, UI offline states, and server idempotency constraints remain unimplemented by design.
-- Security architecture ownership remains distributed across status, architecture, ADR, and migration references.
+- Future temporary volunteer write capability still requires a separate approved server-enforced write model.
 
 ## Evidence Location
 
