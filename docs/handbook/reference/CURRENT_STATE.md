@@ -63,6 +63,7 @@ The project is not documented as production-ready.
 - Return transaction semantics were canonicalized across inventory architecture, affected feature docs, and living drift references after reviewing ADR-0002.
 - Offline queue architecture was defined in a living architecture page without implementing queue storage, replay, or runtime sync behavior.
 - Security architecture ownership was consolidated and committed in `c8a4f5c`.
+- The Horizon 1 security review baseline was recorded in [Security Status](./SECURITY_STATUS.md) without changing runtime behavior.
 
 ## Implemented Domains
 
@@ -111,7 +112,7 @@ Supabase migrations exist for:
 
 RLS is enabled on foundational tables. Authenticated read policies exist for inventory-facing tables. Security-definer helper functions and controlled volunteer RPCs exist. Browser trust boundaries are documented in ADRs and consolidated in [Security Architecture](../architecture/security.md).
 
-Known gaps remain in explicit security review result tracking.
+The latest Horizon 1 security review baseline is recorded in [Security Status](./SECURITY_STATUS.md). This baseline does not grant production security approval.
 
 Offline architecture is now documented in [Offline Sync Architecture](../architecture/offline-sync.md). Offline queue implementation remains future work.
 
@@ -119,7 +120,7 @@ Offline architecture is now documented in [Offline Sync Architecture](../archite
 
 Vitest is configured. Tests exist for inventory domain logic, repository adapters, migrations, auth volunteer sessions, UI reducers/screens, shell navigation, and shared utilities.
 
-Latest full verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md) for the living milestone state refresh after the security architecture commit.
+Latest full verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md) for the Horizon 1 security review baseline milestone.
 
 - `corepack pnpm@9.15.4 format`
 - `corepack pnpm@9.15.4 typecheck`
@@ -144,6 +145,7 @@ The Engineering Operating System is Stable at v1.3. Future EOS changes require i
 ## Known Gaps
 
 - Offline queue implementation is not present; the living architecture defines the future queue and replay boundary.
+- Production security approval is not granted; the current security review baseline records posture and findings only.
 - Existing docs still contain duplication and some encoding artifacts.
 - Older docs are classified in the document index, but content has not been physically migrated.
 

@@ -33,11 +33,11 @@ Update this document whenever a milestone starts, pauses, completes, or changes 
 
 ## Current Active Milestone
 
-Refresh Living Milestone State After Security Commit.
+Record Horizon 1 Security Review Baseline.
 
 ## Goal
 
-Refresh living planning and reconstruction references after the committed security architecture ownership milestone so repository status reflects current git history.
+Record the latest Horizon 1 security review baseline in living documentation so future security-sensitive milestones start from explicit repository evidence.
 
 ## Status
 
@@ -45,13 +45,16 @@ Implemented, verified, reviewed, and approved for commit.
 
 ## Scope
 
-- Record that security architecture ownership was committed in `c8a4f5c`.
-- Refresh current milestone, next milestone, current state, project reconstruction, scorecard, and evidence references that still described the security milestone as pending review or pre-commit.
+- Review Horizon 1 security architecture, status, auth, permissions, Supabase migrations, RLS/RPC evidence, and living references.
+- Record the current security review baseline in [Security Status](./SECURITY_STATUS.md).
+- Refresh only affected living state, milestone, scorecard, reconstruction, memory, patterns, lessons, changelog, and evidence references.
 - Preserve immutable ledger behavior, positive quantity semantics, return/reversal semantics, migrations, Supabase policies, permissions, runtime behavior, Product Horizons, and architecture boundaries.
-- Do not implement local queue storage, background sync, service-worker replay, IndexedDB schema, server idempotency constraints, RLS/RPC changes, permission changes, scanning documentation consolidation, stack documentation reconciliation, schema reference generation, or older documentation cleanup in this milestone.
+- Do not implement local queue storage, background sync, service-worker replay, IndexedDB schema, server idempotency constraints, RLS/RPC changes, permission changes, scanning documentation consolidation, stack documentation reconciliation, schema reference generation, older documentation cleanup, or production security approval in this milestone.
 
 ## Files Affected
 
+- `docs/handbook/reference/SECURITY_STATUS.md`
+- `docs/handbook/architecture/security.md`
 - `docs/handbook/reference/CURRENT_MILESTONE.md`
 - `docs/handbook/reference/CURRENT_STATE.md`
 - `docs/handbook/reference/NEXT_MILESTONE.md`
@@ -61,6 +64,7 @@ Implemented, verified, reviewed, and approved for commit.
 - `docs/handbook/reference/CHANGELOG_SUMMARY.md`
 - `docs/handbook/reference/PROJECT_RECONSTRUCTION.md`
 - `docs/handbook/reference/PROJECT_SCORECARD.md`
+- `docs/handbook/reference/KNOWN_LIMITATIONS.md`
 - `docs/handbook/reference/EVIDENCE_REPORT.md`
 
 ## Known Blockers
@@ -81,7 +85,7 @@ Implementation verification passed:
 
 ## Next Review
 
-Human review, then commit approval if accepted.
+Commit the approved documentation-only milestone.
 
 ## Owner
 

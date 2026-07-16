@@ -53,11 +53,11 @@ Implementation maturity: active development. Repository evidence shows implement
 
 Engineering maturity: strong. The Engineering Operating System is Stable at v1.3, with a canonical operating model, Product Horizons, governance, process docs, templates, ADRs, living references, and a scorecard. Future EOS changes require implementation-driven justification.
 
-Security maturity: foundation implemented, production posture still needs review. RLS is enabled on foundational tables, helper functions and controlled volunteer RPCs exist, authenticated inventory read policies exist, security ADRs are accepted, and durable security boundaries are consolidated in [Security Architecture](../architecture/security.md). Temporary volunteer browser permissions are restricted to read/session capabilities. See [Security Status](./SECURITY_STATUS.md).
+Security maturity: foundation implemented, production approval not granted. RLS is enabled on foundational tables, helper functions and controlled volunteer RPCs exist, authenticated inventory read policies exist, security ADRs are accepted, durable security boundaries are consolidated in [Security Architecture](../architecture/security.md), and the latest Horizon 1 security review baseline is recorded in [Security Status](./SECURITY_STATUS.md). Temporary volunteer browser permissions are restricted to read/session capabilities.
 
 Documentation maturity: high for engineering process and reconstruction, medium for application-state documentation. Canonical handbook docs exist, but older docs still contain drift, duplication, and some encoding artifacts. See [Document Index](./DOCUMENT_INDEX.md) and [Documentation Drift](./DOCUMENTATION_DRIFT.md).
 
-Overall project status: ready to continue controlled application development. The temporary volunteer login diagnostic worktree state, temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, and security architecture ownership gap have been resolved; remaining high-priority risks include unimplemented offline queue/replay behavior and unrecorded full security review results.
+Overall project status: ready to continue controlled application development. The temporary volunteer login diagnostic worktree state, temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, security architecture ownership gap, and unrecorded security review baseline have been resolved; remaining high-priority risks include unimplemented offline queue/replay behavior and missing production security approval.
 
 ## Product Vision Summary
 
@@ -145,8 +145,8 @@ Volunteer security model: temporary volunteers use session records rather than p
 
 Known remaining security work:
 
-- Record latest security review results.
 - Add explicit policies for new write paths before production use.
+- Convert security review findings into focused implementation milestones before production hardening.
 
 Completed security milestones:
 
@@ -154,6 +154,7 @@ Completed security milestones:
 - RLS helper functions, volunteer session RPCs, authenticated inventory read policies, volunteer inventory read RPCs, and volunteer inventory barcode catalog RPC migrations exist.
 - [ADR-0010](../adrs/0010-security-review-before-commit.md) requires security review before security-sensitive commit readiness.
 - [Security Architecture](../architecture/security.md) now owns durable Horizon 1 auth/RLS/RPC/temporary-volunteer security boundaries.
+- [Security Status](./SECURITY_STATUS.md) records the 2026-07-16 Horizon 1 security review baseline and states that it is not production security approval.
 
 ## Milestone Timeline
 
@@ -177,8 +178,9 @@ This timeline is reconstructed from [Changelog Summary](./CHANGELOG_SUMMARY.md),
 | EOS freeze | Stable Engineering Operating System v1.2 | `e5f2fe7`, `2aaaad5 docs(eos): freeze Engineering Operating System v1.2` |
 | Engineering Handbook v1.3 freeze | Product Horizons integration, active-horizon milestone gating, offline-sync architecture, and final handbook consistency pass | `9275155 docs(handbook): freeze engineering handbook v1.3` |
 | Security architecture ownership consolidation | Living security architecture source and reference updates | `c8a4f5c docs(security): consolidate architecture ownership` |
+| Living state refresh after security commit | Milestone, reconstruction, scorecard, and evidence references aligned to committed security architecture history | `63dc374 docs(handbook): refresh milestone state after security commit` |
 
-Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Refresh Living Milestone State After Security Commit as the active implemented milestone pending human review.
+Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Record Horizon 1 Security Review Baseline as the active implemented milestone approved for commit.
 
 ## ADR Status
 
@@ -223,7 +225,7 @@ Genuine blockers before permission-changing application development resumes:
 
 - Future temporary volunteer write capability requires a separate approved server-enforced write model before permissions are expanded.
 
-Not blockers, but important gaps: offline queue implementation, missing latest full security review results, scanning documentation drift, schema reference drift, and older documentation drift.
+Not blockers, but important gaps: offline queue implementation, missing production security approval, scanning documentation drift, schema reference drift, and older documentation drift.
 
 ## Recommended Next Engineering Milestone
 
@@ -231,21 +233,21 @@ Use the EOS candidate flow in [AI Engineering Operating Model](../governance/AI_
 
 | Rank | Candidate | Strategic Alignment | Current Horizon | Reason It Belongs | Evidence Value | Future Horizon Support Without Scope Expansion | Recommendation |
 |---|---|---|---|---|---|---|---|
-| 1 | Refresh living milestone state after security commit | Keeps planning and reconstruction references aligned with committed repository state | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation | High: prevents future EOS sessions from restarting completed security architecture work | Keeps future planning and operations work grounded in reliable engineering state without implementing it now | Implemented, pending human review |
+| 1 | Record Horizon 1 security review baseline | Keeps security posture and evidence aligned with repository reality | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes auth/RLS/RPC foundations, inventory authorization, temporary volunteer access, evidence generation, and engineering documentation | High: resolves the unrecorded security review baseline gap | Keeps future planning and operations work grounded in explicit authorization and audit constraints without implementing higher-horizon work | Implemented and approved for commit |
 | 2 | Canonicalize scanning architecture boundary | Clarifies scan-first inventory workflow ownership | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes inventory workflows, barcode lookup, barcode catalog, unknown barcode workflow, inventory visibility, and mobile-first PWA | Medium: reduces scan workflow drift | Keeps future operational workflows compatible with a cleaner scan boundary without expanding scope | Defer |
 | 3 | Reconcile stack documentation against package manifests | Keeps repository architecture guidance aligned with package manifests | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation | Medium-low: reduces false stack assumptions | Gives future contributors accurate dependency truth before larger product domains are added | Defer |
 
-Recommended next action: human review of the implemented living milestone state refresh. Do not implement offline queue storage, replay, idempotency constraints, permission expansion, scanning architecture work, or stack documentation reconciliation until a separate candidate milestone is approved.
+Recommended next action: commit the approved security review baseline. Do not implement offline queue storage, replay, idempotency constraints, permission expansion, scanning architecture work, or stack documentation reconciliation until a separate candidate milestone is approved.
 
 ## Engineering Health
 
 | Area | Health | Evidence |
 |---|---|---|
 | Architecture | Good with known gaps | ADRs and architecture references establish core boundaries; offline sync architecture and security architecture now exist. |
-| Security | Watch | RLS/RPC foundations exist; temporary volunteer browser permissions are restricted to read/session capabilities; latest full security review result remains unrecorded. |
+| Security | Watch | RLS/RPC foundations exist; temporary volunteer browser permissions are restricted to read/session capabilities; the Horizon 1 security review baseline is recorded, but production security approval is not granted. |
 | Testing | Watch | Many tests exist across domain, repository, migration, auth, UI, and utilities; latest verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md), and future implementation milestones must rerun verification. |
 | Documentation | Good | EOS v1.3 is Stable; Product Horizons, document index, drift register, ADRs, templates, and living references exist. |
-| Roadmap | Conditional | Temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, and security architecture ownership are complete; current milestone state refresh is pending human review. |
+| Roadmap | Conditional | Temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, security architecture ownership, and security review baseline recording are complete or approved for commit. |
 | Technical Debt | Watch | Offline queue implementation, scanning documentation drift, schema reference drift, and older documentation drift remain open. |
 | Overall | Good for controlled development | The project has enough governance and implementation structure to resume application work after candidate approval. |
 
@@ -256,10 +258,12 @@ Working tree at latest reconstruction update before this milestone:
 - No auth/routing application diff remains after temporary diagnostic cleanup.
 - Living documentation updates are present for the reconstruction, milestone, memory, state, changelog, implementation patterns, and engineering lessons.
 - Security architecture ownership is committed in `c8a4f5c`.
+- Living state refresh after the security commit is committed in `63dc374`.
+- Security review baseline documentation is present in the current worktree and approved for commit.
 
 Resolved debug work: [Project Memory](./PROJECT_MEMORY.md), [Common Failures and Engineering Lessons](./COMMON_FAILURES.md), and [Current Milestone](./CURRENT_MILESTONE.md) record that temporary volunteer login diagnostic instrumentation was removed and verified.
 
-Attention before development resumes: finish review/commit handling for the living milestone state refresh, then refresh candidate options and avoid mixing offline implementation, permission changes, scanning architecture, or stack documentation decisions into unrelated work.
+Attention before development resumes: commit the security review baseline, then refresh candidate options and avoid mixing offline implementation, permission changes, scanning architecture, or stack documentation decisions into unrelated work.
 
 ## Known Assumptions
 
@@ -307,7 +311,7 @@ They should avoid changing:
 
 They should plan next:
 
-- Refresh candidate options after this living milestone state refresh is reviewed and committed.
+- Refresh candidate options after this security review baseline is committed.
 - Recommend only active-horizon milestones from [Product Horizons](../../PRODUCT_HORIZONS.md).
 - Keep any follow-up milestone small, independently verifiable, and reversible.
 - Preserve separate approval gates for implementation review and commit.

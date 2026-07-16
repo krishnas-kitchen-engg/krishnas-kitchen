@@ -42,69 +42,73 @@ Implementation must not begin until the human approves one candidate. Commit app
 
 ## Status
 
-Implemented for the approved candidate. Human review pending.
+Implemented for the approved candidate. Commit approved.
 
 ## Approval
 
-Candidate 1, Refresh Living Milestone State After Security Commit, was approved for implementation.
+Candidate 1, Record Horizon 1 Security Review Baseline, was approved for implementation.
 
 ## Recommended Candidate
 
-Candidate 1: Refresh Living Milestone State After Security Commit.
+Candidate 1: Record Horizon 1 Security Review Baseline.
 
-Recommendation: Implemented, pending human review.
+Recommendation: Implemented and approved for commit.
 
-Strategic Alignment: Strengthens Horizon 1 evidence generation, repository health, engineering documentation, and production-readiness discipline.
+Strategic Alignment: Strengthens Horizon 1 security posture, evidence generation, repository health, engineering documentation, and production-readiness discipline.
 
 Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
 
-Reason It Belongs To This Horizon: Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation.
+Reason It Belongs To This Horizon: Horizon 1 includes RLS/RPC foundations, temporary volunteer access, inventory workflows, evidence generation, and engineering documentation.
 
-Evidence Value: High. The milestone removes stale post-commit planning state so the next EOS cycle does not restart completed security architecture work.
+Evidence Value: High. The milestone records the latest security review baseline so future sensitive work starts from explicit findings instead of an unrecorded posture gap.
 
-Future Horizon Support Without Scope Expansion: Keeps the engineering operating system reliable before larger planning, procurement, analytics, or operations domains are added.
+Future Horizon Support Without Scope Expansion: Keeps authorization, audit, and offline replay constraints visible before larger planning, procurement, analytics, or operations domains are added.
 
-Implementation Note: Living planning and reconstruction references now treat `c8a4f5c docs(security): consolidate architecture ownership` as committed repository history.
+Implementation Note: Security Status now records the 2026-07-16 Horizon 1 security review baseline and clarifies that it is not production security approval.
 
-Confidence: 88%.
+Confidence: 87%.
 
-Rationale: The repository was clean and the security architecture milestone had been committed, but multiple living docs still described it as pending review or pre-commit.
+Rationale: Security architecture is canonicalized, but living docs still recorded the absence of a latest full security review result as a known risk.
 
 Estimated Effort: Low.
 
 Assumptions:
 
-- Commit `c8a4f5c` remains the latest security architecture ownership commit.
-- The next application milestone should be selected only after this living-state refresh is reviewed and committed.
+- The review can be recorded from repository evidence without changing application code.
+- The review baseline should not imply production readiness or authorize temporary volunteer write capability.
 
 Uncertainties:
 
-- Future candidate ranking may change after the next full repository reconstruction.
+- Future candidate ranking may change after the next full repository reconstruction and verification cycle.
 
 Reasons Alternatives Were Not Recommended:
 
-- Candidate 2 is useful, but scanning documentation drift should not start while milestone state points at completed work.
-- Candidate 3 is useful, but stack documentation drift is less urgent than correcting the current planning state.
+- Candidate 2 is useful, but scanning documentation drift is less urgent than closing the explicit security-review evidence gap.
+- Candidate 3 is useful, but stack documentation drift does not de-risk security-sensitive Horizon 1 work as directly.
 
-## Candidate 1: Refresh Living Milestone State After Security Commit
+## Candidate 1: Record Horizon 1 Security Review Baseline
 
-Recommendation: Implemented, pending human review.
+Recommendation: Implemented and approved for commit.
 
-Strategic Alignment: Keeps Horizon 1 engineering documentation and evidence aligned with repository reality.
+Strategic Alignment: Keeps Horizon 1 security posture and evidence aligned with repository reality.
 
 Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
 
-Reason It Belongs To This Horizon: Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation.
+Reason It Belongs To This Horizon: Horizon 1 includes auth/RLS/RPC foundations, inventory authorization, temporary volunteer access, evidence generation, and engineering documentation.
 
-Rationale: The security architecture ownership milestone was committed, but current/next milestone and reconstruction references still described it as pending.
+Rationale: Security architecture ownership is consolidated, but the latest full security review result still needed to be recorded before security-sensitive follow-up work.
 
-Confidence: 88%.
+Confidence: 87%.
 
 Estimated Effort: Low.
 
 Dependencies:
 
-- Latest git history.
+- [Security Architecture](../architecture/security.md).
+- [Security Status](./SECURITY_STATUS.md).
+- [Auth Architecture](../../AUTH_ARCHITECTURE.md).
+- [Permissions Matrix](../../PERMISSIONS_MATRIX.md).
+- Supabase migrations under `infra/supabase/migrations`.
 - [Current Milestone](./CURRENT_MILESTONE.md).
 - [Current State](./CURRENT_STATE.md).
 - [Project Reconstruction](./PROJECT_RECONSTRUCTION.md).
@@ -113,17 +117,17 @@ Dependencies:
 
 Risk:
 
-- Low. Main risk is over-editing beyond stale milestone-state references.
+- Low. Main risk is overstating baseline review as production approval or expanding into RLS/RPC implementation.
 
-Expected Value: High. Future EOS sessions start from current repository state instead of completed work.
+Expected Value: High. Future EOS sessions start from an explicit Horizon 1 security posture baseline instead of an unrecorded review gap.
 
-Evidence Value: High. It directly resolves documented reconstruction drift.
+Evidence Value: High. It directly resolves the documented absence of latest full security review results.
 
-Future Horizon Support Without Scope Expansion: Preserves reliable engineering state for future planning, procurement, analytics, and operations work without implementing them.
+Future Horizon Support Without Scope Expansion: Preserves authorization and audit constraints for future planning, procurement, analytics, and operations work without implementing them.
 
-Architecture Impact: Low. It preserves architecture truth by aligning living docs to committed repository state.
+Architecture Impact: Low. It records current architecture/security posture without changing boundaries.
 
-Security Impact: Low. Security architecture remains unchanged; this milestone only updates planning state around the committed security architecture work.
+Security Impact: Medium documentation/evidence impact. Runtime security remains unchanged; review findings become explicit.
 
 Testing Strategy:
 
@@ -132,13 +136,14 @@ Testing Strategy:
 
 Expected Deliverables:
 
-- Refreshed living milestone and reconstruction references.
+- Recorded Horizon 1 security review baseline.
+- Refreshed affected living milestone, state, reconstruction, scorecard, memory, lessons, and evidence references.
 - Updated evidence report.
 - No runtime, migration, permission, RLS, RPC, Product Horizons, or application changes.
 
 Validation Plan:
 
-- Confirm no references still describe the security architecture milestone as pending review or pending commit.
+- Confirm no references still describe latest full security review results as unrecorded.
 - Confirm no source, migration, policy, permission, RPC, Product Horizons, or runtime behavior changed.
 
 ## Candidate 2: Canonicalize Scanning Architecture Boundary

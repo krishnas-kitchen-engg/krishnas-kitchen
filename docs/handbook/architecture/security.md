@@ -5,7 +5,7 @@ doc_type: architecture
 lifecycle: living
 owner: engineering
 update_cadence: when auth, permissions, RLS, RPC boundaries, volunteer session security, or security review outcomes change
-last_reviewed: null
+last_reviewed: 2026-07-16
 related:
   - ./README.md
   - ../reference/SECURITY_STATUS.md
@@ -150,7 +150,9 @@ validate the temporary volunteer session or permission at replay time.
 
 ## Known Gaps
 
-- Latest full security review results are not recorded.
+- Latest Horizon 1 security review baseline is recorded in
+  [Security Status](../reference/SECURITY_STATUS.md), but production security
+  approval is not granted.
 - Offline queue storage, replay workers, and server idempotency constraints are
   not implemented.
 - New protected write paths need explicit enforcement before production use.
