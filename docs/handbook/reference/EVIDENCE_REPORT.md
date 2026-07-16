@@ -30,7 +30,7 @@ This document records evidence gathered during the latest repository reconstruct
 
 Date: 2026-07-16.
 
-Milestone: Consolidate Security Architecture Ownership.
+Milestone: Refresh Living Milestone State After Security Commit.
 
 Status: Implemented, verified, reviewed, and approved for commit.
 
@@ -38,33 +38,29 @@ Status: Implemented, verified, reviewed, and approved for commit.
 
 - Branch: `docs/engineering-handbook`.
 - Working tree before implementation: clean.
-- Latest committed baseline before implementation: `9275155 docs(handbook): freeze engineering handbook v1.3`.
+- Latest committed baseline before implementation: `c8a4f5c docs(security): consolidate architecture ownership`.
 - Product Horizons identifies Horizon 1, Core Kitchen Inventory Platform, as active.
-- The milestone is inside Horizon 1 because Horizon 1 includes authentication, role-based permissions, temporary volunteers, security, RLS, RPC boundaries, audit trail, repository architecture, testing, and engineering documentation.
+- The milestone is inside Horizon 1 because Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation.
 
 ## Architecture Evidence
 
-- [Security Architecture](../architecture/security.md) now owns durable Horizon 1 auth, permission, RLS, RPC, temporary volunteer, inventory auditability, and offline replay security boundaries.
-- [Security Status](./SECURITY_STATUS.md) remains the posture and review-tracking document.
-- ADR-0003, ADR-0004, ADR-0007, and ADR-0010 remain the historical decision records for Supabase Auth/RLS, temporary volunteer sessions, RPC/browser trust boundaries, and security review before commit.
-- [Offline Sync Architecture](../architecture/offline-sync.md) remains the canonical offline queue/replay architecture source; offline queue implementation is unchanged and still future work.
+- [Security Architecture](../architecture/security.md) is committed and remains the canonical Horizon 1 security architecture source.
+- [Offline Sync Architecture](../architecture/offline-sync.md) remains the canonical offline queue/replay architecture source.
+- No runtime, migration, RLS, RPC, permission, Product Horizons, or architecture-boundary changes were made.
 
 ## Implementation Evidence
 
-- No TypeScript source, tests, migrations, RLS policies, RPCs, permissions, or runtime behavior were changed.
-- `docs/handbook/architecture/security.md` was added as the living security architecture source.
-- `docs/handbook/architecture/README.md` now links the security architecture page.
-- `SECURITY_STATUS.md` no longer describes security architecture ownership as absent and now points to the architecture page.
-- `OPEN_DECISIONS.md` records OD-004 as resolved.
-- `TECH_DEBT.md` records security architecture ownership as resolved debt.
-- Living state, milestone, next milestone, memory, changelog, scorecard, reconstruction, limitations, and evidence references were updated for the implemented milestone.
+- No TypeScript source, tests, migrations, RLS policies, RPCs, permissions, Product Horizons, or runtime behavior were changed.
+- `CURRENT_MILESTONE.md` now records the living milestone state refresh as the active milestone.
+- `NEXT_MILESTONE.md` now records the approved refresh milestone as implemented and preserves deferred scanning and stack documentation candidates.
+- `PROJECT_MEMORY.md`, `IMPLEMENTATION_PATTERNS.md`, `COMMON_FAILURES.md`, and `CHANGELOG_SUMMARY.md` record the reusable post-commit state refresh lesson.
+- `CURRENT_STATE.md`, `PROJECT_RECONSTRUCTION.md`, and `PROJECT_SCORECARD.md` no longer describe the security architecture milestone as pending commit or pending review.
 
 ## Documentation Validation
 
-- Active references no longer describe security architecture ownership as absent.
-- The security architecture page does not expand implementation scope beyond Horizon 1.
-- Future horizons are mentioned only as architectural influence, not implementation scope.
-- Remaining open work is outside this milestone: latest full security review result, offline queue implementation, scanning documentation overlap, stack docs drift, schema reference drift, naming drift, historical process overlap, and older documentation duplication.
+- Living references now treat `c8a4f5c docs(security): consolidate architecture ownership` as committed repository history.
+- Higher-horizon work remains deferred and appears only as future architectural context.
+- Remaining open work is outside this milestone: offline queue implementation, scanning documentation overlap, stack docs drift, schema reference drift, naming drift, historical process overlap, older documentation duplication, unrecorded full security review results, and unmeasured accessibility/performance status.
 
 ## Verification Results
 

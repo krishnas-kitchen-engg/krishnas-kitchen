@@ -46,86 +46,84 @@ Implemented for the approved candidate. Human review pending.
 
 ## Approval
 
-Candidate 1, Consolidate Security Architecture Ownership, was approved for implementation.
+Candidate 1, Refresh Living Milestone State After Security Commit, was approved for implementation.
 
 ## Recommended Candidate
 
-Candidate 1: Consolidate Security Architecture Ownership.
+Candidate 1: Refresh Living Milestone State After Security Commit.
 
 Recommendation: Implemented, pending human review.
 
-Strategic Alignment: Strengthens Horizon 1 production readiness by giving auth, permission, RLS, RPC, temporary volunteer, inventory auditability, and offline replay security boundaries one canonical living architecture source.
+Strategic Alignment: Strengthens Horizon 1 evidence generation, repository health, engineering documentation, and production-readiness discipline.
 
 Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
 
-Reason It Belongs To This Horizon: Horizon 1 includes authentication, role-based permissions, temporary volunteers, security, RLS, RPC boundaries, audit trail, repository architecture, testing, and engineering documentation.
+Reason It Belongs To This Horizon: Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation.
 
-Evidence Value: High. The milestone resolves the gap between existing security evidence and the absence of one durable security architecture owner.
+Evidence Value: High. The milestone removes stale post-commit planning state so the next EOS cycle does not restart completed security architecture work.
 
-Future Horizon Support Without Scope Expansion: Keeps future planning, procurement, analytics, and operations capabilities compatible with clear authorization boundaries while explicitly excluding higher-horizon implementation.
+Future Horizon Support Without Scope Expansion: Keeps the engineering operating system reliable before larger planning, procurement, analytics, or operations domains are added.
 
-Implementation Note: Security architecture now has a living architecture source without changing runtime behavior, permissions, migrations, RLS policies, RPCs, or repository contracts.
+Implementation Note: Living planning and reconstruction references now treat `c8a4f5c docs(security): consolidate architecture ownership` as committed repository history.
 
-Confidence: 82%.
+Confidence: 88%.
 
-Rationale: Security ownership was the remaining active open decision and is a prerequisite for safe future volunteer write capability, offline replay, and production hardening.
+Rationale: The repository was clean and the security architecture milestone had been committed, but multiple living docs still described it as pending review or pre-commit.
 
-Estimated Effort: Low to medium.
+Estimated Effort: Low.
 
 Assumptions:
 
-- Existing ADRs, security status, auth docs, permissions docs, Supabase docs, and migrations accurately represent the current security boundary.
-- Security Status remains posture/review tracking, while Security Architecture owns durable architecture.
-- Future write paths and offline replay require separate approval and enforcement work.
+- Commit `c8a4f5c` remains the latest security architecture ownership commit.
+- The next application milestone should be selected only after this living-state refresh is reviewed and committed.
 
 Uncertainties:
 
-- Latest full security review results are not recorded and remain future work.
-- Production hardening may identify additional RLS/RPC policy gaps.
+- Future candidate ranking may change after the next full repository reconstruction.
 
 Reasons Alternatives Were Not Recommended:
 
-- Candidate 2 is useful, but scanning documentation overlap is less foundational than security ownership.
-- Candidate 3 is useful, but stack documentation drift has lower security and production-readiness impact.
+- Candidate 2 is useful, but scanning documentation drift should not start while milestone state points at completed work.
+- Candidate 3 is useful, but stack documentation drift is less urgent than correcting the current planning state.
 
-## Candidate 1: Consolidate Security Architecture Ownership
+## Candidate 1: Refresh Living Milestone State After Security Commit
 
 Recommendation: Implemented, pending human review.
 
-Strategic Alignment: Consolidates Horizon 1 authorization knowledge before production hardening.
+Strategic Alignment: Keeps Horizon 1 engineering documentation and evidence aligned with repository reality.
 
 Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
 
-Reason It Belongs To This Horizon: Horizon 1 includes authentication, role-based permissions, temporary volunteers, security, RLS, RPC boundaries, and engineering documentation.
+Reason It Belongs To This Horizon: Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation.
 
-Rationale: Security status was distributed across auth architecture, permissions, Supabase docs, ADRs, migrations, and status references. A living security architecture page reduces future authorization and RLS drift.
+Rationale: The security architecture ownership milestone was committed, but current/next milestone and reconstruction references still described it as pending.
 
-Confidence: 82%.
+Confidence: 88%.
 
-Estimated Effort: Low to medium.
+Estimated Effort: Low.
 
 Dependencies:
 
-- [Security Status](./SECURITY_STATUS.md)
-- [Auth Architecture](../../AUTH_ARCHITECTURE.md)
-- [Permissions Matrix](../../PERMISSIONS_MATRIX.md)
-- [Supabase README](../../../infra/supabase/README.md)
-- ADR-0003, ADR-0004, ADR-0007, ADR-0010
-- Current Supabase migrations
+- Latest git history.
+- [Current Milestone](./CURRENT_MILESTONE.md).
+- [Current State](./CURRENT_STATE.md).
+- [Project Reconstruction](./PROJECT_RECONSTRUCTION.md).
+- [Project Scorecard](./PROJECT_SCORECARD.md).
+- [Evidence Report](./EVIDENCE_REPORT.md).
 
 Risk:
 
-- Medium documentation/security risk if the page overstates implemented guarantees.
+- Low. Main risk is over-editing beyond stale milestone-state references.
 
-Expected Value: High before future volunteer write capability or offline replay implementation.
+Expected Value: High. Future EOS sessions start from current repository state instead of completed work.
 
-Evidence Value: High. Security architecture ownership consolidates existing RLS/RPC/auth evidence before production hardening.
+Evidence Value: High. It directly resolves documented reconstruction drift.
 
-Future Horizon Support Without Scope Expansion: Makes later procurement, planning, analytics, and operations features safer to authorize without implementing those future capabilities now.
+Future Horizon Support Without Scope Expansion: Preserves reliable engineering state for future planning, procurement, analytics, and operations work without implementing them.
 
-Architecture Impact: Medium.
+Architecture Impact: Low. It preserves architecture truth by aligning living docs to committed repository state.
 
-Security Impact: Medium.
+Security Impact: Low. Security architecture remains unchanged; this milestone only updates planning state around the committed security architecture work.
 
 Testing Strategy:
 
@@ -134,13 +132,14 @@ Testing Strategy:
 
 Expected Deliverables:
 
-- Canonical security architecture page.
-- Updated affected living docs without changing runtime behavior, permissions, migrations, policies, RPCs, or repository contracts.
+- Refreshed living milestone and reconstruction references.
+- Updated evidence report.
+- No runtime, migration, permission, RLS, RPC, Product Horizons, or application changes.
 
 Validation Plan:
 
-- Confirm references no longer describe security architecture ownership as absent.
-- Confirm no source, migration, policy, permission, RPC, or runtime behavior changed.
+- Confirm no references still describe the security architecture milestone as pending review or pending commit.
+- Confirm no source, migration, policy, permission, RPC, Product Horizons, or runtime behavior changed.
 
 ## Candidate 2: Canonicalize Scanning Architecture Boundary
 
@@ -168,7 +167,7 @@ Risk:
 
 Expected Value: Medium for future scan workflow implementation.
 
-Evidence Value: Medium. It would reduce workflow-boundary drift but is less foundational than security ownership.
+Evidence Value: Medium. It would reduce workflow-boundary drift but is less urgent than correcting completed milestone state.
 
 Future Horizon Support Without Scope Expansion: Leaves future operational workflows with a cleaner scan boundary while avoiding menu planning, kitchen planning, and analytics scope.
 
@@ -205,7 +204,7 @@ Risk:
 
 - Low documentation risk; the main risk is mistaking planned dependencies for implemented dependencies.
 
-Expected Value: Medium-low. It improves onboarding and architecture reconstruction, but has lower production-readiness impact than security ownership.
+Expected Value: Medium-low. It improves onboarding and architecture reconstruction, but is less urgent than current milestone-state accuracy.
 
 Evidence Value: Medium-low. It reduces false assumptions but does not directly harden runtime behavior.
 

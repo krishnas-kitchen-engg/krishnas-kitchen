@@ -33,11 +33,11 @@ Update this document whenever a milestone starts, pauses, completes, or changes 
 
 ## Current Active Milestone
 
-Consolidate Security Architecture Ownership.
+Refresh Living Milestone State After Security Commit.
 
 ## Goal
 
-Create the canonical living security architecture source for Horizon 1 auth, permission, RLS, RPC, and temporary volunteer boundaries without changing runtime behavior, migrations, permissions, or repository contracts.
+Refresh living planning and reconstruction references after the committed security architecture ownership milestone so repository status reflects current git history.
 
 ## Status
 
@@ -45,22 +45,19 @@ Implemented, verified, reviewed, and approved for commit.
 
 ## Scope
 
-- Add a living security architecture page under the handbook architecture section.
-- Consolidate current Horizon 1 security boundaries from ADRs, security status, auth docs, permissions docs, Supabase notes, and migrations.
-- Preserve immutable ledger behavior, positive quantity semantics, return/reversal semantics, migrations, Supabase policies, permissions, and runtime behavior.
-- Do not implement local queue storage, background sync, service-worker replay, IndexedDB schema, server idempotency constraints, RLS/RPC changes, permission changes, scanning documentation consolidation, schema reference generation, or older documentation cleanup in this milestone.
+- Record that security architecture ownership was committed in `c8a4f5c`.
+- Refresh current milestone, next milestone, current state, project reconstruction, scorecard, and evidence references that still described the security milestone as pending review or pre-commit.
+- Preserve immutable ledger behavior, positive quantity semantics, return/reversal semantics, migrations, Supabase policies, permissions, runtime behavior, Product Horizons, and architecture boundaries.
+- Do not implement local queue storage, background sync, service-worker replay, IndexedDB schema, server idempotency constraints, RLS/RPC changes, permission changes, scanning documentation consolidation, stack documentation reconciliation, schema reference generation, or older documentation cleanup in this milestone.
 
 ## Files Affected
 
-- `docs/handbook/architecture/security.md`
-- `docs/handbook/architecture/README.md`
 - `docs/handbook/reference/CURRENT_MILESTONE.md`
 - `docs/handbook/reference/CURRENT_STATE.md`
-- `docs/handbook/reference/SECURITY_STATUS.md`
-- `docs/handbook/reference/OPEN_DECISIONS.md`
-- `docs/handbook/reference/TECH_DEBT.md`
-- `docs/handbook/reference/KNOWN_LIMITATIONS.md`
+- `docs/handbook/reference/NEXT_MILESTONE.md`
 - `docs/handbook/reference/PROJECT_MEMORY.md`
+- `docs/handbook/reference/IMPLEMENTATION_PATTERNS.md`
+- `docs/handbook/reference/COMMON_FAILURES.md`
 - `docs/handbook/reference/CHANGELOG_SUMMARY.md`
 - `docs/handbook/reference/PROJECT_RECONSTRUCTION.md`
 - `docs/handbook/reference/PROJECT_SCORECARD.md`

@@ -175,9 +175,10 @@ This timeline is reconstructed from [Changelog Summary](./CHANGELOG_SUMMARY.md),
 | RLS/RPC security foundation | Security helper, authenticated read, volunteer read RPC migrations | `ac2c4b7`, `befd9bd`, `7234f1d`, `ff48d6c`, `7c67441` |
 | Engineering Handbook v1.0 | Handbook docs and ADRs | `29757e6 docs(handbook): establish Engineering Handbook v1.0` |
 | EOS freeze | Stable Engineering Operating System v1.2 | `e5f2fe7`, `2aaaad5 docs(eos): freeze Engineering Operating System v1.2` |
-| Engineering Handbook v1.3 freeze | Product Horizons integration, active-horizon milestone gating, offline-sync architecture, and final handbook consistency pass | Pending current commit |
+| Engineering Handbook v1.3 freeze | Product Horizons integration, active-horizon milestone gating, offline-sync architecture, and final handbook consistency pass | `9275155 docs(handbook): freeze engineering handbook v1.3` |
+| Security architecture ownership consolidation | Living security architecture source and reference updates | `c8a4f5c docs(security): consolidate architecture ownership` |
 
-Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Consolidate Security Architecture Ownership as the active implemented milestone pending human review.
+Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Refresh Living Milestone State After Security Commit as the active implemented milestone pending human review.
 
 ## ADR Status
 
@@ -230,11 +231,11 @@ Use the EOS candidate flow in [AI Engineering Operating Model](../governance/AI_
 
 | Rank | Candidate | Strategic Alignment | Current Horizon | Reason It Belongs | Evidence Value | Future Horizon Support Without Scope Expansion | Recommendation |
 |---|---|---|---|---|---|---|---|
-| 1 | Consolidate security architecture ownership | Consolidates authorization knowledge before production hardening | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes authentication, permissions, temporary volunteers, security, RLS, RPC boundaries, and engineering documentation | High: consolidates RLS/RPC/auth evidence | Makes later procurement, planning, and analytics safer to authorize without implementing them now | Implemented, pending human review |
+| 1 | Refresh living milestone state after security commit | Keeps planning and reconstruction references aligned with committed repository state | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation | High: prevents future EOS sessions from restarting completed security architecture work | Keeps future planning and operations work grounded in reliable engineering state without implementing it now | Implemented, pending human review |
 | 2 | Canonicalize scanning architecture boundary | Clarifies scan-first inventory workflow ownership | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes inventory workflows, barcode lookup, barcode catalog, unknown barcode workflow, inventory visibility, and mobile-first PWA | Medium: reduces scan workflow drift | Keeps future operational workflows compatible with a cleaner scan boundary without expanding scope | Defer |
 | 3 | Reconcile stack documentation against package manifests | Keeps repository architecture guidance aligned with package manifests | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation | Medium-low: reduces false stack assumptions | Gives future contributors accurate dependency truth before larger product domains are added | Defer |
 
-Recommended next action: human review of the implemented security architecture milestone. Do not implement offline queue storage, replay, idempotency constraints, permission expansion, scanning architecture work, or stack documentation reconciliation until a separate candidate milestone is approved.
+Recommended next action: human review of the implemented living milestone state refresh. Do not implement offline queue storage, replay, idempotency constraints, permission expansion, scanning architecture work, or stack documentation reconciliation until a separate candidate milestone is approved.
 
 ## Engineering Health
 
@@ -244,21 +245,21 @@ Recommended next action: human review of the implemented security architecture m
 | Security | Watch | RLS/RPC foundations exist; temporary volunteer browser permissions are restricted to read/session capabilities; latest full security review result remains unrecorded. |
 | Testing | Watch | Many tests exist across domain, repository, migration, auth, UI, and utilities; latest verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md), and future implementation milestones must rerun verification. |
 | Documentation | Good | EOS v1.3 is Stable; Product Horizons, document index, drift register, ADRs, templates, and living references exist. |
-| Roadmap | Conditional | Temporary volunteer permission drift, undo/reversal terminology drift, and return semantics drift are complete; next candidate selection should happen after this commit. |
+| Roadmap | Conditional | Temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, and security architecture ownership are complete; current milestone state refresh is pending human review. |
 | Technical Debt | Watch | Offline queue implementation, scanning documentation drift, schema reference drift, and older documentation drift remain open. |
 | Overall | Good for controlled development | The project has enough governance and implementation structure to resume application work after candidate approval. |
 
 ## Repository Health
 
-Working tree at latest reconstruction update:
+Working tree at latest reconstruction update before this milestone:
 
 - No auth/routing application diff remains after temporary diagnostic cleanup.
 - Living documentation updates are present for the reconstruction, milestone, memory, state, changelog, implementation patterns, and engineering lessons.
-- Return semantics drift is implemented and approved for commit.
+- Security architecture ownership is committed in `c8a4f5c`.
 
 Resolved debug work: [Project Memory](./PROJECT_MEMORY.md), [Common Failures and Engineering Lessons](./COMMON_FAILURES.md), and [Current Milestone](./CURRENT_MILESTONE.md) record that temporary volunteer login diagnostic instrumentation was removed and verified.
 
-Attention before development resumes: finish review/commit handling for the security architecture milestone, then refresh candidate options and avoid mixing offline implementation, permission changes, scanning architecture, or stack documentation decisions into unrelated work.
+Attention before development resumes: finish review/commit handling for the living milestone state refresh, then refresh candidate options and avoid mixing offline implementation, permission changes, scanning architecture, or stack documentation decisions into unrelated work.
 
 ## Known Assumptions
 
@@ -306,7 +307,7 @@ They should avoid changing:
 
 They should plan next:
 
-- Refresh candidate options after this commit.
+- Refresh candidate options after this living milestone state refresh is reviewed and committed.
 - Recommend only active-horizon milestones from [Product Horizons](../../PRODUCT_HORIZONS.md).
 - Keep any follow-up milestone small, independently verifiable, and reversible.
 - Preserve separate approval gates for implementation review and commit.

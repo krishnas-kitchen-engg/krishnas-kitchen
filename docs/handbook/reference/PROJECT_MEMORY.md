@@ -40,6 +40,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 - Security architecture is canonicalized in [Security Architecture](../architecture/security.md). It owns durable Horizon 1 auth, permission, RLS, RPC, temporary volunteer, and offline replay security boundaries; [Security Status](./SECURITY_STATUS.md) remains posture and review tracking.
 - Temporary volunteer login diagnostic instrumentation was resolved and should not be reintroduced as permanent behavior.
 - Living planning/status references must be refreshed after completed milestones so `CURRENT_MILESTONE.md`, `NEXT_MILESTONE.md`, scorecard, and limitations do not keep pointing future sessions at completed work.
+- After commit `c8a4f5c`, living milestone state was refreshed so the security architecture milestone is treated as committed history rather than pending review.
 - Temporary volunteer permission drift was reconciled by aligning docs, permission helpers, and workflow tests to the read/session-only browser permission policy.
 - Permission-sensitive tests should set exact permission arrays instead of relying on broad auth fixture defaults.
 
@@ -60,6 +61,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 | Offline architecture drift was resolved without source changes | PWA tooling, offline-safe transaction IDs, audit metadata, and repository boundaries already existed, but no living queue/replay architecture page existed | Future offline implementation could otherwise bypass inventory integrity or server authorization constraints | Treat offline writes as future queued, validated drafts replayed through authoritative server/database boundaries; implement storage, replay, and idempotency only in separate approved milestones |
 | Product horizons were added as the canonical long-term roadmap | Future horizons can tempt implementation scope expansion during milestone selection | Architecture can account for future horizons, but implementation must stay inside the active horizon | Read Product Horizons during reconstruction; reject out-of-horizon implementation candidates and explain why |
 | Security ownership was consolidated without source changes | Existing ADRs, security status, auth docs, permissions docs, Supabase docs, and migrations already described the boundary, but no living architecture page owned it | Future security-sensitive work needs one durable source before permission, write-path, or offline replay expansion | Use Security Architecture as the canonical boundary; update Security Status for posture/review evidence |
+| Security architecture commit left planning docs stale | Current/next milestone, reconstruction, state, and scorecard references still described committed work as pending | Future EOS sessions could restart completed work or misread repository health | Treat post-commit milestone-state refresh as a focused Horizon 1 documentation milestone when planning docs drift after commit |
 
 ## Memory Update Rules
 

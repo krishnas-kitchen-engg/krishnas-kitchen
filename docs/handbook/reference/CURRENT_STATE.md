@@ -62,6 +62,7 @@ The project is not documented as production-ready.
 - Undo/reversal terminology was canonicalized across inventory architecture, ADR-0009, affected feature docs, and living drift/debt/decision references.
 - Return transaction semantics were canonicalized across inventory architecture, affected feature docs, and living drift references after reviewing ADR-0002.
 - Offline queue architecture was defined in a living architecture page without implementing queue storage, replay, or runtime sync behavior.
+- Security architecture ownership was consolidated and committed in `c8a4f5c`.
 
 ## Implemented Domains
 
@@ -118,7 +119,7 @@ Offline architecture is now documented in [Offline Sync Architecture](../archite
 
 Vitest is configured. Tests exist for inventory domain logic, repository adapters, migrations, auth volunteer sessions, UI reducers/screens, shell navigation, and shared utilities.
 
-Latest full verification before this milestone was recorded for the handbook finalization milestone. Verification for the security architecture milestone is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
+Latest full verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md) for the living milestone state refresh after the security architecture commit.
 
 - `corepack pnpm@9.15.4 format`
 - `corepack pnpm@9.15.4 typecheck`
@@ -136,7 +137,7 @@ Existing project docs cover product vision, MVP scope, system architecture, inve
 
 The handbook now contains governance, the canonical AI Engineering Operating Model, engineering principles, process, templates, ADR framework, initial ADRs, living reference documents, project reconstruction, project memory, implementation patterns, common failures and engineering lessons, document index, drift register, and health report.
 
-Temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, and offline architecture drift have been resolved. The next candidate set should be refreshed after this commit.
+Temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, and security architecture ownership drift have been resolved.
 
 The Engineering Operating System is Stable at v1.3. Future EOS changes require implementation-driven justification rather than speculative improvement.
 
