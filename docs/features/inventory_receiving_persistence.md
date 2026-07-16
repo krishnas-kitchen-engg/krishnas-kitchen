@@ -54,7 +54,7 @@ so that inventory balances and transaction history remain trustworthy after page
 5. Supabase returns the persisted immutable transaction row.
 6. Mapper converts the row back into the domain transaction type.
 7. Inventory balances remain derived from transaction aggregation.
-8. Corrections are handled by undo/reversal transactions, never updates or deletes.
+8. Corrections are handled by reversal transactions, never updates or deletes.
 
 ---
 
@@ -65,7 +65,7 @@ Receiving persistence must be append-only.
 Allowed:
 
 * insert a new receiving transaction
-* insert a new undo transaction that reverses a receiving transaction
+* insert a new reversal transaction that reverses a receiving transaction
 * read transactions for aggregation and audit review
 
 Not allowed:
@@ -99,7 +99,7 @@ Receiving transactions must persist:
 * transaction mapper mismatch
 * audit metadata missing client request id
 * temporary volunteer session expires before persistence
-* receiving undo after original transaction persisted
+* receiving undo action after original transaction persisted
 
 ---
 
@@ -159,7 +159,7 @@ Every persisted receiving transaction must record:
 
 Undo persistence must record:
 
-* a new transaction with `transaction_type = "undo"`
+* a new transaction with `transaction_type = "reversal"`
 * `reversal_of_transaction_id` pointing to the original receiving transaction
 * audit metadata explaining the reversal reason when supplied
 
@@ -198,7 +198,7 @@ Undo persistence must record:
 * Supabase insert persists receiving transaction
 * Supabase read returns receiving transaction
 * audit metadata persists as JSON
-* append-only undo creates a second transaction
+* append-only undo action creates a second reversal transaction
 
 ## Permission Tests
 
@@ -267,7 +267,7 @@ Future work, in order:
 * receiving Supabase repository integration tests
 * transfer workflow persistence
 * return workflow persistence
-* undo/reversal workflow hardening
+* correction workflow hardening
 * barcode scanning
 * offline queue idempotency
 * RLS policy hardening

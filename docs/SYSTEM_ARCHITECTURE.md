@@ -109,7 +109,10 @@ Inventory must never be directly mutated.
 - CONSUME
 - RETURN
 - ADJUSTMENT
-- UNDO
+- REVERSAL
+
+Undo is the user-facing correction action. Reversal is the persisted inventory
+transaction type created by that action.
 
 ---
 

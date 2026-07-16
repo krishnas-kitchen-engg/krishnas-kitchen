@@ -54,7 +54,7 @@ Security maturity: foundation implemented, production posture still needs review
 
 Documentation maturity: high for engineering process and reconstruction, medium for application-state documentation. Canonical handbook docs exist, but older docs still contain drift, duplication, and some encoding artifacts. See [Document Index](./DOCUMENT_INDEX.md) and [Documentation Drift](./DOCUMENTATION_DRIFT.md).
 
-Overall project status: ready to continue controlled application development. The temporary volunteer login diagnostic worktree state and temporary volunteer permission drift have been resolved; remaining high-priority risks include undo/reversal terminology drift and incomplete offline queue architecture.
+Overall project status: ready to continue controlled application development. The temporary volunteer login diagnostic worktree state, temporary volunteer permission drift, and undo/reversal terminology drift have been resolved; remaining high-priority risks include return semantics drift and incomplete offline queue architecture.
 
 ## Product Vision Summary
 
@@ -79,13 +79,13 @@ Long-term vision: become the operational backbone for volunteer-run kitchens glo
 | Authentication | Partially Implemented | [Auth Architecture](../../AUTH_ARCHITECTURE.md); `apps/web/src/features/auth`; `apps/web/src/shared/integrations/supabase/auth` | Supabase session source and app-facing auth provider exist. Production profile/RLS integration remains a future extension in docs. |
 | Temporary Volunteer Login | Partially Implemented / Clean Worktree | [ADR-0004](../adrs/0004-temporary-volunteer-session-model.md); [Security Status](./SECURITY_STATUS.md); [Current Milestone](./CURRENT_MILESTONE.md) | Session storage, repository, RPCs, and tests exist. Temporary auth/routing diagnostic instrumentation has been removed without changing permission semantics. |
 | Inventory Domain | Implemented | [Inventory Architecture](../../INVENTORY_ARCHITECTURE.md); `apps/web/src/domains/inventory` | Domain services, validation, aggregation, transaction helpers, repository contracts, and Supabase adapters exist. |
-| Inventory Visibility | Implemented | `inventoryVisibilityService`, visibility domain/tests, inventory lookup screens | Current stock and location/item detail UI files exist. Latest full verification result is not recorded. |
+| Inventory Visibility | Implemented | `inventoryVisibilityService`, visibility domain/tests, inventory lookup screens | Current stock and location/item detail UI files exist. Latest full verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md). |
 | Barcode Lookup | Implemented | `barcodeLookupService`, barcode catalog services, lookup UI components | Barcode lookup/catalog domain and Supabase repository files exist. |
 | Barcode Scanning | Partially Implemented | `cameraScanningService`, scan workflow UI files, [Documentation Drift](./DOCUMENTATION_DRIFT.md) DD-006 | Manual/scanner workflow UI exists; camera/scanning docs overlap and need canonical boundary clarification. |
 | Receiving | Implemented | receive domain/workflow services and `ReceiveInventoryScreen` | Domain, UI, and tests exist. Persistence adapters exist. |
 | Transfers | Implemented | transfer domain/workflow services and `TransferInventoryScreen` | Domain, UI, and tests exist. |
 | Returns | Implemented with Drift | return domain/workflow services and `ReturnInventoryScreen`; DD-003 | Implementation exists, but return semantics are documented inconsistently. |
-| Undo/Reversal | Partially Implemented | reversal validation, transaction helpers, migrations, [ADR-0009](../adrs/0009-auditability-and-reversibility.md) | Reversal architecture exists; terminology drift remains open. |
+| Undo/Reversal | Implemented with Canonical Terminology | reversal validation, transaction helpers, migrations, [ADR-0009](../adrs/0009-auditability-and-reversibility.md) | `undo` is the user-facing action and service operation; `reversal` is the current persisted correction transaction type; legacy persisted `undo` rows remain read-compatible history only. |
 | Unknown Barcodes | Implemented | unknown barcode domain/service/repository/tests; migration `20260606000400_add_unknown_barcodes.sql` | Home/tasks summary files also reference pending unknown barcodes. |
 | Low Stock | Implemented | low-stock threshold repository/mapper/tests; migration `20260606000500_add_inventory_low_stock_thresholds.sql` | Home and tasks summary components exist. |
 | Volunteer Home | Implemented | `apps/web/src/features/home` | Home summary, quick actions, low-stock and unknown barcode summaries exist. |
@@ -183,7 +183,7 @@ Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Projec
 | [ADR-0006 Repository Pattern](../adrs/0006-repository-pattern.md) | Accepted | Implemented | Repository contracts and Supabase adapters exist. |
 | [ADR-0007 RPC Boundaries And Browser Trust](../adrs/0007-rpc-boundaries-and-browser-trust.md) | Accepted | Partially Implemented | Volunteer RPC surfaces exist; future protected operations must preserve boundary. |
 | [ADR-0008 Domain-Driven Package Organization](../adrs/0008-domain-driven-package-organization.md) | Accepted | Implemented | Source tree follows app/domain/feature/shared/packages organization. |
-| [ADR-0009 Auditability And Reversibility](../adrs/0009-auditability-and-reversibility.md) | Accepted | Partially Implemented / Needs Review | Auditability and reversal are implemented, but undo/reversal terminology drift remains. |
+| [ADR-0009 Auditability And Reversibility](../adrs/0009-auditability-and-reversibility.md) | Accepted | Implemented | Auditability and reversal are implemented, and undo/reversal terminology is canonicalized. |
 | [ADR-0010 Security Review Before Commit](../adrs/0010-security-review-before-commit.md) | Accepted | Implemented as governance | EOS and process docs require security review before security-sensitive commit readiness. |
 
 ## Documentation Status
@@ -202,10 +202,9 @@ Templates: handbook templates exist under `docs/handbook/templates` and should b
 
 Intentional or accepted technical debt from [Technical Debt](./TECH_DEBT.md) and [Known Limitations](./KNOWN_LIMITATIONS.md):
 
-- Undo versus reversal terminology drift: high priority because it affects inventory correction semantics.
 - Offline queue architecture gap: medium priority because offline is an architectural requirement but not fully specified.
 - Older documentation duplication and encoding artifacts: medium priority, mostly contributor-experience risk.
-- Latest full verification result not recorded: medium priority because project health is harder to assess.
+- Verification freshness: medium priority because project health depends on rerunning checks during each implementation milestone.
 
 Deferred work reasons: these items require focused, approved milestones. They should not be fixed opportunistically during unrelated implementation.
 
@@ -215,7 +214,7 @@ Genuine blockers before permission-changing application development resumes:
 
 - Future temporary volunteer write capability requires a separate approved server-enforced write model before permissions are expanded.
 
-Not blockers, but important gaps: offline queue architecture, undo/reversal terminology cleanup, return semantics documentation drift, and older documentation drift.
+Not blockers, but important gaps: offline queue architecture, return semantics documentation drift, security architecture ownership, and older documentation drift.
 
 ## Recommended Next Engineering Milestone
 
@@ -223,11 +222,11 @@ Use the EOS candidate flow in [AI Engineering Operating Model](../governance/AI_
 
 | Rank | Candidate | Recommendation | Confidence | Effort | Dependencies | Risk | Why Alternatives Were Rejected |
 |---|---|---|---|---|---|---|---|
-| 1 | Reconcile temporary volunteer permission drift | Completed | 68% | Medium | Human product/security decision; review drift/open decisions/auth docs/permissions matrix/current tests | Security-sensitive | Resolved before expanding temporary volunteer capability. |
-| 2 | Define offline queue architecture | Defer | 60% | Medium | ADR-0005 review, inventory repository boundary review, architecture approval | Medium-to-high architecture risk | Important, but offline writes should not outrank active authorization ambiguity. |
-| 3 | Canonicalize undo/reversal terminology | Defer | 66% | Small to Medium | ADR-0009 review, transaction helper/reversal validation review, feature doc review | Medium inventory-semantics risk | Important, but lower immediate security impact than temporary volunteer permissions. |
+| 1 | Canonicalize undo/reversal terminology | Implemented | 66% | Small to Medium | ADR-0009 review, transaction helper/reversal validation review, feature doc review | Medium inventory-semantics risk | Smallest high-value drift resolution after temporary volunteer permissions. |
+| 2 | Canonicalize return transaction semantics | Defer | 62% | Medium | ADR-0002 review, return validation/service review, migration compatibility review | Medium correctness risk | Important, but broader than the terminology slice. |
+| 3 | Define offline queue architecture | Defer | 60% | Medium | ADR-0005 review, inventory repository boundary review, architecture approval | Medium-to-high architecture risk | Important, but higher design uncertainty than terminology cleanup. |
 
-Recommended next action: refresh candidate options after this commit. Do not implement offline or reversal work until a separate candidate milestone is approved.
+Recommended next action: human review of the implemented undo/reversal terminology milestone. Do not implement return semantics or offline architecture work until a separate candidate milestone is approved.
 
 ## Engineering Health
 
@@ -235,10 +234,10 @@ Recommended next action: refresh candidate options after this commit. Do not imp
 |---|---|---|
 | Architecture | Good with known gaps | ADRs and architecture references establish core boundaries; offline/security living architecture pages remain gaps. |
 | Security | Watch | RLS/RPC foundations exist; temporary volunteer browser permissions are restricted to read/session capabilities. |
-| Testing | Watch | Many tests exist across domain, repository, migration, auth, UI, and utilities; latest recorded full-suite result passed for the temporary volunteer permission milestone, and future implementation milestones must rerun verification. |
+| Testing | Watch | Many tests exist across domain, repository, migration, auth, UI, and utilities; latest recorded full-suite result passed for the undo/reversal terminology milestone, and future implementation milestones must rerun verification. |
 | Documentation | Good | EOS v1.2 is Stable; document index, drift register, ADRs, templates, and living references exist. |
-| Roadmap | Conditional | Temporary volunteer permission drift is complete; next candidate selection should happen after this commit. |
-| Technical Debt | Watch | High-priority undo/reversal drift and offline queue architecture remain open. |
+| Roadmap | Conditional | Temporary volunteer permission drift and undo/reversal terminology drift are complete; next candidate selection should happen after human review and commit approval. |
+| Technical Debt | Watch | Return semantics drift and offline queue architecture remain open. |
 | Overall | Good for controlled development | The project has enough governance and implementation structure to resume application work after candidate approval. |
 
 ## Repository Health
@@ -247,11 +246,11 @@ Working tree at latest reconstruction update:
 
 - No auth/routing application diff remains after temporary diagnostic cleanup.
 - Living documentation updates are present for the reconstruction, milestone, memory, state, changelog, implementation patterns, and engineering lessons.
-- Temporary volunteer permission drift is implemented and approved for commit.
+- Undo/reversal terminology drift is implemented and ready for human review.
 
 Resolved debug work: [Project Memory](./PROJECT_MEMORY.md), [Common Failures and Engineering Lessons](./COMMON_FAILURES.md), and [Current Milestone](./CURRENT_MILESTONE.md) record that temporary volunteer login diagnostic instrumentation was removed and verified.
 
-Attention before development resumes: refresh candidate options and avoid mixing offline or reversal decisions into unrelated work.
+Attention before development resumes: complete human review and commit approval for this milestone, then refresh candidate options and avoid mixing offline or return-semantics decisions into unrelated work.
 
 ## Known Assumptions
 
@@ -299,7 +298,7 @@ They should avoid changing:
 
 They should plan next:
 
-- Refresh candidate options after this commit.
+- Review and approve the implemented undo/reversal terminology milestone before commit.
 - Keep any follow-up milestone small, independently verifiable, and reversible.
 - Preserve separate approval gates for implementation review and commit.
 

@@ -31,11 +31,11 @@ Update this document whenever a milestone starts, pauses, completes, or changes 
 
 ## Current Active Milestone
 
-Reconcile Temporary Volunteer Permission Drift.
+Canonicalize Undo/Reversal Terminology.
 
 ## Goal
 
-Establish the canonical temporary volunteer permission policy and align the affected documentation, code, and tests only as authorized by the approved product/security decision.
+Define the canonical distinction between the user-facing undo action, the domain reversal event, the persisted transaction type, and legacy `undo` compatibility without changing inventory behavior, migrations, or repository contracts.
 
 ## Status
 
@@ -43,41 +43,35 @@ Completed. Human review and commit approval received.
 
 ## Scope
 
-- Confirm the intended temporary volunteer capability policy as read/session-only for browser permissions.
-- Reconcile contradictions between `AUTH_ARCHITECTURE.md`, `PERMISSIONS_MATRIX.md`, current permission helpers, and affected workflow tests.
-- Preserve the invariant that client-side permission helpers are usability signals, not final authorization.
-- Do not modify RLS, RPC, migrations, or database authorization boundaries unless a separate approved milestone explicitly includes that work.
-- Do not resolve undo/reversal terminology drift, offline queue architecture, or security architecture ownership in this milestone.
-- Keep the implementation to the smallest independently verifiable vertical slice.
+- Establish canonical correction terminology in inventory architecture and ADR-0009.
+- Align affected feature documentation that described new persisted `undo` transactions.
+- Update living drift, debt, decision, state, memory, changelog, pattern, limitation, scorecard, reconstruction, and evidence references.
+- Preserve immutable ledger behavior, positive quantity semantics, and existing reversal implementation.
+- Do not change TypeScript source, tests, migrations, Supabase policies, permissions, or runtime behavior.
+- Do not resolve return semantics drift, offline queue architecture, security architecture ownership, or older documentation duplication in this milestone.
 - Do not commit implementation changes without explicit separate commit approval after verification and review.
 
 ## Files Affected
 
-- Expected documentation/code areas for the approved milestone:
-  - `docs/AUTH_ARCHITECTURE.md`
-  - `docs/PERMISSIONS_MATRIX.md`
-  - `docs/handbook/reference/DOCUMENTATION_DRIFT.md`
-  - `docs/handbook/reference/OPEN_DECISIONS.md`
-  - `docs/handbook/reference/TECH_DEBT.md`
-  - `apps/web/src/features/auth/lib/permissions.ts`
-  - affected temporary-volunteer workflow tests if behavior changes
-- Implementation files updated:
-  - `apps/web/src/features/auth/lib/permissions.ts`
-  - `apps/web/src/features/auth/lib/permissions.test.ts`
-  - `apps/web/src/features/inventory/receive/screens/ReceiveInventoryScreen.test.tsx`
-  - `apps/web/src/features/inventory/transfer/screens/TransferInventoryScreen.test.tsx`
-  - `apps/web/src/features/inventory/return/screens/ReturnInventoryScreen.test.tsx`
-- Documentation handoff files updated before implementation:
-  - `docs/handbook/reference/CURRENT_MILESTONE.md`
-  - `docs/handbook/reference/PROJECT_MEMORY.md`
-  - `docs/handbook/reference/CURRENT_STATE.md`
-  - `docs/handbook/reference/CHANGELOG_SUMMARY.md`
-  - `docs/handbook/reference/IMPLEMENTATION_PATTERNS.md`
-  - `docs/handbook/reference/COMMON_FAILURES.md`
-  - `docs/handbook/reference/NEXT_MILESTONE.md`
-  - `docs/handbook/reference/PROJECT_RECONSTRUCTION.md`
-  - `docs/handbook/reference/TECH_DEBT.md`
-  - `docs/handbook/reference/EVIDENCE_REPORT.md`
+- `docs/INVENTORY_ARCHITECTURE.md`
+- `docs/SYSTEM_ARCHITECTURE.md`
+- `docs/features/inventory_receiving_persistence.md`
+- `docs/features/inventory_transfer.md`
+- `docs/handbook/adrs/0009-auditability-and-reversibility.md`
+- `docs/handbook/reference/CURRENT_MILESTONE.md`
+- `docs/handbook/reference/CURRENT_STATE.md`
+- `docs/handbook/reference/NEXT_MILESTONE.md`
+- `docs/handbook/reference/DOCUMENTATION_DRIFT.md`
+- `docs/handbook/reference/OPEN_DECISIONS.md`
+- `docs/handbook/reference/TECH_DEBT.md`
+- `docs/handbook/reference/KNOWN_LIMITATIONS.md`
+- `docs/handbook/reference/PROJECT_MEMORY.md`
+- `docs/handbook/reference/IMPLEMENTATION_PATTERNS.md`
+- `docs/handbook/reference/COMMON_FAILURES.md`
+- `docs/handbook/reference/CHANGELOG_SUMMARY.md`
+- `docs/handbook/reference/PROJECT_SCORECARD.md`
+- `docs/handbook/reference/PROJECT_RECONSTRUCTION.md`
+- `docs/handbook/reference/EVIDENCE_REPORT.md`
 
 ## Known Blockers
 
@@ -87,16 +81,13 @@ None known for this milestone.
 
 Implementation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
 
-Implementation verification:
+Implementation verification passed:
 
-- Targeted permission helper and affected receive, transfer, and return screen tests passed.
-- `corepack pnpm@9.15.4 format` passed.
-- `corepack pnpm@9.15.4 typecheck` passed.
-- `corepack pnpm@9.15.4 lint` passed.
-- `corepack pnpm@9.15.4 test` passed with 60 test files and 296 tests.
-- `corepack pnpm@9.15.4 build` passed with the existing Vite chunk-size warning.
-
-Security review is required before commit readiness because the approved milestone touches authorization expectations.
+- `corepack pnpm@9.15.4 format`
+- `corepack pnpm@9.15.4 typecheck`
+- `corepack pnpm@9.15.4 lint`
+- `corepack pnpm@9.15.4 test`
+- `corepack pnpm@9.15.4 build`
 
 ## Next Review
 

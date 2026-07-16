@@ -30,9 +30,8 @@ Record reality only. Do not turn this page into a roadmap.
 ## Limitations
 
 - The project is not documented as production-ready.
-- Undo and reversal terminology is not fully canonical across docs and schema history.
 - Offline queueing is an architectural requirement, but detailed living architecture for offline sync is not present.
-- Latest full format, typecheck, lint, test, and build results are recorded for the temporary volunteer permission milestone, but verification freshness still depends on rerunning checks during each future implementation milestone.
+- Latest full format, typecheck, lint, test, and build results are recorded for the undo/reversal terminology milestone, but verification freshness still depends on rerunning checks during each future implementation milestone.
 - Existing older docs include duplication and encoding artifacts.
 - Security status exists across multiple docs and migrations, but a dedicated living security architecture page is not yet present.
 - Accessibility status is not measured in current living docs.

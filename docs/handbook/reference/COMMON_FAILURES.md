@@ -33,7 +33,7 @@ Use it to prevent repeated mistakes and surface practical lessons. Keep durable 
 | Permission work uses wrong temporary-volunteer source | Documentation drift exists between auth docs, permissions matrix, and feature docs | Resolve through a focused permission/authorization milestone | Check [Documentation Drift](./DOCUMENTATION_DRIFT.md) and [Open Decisions](./OPEN_DECISIONS.md) before auth work |
 | Permission tests inherit broad fixture defaults | Auth test helpers default to operational permissions even when a test is about restricted temporary sessions | Set exact permission arrays in restricted-session tests and add source-level permission helper coverage | Treat permissions as part of the test input, not ambient fixture background |
 | Reconstruction docs lag behind next milestone state | Candidate updates did not reach every living reconstruction reference | Refresh stale reconstruction references during the next documentation handoff | Cross-check [Project Reconstruction](./PROJECT_RECONSTRUCTION.md), [Current Milestone](./CURRENT_MILESTONE.md), and [Next Milestone](./NEXT_MILESTONE.md) before committing planning docs |
-| Undo/reversal terminology drifts | Historical docs and migrations use different terminology | Canonicalize terms through focused reference/ADR work | Check [ADR-0009](../adrs/0009-auditability-and-reversibility.md) before correction workflow work |
+| Undo/reversal terminology drifts | Historical docs and migrations use different terminology | Canonical terms now distinguish user-facing undo action, persisted reversal transaction, and legacy undo compatibility | Check [ADR-0009](../adrs/0009-auditability-and-reversibility.md) and [Inventory Architecture](../../INVENTORY_ARCHITECTURE.md) before correction workflow work |
 | Offline implementation starts without architecture | Offline is required but detailed queue architecture is incomplete | Create or approve a focused offline architecture milestone before offline writes | Score offline work carefully for dependencies and confidence |
 
 ## Engineering Discoveries
@@ -47,6 +47,7 @@ Use it to prevent repeated mistakes and surface practical lessons. Keep durable 
 | Completed milestone state can remain sticky | If living status docs are not refreshed after a commit, future sessions may start from stale recommendations | Treat current milestone, next milestone, scorecard, and limitations as a linked status set during milestone closeout |
 | Reconstruction references can preserve stale candidate tables | A refreshed candidate page does not automatically update summary reconstruction docs | Include reconstruction summaries in living-document validation when a planning commit changes active milestone state |
 | Permission fixture defaults can hide restricted-session behavior | A component may look correctly tested while the fixture still grants the operation under test | Add direct helper tests for role/session permission sets and override fixture defaults in screen tests |
+| Terminology fixes can look like behavior work | The words "undo" and "reversal" span UI, service, domain, schema, and legacy data contexts | First classify each reference as user action, domain event, persisted transaction type, or compatibility history; change behavior only under a separate approved milestone |
 
 ## Owner
 

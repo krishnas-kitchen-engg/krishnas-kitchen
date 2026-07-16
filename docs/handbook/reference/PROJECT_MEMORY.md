@@ -33,7 +33,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 - The inventory model is an immutable event ledger. Balances are derived from transactions.
 - Browser clients are not authoritative for protected authorization decisions.
 - Temporary volunteer browser permissions are read/session-only: `locations.read`, `items.read`, `inventory.read`, and `volunteer_sessions.create`.
-- Undo and reversal terminology remains a known drift area.
+- Undo/reversal terminology is canonical: `undo` is the user-facing action and service operation, `reversal` is the current persisted correction transaction type, and legacy persisted `undo` rows are read-compatible history only.
 - Offline capability is an architectural requirement, but detailed offline queue architecture remains incomplete.
 - Temporary volunteer login diagnostic instrumentation was resolved and should not be reintroduced as permanent behavior.
 - Living planning/status references must be refreshed after completed milestones so `CURRENT_MILESTONE.md`, `NEXT_MILESTONE.md`, scorecard, and limitations do not keep pointing future sessions at completed work.
@@ -52,6 +52,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 | Temporary volunteer permissions and undo/reversal terminology remained inconsistent across older docs | Historical documents preserve useful context but may not represent current authority | Silent reconciliation would hide product/security decisions | Record drift, propose focused milestones, and stop when product or security authority is needed |
 | Repository reconstruction found stale milestone state outside the main candidate page | `PROJECT_RECONSTRUCTION.md` still carried an older ranked table after `NEXT_MILESTONE.md` was refreshed | Future sessions could restart from completed work despite the current candidate page being correct | Validate reconstruction docs against current milestone and next milestone during every resume |
 | Temporary volunteer workflow tests relied on default operational permissions in auth fixtures | Fixture defaults made temporary-session tests pass as though temporary volunteers had write permissions | The permission drift could persist without a helper-level test | In permission-sensitive tests, pass the exact permissions being asserted and add a direct helper test near the permission source |
+| Undo/reversal drift was resolved without source changes | Current code already creates `reversal` transactions and keeps legacy `undo` compatibility at the mapper/database boundary | Documentation could be fixed safely as a terminology milestone instead of a behavior change | For inventory correction work, preserve `undo` as UI/service language and `reversal` as persisted event language unless a new ADR supersedes ADR-0009 |
 
 ## Memory Update Rules
 

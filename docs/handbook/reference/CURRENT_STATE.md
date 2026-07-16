@@ -56,6 +56,7 @@ The project is not documented as production-ready.
 - Temporary volunteer login diagnostic instrumentation has been removed from the auth/routing worktree, returning those application files to repository behavior.
 - Living planning/status references have been refreshed so the next candidate set no longer points to completed diagnostic cleanup work.
 - Temporary volunteer permission drift was reconciled by restricting temporary volunteer browser permissions to read/session capabilities.
+- Undo/reversal terminology was canonicalized across inventory architecture, ADR-0009, affected feature docs, and living drift/debt/decision references.
 
 ## Implemented Domains
 
@@ -77,6 +78,8 @@ Temporary volunteer browser permissions are restricted to `locations.read`, `ite
 Inventory is implemented around immutable transaction drafts, aggregation, visibility projections, receiving, transfer, return, reversal, barcode scanning, catalog queries, unknown barcode handling, and low stock thresholds.
 
 Inventory architecture and ADRs establish that balances are derived from immutable transaction history.
+
+Canonical correction terminology: `undo` is the user-facing action and service operation, `reversal` is the domain event and current persisted correction transaction type, `reversal_of_transaction_id` links to the original transaction, and legacy persisted `undo` rows remain read-compatible history only.
 
 ## Database Status
 
@@ -104,7 +107,7 @@ Known gaps remain in documentation synchronization and explicit security status 
 
 Vitest is configured. Tests exist for inventory domain logic, repository adapters, migrations, auth volunteer sessions, UI reducers/screens, shell navigation, and shared utilities.
 
-Latest verification for the temporary volunteer permission milestone passed:
+Latest verification for the undo/reversal terminology milestone passed:
 
 - `corepack pnpm@9.15.4 format`
 - `corepack pnpm@9.15.4 typecheck`
@@ -120,13 +123,12 @@ Existing project docs cover product vision, MVP scope, system architecture, inve
 
 The handbook now contains governance, the canonical AI Engineering Operating Model, engineering principles, process, templates, ADR framework, initial ADRs, living reference documents, project reconstruction, project memory, implementation patterns, common failures and engineering lessons, document index, drift register, and health report.
 
-Temporary volunteer permission drift has been reconciled. The next candidate set should be refreshed after human review.
+Temporary volunteer permission drift has been reconciled. Undo/reversal terminology drift has been resolved. The next candidate set should be refreshed after human review.
 
 The Engineering Operating System is Stable at v1.2. Future EOS changes require implementation-driven justification rather than speculative improvement.
 
 ## Known Gaps
 
-- Undo versus reversal terminology needs canonicalization.
 - Offline queue architecture is required but not fully described as a living architecture document.
 - RLS/security architecture should be consolidated into a living architecture page.
 - Existing docs still contain duplication and some encoding artifacts.

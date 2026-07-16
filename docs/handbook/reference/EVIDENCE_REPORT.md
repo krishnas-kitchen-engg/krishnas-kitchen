@@ -22,68 +22,69 @@ related:
 
 ## Purpose
 
-This document records evidence gathered during the latest repository reconstruction and documentation handoff.
+This document records evidence gathered during the latest repository reconstruction, implementation, verification, and commit-readiness handoff.
 
 ## Report
 
-Date: 2026-07-15.
+Date: 2026-07-16.
 
-Milestone: Reconcile Temporary Volunteer Permission Drift.
+Milestone: Canonicalize Undo/Reversal Terminology.
 
 Status: Implemented, verified, reviewed, and approved for commit.
 
 ## Repository Evidence
 
 - Branch: `docs/engineering-handbook`.
-- Working tree before documentation updates: clean.
-- Latest committed handoff before implementation: `bdc1220 docs(handbook): record approved permission milestone`.
+- Working tree before implementation: clean.
+- Latest committed baseline before implementation: `235fc25 fix(auth): restrict temporary volunteer permissions`.
 - Source files under `apps/web/src`: 244.
 - Test files under `apps/web/src`: 60.
 - Supabase migration files: 12.
-- Diagnostic instrumentation search: no `KK_LOGIN_DEBUG` or `console.info` matches under `apps/web/src`.
+- Relevant source behavior already created current corrections as `transactionType: "reversal"`.
+- Mapper/repository tests already preserved legacy `undo` rows for read compatibility.
 
 ## Architecture Evidence
 
-- Stack evidenced by manifests: React 19, Vite, TypeScript, Tailwind, Supabase, pnpm workspaces, Vitest, ESLint, Prettier.
-- Accepted ADRs 0001-0010 cover inventory ledger immutability, positive quantity effects, Supabase/RLS boundaries, temporary volunteer sessions, offline PWA direction, repository pattern, RPC/browser trust, domain organization, reversibility, and security review before commit readiness.
-- Architectural invariants require immutable inventory transactions, derived balances, server/database authorization, explicit repository boundaries, scoped temporary volunteer sessions, and security review before security-sensitive commit readiness.
+- [Inventory Architecture](../../INVENTORY_ARCHITECTURE.md) now defines canonical correction terminology.
+- [ADR-0009](../adrs/0009-auditability-and-reversibility.md) now records the same terminology under the accepted auditability and reversibility decision.
+- `undo` is the user-facing action and application service operation.
+- `reversal` is the domain event and current persisted inventory correction transaction type.
+- `reversal_of_transaction_id` links a reversal transaction to the original transaction.
+- Legacy persisted `undo` rows remain read-compatible history only and should not be created by new application code.
 
-## Permission Drift Evidence
+## Implementation Evidence
 
-- Before implementation, `docs/AUTH_ARCHITECTURE.md` described temporary volunteers with limited inventory permissions including transfer, consume, and return.
-- Before implementation, `docs/PERMISSIONS_MATRIX.md` said temporary volunteers could not receive, transfer, consume, return, adjust, or undo inventory and received only `volunteer_sessions.create`.
-- Before implementation, `apps/web/src/features/auth/lib/permissions.ts` granted temporary volunteers `inventory.read`, `inventory.receive`, `inventory.transfer`, `inventory.consume`, and `inventory.return`.
-- Before implementation, receive, transfer, and return workflow tests included cases allowing temporary volunteers with the corresponding inventory permissions.
-- After implementation, temporary volunteer browser permissions are `locations.read`, `items.read`, `inventory.read`, and `volunteer_sessions.create`.
-- After implementation, receive, transfer, and return screen tests assert temporary volunteers without operational permissions are blocked from operational workflows.
+- No TypeScript source, tests, migrations, RLS policies, RPCs, or runtime behavior were changed.
+- `docs/INVENTORY_ARCHITECTURE.md` and `docs/SYSTEM_ARCHITECTURE.md` no longer list `undo` as the current correction transaction type.
+- `docs/features/inventory_receiving_persistence.md` and `docs/features/inventory_transfer.md` now describe undo as the action and reversal as the persisted correction transaction.
+- `DOCUMENTATION_DRIFT.md`, `OPEN_DECISIONS.md`, and `TECH_DEBT.md` record DD-002, OD-002, and TD-002 as resolved.
+- Living state, milestone, next milestone, memory, implementation patterns, common failures, changelog, scorecard, limitations, and reconstruction references were updated for the implemented milestone.
 
 ## Documentation Validation
 
-- `AUTH_ARCHITECTURE.md` and `PERMISSIONS_MATRIX.md` were aligned to the read/session-only temporary volunteer browser permission policy.
-- `DOCUMENTATION_DRIFT.md`, `OPEN_DECISIONS.md`, and `TECH_DEBT.md` no longer list temporary volunteer permission drift as open.
-- Living status, memory, changelog, scorecard, limitation, reconstruction, and evidence references were updated for the implemented milestone.
+- Active drift no longer lists undo/reversal terminology as unresolved.
+- Active open decisions no longer include undo/reversal terminology.
+- Known limitations no longer claim undo/reversal terminology is not canonical.
+- Remaining open drift/debt is outside this milestone: return semantics, offline queue architecture, security architecture ownership, older documentation duplication, stack docs drift, schema reference drift, naming drift, and historical process overlap.
 
 ## Verification Results
 
-Targeted implementation verification passed:
-
-- `corepack pnpm@9.15.4 vitest run apps/web/src/features/auth/lib/permissions.test.ts apps/web/src/features/inventory/receive/screens/ReceiveInventoryScreen.test.tsx apps/web/src/features/inventory/transfer/screens/TransferInventoryScreen.test.tsx apps/web/src/features/inventory/return/screens/ReturnInventoryScreen.test.tsx` with 4 test files and 7 tests passing.
-
-Full implementation verification results:
+Full implementation verification passed:
 
 - `corepack pnpm@9.15.4 format`
 - `corepack pnpm@9.15.4 typecheck`
 - `corepack pnpm@9.15.4 lint`
-- `corepack pnpm@9.15.4 test` with 60 test files and 296 tests passing.
+- `corepack pnpm@9.15.4 test` with 60 test files and 296 tests passing
 - `corepack pnpm@9.15.4 build`
 
-Build note: production build completed successfully and emitted the existing Vite chunk-size warning for `dist/assets/index-CG86QxKA.js` at 590.33 kB.
+Build note: production build completed successfully and emitted the existing Vite chunk-size warning.
 
 ## Residual Risks
 
-- The approved milestone is security-sensitive because it affects temporary volunteer authorization expectations.
-- No RLS, RPC, or migration changes are included.
-- Temporary volunteers still have controlled inventory/barcode read surfaces; future write capabilities require a separate approved server-enforced design.
+- The milestone is documentation-only and depends on current code behavior remaining unchanged.
+- Legacy persisted `undo` compatibility remains in migrations and mappers by design.
+- Return transaction semantics remain a separate documented drift item.
+- Offline queue architecture remains undefined as a detailed living architecture document.
 
 ## Evidence Location
 

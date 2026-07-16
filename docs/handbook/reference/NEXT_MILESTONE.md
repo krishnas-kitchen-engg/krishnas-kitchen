@@ -37,130 +37,46 @@ Implementation must not begin until the human approves one candidate. Commit app
 
 ## Status
 
-Implemented
+Implemented for the approved candidate. Pending human review and separate commit approval.
 
 ## Approval
 
-Candidate 1, Reconcile Temporary Volunteer Permission Drift, has been implemented and approved for commit.
+Candidate 1, Canonicalize Undo/Reversal Terminology, was approved for implementation.
 
 ## Recommended Candidate
 
-Candidate 1: Reconcile Temporary Volunteer Permission Drift.
+Candidate 1: Canonicalize Undo/Reversal Terminology.
 
 Recommendation: Implemented.
 
-Implementation Note: Temporary volunteer browser permissions were reconciled to read/session-only access. The next session should refresh candidate options before implementation work resumes.
+Implementation Note: Canonical terminology now defines `undo` as the user-facing action and service operation, `reversal` as the domain event and current persisted correction transaction type, `reversal_of_transaction_id` as the original-transaction link, and legacy persisted `undo` rows as read-compatible history only.
 
-Confidence: 68%.
+Confidence: 66%.
 
-Rationale: Temporary volunteer permissions were the highest-priority documented security/product ambiguity. The implementation resolves the conflict by restricting temporary volunteer browser permissions to read/session capabilities.
+Rationale: Undo/reversal terminology drift affected inventory correction semantics, documentation, and future UI wording. The implementation was the smallest high-value slice because source behavior already created current reversal transactions.
 
-Estimated Effort: Medium.
+Estimated Effort: Small to Medium.
 
 Assumptions:
 
-- Temporary volunteer access must remain scoped, attributable, expiring, and server-reviewable.
-- Client-side permission helpers are usability signals, not final authorization.
-- Future temporary volunteer write capability requires a separate approved server-enforced write model.
+- Current inventory code behavior is correct: undo requests create `transactionType: "reversal"` drafts.
+- Legacy `undo` enum values and rows remain compatibility history and should not be removed in this milestone.
+- Feature docs can use "undo" for the user action when they explicitly describe the persisted event as `reversal`.
 
 Uncertainties:
 
-- Whether session type should determine operational capability.
-- Whether future session types should add server-enforced write capabilities.
+- Whether a future data cleanup or migration should retire legacy `undo` values. That is intentionally outside this milestone.
 
 Reasons Alternatives Were Not Recommended:
 
-- Candidate 2 is important, but offline writes should not outrank an active authorization ambiguity.
-- Candidate 3 is important, but terminology cleanup has lower immediate security impact than temporary volunteer permissions.
+- Candidate 2 is important, but return semantics may require broader domain and migration review than this terminology slice.
+- Candidate 3 is important, but offline queue architecture has higher design uncertainty and should follow a dedicated architecture milestone.
 
-## Candidate 1: Reconcile Temporary Volunteer Permission Drift
+## Candidate 1: Canonicalize Undo/Reversal Terminology
 
 Recommendation: Implemented.
 
-Rationale: Temporary volunteer permission drift was documented in [Documentation Drift](./DOCUMENTATION_DRIFT.md), [Open Decisions](./OPEN_DECISIONS.md), [Technical Debt](./TECH_DEBT.md), and [Security Status](./SECURITY_STATUS.md). Current source granted temporary volunteers operational inventory permissions, while the permissions matrix said they could not perform those operations.
-
-Confidence: 68%.
-
-Estimated Effort: Medium.
-
-Dependencies:
-
-- Human product/security decision on intended temporary volunteer capabilities.
-- Review of [ADR-0004](../adrs/0004-temporary-volunteer-session-model.md), [ADR-0007](../adrs/0007-rpc-boundaries-and-browser-trust.md), [Auth Architecture](../../AUTH_ARCHITECTURE.md), [Permissions Matrix](../../PERMISSIONS_MATRIX.md), and affected workflow tests.
-
-Risk:
-
-- High security risk if implementation silently expands or contracts temporary volunteer authority.
-- Medium documentation risk because multiple older docs conflict.
-
-Expected Value: Very high. Resolving this removes the main security/product ambiguity before volunteer workflow expansion.
-
-Architecture Impact: Medium. Canonical docs now describe read/session-only temporary volunteer browser permissions.
-
-Security Impact: High. Temporary volunteer authority must remain narrow and server-enforced.
-
-Testing Strategy:
-
-- Focused permission helper tests, affected receive/transfer/return screen tests, then typecheck, lint, full tests, and build.
-
-Expected Deliverables:
-
-- Canonical temporary volunteer permission decision.
-- Updated affected living docs and older source docs.
-- No RLS/RPC or migration changes.
-
-Validation Plan:
-
-- Verify `AUTH_ARCHITECTURE.md`, `PERMISSIONS_MATRIX.md`, `DOCUMENTATION_DRIFT.md`, `OPEN_DECISIONS.md`, and source permission helpers no longer contradict the implemented policy.
-- Run full verification before commit readiness.
-
-## Candidate 2: Define Offline Queue Architecture
-
-Recommendation: Defer.
-
-Rationale: Offline capability is an architectural requirement, but detailed queue storage, replay, idempotency, and conflict behavior are not yet captured in a living architecture document.
-
-Confidence: 60%.
-
-Estimated Effort: Medium.
-
-Dependencies:
-
-- Review [ADR-0005](../adrs/0005-mobile-first-offline-pwa.md), inventory repository contracts, transaction audit metadata, and current PWA behavior.
-- Human approval for architecture work before implementation.
-
-Risk:
-
-- Medium-to-high architecture risk if offline writes proceed without canonical replay and authorization rules.
-- Medium security risk because offline replay must not bypass server authorization or auditability.
-
-Expected Value: High for future offline implementation, but less urgent than resolving current temporary volunteer authorization drift.
-
-Architecture Impact: High. Queue boundaries, storage, replay, idempotency, and conflict handling need explicit design.
-
-Security Impact: Medium. Offline write replay must preserve RLS/RPC boundaries and immutable audit history.
-
-Testing Strategy:
-
-- Architecture-only validation first.
-- Future implementation should include queue unit tests, replay/idempotency tests, and integration coverage where feasible.
-
-Expected Deliverables:
-
-- Focused offline queue architecture/status page or ADR proposal.
-- Explicit current/future separation for offline capability.
-- No offline write implementation until architecture is approved.
-
-Validation Plan:
-
-- Confirm offline docs distinguish requirement, current implementation, and future queue work.
-- Confirm architecture preserves repository boundaries and server authorization.
-
-## Candidate 3: Canonicalize Undo/Reversal Terminology
-
-Recommendation: Defer.
-
-Rationale: Undo/reversal terminology drift affects inventory correction semantics, documentation, and future UI wording. The implementation already has reversal validation and compatibility migrations, but docs still use mixed language.
+Rationale: The repository already had reversal validation, transaction helpers, mapper compatibility, and migrations, but living docs and older feature docs mixed user-action language with current `reversal` persistence semantics.
 
 Confidence: 66%.
 
@@ -168,23 +84,23 @@ Estimated Effort: Small to Medium.
 
 Dependencies:
 
-- Review [ADR-0009](../adrs/0009-auditability-and-reversibility.md), inventory architecture, transaction compatibility migration, reversal validation, transaction helpers, and feature docs.
+- Review [ADR-0009](../adrs/0009-auditability-and-reversibility.md), inventory architecture, transaction compatibility migrations, reversal validation, transaction helpers, mapper compatibility, and affected feature docs.
 
 Risk:
 
 - Medium inventory-correctness risk if terminology cleanup accidentally changes semantics.
-- Low-to-medium implementation risk if kept documentation/reference-only.
+- Low implementation risk because the completed slice is documentation/reference-only.
 
-Expected Value: High for maintainability and future correction workflows, but lower immediate security value than temporary volunteer permission drift.
+Expected Value: High. Future correction workflows now have one vocabulary across user action, domain event, persisted transaction type, and legacy compatibility.
 
-Architecture Impact: Medium if the milestone creates a canonical transaction terminology reference; low if only documentation language is clarified.
+Architecture Impact: Medium. Inventory architecture and ADR-0009 now contain canonical correction terminology.
 
 Security Impact: Low. Main concern is auditability and inventory integrity rather than authorization.
 
 Testing Strategy:
 
-- Documentation/reference validation for terminology-only work.
-- If code names or behavior change, run reversal validation tests, inventory service tests, typecheck, lint, full tests, and build.
+- Documentation/reference validation.
+- Full format, typecheck, lint, test, and build before human review.
 
 Expected Deliverables:
 
@@ -195,6 +111,65 @@ Validation Plan:
 
 - Confirm references no longer conflict on `undo` versus `reversal`.
 - Confirm no historical transaction mutation or signed-quantity behavior is introduced.
+
+## Candidate 2: Canonicalize Return Transaction Semantics
+
+Recommendation: Defer.
+
+Rationale: Return transaction behavior is implemented, but documentation still mixes transfer-style return movement and migration compatibility that permits increase semantics.
+
+Confidence: 62%.
+
+Estimated Effort: Medium.
+
+Dependencies:
+
+- Review [ADR-0002](../adrs/0002-positive-quantities-and-quantity-effects.md), return validation, return workflow services, transaction constraint migration, and return feature docs.
+
+Risk:
+
+- Medium correctness risk because return semantics affect balances and reversal behavior.
+
+Expected Value: High. Resolves DD-003 and prevents future return workflow ambiguity.
+
+Architecture Impact: Medium.
+
+Security Impact: Low.
+
+Testing Strategy:
+
+- Documentation/reference validation first.
+- Run targeted return validation/service tests if the milestone discovers source or test contradictions.
+
+## Candidate 3: Define Offline Queue Architecture
+
+Recommendation: Defer.
+
+Rationale: Offline capability is an architectural requirement, but detailed queue storage, replay, idempotency, conflict, and authorization behavior are not yet captured in a living architecture document.
+
+Confidence: 60%.
+
+Estimated Effort: Medium.
+
+Dependencies:
+
+- Review [ADR-0005](../adrs/0005-mobile-first-offline-pwa.md), inventory repository contracts, transaction audit metadata, current PWA behavior, and Supabase/RPC boundaries.
+
+Risk:
+
+- Medium-to-high architecture risk if offline writes proceed without canonical replay and authorization rules.
+- Medium security risk because offline replay must not bypass server authorization or auditability.
+
+Expected Value: High for future offline implementation.
+
+Architecture Impact: High.
+
+Security Impact: Medium.
+
+Testing Strategy:
+
+- Architecture-only validation first.
+- Future implementation should include queue unit tests, replay/idempotency tests, and integration coverage where feasible.
 
 ## Owner
 

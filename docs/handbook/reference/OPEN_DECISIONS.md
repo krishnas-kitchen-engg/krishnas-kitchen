@@ -30,9 +30,14 @@ Only include decisions that are unresolved. When resolved, create or link an ADR
 
 | Decision | Context | Options | Required Information | Decision Owner | Target Milestone |
 |---|---|---|---|---|---|
-| OD-002 Undo versus reversal terminology | Docs and schema history use both `undo` and `reversal` | Canonicalize event type as reversal and UI action as undo; retain both terms with explicit meanings; choose another mapping | Confirm current implementation and desired user-facing language | Engineering | Not assigned |
 | OD-003 Offline queue architecture | Offline is required, but detailed living architecture is absent | Client-side queue through repository contract; service-worker-backed flow; defer writes until online-only milestone | Confirm storage, replay, idempotency, and conflict strategy | Engineering | Not assigned |
 | OD-004 Living security architecture ownership | Security status is distributed across docs, migrations, and ADRs | Create a dedicated auth/RLS/security architecture page; keep status only in reference docs | Confirm owner and scope | Engineering | Not assigned |
+
+## Resolved Decisions
+
+| Decision | Resolution | Evidence |
+|---|---|---|
+| OD-002 Undo versus reversal terminology | `undo` is the user-facing action and service operation; `reversal` is the domain event and current persisted correction transaction type; legacy persisted `undo` rows remain read-compatible history only. | [Inventory Architecture](../../INVENTORY_ARCHITECTURE.md); [ADR-0009](../adrs/0009-auditability-and-reversibility.md) |
 
 ## Owner
 

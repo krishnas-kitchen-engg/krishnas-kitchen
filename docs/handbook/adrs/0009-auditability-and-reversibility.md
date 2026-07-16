@@ -40,6 +40,13 @@ Inventory-changing actions must remain auditable and reversible through explicit
 
 Audit history and inventory ledger history must remain immutable.
 
+Canonical terminology:
+
+- `undo` is the user-facing action and application service operation.
+- `reversal` is the domain event and current persisted inventory transaction type created by undo.
+- `reversal_of_transaction_id` links a reversal transaction to the original transaction.
+- legacy persisted `undo` transaction rows are read-compatible historical data only and should not be created by new application code.
+
 ## Consequences
 
 - Mistakes can be corrected without hiding what happened.
@@ -57,6 +64,8 @@ Audit history and inventory ledger history must remain immutable.
 - `reversal_of_transaction_id` links reversal transactions to originals.
 - `20260606000100_add_reversal_transaction_type.sql` adds `reversal`.
 - `20260606000200_reconcile_inventory_transaction_constraints.sql` requires reversal transactions to reference an original transaction.
+- `transactionHelpers.ts` creates current corrections as `transactionType: "reversal"`.
+- `inventoryTransactionMapper.ts` preserves legacy `undo` rows for read compatibility without creating new undo drafts.
 
 ## Related Documents
 
@@ -73,4 +82,3 @@ Audit history and inventory ledger history must remain immutable.
 ## Supersession
 
 None.
-

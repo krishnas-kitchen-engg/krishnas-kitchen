@@ -31,7 +31,10 @@ The inventory system must prioritize:
 - adjusted
 - wasted
 - reservation
-- undo
+- reversal
+
+Legacy persisted rows may still use `undo` for compatibility. New correction
+transactions use `reversal`.
 
 ---
 
@@ -46,6 +49,20 @@ Transactions:
 Corrections occur via:
 - reversal transactions
 - compensating transactions
+
+---
+
+# Correction Terminology
+
+The canonical correction vocabulary is:
+
+- `undo`: user-facing action name and application service operation.
+- `reversal`: domain event and persisted transaction type created by undo.
+- `reversal_of_transaction_id`: database link from a reversal to the original transaction.
+- legacy `undo`: historical persisted transaction type retained for read compatibility only.
+
+New application code must create `transaction_type = "reversal"` for corrections.
+It must not create new `transaction_type = "undo"` rows.
 
 ---
 
@@ -154,7 +171,8 @@ Transactions store positive quantities only. `quantity_effect` determines balanc
 - `transfer`: subtracts from source and adds to destination
 - `none`: records an event without changing balance
 
-`undo` creates a new reversal transaction. It never edits the original transaction.
+The user-facing undo action creates a new `reversal` transaction. It never edits
+the original transaction.
 
 ## Audit Metadata
 

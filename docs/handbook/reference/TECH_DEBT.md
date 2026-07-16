@@ -30,7 +30,7 @@ Add debt when a known weakness is accepted temporarily. Do not use this register
 
 | Identifier | Description | Impact | Risk | Priority | Owner | Status | Planned Milestone |
 |---|---|---|---|---|---|---|---|
-| TD-002 | Undo versus reversal terminology remains inconsistent across docs, schema history, and feature docs | Future implementation may confuse event types and user-facing action names | Medium | High | Engineering | Open | Not assigned |
+| TD-002 | Undo versus reversal terminology required canonical vocabulary across docs, schema history, and feature docs | Future implementation could confuse event types and user-facing action names | Medium | High | Engineering | Resolved | Canonicalize Undo/Reversal Terminology |
 | TD-003 | Offline queue architecture is required but not yet captured as a detailed living architecture document | Offline work may proceed without a canonical plan | Medium | Medium | Engineering | Open | Not assigned |
 | TD-004 | Existing older documentation contains duplication and encoding artifacts | Contributors may struggle to identify canonical guidance | Low | Medium | Engineering | Open | Not assigned |
 | TD-005 | Latest full verification results must be refreshed during each implementation milestone | Project health is harder to assess if sessions reuse stale verification evidence | Medium | Medium | Engineering | Open | Not assigned |

@@ -12,7 +12,7 @@ This workflow must:
 * move inventory using transfer semantics, not signed quantities
 * keep source and destination locations explicit
 * prevent same-location transfers
-* support reversal through undo transactions
+* support reversal through the user-facing undo action
 * remain compatible with future offline queueing
 
 ---
@@ -187,7 +187,7 @@ Every transfer transaction must record:
 
 Undo of transfer must record:
 
-* a new `undo` transaction
+* a new `reversal` transaction
 * `reversal_of_transaction_id` pointing to the original transfer transaction
 * source and destination swapped by reversal semantics
 * original transfer remains immutable
@@ -204,7 +204,7 @@ Undo of transfer must record:
 * [ ] Transfer uses positive quantity and transfer semantics.
 * [ ] Transfer aggregation subtracts from source and adds to destination.
 * [ ] Transfer audit metadata includes client request id.
-* [ ] Transfer can be reversed by an undo transaction.
+* [ ] Transfer can be reversed by a reversal transaction created from the undo action.
 * [ ] Original transfer transaction remains immutable after undo.
 
 ---
@@ -221,7 +221,7 @@ Undo of transfer must record:
 * unit validation
 * audit metadata preservation
 * transfer aggregation correctness
-* transfer undo transaction creation
+* transfer reversal transaction creation
 
 ## Service Tests
 
@@ -301,7 +301,7 @@ Future work, in order:
 
 * transfer persistence integration
 * return workflow
-* undo/reversal workflow hardening
+* correction workflow hardening
 * barcode-assisted transfer
 * source balance sufficiency checks
 * offline transfer queue
