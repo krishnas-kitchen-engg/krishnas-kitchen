@@ -40,6 +40,7 @@ Classifications are intentionally exact: each document has one classification.
 | `docs/INVENTORY_ARCHITECTURE.md` | Reference | Engineering | Active source material | Future living inventory architecture page | When inventory architecture changes |
 | `docs/MVP_SCOPE.md` | Reference | Product/Engineering | Active source material | None | When MVP scope changes |
 | `docs/PERMISSIONS_MATRIX.md` | Reference | Engineering | Active source material with drift | Future permission/role reference | When permissions change |
+| `docs/PRODUCT_HORIZONS.md` | Canonical | Product/Engineering | Canonical long-term product roadmap and active horizon source | None | When horizons, active horizon, or horizon rules change |
 | `docs/PRODUCT_VISION.md` | Reference | Product | Active source material | None | When product vision changes |
 | `docs/SYSTEM_ARCHITECTURE.md` | Reference | Engineering | Active source material with drift | Future living system architecture page | When system architecture changes |
 | `docs/execution/BACKLOG.md` | Archive Candidate | Engineering | Superseded by living milestone docs | `docs/handbook/reference/CURRENT_MILESTONE.md`; `docs/handbook/reference/NEXT_MILESTONE.md` | Reclassify during backlog cleanup |
@@ -115,6 +116,7 @@ Classifications are intentionally exact: each document has one classification.
 | `docs/handbook/adrs/0009-auditability-and-reversibility.md` | Historical | Engineering | Accepted ADR | None | Update only supersession metadata |
 | `docs/handbook/adrs/0010-security-review-before-commit.md` | Historical | Engineering | Accepted ADR | None | Update only supersession metadata |
 | `docs/handbook/architecture/README.md` | Canonical | Engineering | Active | None | When architecture navigation changes |
+| `docs/handbook/architecture/offline-sync.md` | Canonical | Engineering | Active living architecture | None | When offline queue, replay, idempotency, conflict, or sync behavior changes |
 | `docs/handbook/operations/README.md` | Canonical | Engineering/Operations | Active | None | When operations navigation changes |
 | `docs/handbook/owners/README.md` | Canonical | Engineering | Active | None | When ownership navigation changes |
 | `docs/handbook/reference/README.md` | Reference | Engineering | Active | None | When reference navigation changes |

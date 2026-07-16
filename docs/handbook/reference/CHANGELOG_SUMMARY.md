@@ -12,6 +12,7 @@ related:
   - ./CURRENT_STATE.md
   - ../adrs/README.md
   - ../architecture/README.md
+  - ../architecture/offline-sync.md
   - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
   - ../process/MILESTONE_LIFECYCLE.md
 ---
@@ -50,6 +51,8 @@ Add entries for completed milestones that change architecture, process, operatio
 | Temporary volunteer permission reconciliation | Restricted temporary volunteer browser permissions to read/session capabilities and aligned affected auth docs, permissions matrix, drift/debt/open-decision references, and workflow tests | [Current Milestone](./CURRENT_MILESTONE.md); [Auth Architecture](../../AUTH_ARCHITECTURE.md); [Permissions Matrix](../../PERMISSIONS_MATRIX.md); [Evidence Report](./EVIDENCE_REPORT.md) |
 | Undo/reversal terminology canonicalization | Canonicalized inventory correction terminology across inventory architecture, ADR-0009, affected feature docs, and living drift/debt/decision references without changing runtime behavior | [Current Milestone](./CURRENT_MILESTONE.md); [Inventory Architecture](../../INVENTORY_ARCHITECTURE.md); [ADR-0009](../adrs/0009-auditability-and-reversibility.md); [Evidence Report](./EVIDENCE_REPORT.md) |
 | Return transaction semantics canonicalization | Canonicalized current return behavior as `returned` plus `transfer` semantics and classified migration support for `returned` plus `increase` as compatibility only | [Current Milestone](./CURRENT_MILESTONE.md); [Inventory Architecture](../../INVENTORY_ARCHITECTURE.md); [Evidence Report](./EVIDENCE_REPORT.md) |
+| Offline queue architecture definition | Defined the living offline-sync architecture boundary for future queue storage, replay, idempotency, conflict handling, audit metadata, and server authorization constraints without changing runtime behavior | [Offline Sync Architecture](../architecture/offline-sync.md); [Current Milestone](./CURRENT_MILESTONE.md); [Evidence Report](./EVIDENCE_REPORT.md) |
+| Engineering Handbook v1.3 freeze | Integrated Product Horizons as the canonical long-term roadmap, required active-horizon milestone selection, finalized offline-sync architecture alignment, and froze the handbook after final consistency review | [Engineering Handbook](../README.md); [Product Horizons](../../PRODUCT_HORIZONS.md); [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md); [Evidence Report](./EVIDENCE_REPORT.md) |
 
 ## Owner
 

@@ -16,6 +16,7 @@ related:
   - ../adrs/0005-mobile-first-offline-pwa.md
   - ../adrs/0009-auditability-and-reversibility.md
   - ../architecture/README.md
+  - ../architecture/offline-sync.md
 ---
 
 # Open Decisions
@@ -30,7 +31,6 @@ Only include decisions that are unresolved. When resolved, create or link an ADR
 
 | Decision | Context | Options | Required Information | Decision Owner | Target Milestone |
 |---|---|---|---|---|---|
-| OD-003 Offline queue architecture | Offline is required, but detailed living architecture is absent | Client-side queue through repository contract; service-worker-backed flow; defer writes until online-only milestone | Confirm storage, replay, idempotency, and conflict strategy | Engineering | Not assigned |
 | OD-004 Living security architecture ownership | Security status is distributed across docs, migrations, and ADRs | Create a dedicated auth/RLS/security architecture page; keep status only in reference docs | Confirm owner and scope | Engineering | Not assigned |
 
 ## Resolved Decisions
@@ -38,6 +38,7 @@ Only include decisions that are unresolved. When resolved, create or link an ADR
 | Decision | Resolution | Evidence |
 |---|---|---|
 | OD-002 Undo versus reversal terminology | `undo` is the user-facing action and service operation; `reversal` is the domain event and current persisted correction transaction type; legacy persisted `undo` rows remain read-compatible history only. | [Inventory Architecture](../../INVENTORY_ARCHITECTURE.md); [ADR-0009](../adrs/0009-auditability-and-reversibility.md) |
+| OD-003 Offline queue architecture | Offline writes must use the existing inventory domain and repository boundary. A future queue stores validated drafts, preserves audit/client request metadata, replays through authoritative server/database write paths, remains idempotent, fails closed on authorization or conflict errors, and does not bypass RLS/RPC/security constraints. | [Offline Sync Architecture](../architecture/offline-sync.md); [ADR-0005](../adrs/0005-mobile-first-offline-pwa.md) |
 
 ## Owner
 
@@ -60,3 +61,4 @@ This is living documentation.
 - [ADR-0004: Temporary Volunteer Session Model](../adrs/0004-temporary-volunteer-session-model.md)
 - [ADR-0005: Mobile-First Offline PWA](../adrs/0005-mobile-first-offline-pwa.md)
 - [ADR-0009: Auditability And Reversibility](../adrs/0009-auditability-and-reversibility.md)
+- [Offline Sync Architecture](../architecture/offline-sync.md)

@@ -18,6 +18,7 @@ related:
   - ../adrs/0005-mobile-first-offline-pwa.md
   - ../adrs/0009-auditability-and-reversibility.md
   - ../architecture/README.md
+  - ../architecture/offline-sync.md
 ---
 
 # Documentation Drift
@@ -32,7 +33,6 @@ Do not silently resolve contradictions. Record them here, then resolve them thro
 
 | ID | Contradiction | Affected Files | Impact | Recommended Resolution | Priority |
 |---|---|---|---|---|---|
-| DD-004 | Offline architecture is required globally, but several feature docs say offline is future work or not implemented yet. | `docs/SYSTEM_ARCHITECTURE.md`; `docs/MVP_SCOPE.md`; `docs/INVENTORY_ARCHITECTURE.md`; `docs/features/barcode_scanning.md`; `docs/features/inventory_receiving.md`; `docs/features/inventory_receiving_persistence.md`; `docs/features/inventory_transfer.md`; `docs/features/inventory_return.md` | Contributors may confuse architectural requirement with current implementation status. | Create a living offline-sync architecture/status page that separates invariant, current implementation, and future work. | High |
 | DD-005 | Mobile inventory UI guidance is duplicated across two docs with overlapping personas, navigation, and workflows. | `docs/features/inventory_mobile_ui.md`; `docs/features/inventory_mobile_ui_epic.md` | Future UI work may update one document and miss the other. | Classify one as historical or archive candidate after a canonical UI architecture/spec exists. | Medium |
 | DD-006 | Camera scanning and barcode scanning docs overlap in workflow ownership and duplicate scan handling. | `docs/features/camera_scanning.md`; `docs/features/barcode_scanning.md`; `docs/features/receiving_scan_workflow.md`; `docs/features/transfer_scan_workflow.md`; `docs/features/return_scan_workflow.md` | Scanner boundary may become unclear between camera capture, barcode lookup, and inventory workflows. | Create or update a canonical scanning architecture page that separates capture, lookup, and transaction workflows. | Medium |
 | DD-007 | Stack documentation lists shadcn/ui and Zustand, but the package manifests inspected during this audit do not show those dependencies. | `docs/SYSTEM_ARCHITECTURE.md`; `package.json`; `apps/web/package.json` | Onboarding and architecture assumptions may be inaccurate. | Verify whether these are intended future choices, removed dependencies, or stale documentation; update stack reference accordingly. | Medium |
@@ -46,6 +46,7 @@ Do not silently resolve contradictions. Record them here, then resolve them thro
 |---|---|---|
 | DD-002 | Undo/reversal terminology is canonicalized: `undo` is the user-facing action and service operation, `reversal` is the current persisted correction transaction type, `reversal_of_transaction_id` links to the original transaction, and legacy persisted `undo` rows remain read-compatible history only. | [Inventory Architecture](../../INVENTORY_ARCHITECTURE.md); [ADR-0009](../adrs/0009-auditability-and-reversibility.md); `apps/web/src/domains/inventory/domain/transactionHelpers.ts`; `apps/web/src/domains/inventory/infrastructure/supabase/inventoryTransactionMapper.ts` |
 | DD-003 | Return semantics are canonicalized: new application-created `returned` transactions use `quantity_effect = "transfer"` with source and destination locations; migration support for `returned` plus `increase` is compatibility only. | [Inventory Architecture](../../INVENTORY_ARCHITECTURE.md); `apps/web/src/domains/inventory/domain/transactionHelpers.ts`; `infra/supabase/migrations/20260606000200_reconcile_inventory_transaction_constraints.sql` |
+| DD-004 | Offline architecture now has a living architecture source that separates the offline requirement, current non-implementation status, repository boundary, replay/idempotency expectations, conflict policy, and security constraints. | [Offline Sync Architecture](../architecture/offline-sync.md); [Architecture](../architecture/README.md); [ADR-0005](../adrs/0005-mobile-first-offline-pwa.md) |
 
 ## Owner
 

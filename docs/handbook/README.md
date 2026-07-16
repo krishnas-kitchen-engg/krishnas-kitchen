@@ -25,11 +25,11 @@ related:
 
 # Krishna's Kitchen Engineering Handbook
 
-Engineering Handbook Version: 1.2
+Engineering Handbook Version: 1.3
 
 Status: Stable
 
-This handbook is the canonical engineering system for Krishna's Kitchen. The Engineering Operating System is Stable as of v1.2.
+This handbook is the canonical engineering system for Krishna's Kitchen. The Engineering Operating System is Stable as of v1.3.
 
 Existing project documentation remains valuable source material, reference material, or historical context, but future engineering work should begin from the handbook. When older documentation conflicts with the handbook, use the decision hierarchy in [Project Constitution](./governance/PROJECT_CONSTITUTION.md) and record unresolved drift in [Documentation Drift](./reference/DOCUMENTATION_DRIFT.md).
 
@@ -98,7 +98,7 @@ Reusable documentation standards:
 
 ## Lifecycle
 
-This is a living index for the stable v1.2 handbook. Update it whenever handbook sections, navigation paths, or canonical documentation locations change.
+This is a living index for the stable v1.3 handbook. Update it whenever handbook sections, navigation paths, or canonical documentation locations change.
 
 ## Update Ownership
 

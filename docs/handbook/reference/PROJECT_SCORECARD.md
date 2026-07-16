@@ -21,6 +21,7 @@ related:
   - ../adrs/0005-mobile-first-offline-pwa.md
   - ../adrs/0010-security-review-before-commit.md
   - ../architecture/README.md
+  - ../architecture/offline-sync.md
 ---
 
 # Project Scorecard
@@ -35,21 +36,21 @@ Track only health indicators that help choose, review, or de-risk engineering wo
 
 | Area | Health | Evidence | Next Improvement |
 |---|---|---|---|
-| Architecture Health | Good with known gaps | ADRs and architecture references establish inventory ledger, auth/RLS boundary, PWA direction, repositories, RPC boundaries, and package organization | Create focused living architecture pages only when implementation work needs them |
+| Architecture Health | Good with known gaps | ADRs and architecture references establish inventory ledger, auth/RLS boundary, PWA direction, offline sync boundary, repositories, RPC boundaries, and package organization | Consolidate security architecture before expanding volunteer write capability or offline replay |
 | Security Health | Watch | RLS, helper functions, authenticated read policies, volunteer RPCs, and security ADRs exist; temporary volunteer browser permissions are restricted to read/session capabilities | Consolidate RLS/security architecture before expanding volunteer write capability |
-| Testing Health | Watch | Vitest coverage exists across domain, repository, migration, auth, UI, and utilities; latest full-suite result is recorded in [Current State](./CURRENT_STATE.md) for the return semantics milestone | Keep recording full verification during implementation milestones |
-| Documentation Health | Good | Handbook contains canonical operating model, governance, process, templates, ADRs, living references, document index, drift register, and memory pages | Freeze EOS changes unless implementation reveals a real gap |
-| Technical Debt Trend | Watch | Undo/reversal terminology drift and return semantics drift are resolved; [Technical Debt](./TECH_DEBT.md), [Documentation Drift](./DOCUMENTATION_DRIFT.md), and [Common Failures and Engineering Lessons](./COMMON_FAILURES.md) identify remaining known issues | Address debt through approved micro-milestones instead of broad cleanup |
-| Roadmap Progress | Conditional | Temporary volunteer permission drift, undo/reversal terminology drift, and return semantics drift have been reconciled; next work should be selected through a fresh EOS candidate review | Refresh next milestone candidates after this commit |
+| Testing Health | Watch | Vitest coverage exists across domain, repository, migration, auth, UI, and utilities; latest full-suite result is recorded in [Evidence Report](./EVIDENCE_REPORT.md) | Keep recording full verification during implementation milestones |
+| Documentation Health | Good | Handbook contains canonical operating model, Product Horizons, governance, process, templates, ADRs, living references, document index, drift register, and memory pages | Freeze EOS changes unless implementation reveals a real gap |
+| Technical Debt Trend | Watch | Undo/reversal terminology drift, return semantics drift, and offline architecture drift are resolved; [Technical Debt](./TECH_DEBT.md), [Documentation Drift](./DOCUMENTATION_DRIFT.md), and [Common Failures and Engineering Lessons](./COMMON_FAILURES.md) identify remaining known issues | Address remaining debt through approved micro-milestones instead of broad cleanup |
+| Roadmap Progress | Conditional | Temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, and offline architecture drift have been reconciled; next work should be selected through a fresh EOS candidate review | Refresh next milestone candidates after this commit |
 | Build Stability | Watch | Latest recorded verification in [Current State](./CURRENT_STATE.md) passed typecheck, lint, tests, and build with the existing Vite chunk-size warning | Continue running full verification before commit readiness |
 
 ## EOS Freeze Status
 
 | Indicator | Status | Evidence |
 |---|---|---|
-| EOS Version | v1.2 | [Engineering Handbook](../README.md) |
+| EOS Version | v1.3 | [Engineering Handbook](../README.md) |
 | EOS Status | Stable | [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) |
-| Handbook Maturity Score | 92/100 | Final EOS v1.2 freeze review |
+| Handbook Maturity Score | 94/100 | Final EOS v1.3 freeze review |
 | Future EOS Changes | Implementation-driven only | Future changes require a real deficiency discovered during application work |
 
 ## Owner

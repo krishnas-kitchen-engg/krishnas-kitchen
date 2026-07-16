@@ -15,6 +15,7 @@ related:
   - ../adrs/0005-mobile-first-offline-pwa.md
   - ../adrs/0009-auditability-and-reversibility.md
   - ../architecture/README.md
+  - ../architecture/offline-sync.md
 ---
 
 # Known Limitations
@@ -30,8 +31,8 @@ Record reality only. Do not turn this page into a roadmap.
 ## Limitations
 
 - The project is not documented as production-ready.
-- Offline queueing is an architectural requirement, but detailed living architecture for offline sync is not present.
-- Latest full format, typecheck, lint, test, and build results are recorded for the return semantics milestone, but verification freshness still depends on rerunning checks during each future implementation milestone.
+- Offline queueing is not implemented. The living offline-sync architecture defines the future queue and replay boundary.
+- Latest full format, typecheck, lint, test, and build results are recorded in [Evidence Report](./EVIDENCE_REPORT.md); verification freshness still depends on rerunning checks during each future implementation milestone.
 - Existing older docs include duplication and encoding artifacts.
 - Security status exists across multiple docs and migrations, but a dedicated living security architecture page is not yet present.
 - Accessibility status is not measured in current living docs.
@@ -57,3 +58,4 @@ This is living documentation.
 - [ADR-0004: Temporary Volunteer Session Model](../adrs/0004-temporary-volunteer-session-model.md)
 - [ADR-0005: Mobile-First Offline PWA](../adrs/0005-mobile-first-offline-pwa.md)
 - [ADR-0009: Auditability And Reversibility](../adrs/0009-auditability-and-reversibility.md)
+- [Offline Sync Architecture](../architecture/offline-sync.md)

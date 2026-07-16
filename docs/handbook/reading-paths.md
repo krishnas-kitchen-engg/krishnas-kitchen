@@ -17,6 +17,7 @@ related:
   - ./governance/REPOSITORY_REFRESH_PROTOCOL.md
   - ./governance/ENGINEERING_SYSTEM.md
   - ./reference/PROJECT_RECONSTRUCTION.md
+  - ../PRODUCT_HORIZONS.md
 ---
 
 # Reading Paths
@@ -32,11 +33,12 @@ This page defines curated paths for common readers. It references existing proje
 1. [Project README](../../README.md)
 2. [Project Constitution](./governance/PROJECT_CONSTITUTION.md)
 3. [Engineering System](./governance/ENGINEERING_SYSTEM.md)
-4. [Product Vision](../PRODUCT_VISION.md)
-5. [MVP Scope](../MVP_SCOPE.md)
-6. [System Architecture](../SYSTEM_ARCHITECTURE.md)
-7. [Development Workflow](../execution/DEVELOPMENT_WORKFLOW.md)
-8. [Definition of Done](../execution/DEFINITION_OF_DONE.md)
+4. [Product Horizons](../PRODUCT_HORIZONS.md)
+5. [Product Vision](../PRODUCT_VISION.md)
+6. [MVP Scope](../MVP_SCOPE.md)
+7. [System Architecture](../SYSTEM_ARCHITECTURE.md)
+8. [Development Workflow](../execution/DEVELOPMENT_WORKFLOW.md)
+9. [Definition of Done](../execution/DEFINITION_OF_DONE.md)
 
 ## AI Session Startup Path
 
@@ -48,14 +50,15 @@ This page defines curated paths for common readers. It references existing proje
 6. [Engineering System](./governance/ENGINEERING_SYSTEM.md)
 7. [Session Lifecycle](./process/SESSION_LIFECYCLE.md)
 8. [Milestone Lifecycle](./process/MILESTONE_LIFECYCLE.md)
-9. [Current Milestone](./reference/CURRENT_MILESTONE.md)
-10. [Project Reconstruction](./reference/PROJECT_RECONSTRUCTION.md)
-11. [Project Memory](./reference/PROJECT_MEMORY.md)
-12. [Implementation Patterns](./reference/IMPLEMENTATION_PATTERNS.md)
-13. [Common Failures and Engineering Lessons](./reference/COMMON_FAILURES.md)
-14. [Next Milestone](./reference/NEXT_MILESTONE.md)
-15. [Existing Documentation Map](./existing-documentation.md)
-16. The relevant handbook section for the task.
+9. [Product Horizons](../PRODUCT_HORIZONS.md)
+10. [Current Milestone](./reference/CURRENT_MILESTONE.md)
+11. [Project Reconstruction](./reference/PROJECT_RECONSTRUCTION.md)
+12. [Project Memory](./reference/PROJECT_MEMORY.md)
+13. [Implementation Patterns](./reference/IMPLEMENTATION_PATTERNS.md)
+14. [Common Failures and Engineering Lessons](./reference/COMMON_FAILURES.md)
+15. [Next Milestone](./reference/NEXT_MILESTONE.md)
+16. [Existing Documentation Map](./existing-documentation.md)
+17. The relevant handbook section for the task.
 
 This path starts with the canonical AI engineering operating contract before moving into supporting process and reference material.
 
@@ -70,14 +73,15 @@ This path starts with the canonical AI engineering operating contract before mov
 
 ## Feature Planning Path
 
-1. [MVP Scope](../MVP_SCOPE.md)
-2. [Milestone Lifecycle](./process/MILESTONE_LIFECYCLE.md)
-3. [Quality Gates](./process/QUALITY_GATES.md)
-4. [Next Milestone](./reference/NEXT_MILESTONE.md)
-5. [Feature Template](../execution/FEATURE_TEMPLATE.md)
-6. [Delivery Process](../execution/DELIVERY_PROCESS.md)
-7. Existing feature specs in [docs/features](../features/)
-8. [Testing Strategy](../execution/TESTING_STRATEGY.md)
+1. [Product Horizons](../PRODUCT_HORIZONS.md)
+2. [MVP Scope](../MVP_SCOPE.md)
+3. [Milestone Lifecycle](./process/MILESTONE_LIFECYCLE.md)
+4. [Quality Gates](./process/QUALITY_GATES.md)
+5. [Next Milestone](./reference/NEXT_MILESTONE.md)
+6. [Feature Template](../execution/FEATURE_TEMPLATE.md)
+7. [Delivery Process](../execution/DELIVERY_PROCESS.md)
+8. Existing feature specs in [docs/features](../features/)
+9. [Testing Strategy](../execution/TESTING_STRATEGY.md)
 
 ## Release And Operations Path
 

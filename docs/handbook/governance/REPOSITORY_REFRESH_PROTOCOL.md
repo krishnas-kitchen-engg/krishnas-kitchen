@@ -16,6 +16,7 @@ related:
   - ../overview.md
   - ../reading-paths.md
   - ../existing-documentation.md
+  - ../../PRODUCT_HORIZONS.md
   - ../roadmap.md
   - ../conventions.md
   - ../architecture/README.md
@@ -55,6 +56,7 @@ At session startup, use:
 - [Engineering Handbook](../README.md)
 - [Reading Paths](../reading-paths.md)
 - [Existing Documentation Map](../existing-documentation.md)
+- [Product Horizons](../../PRODUCT_HORIZONS.md)
 - [Project Constitution](./PROJECT_CONSTITUTION.md)
 - [AI Execution Protocol](./AI_EXECUTION_PROTOCOL.md)
 
@@ -143,9 +145,9 @@ Externalize knowledge by:
 - Confirm task objective and constraints.
 - Check repository status.
 - Identify whether the task is documentation-only, code, tests, migrations, operations, or review.
-- Read the required handbook and project docs.
+- Read the required handbook and project docs, including the canonical long-term product roadmap in [Product Horizons](../../PRODUCT_HORIZONS.md).
 - Identify affected files and owners.
-- Identify top three candidate micro-milestones and one recommendation when implementation work is appropriate.
+- Identify top three active-horizon candidate micro-milestones and one recommendation when implementation work is appropriate.
 - Identify verification requirements.
 - Identify human review gates.
 

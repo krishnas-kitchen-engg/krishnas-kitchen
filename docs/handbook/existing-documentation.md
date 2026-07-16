@@ -28,6 +28,7 @@ Project entry point:
 
 Product and scope:
 
+- [Product Horizons](../PRODUCT_HORIZONS.md)
 - [Product Vision](../PRODUCT_VISION.md)
 - [MVP Scope](../MVP_SCOPE.md)
 

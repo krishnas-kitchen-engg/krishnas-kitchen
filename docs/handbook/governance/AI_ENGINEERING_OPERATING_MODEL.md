@@ -24,11 +24,12 @@ related:
   - ../reference/PROJECT_MEMORY.md
   - ../reference/IMPLEMENTATION_PATTERNS.md
   - ../reference/COMMON_FAILURES.md
+  - ../../PRODUCT_HORIZONS.md
 ---
 
 # AI Engineering Operating Model
 
-This document is the canonical operational contract for every future AI-assisted engineering session in Krishna's Kitchen. The Engineering Operating System is Stable as of v1.2.
+This document is the canonical operational contract for every future AI-assisted engineering session in Krishna's Kitchen. The Engineering Operating System is Stable as of v1.3.
 
 ## Purpose
 
@@ -105,21 +106,34 @@ Approval to inspect, plan, or propose does not authorize implementation. Approva
 
 After repository refresh and audit, present the top three candidate micro-milestones and recommend exactly one for approval.
 
+Candidate milestones must come from the active horizon in [Product Horizons](../../PRODUCT_HORIZONS.md). Architecture should support future horizons. Implementation must remain inside the ACTIVE horizon. If a candidate is outside the active horizon, reject it automatically and explain why instead of recommending it.
+
 Each candidate must be:
 
 - Small enough for one engineering session.
 - Independently verifiable.
 - Independently reversible.
 - Consistent with accepted ADRs and architectural invariants.
+- Inside the active product horizon.
 - Explicitly scored using the milestone scoring framework.
 - Recorded in [Next Milestone](../reference/NEXT_MILESTONE.md) when living documentation updates are in scope.
 
-The recommendation must include:
+Every milestone recommendation must include:
 
+- Strategic alignment.
+- Current horizon.
+- Reason it belongs to that horizon.
+- Evidence value.
+- How it supports future horizons without expanding scope.
 - Confidence percentage.
 - Assumptions.
 - Uncertainties.
 - Reasons alternative candidates were not recommended.
+
+Every implementation milestone must answer:
+
+- Does this maximize progress within the ACTIVE horizon?
+- Does this avoid making future horizons harder to implement?
 
 If no safe candidate can be recommended, enter Blocked and request human direction.
 
@@ -129,7 +143,7 @@ If no safe candidate can be recommended, enter Blocked and request human directi
 |---|---|---|---|---|
 | Repository Reconstruction | User request, git status, handbook reading paths, current docs | Reconstructed project state and constraints | Required sources read and current state understood | Required sources unavailable or instructions conflict |
 | Repository Audit | Reconstructed state, git diff/status, relevant docs/code/tests/migrations | Audit findings, dirty worktree risks, drift, technical debt | Risks and relevant unfinished work identified | Unsafe dirty worktree or contradictory authority cannot be resolved |
-| Candidate Generation | Audit findings, stewardship, ADRs, invariants, scorecard, project memory, implementation patterns, common failures | Top three candidate micro-milestones, scores, and one recommendation | Candidates are small, verifiable, reversible, and justified | No safe recommendation or insufficient product/security intent |
+| Candidate Generation | Audit findings, active product horizon, stewardship, ADRs, invariants, scorecard, project memory, implementation patterns, common failures | Top three active-horizon candidate micro-milestones, scores, and one recommendation | Candidates are small, verifiable, reversible, active-horizon aligned, and justified | No safe recommendation, candidate outside active horizon, or insufficient product/security intent |
 | Human Approval Pending | Candidate proposal and score | Approval, rejection, or redirection | Human approves implementation | Human rejects, redirects, or does not provide required decision |
 | Implementation | Approved candidate, affected files, local patterns | Focused implementation changes | Scope implemented without unrelated changes | Scope expands, architecture changes needed, or blocked dependency appears |
 | Testing | Implemented changes and verification plan | Typecheck, lint, tests, build, or scoped checks | Applicable checks pass or documented not applicable | Failing checks not understood or cannot be fixed in scope |
@@ -148,7 +162,7 @@ Score each proposed candidate from 1 to 5. Higher is better. For risk-oriented c
 | Criterion | Score 1 | Score 3 | Score 5 |
 |---|---|---|---|
 | Architecture Alignment | Conflicts or unclear | Mostly aligned with known gaps | Clearly aligned with ADRs and invariants |
-| Roadmap Alignment | Not supported | Related but not explicit | Directly supported by current milestone, next milestone, roadmap, or debt |
+| Roadmap Alignment | Outside active horizon or not supported | Related to active horizon but not explicit | Directly supported by the active horizon, current milestone, next milestone, roadmap, or debt |
 | Security Risk | High unresolved security risk | Some review needed | Low or well-contained risk |
 | Complexity | Broad or hard to reason about | Moderate | Small and simple |
 | Blast Radius | Cross-cutting or production-sensitive | Several files or flows | Localized |
@@ -261,6 +275,7 @@ Minimum reconstruction sources:
 
 - [Engineering Handbook](../README.md)
 - [Reading Paths](../reading-paths.md)
+- [Product Horizons](../../PRODUCT_HORIZONS.md)
 - This operating model
 - [Current State](../reference/CURRENT_STATE.md)
 - [Current Milestone](../reference/CURRENT_MILESTONE.md)

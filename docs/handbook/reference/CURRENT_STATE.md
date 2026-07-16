@@ -17,12 +17,14 @@ related:
   - ./KNOWN_LIMITATIONS.md
   - ./OPEN_DECISIONS.md
   - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
+  - ../../PRODUCT_HORIZONS.md
   - ../adrs/0001-immutable-inventory-ledger.md
   - ../adrs/0003-supabase-auth-and-rls-boundary.md
   - ../adrs/0005-mobile-first-offline-pwa.md
   - ../adrs/0006-repository-pattern.md
   - ../adrs/0008-domain-driven-package-organization.md
   - ../architecture/README.md
+  - ../architecture/offline-sync.md
   - ../../SYSTEM_ARCHITECTURE.md
   - ../../INVENTORY_ARCHITECTURE.md
   - ../../AUTH_ARCHITECTURE.md
@@ -58,6 +60,7 @@ The project is not documented as production-ready.
 - Temporary volunteer permission drift was reconciled by restricting temporary volunteer browser permissions to read/session capabilities.
 - Undo/reversal terminology was canonicalized across inventory architecture, ADR-0009, affected feature docs, and living drift/debt/decision references.
 - Return transaction semantics were canonicalized across inventory architecture, affected feature docs, and living drift references after reviewing ADR-0002.
+- Offline queue architecture was defined in a living architecture page without implementing queue storage, replay, or runtime sync behavior.
 
 ## Implemented Domains
 
@@ -84,6 +87,8 @@ Canonical correction terminology: `undo` is the user-facing action and service o
 
 Canonical return semantics: current application-created return transactions use `transaction_type = "returned"` with `quantity_effect = "transfer"`. Returns move positive quantity from source location to destination location; migration support for `returned` plus `increase` is compatibility only.
 
+Canonical offline architecture: offline writes must preserve domain validation, immutable inventory semantics, audit/client request metadata, repository boundaries, idempotent replay, fail-closed authorization, and server/database authority. Local queue storage and replay are not implemented yet.
+
 ## Database Status
 
 Supabase migrations exist for:
@@ -106,11 +111,13 @@ RLS is enabled on foundational tables. Authenticated read policies exist for inv
 
 Known gaps remain in documentation synchronization and explicit security status tracking.
 
+Offline architecture is now documented in [Offline Sync Architecture](../architecture/offline-sync.md). Offline queue implementation remains future work.
+
 ## Testing Status
 
 Vitest is configured. Tests exist for inventory domain logic, repository adapters, migrations, auth volunteer sessions, UI reducers/screens, shell navigation, and shared utilities.
 
-Latest verification for the return semantics milestone passed:
+Latest full verification before this milestone was recorded for the return semantics milestone. Verification for the offline architecture milestone is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
 
 - `corepack pnpm@9.15.4 format`
 - `corepack pnpm@9.15.4 typecheck`
@@ -124,15 +131,17 @@ The production build emitted the existing Vite chunk-size warning, but completed
 
 Existing project docs cover product vision, MVP scope, system architecture, inventory architecture, auth architecture, permissions, execution process, feature specs, Supabase notes, and validation seed data.
 
+[Product Horizons](../../PRODUCT_HORIZONS.md) is the canonical long-term product roadmap. Horizon 1, Core Kitchen Inventory Platform, is active. Future horizons may influence architecture, but implementation milestone recommendations must remain inside the active horizon.
+
 The handbook now contains governance, the canonical AI Engineering Operating Model, engineering principles, process, templates, ADR framework, initial ADRs, living reference documents, project reconstruction, project memory, implementation patterns, common failures and engineering lessons, document index, drift register, and health report.
 
-Temporary volunteer permission drift, undo/reversal terminology drift, and return semantics drift have been resolved. The next candidate set should be refreshed after this commit.
+Temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, and offline architecture drift have been resolved. The next candidate set should be refreshed after this commit.
 
-The Engineering Operating System is Stable at v1.2. Future EOS changes require implementation-driven justification rather than speculative improvement.
+The Engineering Operating System is Stable at v1.3. Future EOS changes require implementation-driven justification rather than speculative improvement.
 
 ## Known Gaps
 
-- Offline queue architecture is required but not fully described as a living architecture document.
+- Offline queue implementation is not present; the living architecture defines the future queue and replay boundary.
 - RLS/security architecture should be consolidated into a living architecture page.
 - Existing docs still contain duplication and some encoding artifacts.
 - Older docs are classified in the document index, but content has not been physically migrated.

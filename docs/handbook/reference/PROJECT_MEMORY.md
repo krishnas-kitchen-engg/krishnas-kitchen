@@ -28,6 +28,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 
 - The Engineering Handbook is the canonical engineering operating system.
 - [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) is the single workflow contract for AI-assisted engineering sessions.
+- [Product Horizons](../../PRODUCT_HORIZONS.md) is the canonical long-term product roadmap. Horizon 1 is active; milestone recommendations must come from the active horizon.
 - [Engineering Principles](../governance/ENGINEERING_PRINCIPLES.md) records timeless philosophy; workflow belongs in the operating model.
 - Existing project documentation remains useful source material; do not duplicate it into the handbook without a focused milestone.
 - The inventory model is an immutable event ledger. Balances are derived from transactions.
@@ -35,7 +36,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 - Temporary volunteer browser permissions are read/session-only: `locations.read`, `items.read`, `inventory.read`, and `volunteer_sessions.create`.
 - Undo/reversal terminology is canonical: `undo` is the user-facing action and service operation, `reversal` is the current persisted correction transaction type, and legacy persisted `undo` rows are read-compatible history only.
 - Return semantics are canonical: new application-created `returned` transactions use `quantityEffect: "transfer"` and move positive quantity from source location to destination location.
-- Offline capability is an architectural requirement, but detailed offline queue architecture remains incomplete.
+- Offline capability is an architectural requirement. Offline queue architecture is canonicalized in [Offline Sync Architecture](../architecture/offline-sync.md), while local queue storage and replay implementation remain future work.
 - Temporary volunteer login diagnostic instrumentation was resolved and should not be reintroduced as permanent behavior.
 - Living planning/status references must be refreshed after completed milestones so `CURRENT_MILESTONE.md`, `NEXT_MILESTONE.md`, scorecard, and limitations do not keep pointing future sessions at completed work.
 - Temporary volunteer permission drift was reconciled by aligning docs, permission helpers, and workflow tests to the read/session-only browser permission policy.
@@ -55,6 +56,8 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 | Temporary volunteer workflow tests relied on default operational permissions in auth fixtures | Fixture defaults made temporary-session tests pass as though temporary volunteers had write permissions | The permission drift could persist without a helper-level test | In permission-sensitive tests, pass the exact permissions being asserted and add a direct helper test near the permission source |
 | Undo/reversal drift was resolved without source changes | Current code already creates `reversal` transactions and keeps legacy `undo` compatibility at the mapper/database boundary | Documentation could be fixed safely as a terminology milestone instead of a behavior change | For inventory correction work, preserve `undo` as UI/service language and `reversal` as persisted event language unless a new ADR supersedes ADR-0009 |
 | Return semantics drift was resolved without source changes | Current code already creates return transactions as `returned` plus `transfer`, while migrations allow an older compatibility shape | Documentation could clarify current behavior without changing ledger semantics | Treat `returned` plus `transfer` as the current creation path; preserve migration compatibility unless a future data migration is separately approved |
+| Offline architecture drift was resolved without source changes | PWA tooling, offline-safe transaction IDs, audit metadata, and repository boundaries already existed, but no living queue/replay architecture page existed | Future offline implementation could otherwise bypass inventory integrity or server authorization constraints | Treat offline writes as future queued, validated drafts replayed through authoritative server/database boundaries; implement storage, replay, and idempotency only in separate approved milestones |
+| Product horizons were added as the canonical long-term roadmap | Future horizons can tempt implementation scope expansion during milestone selection | Architecture can account for future horizons, but implementation must stay inside the active horizon | Read Product Horizons during reconstruction; reject out-of-horizon implementation candidates and explain why |
 
 ## Memory Update Rules
 
