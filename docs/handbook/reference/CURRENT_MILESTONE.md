@@ -31,11 +31,11 @@ Update this document whenever a milestone starts, pauses, completes, or changes 
 
 ## Current Active Milestone
 
-Canonicalize Undo/Reversal Terminology.
+Canonicalize Return Transaction Semantics.
 
 ## Goal
 
-Define the canonical distinction between the user-facing undo action, the domain reversal event, the persisted transaction type, and legacy `undo` compatibility without changing inventory behavior, migrations, or repository contracts.
+Define the canonical current return transaction behavior across architecture, feature, ADR, and living reference documentation without changing inventory behavior, migrations, or repository contracts.
 
 ## Status
 
@@ -43,28 +43,23 @@ Completed. Human review and commit approval received.
 
 ## Scope
 
-- Establish canonical correction terminology in inventory architecture and ADR-0009.
-- Align affected feature documentation that described new persisted `undo` transactions.
-- Update living drift, debt, decision, state, memory, changelog, pattern, limitation, scorecard, reconstruction, and evidence references.
-- Preserve immutable ledger behavior, positive quantity semantics, and existing reversal implementation.
-- Do not change TypeScript source, tests, migrations, Supabase policies, permissions, or runtime behavior.
-- Do not resolve return semantics drift, offline queue architecture, security architecture ownership, or older documentation duplication in this milestone.
+- Establish that current application-created return transactions persist as `transaction_type = "returned"` with `quantity_effect = "transfer"`.
+- Clarify that returns move positive quantity from source location to destination location.
+- Classify migration support for `returned` plus `increase` as compatibility, not the current creation path.
+- Align affected return feature docs, inventory architecture, drift, state, memory, patterns, scorecard, reconstruction, next milestone, changelog, and evidence references.
+- Preserve immutable ledger behavior, positive quantity semantics, reversal behavior, migrations, Supabase policies, permissions, and runtime behavior.
+- Do not implement offline queue architecture, security architecture ownership, scanning documentation consolidation, schema reference generation, or older documentation cleanup in this milestone.
 - Do not commit implementation changes without explicit separate commit approval after verification and review.
 
 ## Files Affected
 
 - `docs/INVENTORY_ARCHITECTURE.md`
-- `docs/SYSTEM_ARCHITECTURE.md`
-- `docs/features/inventory_receiving_persistence.md`
-- `docs/features/inventory_transfer.md`
-- `docs/handbook/adrs/0009-auditability-and-reversibility.md`
+- `docs/features/inventory_return.md`
+- `docs/features/return_scan_workflow.md`
 - `docs/handbook/reference/CURRENT_MILESTONE.md`
 - `docs/handbook/reference/CURRENT_STATE.md`
 - `docs/handbook/reference/NEXT_MILESTONE.md`
 - `docs/handbook/reference/DOCUMENTATION_DRIFT.md`
-- `docs/handbook/reference/OPEN_DECISIONS.md`
-- `docs/handbook/reference/TECH_DEBT.md`
-- `docs/handbook/reference/KNOWN_LIMITATIONS.md`
 - `docs/handbook/reference/PROJECT_MEMORY.md`
 - `docs/handbook/reference/IMPLEMENTATION_PATTERNS.md`
 - `docs/handbook/reference/COMMON_FAILURES.md`

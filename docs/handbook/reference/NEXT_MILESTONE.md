@@ -37,65 +37,65 @@ Implementation must not begin until the human approves one candidate. Commit app
 
 ## Status
 
-Implemented for the approved candidate. Pending human review and separate commit approval.
+Implemented for the approved candidate. Human review and commit approval received.
 
 ## Approval
 
-Candidate 1, Canonicalize Undo/Reversal Terminology, was approved for implementation.
+Candidate 1, Canonicalize Return Transaction Semantics, was approved for implementation.
 
 ## Recommended Candidate
 
-Candidate 1: Canonicalize Undo/Reversal Terminology.
+Candidate 1: Canonicalize Return Transaction Semantics.
 
 Recommendation: Implemented.
 
-Implementation Note: Canonical terminology now defines `undo` as the user-facing action and service operation, `reversal` as the domain event and current persisted correction transaction type, `reversal_of_transaction_id` as the original-transaction link, and legacy persisted `undo` rows as read-compatible history only.
+Implementation Note: Current return semantics now define new application-created returns as `transaction_type = "returned"` with `quantity_effect = "transfer"`, source and destination locations, and positive quantity. Migration support for `returned` plus `increase` is compatibility only.
 
-Confidence: 66%.
+Confidence: 70%.
 
-Rationale: Undo/reversal terminology drift affected inventory correction semantics, documentation, and future UI wording. The implementation was the smallest high-value slice because source behavior already created current reversal transactions.
+Rationale: Return semantics drift affected inventory balance expectations. The implementation was a documentation/reference slice because source behavior and tests already create and verify transfer-style return movement.
 
-Estimated Effort: Small to Medium.
+Estimated Effort: Medium.
 
 Assumptions:
 
-- Current inventory code behavior is correct: undo requests create `transactionType: "reversal"` drafts.
-- Legacy `undo` enum values and rows remain compatibility history and should not be removed in this milestone.
-- Feature docs can use "undo" for the user action when they explicitly describe the persisted event as `reversal`.
+- Current inventory code behavior is correct: return requests create `transactionType: "returned"` and `quantityEffect: "transfer"` drafts.
+- Migration compatibility for `returned` plus `increase` should remain intact.
+- Future data cleanup or migration work requires separate approval.
 
 Uncertainties:
 
-- Whether a future data cleanup or migration should retire legacy `undo` values. That is intentionally outside this milestone.
+- Whether any legacy production data uses `returned` plus `increase`; no data inspection was performed in this documentation milestone.
 
 Reasons Alternatives Were Not Recommended:
 
-- Candidate 2 is important, but return semantics may require broader domain and migration review than this terminology slice.
-- Candidate 3 is important, but offline queue architecture has higher design uncertainty and should follow a dedicated architecture milestone.
+- Candidate 2 is important, but offline queue architecture has more design surface and should follow canonical inventory transaction semantics.
+- Candidate 3 is valuable, but security architecture consolidation is less directly tied to the resolved inventory correctness drift.
 
-## Candidate 1: Canonicalize Undo/Reversal Terminology
+## Candidate 1: Canonicalize Return Transaction Semantics
 
 Recommendation: Implemented.
 
-Rationale: The repository already had reversal validation, transaction helpers, mapper compatibility, and migrations, but living docs and older feature docs mixed user-action language with current `reversal` persistence semantics.
+Rationale: Return transaction behavior is implemented as transfer movement, but documentation and migration compatibility previously made current behavior ambiguous.
 
-Confidence: 66%.
+Confidence: 70%.
 
-Estimated Effort: Small to Medium.
+Estimated Effort: Medium.
 
 Dependencies:
 
-- Review [ADR-0009](../adrs/0009-auditability-and-reversibility.md), inventory architecture, transaction compatibility migrations, reversal validation, transaction helpers, mapper compatibility, and affected feature docs.
+- Review [ADR-0002](../adrs/0002-positive-quantities-and-quantity-effects.md), inventory architecture, return validation/tests, transaction helpers, aggregation tests, return scan workflow docs, and transaction constraint migration.
 
 Risk:
 
-- Medium inventory-correctness risk if terminology cleanup accidentally changes semantics.
+- Medium correctness risk because return semantics affect balances and reversal behavior.
 - Low implementation risk because the completed slice is documentation/reference-only.
 
-Expected Value: High. Future correction workflows now have one vocabulary across user action, domain event, persisted transaction type, and legacy compatibility.
+Expected Value: High. Future return workflow work now has one current creation model and an explicit compatibility boundary.
 
-Architecture Impact: Medium. Inventory architecture and ADR-0009 now contain canonical correction terminology.
+Architecture Impact: Medium. Inventory architecture and ADR-0002 now state canonical return semantics.
 
-Security Impact: Low. Main concern is auditability and inventory integrity rather than authorization.
+Security Impact: Low. Main concern is inventory integrity rather than authorization.
 
 Testing Strategy:
 
@@ -104,44 +104,15 @@ Testing Strategy:
 
 Expected Deliverables:
 
-- Canonical distinction between user-facing undo action, domain reversal event, database transaction type, and legacy compatibility.
-- Updated affected docs without changing immutable ledger semantics.
+- Canonical return transaction semantics.
+- Updated affected docs without changing ledger behavior or migration compatibility.
 
 Validation Plan:
 
-- Confirm references no longer conflict on `undo` versus `reversal`.
-- Confirm no historical transaction mutation or signed-quantity behavior is introduced.
+- Confirm references no longer describe return semantics ambiguously.
+- Confirm no source, migration, or runtime behavior changed.
 
-## Candidate 2: Canonicalize Return Transaction Semantics
-
-Recommendation: Defer.
-
-Rationale: Return transaction behavior is implemented, but documentation still mixes transfer-style return movement and migration compatibility that permits increase semantics.
-
-Confidence: 62%.
-
-Estimated Effort: Medium.
-
-Dependencies:
-
-- Review [ADR-0002](../adrs/0002-positive-quantities-and-quantity-effects.md), return validation, return workflow services, transaction constraint migration, and return feature docs.
-
-Risk:
-
-- Medium correctness risk because return semantics affect balances and reversal behavior.
-
-Expected Value: High. Resolves DD-003 and prevents future return workflow ambiguity.
-
-Architecture Impact: Medium.
-
-Security Impact: Low.
-
-Testing Strategy:
-
-- Documentation/reference validation first.
-- Run targeted return validation/service tests if the milestone discovers source or test contradictions.
-
-## Candidate 3: Define Offline Queue Architecture
+## Candidate 2: Define Offline Queue Architecture
 
 Recommendation: Defer.
 
@@ -170,6 +141,35 @@ Testing Strategy:
 
 - Architecture-only validation first.
 - Future implementation should include queue unit tests, replay/idempotency tests, and integration coverage where feasible.
+
+## Candidate 3: Consolidate Security Architecture Ownership
+
+Recommendation: Defer.
+
+Rationale: Security status is distributed across auth architecture, permissions, Supabase docs, ADRs, migrations, and status references. A living security architecture page would reduce future authorization and RLS drift.
+
+Confidence: 58%.
+
+Estimated Effort: Medium.
+
+Dependencies:
+
+- Review [Security Status](./SECURITY_STATUS.md), [Auth Architecture](../../AUTH_ARCHITECTURE.md), [Permissions Matrix](../../PERMISSIONS_MATRIX.md), [Supabase README](../../../infra/supabase/README.md), ADR-0003, ADR-0004, ADR-0007, ADR-0010, and current migrations.
+
+Risk:
+
+- Medium documentation/security risk if the page overstates implemented guarantees.
+
+Expected Value: High before future volunteer write capability or offline replay work.
+
+Architecture Impact: Medium.
+
+Security Impact: Medium.
+
+Testing Strategy:
+
+- Documentation/reference validation.
+- No code verification unless implementation scope changes.
 
 ## Owner
 

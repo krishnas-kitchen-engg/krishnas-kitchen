@@ -54,7 +54,7 @@ Security maturity: foundation implemented, production posture still needs review
 
 Documentation maturity: high for engineering process and reconstruction, medium for application-state documentation. Canonical handbook docs exist, but older docs still contain drift, duplication, and some encoding artifacts. See [Document Index](./DOCUMENT_INDEX.md) and [Documentation Drift](./DOCUMENTATION_DRIFT.md).
 
-Overall project status: ready to continue controlled application development. The temporary volunteer login diagnostic worktree state, temporary volunteer permission drift, and undo/reversal terminology drift have been resolved; remaining high-priority risks include return semantics drift and incomplete offline queue architecture.
+Overall project status: ready to continue controlled application development. The temporary volunteer login diagnostic worktree state, temporary volunteer permission drift, undo/reversal terminology drift, and return semantics drift have been resolved; remaining high-priority risks include incomplete offline queue architecture and distributed security architecture ownership.
 
 ## Product Vision Summary
 
@@ -84,7 +84,7 @@ Long-term vision: become the operational backbone for volunteer-run kitchens glo
 | Barcode Scanning | Partially Implemented | `cameraScanningService`, scan workflow UI files, [Documentation Drift](./DOCUMENTATION_DRIFT.md) DD-006 | Manual/scanner workflow UI exists; camera/scanning docs overlap and need canonical boundary clarification. |
 | Receiving | Implemented | receive domain/workflow services and `ReceiveInventoryScreen` | Domain, UI, and tests exist. Persistence adapters exist. |
 | Transfers | Implemented | transfer domain/workflow services and `TransferInventoryScreen` | Domain, UI, and tests exist. |
-| Returns | Implemented with Drift | return domain/workflow services and `ReturnInventoryScreen`; DD-003 | Implementation exists, but return semantics are documented inconsistently. |
+| Returns | Implemented with Canonical Semantics | return domain/workflow services and `ReturnInventoryScreen`; [Inventory Architecture](../../INVENTORY_ARCHITECTURE.md) | Current returns use `transaction_type = "returned"` with `quantity_effect = "transfer"`; migration support for `returned` plus `increase` is compatibility only. |
 | Undo/Reversal | Implemented with Canonical Terminology | reversal validation, transaction helpers, migrations, [ADR-0009](../adrs/0009-auditability-and-reversibility.md) | `undo` is the user-facing action and service operation; `reversal` is the current persisted correction transaction type; legacy persisted `undo` rows remain read-compatible history only. |
 | Unknown Barcodes | Implemented | unknown barcode domain/service/repository/tests; migration `20260606000400_add_unknown_barcodes.sql` | Home/tasks summary files also reference pending unknown barcodes. |
 | Low Stock | Implemented | low-stock threshold repository/mapper/tests; migration `20260606000500_add_inventory_low_stock_thresholds.sql` | Home and tasks summary components exist. |
@@ -169,14 +169,14 @@ This timeline is reconstructed from [Changelog Summary](./CHANGELOG_SUMMARY.md),
 | Engineering Handbook v1.0 | Handbook docs and ADRs | `29757e6 docs(handbook): establish Engineering Handbook v1.0` |
 | EOS freeze | Stable Engineering Operating System v1.2 | `e5f2fe7`, `2aaaad5 docs(eos): freeze Engineering Operating System v1.2` |
 
-Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Project Reconstruction v1 as the active documentation milestone.
+Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Canonicalize Return Transaction Semantics as the active implemented milestone.
 
 ## ADR Status
 
 | ADR | Decision Status | Implementation Status | Notes |
 |---|---|---|---|
 | [ADR-0001 Immutable Inventory Ledger](../adrs/0001-immutable-inventory-ledger.md) | Accepted | Implemented | Domain helpers, aggregation, migrations, and docs support immutable transaction history. |
-| [ADR-0002 Positive Quantities And Quantity Effects](../adrs/0002-positive-quantities-and-quantity-effects.md) | Accepted | Implemented with drift | Quantity/effect model exists; return semantics drift is recorded in DD-003. |
+| [ADR-0002 Positive Quantities And Quantity Effects](../adrs/0002-positive-quantities-and-quantity-effects.md) | Accepted | Implemented | Quantity/effect model exists; current return semantics are canonicalized as `returned` plus `transfer`, while migration compatibility remains documented. |
 | [ADR-0003 Supabase Auth And RLS Boundary](../adrs/0003-supabase-auth-and-rls-boundary.md) | Accepted | Partially Implemented | Supabase Auth, RLS helpers, policies, and auth providers exist; production security review remains needed. |
 | [ADR-0004 Temporary Volunteer Session Model](../adrs/0004-temporary-volunteer-session-model.md) | Accepted | Partially Implemented / Needs Review | Session storage, repository, RPCs, tests, and read/session-only browser permissions exist. Temporary auth/routing diagnostics have been resolved. |
 | [ADR-0005 Mobile-First Offline PWA](../adrs/0005-mobile-first-offline-pwa.md) | Accepted | Partially Implemented | PWA stack exists; offline queue architecture is incomplete. |
@@ -214,7 +214,7 @@ Genuine blockers before permission-changing application development resumes:
 
 - Future temporary volunteer write capability requires a separate approved server-enforced write model before permissions are expanded.
 
-Not blockers, but important gaps: offline queue architecture, return semantics documentation drift, security architecture ownership, and older documentation drift.
+Not blockers, but important gaps: offline queue architecture, security architecture ownership, scanning documentation drift, schema reference drift, and older documentation drift.
 
 ## Recommended Next Engineering Milestone
 
@@ -222,11 +222,11 @@ Use the EOS candidate flow in [AI Engineering Operating Model](../governance/AI_
 
 | Rank | Candidate | Recommendation | Confidence | Effort | Dependencies | Risk | Why Alternatives Were Rejected |
 |---|---|---|---|---|---|---|---|
-| 1 | Canonicalize undo/reversal terminology | Implemented | 66% | Small to Medium | ADR-0009 review, transaction helper/reversal validation review, feature doc review | Medium inventory-semantics risk | Smallest high-value drift resolution after temporary volunteer permissions. |
-| 2 | Canonicalize return transaction semantics | Defer | 62% | Medium | ADR-0002 review, return validation/service review, migration compatibility review | Medium correctness risk | Important, but broader than the terminology slice. |
-| 3 | Define offline queue architecture | Defer | 60% | Medium | ADR-0005 review, inventory repository boundary review, architecture approval | Medium-to-high architecture risk | Important, but higher design uncertainty than terminology cleanup. |
+| 1 | Canonicalize return transaction semantics | Implemented | 70% | Medium | ADR-0002 review, return validation/service review, migration compatibility review | Medium correctness risk | Smallest high-value inventory correctness drift after undo/reversal cleanup. |
+| 2 | Define offline queue architecture | Defer | 60% | Medium | ADR-0005 review, inventory repository boundary review, architecture approval | Medium-to-high architecture risk | Important, but higher design uncertainty than return semantics cleanup. |
+| 3 | Consolidate security architecture ownership | Defer | 58% | Medium | Security status, auth architecture, permissions matrix, Supabase README, security ADRs, migrations | Medium documentation/security risk | Valuable, but less directly tied to a current transaction correctness drift. |
 
-Recommended next action: human review of the implemented undo/reversal terminology milestone. Do not implement return semantics or offline architecture work until a separate candidate milestone is approved.
+Recommended next action: human review of the implemented return semantics milestone. Do not implement offline architecture or security architecture work until a separate candidate milestone is approved.
 
 ## Engineering Health
 
@@ -234,10 +234,10 @@ Recommended next action: human review of the implemented undo/reversal terminolo
 |---|---|---|
 | Architecture | Good with known gaps | ADRs and architecture references establish core boundaries; offline/security living architecture pages remain gaps. |
 | Security | Watch | RLS/RPC foundations exist; temporary volunteer browser permissions are restricted to read/session capabilities. |
-| Testing | Watch | Many tests exist across domain, repository, migration, auth, UI, and utilities; latest recorded full-suite result passed for the undo/reversal terminology milestone, and future implementation milestones must rerun verification. |
+| Testing | Watch | Many tests exist across domain, repository, migration, auth, UI, and utilities; latest recorded full-suite result passed for the return semantics milestone, and future implementation milestones must rerun verification. |
 | Documentation | Good | EOS v1.2 is Stable; document index, drift register, ADRs, templates, and living references exist. |
-| Roadmap | Conditional | Temporary volunteer permission drift and undo/reversal terminology drift are complete; next candidate selection should happen after human review and commit approval. |
-| Technical Debt | Watch | Return semantics drift and offline queue architecture remain open. |
+| Roadmap | Conditional | Temporary volunteer permission drift, undo/reversal terminology drift, and return semantics drift are complete; next candidate selection should happen after this commit. |
+| Technical Debt | Watch | Offline queue architecture and security architecture ownership remain open. |
 | Overall | Good for controlled development | The project has enough governance and implementation structure to resume application work after candidate approval. |
 
 ## Repository Health
@@ -246,11 +246,11 @@ Working tree at latest reconstruction update:
 
 - No auth/routing application diff remains after temporary diagnostic cleanup.
 - Living documentation updates are present for the reconstruction, milestone, memory, state, changelog, implementation patterns, and engineering lessons.
-- Undo/reversal terminology drift is implemented and ready for human review.
+- Return semantics drift is implemented and approved for commit.
 
 Resolved debug work: [Project Memory](./PROJECT_MEMORY.md), [Common Failures and Engineering Lessons](./COMMON_FAILURES.md), and [Current Milestone](./CURRENT_MILESTONE.md) record that temporary volunteer login diagnostic instrumentation was removed and verified.
 
-Attention before development resumes: complete human review and commit approval for this milestone, then refresh candidate options and avoid mixing offline or return-semantics decisions into unrelated work.
+Attention before development resumes: refresh candidate options and avoid mixing offline or security architecture decisions into unrelated work.
 
 ## Known Assumptions
 
@@ -298,7 +298,7 @@ They should avoid changing:
 
 They should plan next:
 
-- Review and approve the implemented undo/reversal terminology milestone before commit.
+- Refresh candidate options after this commit.
 - Keep any follow-up milestone small, independently verifiable, and reversible.
 - Preserve separate approval gates for implementation review and commit.
 

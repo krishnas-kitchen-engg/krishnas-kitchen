@@ -57,6 +57,7 @@ The project is not documented as production-ready.
 - Living planning/status references have been refreshed so the next candidate set no longer points to completed diagnostic cleanup work.
 - Temporary volunteer permission drift was reconciled by restricting temporary volunteer browser permissions to read/session capabilities.
 - Undo/reversal terminology was canonicalized across inventory architecture, ADR-0009, affected feature docs, and living drift/debt/decision references.
+- Return transaction semantics were canonicalized across inventory architecture, affected feature docs, and living drift references after reviewing ADR-0002.
 
 ## Implemented Domains
 
@@ -80,6 +81,8 @@ Inventory is implemented around immutable transaction drafts, aggregation, visib
 Inventory architecture and ADRs establish that balances are derived from immutable transaction history.
 
 Canonical correction terminology: `undo` is the user-facing action and service operation, `reversal` is the domain event and current persisted correction transaction type, `reversal_of_transaction_id` links to the original transaction, and legacy persisted `undo` rows remain read-compatible history only.
+
+Canonical return semantics: current application-created return transactions use `transaction_type = "returned"` with `quantity_effect = "transfer"`. Returns move positive quantity from source location to destination location; migration support for `returned` plus `increase` is compatibility only.
 
 ## Database Status
 
@@ -107,7 +110,7 @@ Known gaps remain in documentation synchronization and explicit security status 
 
 Vitest is configured. Tests exist for inventory domain logic, repository adapters, migrations, auth volunteer sessions, UI reducers/screens, shell navigation, and shared utilities.
 
-Latest verification for the undo/reversal terminology milestone passed:
+Latest verification for the return semantics milestone passed:
 
 - `corepack pnpm@9.15.4 format`
 - `corepack pnpm@9.15.4 typecheck`
@@ -123,7 +126,7 @@ Existing project docs cover product vision, MVP scope, system architecture, inve
 
 The handbook now contains governance, the canonical AI Engineering Operating Model, engineering principles, process, templates, ADR framework, initial ADRs, living reference documents, project reconstruction, project memory, implementation patterns, common failures and engineering lessons, document index, drift register, and health report.
 
-Temporary volunteer permission drift has been reconciled. Undo/reversal terminology drift has been resolved. The next candidate set should be refreshed after human review.
+Temporary volunteer permission drift, undo/reversal terminology drift, and return semantics drift have been resolved. The next candidate set should be refreshed after this commit.
 
 The Engineering Operating System is Stable at v1.2. Future EOS changes require implementation-driven justification rather than speculative improvement.
 

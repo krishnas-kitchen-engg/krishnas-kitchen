@@ -102,6 +102,8 @@ Returns:
 * move inventory
 * do not create inventory
 * do not destroy inventory
+* persist as `transaction_type = "returned"`
+* use `quantity_effect = "transfer"`
 
 Inventory totals remain conserved.
 

@@ -84,6 +84,10 @@ so that inventory balances remain accurate and usable stock is not lost.
 8. Inventory balances re-aggregate automatically
 9. Audit metadata is recorded
 
+Current return transactions persist as `transaction_type = "returned"` with
+`quantity_effect = "transfer"`. The source location decreases and the
+destination location increases.
+
 ---
 
 # Return Examples
@@ -208,6 +212,8 @@ Returns:
 - remain immutable
 - cannot be edited
 - cannot be deleted
+- use positive quantities
+- use transfer semantics from source to destination
 
 Corrections occur via reversal transactions.
 

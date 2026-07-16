@@ -85,6 +85,25 @@ Transfer direction must not depend on signed quantities.
 
 ---
 
+# Return Model
+
+Current return transactions use:
+
+- `transaction_type = "returned"`
+- `quantity_effect = "transfer"`
+- `source_location_id`
+- `destination_location_id`
+
+Returns move unused inventory from the operational source location back to the
+storage destination location. They subtract from the source and add to the
+destination through transfer semantics while keeping quantity positive.
+
+The transaction constraint reconciliation migration permits `returned` rows with
+`quantity_effect = "increase"` for compatibility. New application code must
+create returns with `quantity_effect = "transfer"`.
+
+---
+
 # Quantity Rules
 
 Quantities must always remain positive.
@@ -170,6 +189,8 @@ Transactions store positive quantities only. `quantity_effect` determines balanc
 - `decrease`: subtracts quantity from `source_location_id`
 - `transfer`: subtracts from source and adds to destination
 - `none`: records an event without changing balance
+
+Current `returned` transactions use `transfer` semantics.
 
 The user-facing undo action creates a new `reversal` transaction. It never edits
 the original transaction.

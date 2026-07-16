@@ -34,6 +34,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 - Browser clients are not authoritative for protected authorization decisions.
 - Temporary volunteer browser permissions are read/session-only: `locations.read`, `items.read`, `inventory.read`, and `volunteer_sessions.create`.
 - Undo/reversal terminology is canonical: `undo` is the user-facing action and service operation, `reversal` is the current persisted correction transaction type, and legacy persisted `undo` rows are read-compatible history only.
+- Return semantics are canonical: new application-created `returned` transactions use `quantityEffect: "transfer"` and move positive quantity from source location to destination location.
 - Offline capability is an architectural requirement, but detailed offline queue architecture remains incomplete.
 - Temporary volunteer login diagnostic instrumentation was resolved and should not be reintroduced as permanent behavior.
 - Living planning/status references must be refreshed after completed milestones so `CURRENT_MILESTONE.md`, `NEXT_MILESTONE.md`, scorecard, and limitations do not keep pointing future sessions at completed work.
@@ -53,6 +54,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 | Repository reconstruction found stale milestone state outside the main candidate page | `PROJECT_RECONSTRUCTION.md` still carried an older ranked table after `NEXT_MILESTONE.md` was refreshed | Future sessions could restart from completed work despite the current candidate page being correct | Validate reconstruction docs against current milestone and next milestone during every resume |
 | Temporary volunteer workflow tests relied on default operational permissions in auth fixtures | Fixture defaults made temporary-session tests pass as though temporary volunteers had write permissions | The permission drift could persist without a helper-level test | In permission-sensitive tests, pass the exact permissions being asserted and add a direct helper test near the permission source |
 | Undo/reversal drift was resolved without source changes | Current code already creates `reversal` transactions and keeps legacy `undo` compatibility at the mapper/database boundary | Documentation could be fixed safely as a terminology milestone instead of a behavior change | For inventory correction work, preserve `undo` as UI/service language and `reversal` as persisted event language unless a new ADR supersedes ADR-0009 |
+| Return semantics drift was resolved without source changes | Current code already creates return transactions as `returned` plus `transfer`, while migrations allow an older compatibility shape | Documentation could clarify current behavior without changing ledger semantics | Treat `returned` plus `transfer` as the current creation path; preserve migration compatibility unless a future data migration is separately approved |
 
 ## Memory Update Rules
 
