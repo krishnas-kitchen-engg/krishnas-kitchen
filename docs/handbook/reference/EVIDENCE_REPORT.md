@@ -30,43 +30,45 @@ This document records evidence gathered during the latest repository reconstruct
 
 Date: 2026-07-17.
 
-Milestone: Recipe Scaling Domain Foundation.
+Milestone: Recipe Availability Domain Foundation.
 
-Status: Implemented, verified, human-approved, and committed.
+Status: Implemented and verified. Ready for human review. Commit approval remains pending.
 
 ## Repository Evidence
 
 - Branch: `docs/engineering-handbook`.
-- Working tree before implementation: clean after `6662e77 docs(eos): refine completion reporting terminology`.
-- Latest committed baseline before implementation: `6662e77 docs(eos): refine completion reporting terminology`.
+- Working tree before implementation: clean after `830c5dc feat(recipes): add recipe scaling domain foundation`.
+- Latest committed baseline before implementation: `830c5dc feat(recipes): add recipe scaling domain foundation`.
 - Product Horizons identifies Horizon 1, Core Kitchen Inventory Platform, as active.
-- The milestone is inside Horizon 1 because Horizon 1 explicitly includes recipe scaling.
+- The milestone is inside Horizon 1 because Horizon 1 explicitly includes ingredient availability checks.
 
 ## Architecture Evidence
 
-- Recipe scaling is implemented under `apps/web/src/domains/recipes`, aligned with ADR-0008 domain-driven package organization.
-- Scaling reuses existing recipe definition validation and normalization before calculating target quantities.
-- No feature UI, routes, navigation, persistence adapters, migrations, RLS, RPC, permission, unit conversion, availability check, shopping-list generation, or Product Horizons changes were made.
+- Recipe availability is implemented under `apps/web/src/domains/recipes`, aligned with ADR-0008 domain-driven package organization.
+- Availability reuses existing recipe definition validation and normalization before comparing ingredient requirements with inventory balances.
+- Availability composes recipe inputs with projected inventory item balances by exact `itemId` plus `unit` matching.
+- No feature UI, routes, navigation, persistence adapters, migrations, RLS, RPC, permission, unit conversion, shopping-list generation, or Product Horizons changes were made.
 
 ## Implementation Evidence
 
-- Added `scaleRecipeDefinition`.
-- Added `RECIPE_QUANTITY_DECIMAL_PLACES` to document six-decimal recipe quantity precision.
-- Scaling validates the base recipe and target servings, normalizes user-entered recipe text, preserves ingredient item references, units, and notes, and scales ingredient quantities by target servings.
-- Added focused Vitest coverage for scaling, normalization while scaling, six-decimal rounding, invalid base recipes, and invalid target servings.
+- Added `evaluateRecipeAvailability`.
+- Added `getRecipeAvailabilityStatus`.
+- Added recipe availability result/status types and recipe-domain barrel exports.
+- Availability validates and normalizes recipe input, aggregates projected item balances, allocates available quantity per recipe ingredient line, and reports `available`, `short`, or `missing` status with shortage quantities.
+- Added focused Vitest coverage for available, short, missing, exact-unit, negative-balance, duplicate-ingredient, and validation-error behavior.
 
 ## Documentation Validation
 
-- Living references now identify Recipe Scaling Domain Foundation as the active implemented milestone.
-- Living docs record that recipe UI, persistence, unit conversion, availability checks, shopping-list generation, menu planning, procurement, analytics, and other higher-horizon behavior remain deferred.
+- Living references now identify Recipe Availability Domain Foundation as the active implemented milestone pending human review.
+- Living docs record that recipe UI, persistence, unit conversion, shopping-list generation, menu planning, procurement, analytics, and other higher-horizon behavior remain deferred.
 - Product Horizons was not changed because the active horizon and exit criteria did not change.
-- Previously observed documentation drift remains: `NEXT_MILESTONE.md` and `PROJECT_RECONSTRUCTION.md` carried stale candidate/current-milestone text before this implementation and were refreshed only where required for this milestone handoff.
+- Previously observed documentation drift in `NEXT_MILESTONE.md` and `PROJECT_RECONSTRUCTION.md` was addressed where required to reflect the approved availability milestone.
 
 ## Verification Results
 
 Focused verification passed:
 
-- `corepack pnpm@9.15.4 exec vitest run apps/web/src/domains/recipes/domain/recipeDefinition.test.ts`
+- `corepack pnpm@9.15.4 exec vitest run apps/web/src/domains/recipes/domain/recipeAvailability.test.ts`
 
 Full verification passed:
 
@@ -79,13 +81,12 @@ Full verification passed:
 
 ## Residual Risks
 
-None known for the completed recipe scaling domain foundation.
+None known for the completed recipe availability domain foundation.
 
 ## Future Approved Work
 
 - Recipe UI, routes, persistence, migrations, and authorization.
 - Recipe unit conversion.
-- Ingredient availability checks.
 - Shopping-list generation.
 - Menu planning, procurement, forecasting, analytics, and other higher-horizon work.
 

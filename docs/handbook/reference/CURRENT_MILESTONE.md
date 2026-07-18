@@ -33,29 +33,29 @@ Update this document whenever a milestone starts, pauses, completes, or changes 
 
 ## Current Active Milestone
 
-Recipe Scaling Domain Foundation.
+Recipe Availability Domain Foundation.
 
 ## Goal
 
-Add the smallest production-quality recipe scaling domain foundation for Horizon 1 recipe work without adding UI, persistence, migrations, availability checks, shopping-list generation, menu planning, procurement, or higher-horizon behavior.
+Add the smallest production-quality recipe availability domain foundation for Horizon 1 recipe work without adding UI, persistence, migrations, shopping-list generation, menu planning, procurement, unit conversion, or higher-horizon behavior.
 
 ## Status
 
-Implemented, verified, human-approved, and committed.
+Implemented and verified. Ready for human review. Commit approval remains pending.
 
 ## Scope
 
-- Add a recipe scaling helper that scales ingredient quantities from base servings to target servings.
-- Reuse existing recipe definition validation and normalization before scaling.
-- Preserve ingredient item references, units, and notes while updating quantities.
-- Round scaled ingredient quantities to a documented six-decimal domain precision.
-- Add focused Vitest coverage for scaling, normalization during scaling, rounding, and validation errors.
-- Preserve Product Horizons, runtime routes, UI screens, navigation, Supabase schema, migrations, RLS/RPC behavior, inventory behavior, auth behavior, availability checks, shopping-list generation, and higher-horizon product scope.
+- Add a pure recipe availability evaluator that compares normalized recipe ingredients with projected inventory item balances.
+- Match inventory by exact `itemId` and `unit`; do not perform unit conversion.
+- Report per-ingredient `available`, `short`, or `missing` status, allocated available quantity, required quantity, and shortage quantity.
+- Aggregate same-item inventory balances while preventing duplicate recipe ingredient lines from reusing the same available quantity.
+- Add focused Vitest coverage for available, short, missing, exact-unit, negative-balance, duplicate-ingredient, and validation-error behavior.
+- Preserve Product Horizons, runtime routes, UI screens, navigation, Supabase schema, migrations, RLS/RPC behavior, inventory mutation behavior, auth behavior, shopping-list generation, and higher-horizon product scope.
 
 ## Files Affected
 
-- `apps/web/src/domains/recipes/domain/recipeDefinition.ts`
-- `apps/web/src/domains/recipes/domain/recipeDefinition.test.ts`
+- `apps/web/src/domains/recipes/domain/recipeAvailability.ts`
+- `apps/web/src/domains/recipes/domain/recipeAvailability.test.ts`
 - `apps/web/src/domains/recipes/index.ts`
 - `docs/handbook/reference/CURRENT_MILESTONE.md`
 - `docs/handbook/reference/CURRENT_STATE.md`
@@ -78,6 +78,7 @@ Implementation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.m
 
 Verification passed:
 
+- `corepack pnpm@9.15.4 exec vitest run apps/web/src/domains/recipes/domain/recipeAvailability.test.ts`
 - `corepack pnpm@9.15.4 format`
 - `corepack pnpm@9.15.4 typecheck`
 - `corepack pnpm@9.15.4 lint`
@@ -87,7 +88,7 @@ Verification passed:
 
 ## Next Review
 
-Session complete. Start the next session with repository reconstruction and active-horizon milestone selection.
+Stop for human review. Commit only after explicit commit approval.
 
 ## Owner
 

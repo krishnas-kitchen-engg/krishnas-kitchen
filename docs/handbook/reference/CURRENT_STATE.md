@@ -68,12 +68,13 @@ The project is not documented as production-ready.
 - Recipe definition domain foundation is implemented with pure domain types, validation, normalization, exports, and tests.
 - Engineering Operating System completion reporting now separates Residual Risks from Future Approved Work without changing workflow behavior.
 - Recipe scaling domain foundation is implemented with pure domain scaling logic and tests.
+- Recipe availability domain foundation is implemented with pure domain availability evaluation logic and tests.
 
 ## Implemented Domains
 
 - `auth`: authentication provider, auth screens, temporary volunteer session storage, volunteer session repository/RPC integration.
 - `inventory`: inventory domain, validation, aggregation, visibility, barcode lookup/catalog, unknown barcode, repository adapters, scan workflows, receive/transfer/return workflows.
-- `recipes`: recipe definition domain inputs, ingredient validation, serving/yield validation, normalization, recipe-specific validation errors, and ingredient quantity scaling.
+- `recipes`: recipe definition domain inputs, ingredient validation, serving/yield validation, normalization, recipe-specific validation errors, ingredient quantity scaling, and exact item/unit availability evaluation.
 - `home`: volunteer home summary and shell integration.
 - `tasks`: task screen and inventory-related task summaries.
 
@@ -99,9 +100,9 @@ Canonical offline architecture: offline writes must preserve domain validation, 
 
 ## Recipe Status
 
-Recipe definition and scaling domain work has started inside Horizon 1. The current slices validate recipe names, servings/yield, inventory item references, supported item units, and positive finite ingredient quantities; normalize user-entered recipe text; and scale ingredient quantities to a target serving count.
+Recipe definition, scaling, and availability domain work has started inside Horizon 1. The current slices validate recipe names, servings/yield, inventory item references, supported item units, and positive finite ingredient quantities; normalize user-entered recipe text; scale ingredient quantities to a target serving count; and evaluate ingredient availability against projected inventory item balances by exact item/unit match.
 
-No recipe UI, routes, persistence, migrations, availability checks, shopping-list generation, menu planning, procurement, or higher-horizon kitchen planning behavior is implemented.
+No recipe UI, routes, persistence, migrations, unit conversion, shopping-list generation, menu planning, procurement, or higher-horizon kitchen planning behavior is implemented.
 
 ## Database Status
 
@@ -131,7 +132,7 @@ Offline architecture is now documented in [Offline Sync Architecture](../archite
 
 Vitest is configured. Tests exist for inventory domain logic, repository adapters, migrations, auth volunteer sessions, UI reducers/screens, shell navigation, and shared utilities.
 
-Latest implementation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md) for the Recipe Scaling Domain Foundation.
+Latest implementation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md) for the Recipe Availability Domain Foundation.
 
 - `corepack pnpm@9.15.4 format`
 - `corepack pnpm@9.15.4 typecheck`

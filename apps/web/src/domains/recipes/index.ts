@@ -9,6 +9,15 @@ export {
   validateRecipeIngredient,
   validateRecipeServings
 } from "./domain/recipeDefinition";
+export {
+  evaluateRecipeAvailability,
+  getRecipeAvailabilityStatus
+} from "./domain/recipeAvailability";
+export type {
+  RecipeAvailabilityResult,
+  RecipeAvailabilityStatus,
+  RecipeIngredientAvailability
+} from "./domain/recipeAvailability";
 export type {
   RecipeDefinitionValidationErrorCode,
   RecipeDefinitionValidationErrorDetail,
