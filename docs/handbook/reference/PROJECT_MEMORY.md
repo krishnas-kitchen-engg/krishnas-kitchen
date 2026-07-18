@@ -31,6 +31,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 - Session resume is repository-evidence based. Do not create persistent session files; reconstruct first, then continue from the appropriate controller state when evidence shows an interrupted workflow.
 - Evidence Capture belongs inside the Verification to Ready For Human Review transition, not in a separate workflow state.
 - [Product Horizons](../../PRODUCT_HORIZONS.md) is the canonical long-term product roadmap. Horizon 1 is active; milestone recommendations must come from the active horizon.
+- Delivery Management is the canonical product-delivery reporting layer under `docs/delivery`. It is separate from the Engineering Operating System and consumes Product Horizons plus engineering evidence without overriding either.
 - [Engineering Principles](../governance/ENGINEERING_PRINCIPLES.md) records timeless philosophy; workflow belongs in the operating model.
 - Existing project documentation remains useful source material; do not duplicate it into the handbook without a focused milestone.
 - The inventory model is an immutable event ledger. Balances are derived from transactions.
@@ -73,6 +74,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 | Recipe availability can overstate readiness if inventory is reused across duplicate ingredient lines | A recipe can contain repeated item/unit entries even when normalized and valid | Availability now allocates available balance per recipe line so the same quantity is not reused | Treat recipe availability as exact item/unit allocation only; defer unit conversion, reservations, persistence, and shopping-list generation to separate approved milestones |
 | Recipe shopping lists can become procurement workflows too early | A shopping-list output naturally suggests vendors, approvals, purchasing, and persistence | The shopping-list foundation now derives shortage-only item/unit groups from availability results without procurement behavior | Keep shopping-list generation pure and exact-unit until separate approved milestones add UI, persistence, authorization, procurement, or unit conversion |
 | Recipe repository contracts can become schema design too early | Once a repository boundary exists, it can tempt premature Supabase tables, RLS, and adapter details | The repository contract foundation defines scoped list/read types only and keeps records compatible with pure recipe calculations | Add schema, adapters, RLS/RPC, authorization, and offline behavior only through separate approved milestones |
+| Delivery reporting can blur into engineering governance | The product needed a way to answer delivery progress, increment usability, pilot readiness, and production readiness without changing the EOS | Delivery Management was created as a separate four-document handbook under `docs/delivery`, with Product Horizons owning scope and EOS owning execution | Use Delivery Management for product-facing delivery status and readiness; keep engineering workflow decisions in the EOS |
 
 ## Memory Update Rules
 

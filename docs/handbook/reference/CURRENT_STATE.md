@@ -71,6 +71,7 @@ The project is not documented as production-ready.
 - Recipe availability domain foundation is implemented with pure domain availability evaluation logic and tests.
 - Recipe shopping-list domain foundation is implemented with pure domain shortage-output logic and tests.
 - Recipe repository contract foundation is implemented with an application-layer list/read contract and tests.
+- Delivery Management handbook is frozen as a separate product-delivery reporting layer under `docs/delivery`.
 
 ## Implemented Domains
 
@@ -155,10 +156,13 @@ Temporary volunteer permission drift, undo/reversal terminology drift, return se
 
 The Engineering Operating System is stable for production use. [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) owns the Session Controller, including session resume, active-horizon milestone selection, verification repeat behavior, Evidence Capture, commit approval gates, and completion-report terminology. Future EOS changes require implementation-driven justification rather than speculative improvement.
 
+Delivery Management is active under `docs/delivery`. It is separate from the Engineering Operating System and owns product-facing capability status, current delivery status, and readiness assessment. [Delivery Status](../../delivery/DELIVERY_STATUS.md) records that no narrower Current Delivery Increment has been formally selected; [Delivery Readiness](../../delivery/DELIVERY_READINESS.md) currently assesses increment, pilot, and production readiness as blocked.
+
 ## Known Gaps
 
 - Offline queue implementation is not present; the living architecture defines the future queue and replay boundary.
 - Production security approval is not granted; the current security review baseline records posture and findings only.
+- Delivery Management currently records readiness as blocked because no formal Current Delivery Increment has been selected and pilot/production approval is not documented.
 - Existing docs still contain duplication and some encoding artifacts.
 - Older docs are classified in the document index, but content has not been physically migrated.
 

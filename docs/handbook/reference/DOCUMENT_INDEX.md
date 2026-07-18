@@ -43,6 +43,10 @@ Classifications are intentionally exact: each document has one classification.
 | `docs/PRODUCT_HORIZONS.md` | Canonical | Product/Engineering | Canonical long-term product roadmap and active horizon source | None | When horizons, active horizon, or horizon rules change |
 | `docs/PRODUCT_VISION.md` | Reference | Product | Active source material | None | When product vision changes |
 | `docs/SYSTEM_ARCHITECTURE.md` | Reference | Engineering | Active source material with drift | Future living system architecture page | When system architecture changes |
+| `docs/delivery/DELIVERY_MODEL.md` | Canonical | Delivery | Active Delivery Management model | None | When Delivery Management responsibilities, lifecycle semantics, authority boundaries, or document relationships change |
+| `docs/delivery/CAPABILITY_MATRIX.md` | Living | Delivery | Active capability delivery inventory | None | When product capabilities or delivery, current-delivery, pilot-ready, or production-ready status changes |
+| `docs/delivery/DELIVERY_STATUS.md` | Living | Delivery | Active product-facing delivery status | None | When Current Delivery Increment, delivery goal, included/excluded capabilities, completion, or product-facing gaps change |
+| `docs/delivery/DELIVERY_READINESS.md` | Living | Delivery | Active delivery readiness assessment | None | When increment readiness, pilot readiness, production readiness, blockers, residual risks, future approved work, or evidence materially changes |
 | `docs/execution/BACKLOG.md` | Archive Candidate | Engineering | Superseded by living milestone docs | `docs/handbook/reference/CURRENT_MILESTONE.md`; `docs/handbook/reference/NEXT_MILESTONE.md` | Reclassify during backlog cleanup |
 | `docs/execution/CODE_REVIEW_CHECKLIST.md` | Historical | Engineering | Superseded source material | `docs/handbook/process/ENGINEERING_REVIEW_CHECKLIST.md` | Revisit during process migration |
 | `docs/execution/DEFINITION_OF_DONE.md` | Historical | Engineering | Superseded source material | `docs/handbook/process/DEFINITION_OF_DONE.md` | Revisit during process migration |

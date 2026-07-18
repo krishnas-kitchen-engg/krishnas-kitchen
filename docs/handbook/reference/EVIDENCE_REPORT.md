@@ -14,10 +14,11 @@ related:
   - ./PROJECT_MEMORY.md
   - ./IMPLEMENTATION_PATTERNS.md
   - ./COMMON_FAILURES.md
-  - ../architecture/security.md
-  - ../architecture/offline-sync.md
-  - ../governance/AI_ENGINEERING_OPERATING_MODEL.md
-  - ../process/QUALITY_GATES.md
+  - ./DOCUMENT_INDEX.md
+  - ../../delivery/DELIVERY_MODEL.md
+  - ../../delivery/CAPABILITY_MATRIX.md
+  - ../../delivery/DELIVERY_STATUS.md
+  - ../../delivery/DELIVERY_READINESS.md
 ---
 
 # Evidence Report
@@ -30,65 +31,60 @@ This document records evidence gathered during the latest repository reconstruct
 
 Date: 2026-07-17.
 
-Milestone: Recipe Repository Contract Foundation.
+Milestone: Delivery Management Handbook Freeze.
 
-Status: Implemented and verified. Ready for human review. Commit approval remains pending.
+Status: Implemented and verified. Commit approval granted.
 
 ## Repository Evidence
 
 - Branch: `docs/engineering-handbook`.
-- Working tree before implementation: clean after `9a9aa53 feat(recipes): add shopping list domain foundation`.
-- Latest committed baseline before implementation: `9a9aa53 feat(recipes): add shopping list domain foundation`.
 - Product Horizons identifies Horizon 1, Core Kitchen Inventory Platform, as active.
-- The milestone is inside Horizon 1 because Horizon 1 includes recipe definitions, repository architecture, testing, and evidence generation.
+- Delivery Management is documentation-only and does not modify application code.
+- The milestone creates a separate product-delivery reporting layer under `docs/delivery`.
+- The Engineering Operating System was not modified.
+- Product Horizons was not modified.
 
 ## Architecture Evidence
 
-- Recipe repository contract is implemented under `apps/web/src/domains/recipes/application`, aligned with ADR-0006 repository pattern and ADR-0008 domain-driven package organization.
-- The contract defines scoped list/read queries and recipe records compatible with existing recipe domain calculations.
-- No feature UI, routes, navigation, Supabase adapters, persistence implementation, migrations, RLS, RPC, permission, unit conversion, procurement, vendor management, approval workflow, or Product Horizons changes were made.
+- [Delivery Model](../../delivery/DELIVERY_MODEL.md) defines the Delivery Management model, vocabulary, lifecycle, authority boundaries, and ownership rules.
+- [Capability Matrix](../../delivery/CAPABILITY_MATRIX.md) owns capability-level delivery status.
+- [Delivery Status](../../delivery/DELIVERY_STATUS.md) owns the Current Delivery Increment, delivery goal, included/excluded capabilities, and delivery progress summary.
+- [Delivery Readiness](../../delivery/DELIVERY_READINESS.md) owns increment readiness, pilot readiness, production readiness, blockers, residual risks, future approved work, and evidence summary.
+- [Product Horizons](../../PRODUCT_HORIZONS.md) remains canonical for product vision, roadmap, active horizon, product scope, explicit exclusions, and horizon exit criteria.
+- The Engineering Operating System remains canonical for engineering execution, Session Controller behavior, verification, approval gates, and commit process.
 
-## Implementation Evidence
+## Documentation Evidence
 
-- Added `RecipeRepository`.
-- Added recipe repository scope, list query, find query, and record types.
-- Added recipe-domain barrel exports for the repository contract.
-- Added focused Vitest coverage for scoped listing, scoped find, out-of-scope null behavior, and compatibility with scaling, availability, and shopping-list domain functions.
-
-## Documentation Validation
-
-- Living references now identify Recipe Repository Contract Foundation as the active implemented milestone pending human review.
-- Living docs record that recipe UI, persistence implementation, Supabase adapters, migrations, RLS/RPC changes, authorization, unit conversion, procurement, vendor management, approval workflows, menu planning, analytics, and other higher-horizon behavior remain deferred.
-- Product Horizons was not changed because the active horizon and exit criteria did not change.
-- Previously observed post-commit documentation drift for Recipe Shopping-List Domain Foundation was addressed where required while recording the approved repository-contract milestone.
+- Delivery Management currently records Horizon 1 as active product scope.
+- [Delivery Status](../../delivery/DELIVERY_STATUS.md) records that no narrower Current Delivery Increment has been formally selected.
+- [Delivery Readiness](../../delivery/DELIVERY_READINESS.md) assesses increment readiness, pilot readiness, and production readiness as blocked.
+- [Capability Matrix](../../delivery/CAPABILITY_MATRIX.md) records capability-level readiness as distinct from overall delivery readiness.
+- Final consistency refinements clarified delivery gaps versus readiness blockers and `Complete` capability semantics.
+- Required living references were updated to make Delivery Management discoverable during future Repository Reconstruction.
 
 ## Verification Results
 
-Focused verification passed:
+Documentation verification passed:
 
-- `corepack pnpm@9.15.4 exec vitest run apps/web/src/domains/recipes/application/recipeRepository.test.ts`
+- `corepack pnpm@9.15.4 prettier docs/delivery/*.md --check`
 
-Full verification passed:
+Repository scope validation:
 
-- `corepack pnpm@9.15.4 format`
-- `corepack pnpm@9.15.4 typecheck`
-- `corepack pnpm@9.15.4 lint`
-- `corepack pnpm@9.15.4 test`
-- `corepack pnpm@9.15.4 build`
-- `git diff --check`
+- No application code changes were made.
+- No Engineering Operating System documents were modified.
+- `docs/PRODUCT_HORIZONS.md` was not modified.
+
+Full typecheck, lint, tests, and build were not rerun because this milestone changes documentation only and does not affect runtime source, TypeScript, linted application code, tests, or build behavior.
 
 ## Residual Risks
 
-None known for the completed recipe repository contract foundation.
+None known for the Delivery Management handbook freeze.
 
 ## Future Approved Work
 
-- Recipe UI, routes, persistence, migrations, and authorization.
-- Recipe unit conversion.
-- Supabase recipe repository adapter and schema.
-- Recipe shopping-list UI and persistence.
-- Procurement, vendor management, and approval workflows.
-- Menu planning, procurement, forecasting, analytics, and other higher-horizon work.
+- Select or confirm a formal Current Delivery Increment.
+- Populate delivery status and readiness from future committed repository evidence.
+- Continue Horizon 1 application work through the Engineering Operating System.
 
 ## Evidence Location
 

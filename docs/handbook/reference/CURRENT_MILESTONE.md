@@ -5,7 +5,7 @@ doc_type: reference
 lifecycle: living
 owner: engineering
 update_cadence: at the start, review, and completion of every milestone
-last_reviewed: null
+last_reviewed: 2026-07-17
 related:
   - ./README.md
   - ./CURRENT_STATE.md
@@ -15,10 +15,10 @@ related:
   - ../process/MILESTONE_LIFECYCLE.md
   - ../process/SESSION_LIFECYCLE.md
   - ../process/DEFINITION_OF_DONE.md
-  - ../adrs/0010-security-review-before-commit.md
-  - ../architecture/README.md
-  - ../architecture/offline-sync.md
-  - ../architecture/security.md
+  - ../../delivery/DELIVERY_MODEL.md
+  - ../../delivery/CAPABILITY_MATRIX.md
+  - ../../delivery/DELIVERY_STATUS.md
+  - ../../delivery/DELIVERY_READINESS.md
 ---
 
 # Current Milestone
@@ -33,61 +33,58 @@ Update this document whenever a milestone starts, pauses, completes, or changes 
 
 ## Current Active Milestone
 
-Recipe Repository Contract Foundation.
+Delivery Management Handbook Freeze.
 
 ## Goal
 
-Add the smallest production-quality recipe repository contract foundation for Horizon 1 recipe work without adding Supabase adapters, persistence implementation, migrations, RLS/RPC changes, UI, routes, authorization changes, unit conversion, procurement, vendor management, approval workflows, menu planning, or higher-horizon behavior.
+Freeze the Delivery Management handbook as the canonical product-delivery reporting layer without modifying application code, the Engineering Operating System, or Product Horizons.
 
 ## Status
 
-Implemented and verified. Ready for human review. Commit approval remains pending.
+Implemented and verified. Approved for commit.
 
 ## Scope
 
-- Add a recipe application-layer repository contract for listing and reading recipe records.
-- Define scoped list and find query types with organization and optional temple scope.
-- Define recipe repository record metadata while keeping records compatible with existing recipe domain calculations.
-- Add focused Vitest coverage showing scoped list/read behavior and compatibility with scaling, availability, and shopping-list domain functions.
-- Preserve Product Horizons, runtime routes, UI screens, navigation, Supabase adapters, persistence implementation, schema, migrations, RLS/RPC behavior, inventory mutation behavior, auth behavior, procurement, vendor management, approval workflows, unit conversion, and higher-horizon product scope.
+- Add and finalize `docs/delivery/DELIVERY_MODEL.md`.
+- Add and finalize `docs/delivery/CAPABILITY_MATRIX.md`.
+- Add and finalize `docs/delivery/DELIVERY_STATUS.md`.
+- Add and finalize `docs/delivery/DELIVERY_READINESS.md`.
+- Update required living documentation so future Repository Reconstruction can discover Delivery Management.
+- Preserve application code, the Engineering Operating System, and Product Horizons.
 
 ## Files Affected
 
-- `apps/web/src/domains/recipes/application/recipeRepository.ts`
-- `apps/web/src/domains/recipes/application/recipeRepository.test.ts`
-- `apps/web/src/domains/recipes/index.ts`
+- `docs/delivery/DELIVERY_MODEL.md`
+- `docs/delivery/CAPABILITY_MATRIX.md`
+- `docs/delivery/DELIVERY_STATUS.md`
+- `docs/delivery/DELIVERY_READINESS.md`
 - `docs/handbook/reference/CURRENT_MILESTONE.md`
 - `docs/handbook/reference/CURRENT_STATE.md`
-- `docs/handbook/reference/NEXT_MILESTONE.md`
 - `docs/handbook/reference/PROJECT_MEMORY.md`
 - `docs/handbook/reference/IMPLEMENTATION_PATTERNS.md`
-- `docs/handbook/reference/COMMON_FAILURES.md`
 - `docs/handbook/reference/CHANGELOG_SUMMARY.md`
+- `docs/handbook/reference/DOCUMENT_INDEX.md`
 - `docs/handbook/reference/PROJECT_RECONSTRUCTION.md`
-- `docs/handbook/reference/PROJECT_SCORECARD.md`
+- `docs/handbook/reference/HANDBOOK_HEALTH_REPORT.md`
 - `docs/handbook/reference/EVIDENCE_REPORT.md`
 
 ## Known Blockers
 
-None known for this milestone.
+None known for this documentation milestone.
 
 ## Verification Status
 
-Implementation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
+Documentation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
 
 Verification passed:
 
-- `corepack pnpm@9.15.4 exec vitest run apps/web/src/domains/recipes/application/recipeRepository.test.ts`
-- `corepack pnpm@9.15.4 format`
-- `corepack pnpm@9.15.4 typecheck`
-- `corepack pnpm@9.15.4 lint`
-- `corepack pnpm@9.15.4 test`
-- `corepack pnpm@9.15.4 build`
-- `git diff --check`
+- `corepack pnpm@9.15.4 prettier docs/delivery/*.md --check`
+
+Full repository verification is not required because this milestone modifies documentation only and does not change application code, runtime behavior, types, linted source, tests, or build inputs.
 
 ## Next Review
 
-Stop for human review. Commit only after explicit commit approval.
+Commit approved. After commit, the Session Controller may complete with the commit hash and repository status.
 
 ## Owner
 
@@ -110,4 +107,7 @@ This is living documentation.
 - [Milestone Lifecycle](../process/MILESTONE_LIFECYCLE.md)
 - [Session Lifecycle](../process/SESSION_LIFECYCLE.md)
 - [Definition of Done](../process/DEFINITION_OF_DONE.md)
-- [Security Architecture](../architecture/security.md)
+- [Delivery Model](../../delivery/DELIVERY_MODEL.md)
+- [Capability Matrix](../../delivery/CAPABILITY_MATRIX.md)
+- [Delivery Status](../../delivery/DELIVERY_STATUS.md)
+- [Delivery Readiness](../../delivery/DELIVERY_READINESS.md)

@@ -55,9 +55,9 @@ Engineering maturity: strong. The Engineering Operating System is frozen for pro
 
 Security maturity: foundation implemented, production approval not granted. RLS is enabled on foundational tables, helper functions and controlled volunteer RPCs exist, authenticated inventory read policies exist, security ADRs are accepted, durable security boundaries are consolidated in [Security Architecture](../architecture/security.md), and the latest Horizon 1 security review baseline is recorded in [Security Status](./SECURITY_STATUS.md). Temporary volunteer browser permissions are restricted to read/session capabilities.
 
-Documentation maturity: high for engineering process and reconstruction, medium for application-state documentation. Canonical handbook docs exist, but older docs still contain drift, duplication, and some encoding artifacts. See [Document Index](./DOCUMENT_INDEX.md) and [Documentation Drift](./DOCUMENTATION_DRIFT.md).
+Documentation maturity: high for engineering process and reconstruction, medium for application-state documentation. Canonical handbook docs exist, and Delivery Management now provides a separate product-delivery reporting layer under `docs/delivery`. Older docs still contain drift, duplication, and some encoding artifacts. See [Document Index](./DOCUMENT_INDEX.md) and [Documentation Drift](./DOCUMENTATION_DRIFT.md).
 
-Overall project status: ready to continue controlled application development. The temporary volunteer login diagnostic worktree state, temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, security architecture ownership gap, unrecorded security review baseline, and EOS Session Controller freeze have been resolved. Recipe domain work has started as small Horizon 1 foundations; remaining high-priority risks include unimplemented offline queue/replay behavior and missing production security approval.
+Overall project status: ready to continue controlled application development. The temporary volunteer login diagnostic worktree state, temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, security architecture ownership gap, unrecorded security review baseline, EOS Session Controller freeze, and Delivery Management handbook gap have been resolved. Recipe domain work has started as small Horizon 1 foundations; remaining high-priority risks include unimplemented offline queue/replay behavior, missing production security approval, and no formally selected Current Delivery Increment.
 
 ## Product Vision Summary
 
@@ -103,6 +103,17 @@ Long-term vision: become the operational backbone for volunteer-run kitchens glo
 | Administration | Planned / Unknown | Product docs mention admin needs; no dedicated admin feature files found | Admin workflows are not evidenced as implemented. |
 | Reporting | Planned | [Product Vision](../../PRODUCT_VISION.md); [MVP Scope](../../MVP_SCOPE.md) excludes advanced reporting | Advanced reporting is explicitly outside initial MVP. |
 | Recipe UI, Persistence, Meal Planning, Procurement | Planned | [Product Vision](../../PRODUCT_VISION.md); [MVP Scope](../../MVP_SCOPE.md) | Recipe UI/persistence remain later Horizon 1 work; meal planning and procurement remain future expansion areas. |
+
+## Delivery Management Snapshot
+
+Delivery Management lives under `docs/delivery` and is separate from the Engineering Operating System.
+
+| Document | Responsibility | Current Delivery Evidence |
+|---|---|---|
+| [Delivery Model](../../delivery/DELIVERY_MODEL.md) | Delivery vocabulary, lifecycle, authority boundaries, and document responsibilities | Active and canonical for Delivery Management. |
+| [Capability Matrix](../../delivery/CAPABILITY_MATRIX.md) | Capability inventory and capability-level delivery/readiness status | Horizon 1 capabilities are tracked; capability-level readiness remains distinct from overall readiness. |
+| [Delivery Status](../../delivery/DELIVERY_STATUS.md) | Current Delivery Increment, delivery goal, included/excluded capabilities, and product-facing progress | No narrower Current Delivery Increment has been formally selected; Horizon 1 production-alpha path remains the delivery goal. |
+| [Delivery Readiness](../../delivery/DELIVERY_READINESS.md) | Increment, pilot, and production readiness; blockers; residual risks; future approved work; evidence summary | Increment readiness, pilot readiness, and production readiness are currently blocked. |
 
 ## Architecture Snapshot
 
@@ -187,7 +198,8 @@ This timeline is reconstructed from [Changelog Summary](./CHANGELOG_SUMMARY.md),
 | Recipe scaling domain foundation | Recipe scaling helper, six-decimal quantity precision, exports, and focused tests | `830c5dc feat(recipes): add recipe scaling domain foundation` |
 | Recipe availability domain foundation | Availability evaluator, exact item/unit matching, per-line balance allocation, exports, and focused tests | `4906960 feat(recipes): add recipe availability domain foundation` |
 | Recipe shopping-list domain foundation | Shortage-only item/unit shopping-list generator, grouped totals, exports, and focused tests | `9a9aa53 feat(recipes): add shopping list domain foundation` |
-| Recipe repository contract foundation | Scoped list/read repository contract, record/query types, exports, and focused contract tests | Pending human review |
+| Recipe repository contract foundation | Scoped list/read repository contract, record/query types, exports, and focused contract tests | Committed in `98d6317` |
+| Delivery Management handbook freeze | Separate product-delivery reporting layer for capability status, delivery status, and readiness assessment | Pending commit |
 
 Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Recipe Repository Contract Foundation as the active implemented milestone pending human review in the current Session Controller run.
 
@@ -210,7 +222,7 @@ Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Recipe
 
 Canonical docs: [Engineering Handbook](../README.md), [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md), governance docs, process docs, ADR index/guide, architecture index, and handbook conventions.
 
-Living docs: [Current State](./CURRENT_STATE.md), [Current Milestone](./CURRENT_MILESTONE.md), [Next Milestone](./NEXT_MILESTONE.md), this reconstruction, [Project Scorecard](./PROJECT_SCORECARD.md), [Security Status](./SECURITY_STATUS.md), [Technical Debt](./TECH_DEBT.md), [Known Limitations](./KNOWN_LIMITATIONS.md), [Open Decisions](./OPEN_DECISIONS.md), [Documentation Drift](./DOCUMENTATION_DRIFT.md), [Project Memory](./PROJECT_MEMORY.md), and [Common Failures and Engineering Lessons](./COMMON_FAILURES.md).
+Living docs: [Current State](./CURRENT_STATE.md), [Current Milestone](./CURRENT_MILESTONE.md), [Next Milestone](./NEXT_MILESTONE.md), this reconstruction, [Project Scorecard](./PROJECT_SCORECARD.md), [Security Status](./SECURITY_STATUS.md), [Technical Debt](./TECH_DEBT.md), [Known Limitations](./KNOWN_LIMITATIONS.md), [Open Decisions](./OPEN_DECISIONS.md), [Documentation Drift](./DOCUMENTATION_DRIFT.md), [Project Memory](./PROJECT_MEMORY.md), [Common Failures and Engineering Lessons](./COMMON_FAILURES.md), and Delivery Management living docs under `docs/delivery`.
 
 Historical docs: accepted ADRs and many older feature/execution documents are classified in [Document Index](./DOCUMENT_INDEX.md). They remain useful context but are not always current authority.
 
@@ -289,6 +301,7 @@ Repository evidence shows these assumptions are currently baked into implementat
 - Security-sensitive work requires security review before commit readiness.
 - Future EOS changes require implementation-driven justification.
 - Recipe foundations currently include domain validation, scaling, exact item/unit availability, shortage-only shopping-list output, and a scoped repository contract only; persistence implementation, Supabase adapters, authorization, UI, unit conversion, procurement, vendor management, and approval workflows remain future approved slices.
+- Delivery Management records product-facing delivery status separately from engineering execution; Product Horizons owns scope and the EOS owns workflow.
 
 ## Lessons Worth Preserving
 
@@ -309,7 +322,8 @@ A brand-new senior engineer should understand first:
 - Krishna's Kitchen is an active-development, mobile-first PWA for volunteer kitchen inventory operations.
 - Inventory integrity, auditability, server-side authorization, and volunteer-friendly speed are the central constraints.
 - The frozen Engineering Operating System Session Controller is the canonical execution workflow.
-- The latest application work is the Recipe Repository Contract Foundation, implemented as a Horizon 1 application-boundary slice and pending human review.
+- The latest application work is the Recipe Repository Contract Foundation, implemented as a Horizon 1 application-boundary slice.
+- The latest documentation work is the Delivery Management handbook freeze, adding product-facing delivery status and readiness tracking.
 
 They should avoid changing:
 
@@ -323,6 +337,7 @@ They should plan next:
 
 - Refresh candidate options after reconstructing repository state in the next Session Controller run.
 - Recommend only active-horizon milestones from [Product Horizons](../../PRODUCT_HORIZONS.md).
+- Read Delivery Management during reconstruction for current delivery target, progress, and readiness.
 - Keep any follow-up milestone small, independently verifiable, and reversible.
 - Preserve separate approval gates for implementation review and commit.
 
