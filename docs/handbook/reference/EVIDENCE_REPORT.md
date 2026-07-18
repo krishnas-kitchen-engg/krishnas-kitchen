@@ -30,44 +30,43 @@ This document records evidence gathered during the latest repository reconstruct
 
 Date: 2026-07-17.
 
-Milestone: Recipe Shopping-List Domain Foundation.
+Milestone: Recipe Repository Contract Foundation.
 
 Status: Implemented and verified. Ready for human review. Commit approval remains pending.
 
 ## Repository Evidence
 
 - Branch: `docs/engineering-handbook`.
-- Working tree before implementation: clean after `4906960 feat(recipes): add recipe availability domain foundation`.
-- Latest committed baseline before implementation: `4906960 feat(recipes): add recipe availability domain foundation`.
+- Working tree before implementation: clean after `9a9aa53 feat(recipes): add shopping list domain foundation`.
+- Latest committed baseline before implementation: `9a9aa53 feat(recipes): add shopping list domain foundation`.
 - Product Horizons identifies Horizon 1, Core Kitchen Inventory Platform, as active.
-- The milestone is inside Horizon 1 because Horizon 1 explicitly includes shopping list generation.
+- The milestone is inside Horizon 1 because Horizon 1 includes recipe definitions, repository architecture, testing, and evidence generation.
 
 ## Architecture Evidence
 
-- Recipe shopping-list generation is implemented under `apps/web/src/domains/recipes`, aligned with ADR-0008 domain-driven package organization.
-- Shopping-list generation consumes recipe availability results instead of recalculating inventory readiness.
-- Shopping-list output groups shortages by exact `itemId` plus `unit` and does not perform unit conversion.
-- No feature UI, routes, navigation, persistence adapters, migrations, RLS, RPC, permission, unit conversion, procurement, vendor management, approval workflow, or Product Horizons changes were made.
+- Recipe repository contract is implemented under `apps/web/src/domains/recipes/application`, aligned with ADR-0006 repository pattern and ADR-0008 domain-driven package organization.
+- The contract defines scoped list/read queries and recipe records compatible with existing recipe domain calculations.
+- No feature UI, routes, navigation, Supabase adapters, persistence implementation, migrations, RLS, RPC, permission, unit conversion, procurement, vendor management, approval workflow, or Product Horizons changes were made.
 
 ## Implementation Evidence
 
-- Added `generateRecipeShoppingList`.
-- Added recipe shopping-list item/result types and recipe-domain barrel exports.
-- Shopping-list generation filters to shortage-only item/unit groups while preserving total required, allocated available, and shortage quantities.
-- Added focused Vitest coverage for shortage output, empty output, duplicate item/unit aggregation, grouped totals, and exact-unit separation.
+- Added `RecipeRepository`.
+- Added recipe repository scope, list query, find query, and record types.
+- Added recipe-domain barrel exports for the repository contract.
+- Added focused Vitest coverage for scoped listing, scoped find, out-of-scope null behavior, and compatibility with scaling, availability, and shopping-list domain functions.
 
 ## Documentation Validation
 
-- Living references now identify Recipe Shopping-List Domain Foundation as the active implemented milestone pending human review.
-- Living docs record that recipe UI, persistence, unit conversion, procurement, vendor management, approval workflows, menu planning, analytics, and other higher-horizon behavior remain deferred.
+- Living references now identify Recipe Repository Contract Foundation as the active implemented milestone pending human review.
+- Living docs record that recipe UI, persistence implementation, Supabase adapters, migrations, RLS/RPC changes, authorization, unit conversion, procurement, vendor management, approval workflows, menu planning, analytics, and other higher-horizon behavior remain deferred.
 - Product Horizons was not changed because the active horizon and exit criteria did not change.
-- Previously observed post-commit documentation drift for Recipe Availability Domain Foundation was addressed where required while recording the approved shopping-list milestone.
+- Previously observed post-commit documentation drift for Recipe Shopping-List Domain Foundation was addressed where required while recording the approved repository-contract milestone.
 
 ## Verification Results
 
 Focused verification passed:
 
-- `corepack pnpm@9.15.4 exec vitest run apps/web/src/domains/recipes/domain/recipeShoppingList.test.ts`
+- `corepack pnpm@9.15.4 exec vitest run apps/web/src/domains/recipes/application/recipeRepository.test.ts`
 
 Full verification passed:
 
@@ -80,12 +79,13 @@ Full verification passed:
 
 ## Residual Risks
 
-None known for the completed recipe shopping-list domain foundation.
+None known for the completed recipe repository contract foundation.
 
 ## Future Approved Work
 
 - Recipe UI, routes, persistence, migrations, and authorization.
 - Recipe unit conversion.
+- Supabase recipe repository adapter and schema.
 - Recipe shopping-list UI and persistence.
 - Procurement, vendor management, and approval workflows.
 - Menu planning, procurement, forecasting, analytics, and other higher-horizon work.

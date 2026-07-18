@@ -46,6 +46,7 @@ Use it to prevent repeated mistakes and surface practical lessons. Keep durable 
 | Recipe scaling absorbs unit conversion | Serving scaling and unit conversion both change quantities, so they can be conflated | Scaling now preserves units and only multiplies quantities by the serving ratio | Treat unit conversion as a separate domain decision and do not add it opportunistically |
 | Recipe availability reuses the same inventory twice | Duplicate recipe ingredient lines can share an item/unit key | Availability now allocates projected balance per recipe line instead of treating each line as independently fully stocked | Test duplicate item/unit recipe lines and keep reservations, conversion, and shopping-list generation outside availability unless separately approved |
 | Recipe shopping list becomes procurement | Shortage output can be mistaken for purchase workflow ownership | Shopping-list generation now outputs shortage-only item/unit groups without vendors, approvals, persistence, or procurement behavior | Treat procurement and approval workflow as separate future milestones; keep domain shopping lists deterministic and exact-unit |
+| Recipe repository contract becomes persistence implementation | A list/read boundary can invite schema, RLS, adapters, and auth decisions | The repository contract now defines only scoped application-layer types without Supabase or storage behavior | Keep recipe persistence, migrations, RLS/RPC, authorization, and offline behavior in separate approved milestones |
 
 ## Engineering Discoveries
 
@@ -70,6 +71,7 @@ Use it to prevent repeated mistakes and surface practical lessons. Keep durable 
 | Recipe scaling is deterministic without persistence | Scaling can be proven before database or UI work exists | Pure domain scaling gives availability and shopping-list work a tested ingredient quantity contract | Keep recipe calculations pure until persistence and authorization are separately approved |
 | Recipe availability can be proven without persistence | Availability only needs normalized recipe inputs and projected inventory item balances | Pure domain availability gives shopping-list work a tested shortage/status contract | Keep unit conversion, location policy, reservations, persistence, and procurement outside the availability foundation until separately approved |
 | Recipe shopping lists can be proven without procurement | A shopping-list primitive only needs recipe availability shortages | Pure domain shopping-list generation gives UI and persistence work a stable shortage-output contract | Keep procurement, vendor management, approval workflows, and persistence outside the shopping-list foundation until separately approved |
+| Recipe access can be shaped before storage exists | UI and persistence need a contract, but schema decisions need separate security and data modeling work | A scoped recipe repository contract gives future adapters and screens a stable boundary | Implement repository contracts before screens or adapters when storage authority is not yet approved |
 
 ## Owner
 

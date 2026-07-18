@@ -9,6 +9,13 @@ export {
   validateRecipeIngredient,
   validateRecipeServings
 } from "./domain/recipeDefinition";
+export type {
+  RecipeRepository,
+  RecipeRepositoryFindQuery,
+  RecipeRepositoryListQuery,
+  RecipeRepositoryRecord,
+  RecipeRepositoryScope
+} from "./application/recipeRepository";
 export {
   evaluateRecipeAvailability,
   getRecipeAvailabilityStatus

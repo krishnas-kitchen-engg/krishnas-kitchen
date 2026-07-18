@@ -33,11 +33,11 @@ Update this document whenever a milestone starts, pauses, completes, or changes 
 
 ## Current Active Milestone
 
-Recipe Shopping-List Domain Foundation.
+Recipe Repository Contract Foundation.
 
 ## Goal
 
-Add the smallest production-quality recipe shopping-list domain foundation for Horizon 1 recipe work without adding UI, persistence, migrations, procurement, vendor management, approval workflows, unit conversion, menu planning, or higher-horizon behavior.
+Add the smallest production-quality recipe repository contract foundation for Horizon 1 recipe work without adding Supabase adapters, persistence implementation, migrations, RLS/RPC changes, UI, routes, authorization changes, unit conversion, procurement, vendor management, approval workflows, menu planning, or higher-horizon behavior.
 
 ## Status
 
@@ -45,17 +45,16 @@ Implemented and verified. Ready for human review. Commit approval remains pendin
 
 ## Scope
 
-- Add a pure recipe shopping-list generator that consumes recipe availability results.
-- Output only ingredient item/unit groups with a shortage.
-- Aggregate repeated recipe ingredient lines by exact `itemId` and `unit`.
-- Preserve total required, allocated available, shortage quantity, and note metadata when present.
-- Add focused Vitest coverage for shortage output, empty output, duplicate item/unit aggregation, grouped totals, and exact-unit separation.
-- Preserve Product Horizons, runtime routes, UI screens, navigation, Supabase schema, migrations, RLS/RPC behavior, inventory mutation behavior, auth behavior, procurement, vendor management, approval workflows, unit conversion, and higher-horizon product scope.
+- Add a recipe application-layer repository contract for listing and reading recipe records.
+- Define scoped list and find query types with organization and optional temple scope.
+- Define recipe repository record metadata while keeping records compatible with existing recipe domain calculations.
+- Add focused Vitest coverage showing scoped list/read behavior and compatibility with scaling, availability, and shopping-list domain functions.
+- Preserve Product Horizons, runtime routes, UI screens, navigation, Supabase adapters, persistence implementation, schema, migrations, RLS/RPC behavior, inventory mutation behavior, auth behavior, procurement, vendor management, approval workflows, unit conversion, and higher-horizon product scope.
 
 ## Files Affected
 
-- `apps/web/src/domains/recipes/domain/recipeShoppingList.ts`
-- `apps/web/src/domains/recipes/domain/recipeShoppingList.test.ts`
+- `apps/web/src/domains/recipes/application/recipeRepository.ts`
+- `apps/web/src/domains/recipes/application/recipeRepository.test.ts`
 - `apps/web/src/domains/recipes/index.ts`
 - `docs/handbook/reference/CURRENT_MILESTONE.md`
 - `docs/handbook/reference/CURRENT_STATE.md`
@@ -78,7 +77,7 @@ Implementation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.m
 
 Verification passed:
 
-- `corepack pnpm@9.15.4 exec vitest run apps/web/src/domains/recipes/domain/recipeShoppingList.test.ts`
+- `corepack pnpm@9.15.4 exec vitest run apps/web/src/domains/recipes/application/recipeRepository.test.ts`
 - `corepack pnpm@9.15.4 format`
 - `corepack pnpm@9.15.4 typecheck`
 - `corepack pnpm@9.15.4 lint`

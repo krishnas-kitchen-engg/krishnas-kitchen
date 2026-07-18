@@ -70,12 +70,13 @@ The project is not documented as production-ready.
 - Recipe scaling domain foundation is implemented with pure domain scaling logic and tests.
 - Recipe availability domain foundation is implemented with pure domain availability evaluation logic and tests.
 - Recipe shopping-list domain foundation is implemented with pure domain shortage-output logic and tests.
+- Recipe repository contract foundation is implemented with an application-layer list/read contract and tests.
 
 ## Implemented Domains
 
 - `auth`: authentication provider, auth screens, temporary volunteer session storage, volunteer session repository/RPC integration.
 - `inventory`: inventory domain, validation, aggregation, visibility, barcode lookup/catalog, unknown barcode, repository adapters, scan workflows, receive/transfer/return workflows.
-- `recipes`: recipe definition domain inputs, ingredient validation, serving/yield validation, normalization, recipe-specific validation errors, ingredient quantity scaling, exact item/unit availability evaluation, and exact item/unit shopping-list shortage output.
+- `recipes`: recipe definition domain inputs, ingredient validation, serving/yield validation, normalization, recipe-specific validation errors, ingredient quantity scaling, exact item/unit availability evaluation, exact item/unit shopping-list shortage output, and a recipe application repository contract.
 - `home`: volunteer home summary and shell integration.
 - `tasks`: task screen and inventory-related task summaries.
 
@@ -101,9 +102,9 @@ Canonical offline architecture: offline writes must preserve domain validation, 
 
 ## Recipe Status
 
-Recipe definition, scaling, availability, and shopping-list domain work has started inside Horizon 1. The current slices validate recipe names, servings/yield, inventory item references, supported item units, and positive finite ingredient quantities; normalize user-entered recipe text; scale ingredient quantities to a target serving count; evaluate ingredient availability against projected inventory item balances by exact item/unit match; and generate shortage-only shopping-list item groups from availability results.
+Recipe definition, scaling, availability, shopping-list, and repository-contract work has started inside Horizon 1. The current slices validate recipe names, servings/yield, inventory item references, supported item units, and positive finite ingredient quantities; normalize user-entered recipe text; scale ingredient quantities to a target serving count; evaluate ingredient availability against projected inventory item balances by exact item/unit match; generate shortage-only shopping-list item groups from availability results; and define a scoped recipe repository contract for future application integration.
 
-No recipe UI, routes, persistence, migrations, unit conversion, procurement, vendor management, approval workflow, menu planning, or higher-horizon kitchen planning behavior is implemented.
+No recipe UI, routes, persistence implementation, Supabase adapter, migrations, RLS/RPC changes, unit conversion, procurement, vendor management, approval workflow, menu planning, or higher-horizon kitchen planning behavior is implemented.
 
 ## Database Status
 
@@ -133,7 +134,7 @@ Offline architecture is now documented in [Offline Sync Architecture](../archite
 
 Vitest is configured. Tests exist for inventory domain logic, repository adapters, migrations, auth volunteer sessions, UI reducers/screens, shell navigation, and shared utilities.
 
-Latest implementation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md) for the Recipe Shopping-List Domain Foundation.
+Latest implementation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md) for the Recipe Repository Contract Foundation.
 
 - `corepack pnpm@9.15.4 format`
 - `corepack pnpm@9.15.4 typecheck`

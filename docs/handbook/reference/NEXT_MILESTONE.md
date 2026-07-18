@@ -46,99 +46,140 @@ Approved for implementation. Verification and commit approval remain separate Se
 
 ## Approval
 
-Candidate 1, Recipe Shopping-List Domain Foundation, was approved for implementation.
+Candidate 1, Recipe Repository Contract Foundation, was approved for implementation.
 
 ## Recommended Candidate
 
-Candidate 1: Recipe Shopping-List Domain Foundation.
+Candidate 1: Recipe Repository Contract Foundation.
 
 Recommendation: Approved for implementation.
 
-Strategic Alignment: Advances Horizon 1 recipe work from availability evaluation to deterministic shopping-list shortage output.
+Strategic Alignment: Advances Horizon 1 recipe work from pure domain calculations toward application integration.
 
 Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
 
-Reason It Belongs To This Horizon: Horizon 1 explicitly includes shopping list generation.
+Reason It Belongs To This Horizon: Horizon 1 explicitly includes recipe definitions, repository architecture, testing, and evidence generation.
 
-Evidence Value: High. It proves the recipe domain can convert availability shortages into a deterministic output before UI or persistence is added.
+Evidence Value: High. It proves recipe access can be modeled behind a repository boundary before UI or persistence adapters are added.
 
-Future Horizon Support Without Scope Expansion: Gives future procurement, planning, and forecasting work a tested shortage-output contract while implementing only active Horizon 1 shopping-list generation.
+Future Horizon Support Without Scope Expansion: Gives future UI, persistence, offline, procurement, planning, and forecasting work a stable recipe access boundary while implementing only an active Horizon 1 contract.
 
-Confidence: 84%.
+Confidence: 86%.
 
-Rationale: Recipe shopping-list generation is the smallest next Horizon 1 recipe step after definition, scaling, and availability foundations.
+Rationale: Recipe repository contract is the smallest next Horizon 1 recipe step after definition, scaling, availability, and shopping-list foundations.
 
 Estimated Effort: Medium.
 
 Assumptions:
 
-- Shopping-list output should consume the existing availability result.
-- Shortage items should be grouped by exact `itemId` plus `unit`.
+- Recipe access should be scoped by organization and optionally temple.
+- Repository records should remain compatible with existing recipe domain calculations.
 
 Uncertainties:
 
-- Future shopping-list work may need persistence, UI, authorization, procurement, vendor, approval, or unit-conversion rules.
+- Future recipe work may need persistence schema, Supabase adapter, authorization, UI, offline, or unit-conversion rules.
 
 Reasons Alternatives Were Not Recommended:
 
-- Candidate 2 is useful, but scanning architecture drift does not advance the recipe pipeline as directly as completing Horizon 1 shopping-list domain output.
-- Candidate 3 is useful, but stack documentation reconciliation is lower product value than a tested shopping-list primitive.
+- Candidate 2 is useful, but recipe UI should follow a recipe access boundary so the screen does not couple to future storage decisions.
+- Candidate 3 is useful, but scanning architecture drift is less directly tied to completing the current recipe integration path.
 
-## Candidate 1: Recipe Shopping-List Domain Foundation
+## Candidate 1: Recipe Repository Contract Foundation
 
 Recommendation: Approved for implementation.
 
-Strategic Alignment: Adds deterministic shortage-output generation to the Horizon 1 recipe domain.
+Strategic Alignment: Adds a stable recipe access boundary for Horizon 1 application integration.
 
 Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
 
-Reason It Belongs To This Horizon: Horizon 1 includes shopping list generation.
+Reason It Belongs To This Horizon: Horizon 1 includes recipe definitions, repository architecture, testing, and evidence generation.
 
-Rationale: The repository now has validated, scalable, and availability-aware recipe foundations. A pure domain slice can add shopping-list shortage output without UI, persistence, migrations, unit conversion, procurement, vendor, or approval decisions.
+Rationale: The repository now has validated, scalable, availability-aware, and shopping-list-capable recipe foundations. A repository contract can prepare future UI and persistence without adding storage, migrations, RLS/RPC, routes, or authorization changes.
 
-Confidence: 84%.
+Confidence: 86%.
 
-Estimated Effort: Medium.
+Estimated Effort: Medium-low.
 
 Dependencies:
 
-- Existing recipe definition, scaling, and availability domains.
+- Existing recipe definition, scaling, availability, and shopping-list domains.
+- [ADR-0006](../adrs/0006-repository-pattern.md).
 - [Product Horizons](../../PRODUCT_HORIZONS.md).
 - [ADR-0008](../adrs/0008-domain-driven-package-organization.md).
 
 Risk:
 
-- Medium-low. Procurement, vendor, approval, persistence, and unit-conversion concerns must remain outside scope.
+- Medium-low. Future schema, adapter, authorization, UI, and offline rules may extend the contract.
 
-Expected Value: High. Establishes the shortage-output contract that later UI, persistence, and procurement work can build on.
+Expected Value: High. Establishes the recipe access boundary that later UI, persistence, and offline work can build on.
 
-Evidence Value: High. Demonstrates availability shortages can become deterministic recipe-domain output without UI, schema, permissions, or higher-horizon expansion.
+Evidence Value: High. Demonstrates recipe access can follow the repository pattern without UI, schema, permissions, or higher-horizon expansion.
 
-Future Horizon Support Without Scope Expansion: Creates a shortage-output primitive future procurement, planning, and forecasting can consume later, while deferring those higher-horizon workflows.
+Future Horizon Support Without Scope Expansion: Creates a recipe access primitive future planning, procurement, and forecasting can consume later, while deferring those higher-horizon workflows.
 
-Architecture Impact: Low. Expands the existing `recipes` domain by deriving shopping-list items from availability results without crossing feature, app, or persistence boundaries.
+Architecture Impact: Medium-low. Adds a recipe application boundary without crossing persistence, feature, app, or Supabase boundaries.
 
 Security Impact: Low. No new protected data access, browser trust boundary, RLS/RPC, or permission behavior is introduced.
 
 Testing Strategy:
 
-- Focused recipe shopping-list domain tests.
+- Focused recipe repository contract tests.
 - Full format, typecheck, lint, test, build, and diff whitespace verification before human review.
 
 Expected Deliverables:
 
-- Recipe shopping-list generator.
-- Recipe shopping-list item/result types.
+- Recipe repository contract.
+- Recipe repository query/record/scope types.
 - Recipe domain barrel export.
 - Focused tests.
 - Updated required living docs and evidence report.
 
 Validation Plan:
 
-- Confirm no recipe UI, route, persistence, migration, RLS/RPC, permission, unit-conversion, menu-planning, procurement, vendor, approval, or analytics behavior was added.
-- Run focused recipe shopping-list tests and full verification suite.
+- Confirm no recipe UI, route, persistence adapter, migration, RLS/RPC, permission, unit-conversion, menu-planning, procurement, vendor, approval, or analytics behavior was added.
+- Run focused recipe repository contract tests and full verification suite.
 
-## Candidate 2: Canonicalize Scanning Architecture Boundary
+## Candidate 2: Recipe Feature Route Empty-State Foundation
+
+Recommendation: Defer.
+
+Strategic Alignment: Starts visible Horizon 1 recipe workflow integration.
+
+Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
+
+Reason It Belongs To This Horizon: Horizon 1 includes recipe definitions, ingredient availability, shopping-list generation, and mobile-first PWA.
+
+Rationale: Recipe workflows have pure domain foundations but no route or screen shell.
+
+Confidence: 73%.
+
+Estimated Effort: Medium.
+
+Dependencies:
+
+- App routing and shell patterns.
+- Recipe repository contract foundation.
+
+Risk:
+
+- Medium. The screen must remain an empty-state shell and avoid creation, persistence, or live inventory behavior.
+
+Expected Value: Medium. It gives recipe work a user-facing home without implementing data workflows.
+
+Evidence Value: Medium. It proves recipe feature integration into app routing.
+
+Future Horizon Support Without Scope Expansion: Gives future planning and procurement screens a navigation path later without implementing those workflows now.
+
+Architecture Impact: Medium.
+
+Security Impact: Low.
+
+Testing Strategy:
+
+- Route/shell tests.
+- Full verification suite.
+
+## Candidate 3: Canonicalize Scanning Architecture Boundary
 
 Recommendation: Defer.
 
@@ -169,45 +210,6 @@ Evidence Value: Medium. It would reduce workflow-boundary drift but is less urge
 Future Horizon Support Without Scope Expansion: Leaves future operational workflows with a cleaner scan boundary while avoiding menu planning, kitchen planning, and analytics scope.
 
 Architecture Impact: Medium.
-
-Security Impact: Low.
-
-Testing Strategy:
-
-- Documentation/reference validation.
-- No code verification unless implementation scope changes.
-
-## Candidate 3: Reconcile Stack Documentation Against Package Manifests
-
-Recommendation: Defer.
-
-Strategic Alignment: Keeps Horizon 1 repository architecture and onboarding guidance aligned with package manifests.
-
-Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
-
-Reason It Belongs To This Horizon: Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation.
-
-Rationale: Stack documentation lists dependencies that package manifests do not show.
-
-Confidence: 70%.
-
-Estimated Effort: Low.
-
-Dependencies:
-
-- Review root and app package manifests, system architecture docs, and handbook stack references.
-
-Risk:
-
-- Low documentation risk; the main risk is mistaking planned dependencies for implemented dependencies.
-
-Expected Value: Medium-low. It improves onboarding and architecture reconstruction, but is less urgent than current recipe pipeline progress.
-
-Evidence Value: Medium-low. It reduces false assumptions but does not directly harden runtime behavior.
-
-Future Horizon Support Without Scope Expansion: Gives future contributors accurate dependency truth before larger product domains are added.
-
-Architecture Impact: Low.
 
 Security Impact: Low.
 
