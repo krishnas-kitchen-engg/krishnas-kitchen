@@ -49,7 +49,7 @@ Use this document after [Engineering Handbook](../README.md) and [AI Engineering
 
 Krishna's Kitchen is a mobile-first React/Vite/TypeScript PWA for volunteer-run temple kitchen operations. [Product Horizons](../../PRODUCT_HORIZONS.md) is the canonical long-term roadmap and active horizon source. Horizon 1, Core Kitchen Inventory Platform, is active. See [Product Vision](../../PRODUCT_VISION.md) and [MVP Scope](../../MVP_SCOPE.md) for supporting product context.
 
-Implementation maturity: active development. Repository evidence shows implemented authentication scaffolding, temporary volunteer session infrastructure, inventory domain services, recipe definition domain foundation, Supabase repository adapters, mobile inventory lookup and receive/transfer/return/scan screens, volunteer home and tasks screens, migrations, and tests. It is not documented as production-ready; see [Current State](./CURRENT_STATE.md) and [Known Limitations](./KNOWN_LIMITATIONS.md).
+Implementation maturity: active development. Repository evidence shows implemented authentication scaffolding, temporary volunteer session infrastructure, inventory domain services, recipe definition and scaling domain foundations, Supabase repository adapters, mobile inventory lookup and receive/transfer/return/scan screens, volunteer home and tasks screens, migrations, and tests. It is not documented as production-ready; see [Current State](./CURRENT_STATE.md) and [Known Limitations](./KNOWN_LIMITATIONS.md).
 
 Engineering maturity: strong. The Engineering Operating System is frozen for production use, with a canonical Session Controller, Product Horizons, governance, process docs, templates, ADRs, living references, and a scorecard. Future EOS changes require implementation-driven justification.
 
@@ -95,14 +95,14 @@ Long-term vision: become the operational backbone for volunteer-run kitchens glo
 | Undo/Reversal | Implemented with Canonical Terminology | reversal validation, transaction helpers, migrations, [ADR-0009](../adrs/0009-auditability-and-reversibility.md) | `undo` is the user-facing action and service operation; `reversal` is the current persisted correction transaction type; legacy persisted `undo` rows remain read-compatible history only. |
 | Unknown Barcodes | Implemented | unknown barcode domain/service/repository/tests; migration `20260606000400_add_unknown_barcodes.sql` | Home/tasks summary files also reference pending unknown barcodes. |
 | Low Stock | Implemented | low-stock threshold repository/mapper/tests; migration `20260606000500_add_inventory_low_stock_thresholds.sql` | Home and tasks summary components exist. |
-| Recipe Definitions | Domain Foundation Implemented | `apps/web/src/domains/recipes`; [Current Milestone](./CURRENT_MILESTONE.md) | Pure domain types, validation, normalization, exports, and tests exist. No recipe UI, persistence, availability, scaling, shopping-list generation, or planning behavior is implemented. |
+| Recipe Definitions and Scaling | Domain Foundation Implemented | `apps/web/src/domains/recipes`; [Current Milestone](./CURRENT_MILESTONE.md) | Pure domain types, validation, normalization, scaling, exports, and tests exist. No recipe UI, persistence, availability, shopping-list generation, or planning behavior is implemented. |
 | Volunteer Home | Implemented | `apps/web/src/features/home` | Home summary, quick actions, low-stock and unknown barcode summaries exist. |
 | Tasks | Implemented | `apps/web/src/features/tasks` | Low-stock and unknown-barcode task cards exist; future task placeholder exists. |
 | Offline | Architecture Defined / Implementation Planned | [ADR-0005](../adrs/0005-mobile-first-offline-pwa.md); [Offline Sync Architecture](../architecture/offline-sync.md); [Known Limitations](./KNOWN_LIMITATIONS.md) | PWA tooling and offline-safe inventory metadata exist. Local queue storage and replay are not implemented. |
 | Settings | Planned / Unknown | No current source files found for a settings feature | Not enough repository evidence to classify as implemented. |
 | Administration | Planned / Unknown | Product docs mention admin needs; no dedicated admin feature files found | Admin workflows are not evidenced as implemented. |
 | Reporting | Planned | [Product Vision](../../PRODUCT_VISION.md); [MVP Scope](../../MVP_SCOPE.md) excludes advanced reporting | Advanced reporting is explicitly outside initial MVP. |
-| Recipe Scaling, Meal Planning, Procurement | Planned | [Product Vision](../../PRODUCT_VISION.md); [MVP Scope](../../MVP_SCOPE.md) | Recipe scaling and shopping-list generation are later Horizon 1 work; meal planning and procurement remain future expansion areas. |
+| Recipe Availability, Shopping Lists, Meal Planning, Procurement | Planned | [Product Vision](../../PRODUCT_VISION.md); [MVP Scope](../../MVP_SCOPE.md) | Recipe availability and shopping-list generation are later Horizon 1 work; meal planning and procurement remain future expansion areas. |
 
 ## Architecture Snapshot
 
@@ -182,9 +182,11 @@ This timeline is reconstructed from [Changelog Summary](./CHANGELOG_SUMMARY.md),
 | Security architecture ownership consolidation | Living security architecture source and reference updates | `c8a4f5c docs(security): consolidate architecture ownership` |
 | Living state refresh after security commit | Milestone, reconstruction, scorecard, and evidence references aligned to committed security architecture history | `63dc374 docs(handbook): refresh milestone state after security commit` |
 | Engineering Operating System Session Controller freeze | Canonical Session Controller, repository-evidence resume, verification-integrated Evidence Capture, and simplified governance/process workflow references | `560ad58 docs(eos): freeze Session Controller workflow` |
-| Recipe definition domain foundation | Recipe definition types, validation, normalization, exports, and focused tests | Committed |
+| Recipe definition domain foundation | Recipe definition types, validation, normalization, exports, and focused tests | `b36e144 feat(recipes): add recipe definition domain foundation` |
+| Engineering Operating System reporting refinement | Completion reporting separates residual risks from future approved work | `6662e77 docs(eos): refine completion reporting terminology` |
+| Recipe scaling domain foundation | Recipe scaling helper, six-decimal quantity precision, exports, and focused tests | Committed |
 
-Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Recipe Definition Domain Foundation as the active implemented milestone committed in the current Session Controller run.
+Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Recipe Scaling Domain Foundation as the active implemented milestone committed in the current Session Controller run.
 
 ## ADR Status
 

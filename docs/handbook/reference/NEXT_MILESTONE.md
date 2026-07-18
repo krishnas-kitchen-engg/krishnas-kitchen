@@ -46,55 +46,55 @@ Implemented, verified, human-approved, and committed for the approved candidate.
 
 ## Approval
 
-Candidate 1, Recipe Definition Domain Foundation, was approved for implementation.
+Candidate 1, Recipe Scaling Domain Foundation, was approved for implementation.
 
 ## Recommended Candidate
 
-Candidate 1: Recipe Definition Domain Foundation.
+Candidate 1: Recipe Scaling Domain Foundation.
 
 Recommendation: Implemented, verified, human-approved, and committed.
 
-Strategic Alignment: Opens Horizon 1 recipe work with a tested domain contract before UI, persistence, availability, scaling, or shopping-list workflows are added.
+Strategic Alignment: Advances Horizon 1 recipe work from validated definitions to deterministic serving-based quantity scaling.
 
 Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
 
-Reason It Belongs To This Horizon: Horizon 1 explicitly includes recipe definitions, recipe scaling, ingredient availability checks, and shopping list generation.
+Reason It Belongs To This Horizon: Horizon 1 explicitly includes recipe scaling.
 
-Evidence Value: High. It proves the recipe domain can reuse existing inventory item/unit concepts without expanding into workflow or persistence scope.
+Evidence Value: High. It proves the recipe domain can scale quantities before availability or shopping-list logic is added.
 
-Future Horizon Support Without Scope Expansion: Gives future menu planning, forecasting, and operations horizons a stable recipe-definition vocabulary while implementing only the active Horizon 1 foundation.
+Future Horizon Support Without Scope Expansion: Gives future availability, shopping-list, planning, and forecasting work a tested quantity contract while implementing only active Horizon 1 scaling.
 
 Confidence: 88%.
 
-Rationale: Recipe definitions are the smallest Horizon 1 step that creates forward product value while preserving current inventory and security behavior.
+Rationale: Recipe scaling is the smallest next Horizon 1 recipe step after the definition foundation.
 
 Estimated Effort: Medium-low.
 
 Assumptions:
 
-- Recipe ingredients should reference existing inventory items through `EntityId`.
-- Recipe ingredient units should reuse the existing shared `ItemUnit` vocabulary.
+- Scaling should preserve exact ingredient units and only change quantities.
+- Six-decimal rounding is sufficient for the current domain foundation.
 
 Uncertainties:
 
-- Future persistence may require additional recipe identity, organization, temple, authoring, and archival fields.
+- Future recipe availability may need explicit unit conversion rules.
 
 Reasons Alternatives Were Not Recommended:
 
-- Candidate 2 is useful, but scanning documentation cleanup is documentation-only and lower product-evidence value than starting the next Horizon 1 recipe capability.
-- Candidate 3 is useful, but stack documentation reconciliation improves onboarding more than it advances the active product horizon.
+- Candidate 2 is useful, but availability is cleaner after scaling exists because availability often depends on a target serving count.
+- Candidate 3 is useful, but shopping-list generation should follow availability so it does not invent a parallel shortage model.
 
-## Candidate 1: Recipe Definition Domain Foundation
+## Candidate 1: Recipe Scaling Domain Foundation
 
 Recommendation: Implemented, verified, human-approved, and committed.
 
-Strategic Alignment: Starts Horizon 1 recipe functionality with a small tested domain foundation.
+Strategic Alignment: Adds deterministic serving-based quantity scaling to the Horizon 1 recipe domain.
 
 Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
 
-Reason It Belongs To This Horizon: Horizon 1 includes recipe definitions, recipe scaling, ingredient availability checks, and shopping list generation.
+Reason It Belongs To This Horizon: Horizon 1 includes recipe scaling.
 
-Rationale: The repository has mature inventory item/unit concepts but no recipe domain source. A pure domain slice creates the first recipe contract without forcing UI or database decisions.
+Rationale: The repository now has validated recipe definitions but no scaling logic. A pure domain slice can add scaling without UI, persistence, availability, or shopping-list decisions.
 
 Confidence: 88%.
 
@@ -102,43 +102,40 @@ Estimated Effort: Medium-low.
 
 Dependencies:
 
+- Existing recipe definition domain.
 - [Product Horizons](../../PRODUCT_HORIZONS.md).
-- `packages/types/src/index.ts`.
-- `packages/utils/src/index.ts`.
-- `apps/web/src/domains/inventory`.
 - [ADR-0008](../adrs/0008-domain-driven-package-organization.md).
 
 Risk:
 
-- Medium-low. Future persistence may require additional fields, but pure validation keeps the current blast radius small.
+- Low. Decimal precision is explicit; unit conversion remains intentionally outside scope.
 
-Expected Value: High. Establishes the first recipe domain contract that later Horizon 1 recipe scaling, availability, and shopping-list work can build on.
+Expected Value: High. Establishes the target-serving quantity contract that later availability and shopping-list work can build on.
 
-Evidence Value: High. Demonstrates recipe work can begin safely inside Horizon 1 without UI, schema, permissions, or higher-horizon expansion.
+Evidence Value: High. Demonstrates recipe scaling can remain pure and deterministic without UI, schema, permissions, or higher-horizon expansion.
 
-Future Horizon Support Without Scope Expansion: Creates a vocabulary future planning and forecasting can consume later, while deferring those higher-horizon workflows.
+Future Horizon Support Without Scope Expansion: Creates a quantity-scaling primitive future planning and forecasting can consume later, while deferring those higher-horizon workflows.
 
-Architecture Impact: Low-medium. Adds a new `recipes` domain alongside `inventory` without crossing feature, app, or persistence boundaries.
+Architecture Impact: Low. Expands the existing `recipes` domain without crossing feature, app, or persistence boundaries.
 
 Security Impact: Low. No new protected data access, browser trust boundary, RLS/RPC, or permission behavior is introduced.
 
 Testing Strategy:
 
-- Focused recipe domain validation tests.
+- Focused recipe domain scaling tests.
 - Full format, typecheck, lint, test, build, and diff whitespace verification before human review.
 
 Expected Deliverables:
 
-- Recipe definition domain types.
-- Recipe validation and normalization helpers.
-- Recipe-specific validation error.
+- Recipe scaling helper.
+- Documented recipe quantity decimal precision.
 - Recipe domain barrel export.
 - Focused tests.
 - Updated required living docs and evidence report.
 
 Validation Plan:
 
-- Confirm no recipe UI, route, persistence, migration, RLS/RPC, permission, shopping-list, availability, scaling, menu-planning, procurement, or analytics behavior was added.
+- Confirm no recipe UI, route, persistence, migration, RLS/RPC, permission, shopping-list, availability, unit-conversion, menu-planning, procurement, or analytics behavior was added.
 - Run focused recipe tests and full verification suite.
 
 ## Candidate 2: Canonicalize Scanning Architecture Boundary

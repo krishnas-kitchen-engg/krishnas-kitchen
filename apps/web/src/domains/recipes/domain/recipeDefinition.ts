@@ -15,6 +15,8 @@ export const RECIPE_INGREDIENT_UNITS = [
   "unit"
 ] as const satisfies readonly ItemUnit[];
 
+export const RECIPE_QUANTITY_DECIMAL_PLACES = 6;
+
 export type RecipeDefinitionValidationErrorCode =
   | "INGREDIENTS_REQUIRED"
   | "ITEM_REQUIRED"
@@ -70,6 +72,10 @@ function createRecipeDefinitionValidationResult(
 
 function isRecipeIngredientUnit(value: unknown): value is ItemUnit {
   return RECIPE_INGREDIENT_UNITS.includes(value as ItemUnit);
+}
+
+function roundRecipeQuantity(quantity: number): number {
+  return Number(quantity.toFixed(RECIPE_QUANTITY_DECIMAL_PLACES));
 }
 
 export function normalizeRecipeDefinitionInput(
@@ -204,4 +210,27 @@ export function assertValidRecipeDefinitionInput(
   }
 
   return input;
+}
+
+export function scaleRecipeDefinition(
+  input: RecipeDefinitionInput,
+  targetServings: number
+): RecipeDefinitionInput {
+  const recipe = normalizeRecipeDefinitionInput(assertValidRecipeDefinitionInput(input));
+  const targetServingsValidation = validateRecipeServings(targetServings);
+
+  if (!targetServingsValidation.ok) {
+    throw new RecipeDefinitionValidationError(targetServingsValidation.errors);
+  }
+
+  const scaleFactor = targetServings / recipe.servings;
+
+  return {
+    ...recipe,
+    ingredients: recipe.ingredients.map((ingredient) => ({
+      ...ingredient,
+      quantity: roundRecipeQuantity(ingredient.quantity * scaleFactor)
+    })),
+    servings: targetServings
+  };
 }

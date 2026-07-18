@@ -1,7 +1,9 @@
 export {
   assertValidRecipeDefinitionInput,
   normalizeRecipeDefinitionInput,
+  RECIPE_QUANTITY_DECIMAL_PLACES,
   RECIPE_INGREDIENT_UNITS,
+  scaleRecipeDefinition,
   RecipeDefinitionValidationError,
   validateRecipeDefinitionInput,
   validateRecipeIngredient,

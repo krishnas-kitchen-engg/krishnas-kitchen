@@ -43,6 +43,7 @@ Use it to prevent repeated mistakes and surface practical lessons. Keep durable 
 | Future horizon expands implementation scope | Long-term product vision can be mistaken for current implementation authority | Product Horizons now defines the active horizon and horizon rules | Reject implementation candidates outside the active horizon; allow future horizons to influence architecture only |
 | Resume restarts completed workflow | A resumed session can look like a new session if reconstruction ignores current repository evidence | Session Controller now requires reconstruction first, then continuation from the evidence-backed controller state | Do not create session files; use git status, living docs, and evidence reports to determine whether to resume or restart |
 | Recipe implementation becomes planning implementation | Recipe definitions sit upstream of availability, shopping lists, menu planning, procurement, and forecasting | Keep the first recipe slice domain-only and explicitly defer UI, persistence, availability, shopping-list, and higher-horizon behavior | For recipe milestones, state what is deferred and verify no routes, migrations, permissions, or planning workflows were added |
+| Recipe scaling absorbs unit conversion | Serving scaling and unit conversion both change quantities, so they can be conflated | Scaling now preserves units and only multiplies quantities by the serving ratio | Treat unit conversion as a separate domain decision and do not add it opportunistically |
 
 ## Engineering Discoveries
 
@@ -64,6 +65,7 @@ Use it to prevent repeated mistakes and surface practical lessons. Keep durable 
 | Product vision looks like milestone scope | Future horizons describe legitimate long-term direction but are not active implementation scope | Include Horizon, reason it belongs to the horizon, and evidence value in every milestone recommendation |
 | Evidence capture becomes workflow sprawl | Evidence promotion and living-doc updates can become a separate process if not tied to completion | Session Controller now keeps Evidence Capture inside the Verification to Ready For Human Review transition | Identify lessons, patterns, memory needs, and promotion candidates during completion without adding states |
 | Recipe definitions can share inventory vocabulary | Recipe ingredients need item references and units, and the repository already owns `EntityId` and `ItemUnit` in shared types | Reusing shared types avoids parallel unit systems before recipe persistence exists | Prefer shared inventory-compatible primitives for recipe foundations unless an ADR introduces a new recipe-specific unit model |
+| Recipe scaling is deterministic without persistence | Scaling can be proven before database or UI work exists | Pure domain scaling gives availability and shopping-list work a tested ingredient quantity contract | Keep recipe calculations pure until persistence and authorization are separately approved |
 
 ## Owner
 

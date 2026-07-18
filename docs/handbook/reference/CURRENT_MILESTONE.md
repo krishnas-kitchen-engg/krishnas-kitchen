@@ -33,11 +33,11 @@ Update this document whenever a milestone starts, pauses, completes, or changes 
 
 ## Current Active Milestone
 
-Engineering Operating System Reporting Refinement.
+Recipe Scaling Domain Foundation.
 
 ## Goal
 
-Refine completion-report terminology so residual implementation risks are separated from planned or intentionally deferred future work.
+Add the smallest production-quality recipe scaling domain foundation for Horizon 1 recipe work without adding UI, persistence, migrations, availability checks, shopping-list generation, menu planning, procurement, or higher-horizon behavior.
 
 ## Status
 
@@ -45,22 +45,27 @@ Implemented, verified, human-approved, and committed.
 
 ## Scope
 
-- Define Residual Risks as issues that may affect the completed milestone.
-- Define Future Approved Work for planned features, future milestones, roadmap items, and intentionally deferred capabilities.
-- Update completion-report guidance to list commit hash, git status, verification summary, documentation updates, Residual Risks, and Future Approved Work.
-- Align post-implementation review docs and templates with the reporting distinction.
-- Update the latest evidence report to model the refined terminology.
-- Preserve Session Controller states, transitions, approval boundaries, workflow behavior, Product Horizons, application code, tests, migrations, and runtime behavior.
+- Add a recipe scaling helper that scales ingredient quantities from base servings to target servings.
+- Reuse existing recipe definition validation and normalization before scaling.
+- Preserve ingredient item references, units, and notes while updating quantities.
+- Round scaled ingredient quantities to a documented six-decimal domain precision.
+- Add focused Vitest coverage for scaling, normalization during scaling, rounding, and validation errors.
+- Preserve Product Horizons, runtime routes, UI screens, navigation, Supabase schema, migrations, RLS/RPC behavior, inventory behavior, auth behavior, availability checks, shopping-list generation, and higher-horizon product scope.
 
 ## Files Affected
 
-- `docs/handbook/governance/AI_ENGINEERING_OPERATING_MODEL.md`
-- `docs/handbook/process/DEFINITION_OF_DONE.md`
-- `docs/handbook/process/POST_IMPLEMENTATION_REVIEW.md`
-- `docs/handbook/templates/POST_IMPLEMENTATION_REVIEW_TEMPLATE.md`
+- `apps/web/src/domains/recipes/domain/recipeDefinition.ts`
+- `apps/web/src/domains/recipes/domain/recipeDefinition.test.ts`
+- `apps/web/src/domains/recipes/index.ts`
 - `docs/handbook/reference/CURRENT_MILESTONE.md`
 - `docs/handbook/reference/CURRENT_STATE.md`
+- `docs/handbook/reference/NEXT_MILESTONE.md`
+- `docs/handbook/reference/PROJECT_MEMORY.md`
+- `docs/handbook/reference/IMPLEMENTATION_PATTERNS.md`
+- `docs/handbook/reference/COMMON_FAILURES.md`
 - `docs/handbook/reference/CHANGELOG_SUMMARY.md`
+- `docs/handbook/reference/PROJECT_RECONSTRUCTION.md`
+- `docs/handbook/reference/PROJECT_SCORECARD.md`
 - `docs/handbook/reference/EVIDENCE_REPORT.md`
 
 ## Known Blockers
@@ -69,11 +74,15 @@ None known for this milestone.
 
 ## Verification Status
 
-Documentation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
+Implementation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
 
 Verification passed:
 
 - `corepack pnpm@9.15.4 format`
+- `corepack pnpm@9.15.4 typecheck`
+- `corepack pnpm@9.15.4 lint`
+- `corepack pnpm@9.15.4 test`
+- `corepack pnpm@9.15.4 build`
 - `git diff --check`
 
 ## Next Review

@@ -5,6 +5,7 @@ import {
   RecipeDefinitionValidationError,
   assertValidRecipeDefinitionInput,
   normalizeRecipeDefinitionInput,
+  scaleRecipeDefinition,
   validateRecipeDefinitionInput,
   validateRecipeIngredient,
   validateRecipeServings
@@ -114,5 +115,84 @@ describe("recipe definition validation", () => {
         }),
       RecipeDefinitionValidationError
     );
+  });
+
+  it("scales ingredient quantities to a target serving count", () => {
+    assert.deepEqual(
+      scaleRecipeDefinition(
+        {
+          ingredients: [
+            {
+              itemId: "item-rice",
+              note: "  rinsed  ",
+              quantity: 2,
+              unit: "kg"
+            },
+            {
+              itemId: "item-water",
+              quantity: 6,
+              unit: "l"
+            }
+          ],
+          name: "  Khichdi  ",
+          servings: 10
+        },
+        25
+      ),
+      {
+        ingredients: [
+          {
+            itemId: "item-rice",
+            note: "rinsed",
+            quantity: 5,
+            unit: "kg"
+          },
+          {
+            itemId: "item-water",
+            quantity: 15,
+            unit: "l"
+          }
+        ],
+        name: "Khichdi",
+        servings: 25
+      }
+    );
+  });
+
+  it("rounds scaled quantities to six decimal places", () => {
+    assert.equal(
+      scaleRecipeDefinition(
+        {
+          ingredients: [
+            {
+              itemId: "item-spice",
+              quantity: 1,
+              unit: "g"
+            }
+          ],
+          name: "Chutney",
+          servings: 3
+        },
+        1
+      ).ingredients[0]?.quantity,
+      0.333333
+    );
+  });
+
+  it("rejects invalid base recipes and invalid target servings while scaling", () => {
+    assert.throws(
+      () =>
+        scaleRecipeDefinition(
+          {
+            ingredients: [],
+            name: "Khichdi",
+            servings: 10
+          },
+          20
+        ),
+      RecipeDefinitionValidationError
+    );
+
+    assert.throws(() => scaleRecipeDefinition(recipe, 0), RecipeDefinitionValidationError);
   });
 });
