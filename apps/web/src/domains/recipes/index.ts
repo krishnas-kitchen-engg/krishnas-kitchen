@@ -13,11 +13,13 @@ export {
   evaluateRecipeAvailability,
   getRecipeAvailabilityStatus
 } from "./domain/recipeAvailability";
+export { generateRecipeShoppingList } from "./domain/recipeShoppingList";
 export type {
   RecipeAvailabilityResult,
   RecipeAvailabilityStatus,
   RecipeIngredientAvailability
 } from "./domain/recipeAvailability";
+export type { RecipeShoppingListItem, RecipeShoppingListResult } from "./domain/recipeShoppingList";
 export type {
   RecipeDefinitionValidationErrorCode,
   RecipeDefinitionValidationErrorDetail,

@@ -33,11 +33,11 @@ Update this document whenever a milestone starts, pauses, completes, or changes 
 
 ## Current Active Milestone
 
-Recipe Availability Domain Foundation.
+Recipe Shopping-List Domain Foundation.
 
 ## Goal
 
-Add the smallest production-quality recipe availability domain foundation for Horizon 1 recipe work without adding UI, persistence, migrations, shopping-list generation, menu planning, procurement, unit conversion, or higher-horizon behavior.
+Add the smallest production-quality recipe shopping-list domain foundation for Horizon 1 recipe work without adding UI, persistence, migrations, procurement, vendor management, approval workflows, unit conversion, menu planning, or higher-horizon behavior.
 
 ## Status
 
@@ -45,17 +45,17 @@ Implemented and verified. Ready for human review. Commit approval remains pendin
 
 ## Scope
 
-- Add a pure recipe availability evaluator that compares normalized recipe ingredients with projected inventory item balances.
-- Match inventory by exact `itemId` and `unit`; do not perform unit conversion.
-- Report per-ingredient `available`, `short`, or `missing` status, allocated available quantity, required quantity, and shortage quantity.
-- Aggregate same-item inventory balances while preventing duplicate recipe ingredient lines from reusing the same available quantity.
-- Add focused Vitest coverage for available, short, missing, exact-unit, negative-balance, duplicate-ingredient, and validation-error behavior.
-- Preserve Product Horizons, runtime routes, UI screens, navigation, Supabase schema, migrations, RLS/RPC behavior, inventory mutation behavior, auth behavior, shopping-list generation, and higher-horizon product scope.
+- Add a pure recipe shopping-list generator that consumes recipe availability results.
+- Output only ingredient item/unit groups with a shortage.
+- Aggregate repeated recipe ingredient lines by exact `itemId` and `unit`.
+- Preserve total required, allocated available, shortage quantity, and note metadata when present.
+- Add focused Vitest coverage for shortage output, empty output, duplicate item/unit aggregation, grouped totals, and exact-unit separation.
+- Preserve Product Horizons, runtime routes, UI screens, navigation, Supabase schema, migrations, RLS/RPC behavior, inventory mutation behavior, auth behavior, procurement, vendor management, approval workflows, unit conversion, and higher-horizon product scope.
 
 ## Files Affected
 
-- `apps/web/src/domains/recipes/domain/recipeAvailability.ts`
-- `apps/web/src/domains/recipes/domain/recipeAvailability.test.ts`
+- `apps/web/src/domains/recipes/domain/recipeShoppingList.ts`
+- `apps/web/src/domains/recipes/domain/recipeShoppingList.test.ts`
 - `apps/web/src/domains/recipes/index.ts`
 - `docs/handbook/reference/CURRENT_MILESTONE.md`
 - `docs/handbook/reference/CURRENT_STATE.md`
@@ -78,7 +78,7 @@ Implementation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.m
 
 Verification passed:
 
-- `corepack pnpm@9.15.4 exec vitest run apps/web/src/domains/recipes/domain/recipeAvailability.test.ts`
+- `corepack pnpm@9.15.4 exec vitest run apps/web/src/domains/recipes/domain/recipeShoppingList.test.ts`
 - `corepack pnpm@9.15.4 format`
 - `corepack pnpm@9.15.4 typecheck`
 - `corepack pnpm@9.15.4 lint`

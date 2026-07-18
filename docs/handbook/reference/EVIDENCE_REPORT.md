@@ -30,45 +30,44 @@ This document records evidence gathered during the latest repository reconstruct
 
 Date: 2026-07-17.
 
-Milestone: Recipe Availability Domain Foundation.
+Milestone: Recipe Shopping-List Domain Foundation.
 
 Status: Implemented and verified. Ready for human review. Commit approval remains pending.
 
 ## Repository Evidence
 
 - Branch: `docs/engineering-handbook`.
-- Working tree before implementation: clean after `830c5dc feat(recipes): add recipe scaling domain foundation`.
-- Latest committed baseline before implementation: `830c5dc feat(recipes): add recipe scaling domain foundation`.
+- Working tree before implementation: clean after `4906960 feat(recipes): add recipe availability domain foundation`.
+- Latest committed baseline before implementation: `4906960 feat(recipes): add recipe availability domain foundation`.
 - Product Horizons identifies Horizon 1, Core Kitchen Inventory Platform, as active.
-- The milestone is inside Horizon 1 because Horizon 1 explicitly includes ingredient availability checks.
+- The milestone is inside Horizon 1 because Horizon 1 explicitly includes shopping list generation.
 
 ## Architecture Evidence
 
-- Recipe availability is implemented under `apps/web/src/domains/recipes`, aligned with ADR-0008 domain-driven package organization.
-- Availability reuses existing recipe definition validation and normalization before comparing ingredient requirements with inventory balances.
-- Availability composes recipe inputs with projected inventory item balances by exact `itemId` plus `unit` matching.
-- No feature UI, routes, navigation, persistence adapters, migrations, RLS, RPC, permission, unit conversion, shopping-list generation, or Product Horizons changes were made.
+- Recipe shopping-list generation is implemented under `apps/web/src/domains/recipes`, aligned with ADR-0008 domain-driven package organization.
+- Shopping-list generation consumes recipe availability results instead of recalculating inventory readiness.
+- Shopping-list output groups shortages by exact `itemId` plus `unit` and does not perform unit conversion.
+- No feature UI, routes, navigation, persistence adapters, migrations, RLS, RPC, permission, unit conversion, procurement, vendor management, approval workflow, or Product Horizons changes were made.
 
 ## Implementation Evidence
 
-- Added `evaluateRecipeAvailability`.
-- Added `getRecipeAvailabilityStatus`.
-- Added recipe availability result/status types and recipe-domain barrel exports.
-- Availability validates and normalizes recipe input, aggregates projected item balances, allocates available quantity per recipe ingredient line, and reports `available`, `short`, or `missing` status with shortage quantities.
-- Added focused Vitest coverage for available, short, missing, exact-unit, negative-balance, duplicate-ingredient, and validation-error behavior.
+- Added `generateRecipeShoppingList`.
+- Added recipe shopping-list item/result types and recipe-domain barrel exports.
+- Shopping-list generation filters to shortage-only item/unit groups while preserving total required, allocated available, and shortage quantities.
+- Added focused Vitest coverage for shortage output, empty output, duplicate item/unit aggregation, grouped totals, and exact-unit separation.
 
 ## Documentation Validation
 
-- Living references now identify Recipe Availability Domain Foundation as the active implemented milestone pending human review.
-- Living docs record that recipe UI, persistence, unit conversion, shopping-list generation, menu planning, procurement, analytics, and other higher-horizon behavior remain deferred.
+- Living references now identify Recipe Shopping-List Domain Foundation as the active implemented milestone pending human review.
+- Living docs record that recipe UI, persistence, unit conversion, procurement, vendor management, approval workflows, menu planning, analytics, and other higher-horizon behavior remain deferred.
 - Product Horizons was not changed because the active horizon and exit criteria did not change.
-- Previously observed documentation drift in `NEXT_MILESTONE.md` and `PROJECT_RECONSTRUCTION.md` was addressed where required to reflect the approved availability milestone.
+- Previously observed post-commit documentation drift for Recipe Availability Domain Foundation was addressed where required while recording the approved shopping-list milestone.
 
 ## Verification Results
 
 Focused verification passed:
 
-- `corepack pnpm@9.15.4 exec vitest run apps/web/src/domains/recipes/domain/recipeAvailability.test.ts`
+- `corepack pnpm@9.15.4 exec vitest run apps/web/src/domains/recipes/domain/recipeShoppingList.test.ts`
 
 Full verification passed:
 
@@ -81,13 +80,14 @@ Full verification passed:
 
 ## Residual Risks
 
-None known for the completed recipe availability domain foundation.
+None known for the completed recipe shopping-list domain foundation.
 
 ## Future Approved Work
 
 - Recipe UI, routes, persistence, migrations, and authorization.
 - Recipe unit conversion.
-- Shopping-list generation.
+- Recipe shopping-list UI and persistence.
+- Procurement, vendor management, and approval workflows.
 - Menu planning, procurement, forecasting, analytics, and other higher-horizon work.
 
 ## Evidence Location
