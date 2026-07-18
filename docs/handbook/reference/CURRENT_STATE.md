@@ -66,6 +66,7 @@ The project is not documented as production-ready.
 - The Horizon 1 security review baseline was recorded in [Security Status](./SECURITY_STATUS.md) without changing runtime behavior.
 - The Engineering Operating System Session Controller was frozen for production use without changing application behavior.
 - Recipe definition domain foundation is implemented with pure domain types, validation, normalization, exports, and tests.
+- Engineering Operating System completion reporting now separates Residual Risks from Future Approved Work without changing workflow behavior.
 
 ## Implemented Domains
 
@@ -148,7 +149,7 @@ The handbook now contains governance, the canonical AI Engineering Operating Mod
 
 Temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, and security architecture ownership drift have been resolved.
 
-The Engineering Operating System is stable for production use. [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) owns the Session Controller, including session resume, active-horizon milestone selection, verification repeat behavior, Evidence Capture, and commit approval gates. Future EOS changes require implementation-driven justification rather than speculative improvement.
+The Engineering Operating System is stable for production use. [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) owns the Session Controller, including session resume, active-horizon milestone selection, verification repeat behavior, Evidence Capture, commit approval gates, and completion-report terminology. Future EOS changes require implementation-driven justification rather than speculative improvement.
 
 ## Known Gaps
 

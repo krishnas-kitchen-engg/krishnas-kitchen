@@ -19,7 +19,7 @@ related:
 
 # Post-Implementation Review
 
-This reusable template captures what changed, how it was validated, and what remains risky after a milestone.
+This reusable template captures what changed, how it was validated, residual risks for the completed milestone, and relevant future approved work.
 
 ## Purpose
 
@@ -66,6 +66,10 @@ Use this template before commit, handoff, or human review for completed implemen
 
 <Describe performance impact or state "Not assessed / not applicable".>
 
+## Residual Risks
+
+<List risks that may affect the completed milestone, or state "None known".>
+
 ## Lessons Learned
 
 <Capture reusable learning from this milestone.>
@@ -78,9 +82,9 @@ Use this template before commit, handoff, or human review for completed implemen
 
 <List docs updated or documentation gaps found.>
 
-## Future Work
+## Future Approved Work
 
-<List follow-up milestones or ADR recommendations.>
+<List planned or intentionally deferred work outside the approved milestone.>
 ```
 
 ## Living Or Historical
@@ -108,4 +112,3 @@ Update this document when:
 - [Project Constitution](../governance/PROJECT_CONSTITUTION.md)
 - [AI Execution Protocol](../governance/AI_EXECUTION_PROTOCOL.md)
 - [Engineering System](../governance/ENGINEERING_SYSTEM.md)
-

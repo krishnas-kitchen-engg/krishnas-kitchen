@@ -30,62 +30,53 @@ This document records evidence gathered during the latest repository reconstruct
 
 Date: 2026-07-17.
 
-Milestone: Recipe Definition Domain Foundation.
+Milestone: Engineering Operating System Reporting Refinement.
 
 Status: Implemented, verified, human-approved, and committed.
 
 ## Repository Evidence
 
 - Branch: `docs/engineering-handbook`.
-- Working tree before implementation: clean.
-- Latest committed baseline before implementation: `560ad58 docs(eos): freeze Session Controller workflow`.
+- Working tree before implementation: clean after `b36e144 feat(recipes): add recipe definition domain foundation`.
+- Latest committed baseline before implementation: `b36e144 feat(recipes): add recipe definition domain foundation`.
 - Product Horizons identifies Horizon 1, Core Kitchen Inventory Platform, as active.
-- The milestone is inside Horizon 1 because Horizon 1 includes recipe definitions, recipe scaling, ingredient availability checks, and shopping list generation.
+- This milestone is documentation-only and refines Engineering Operating System reporting terminology.
 
 ## Architecture Evidence
 
-- Recipe work is implemented under `apps/web/src/domains/recipes`, aligned with ADR-0008 domain-driven package organization.
-- Recipe ingredients reuse shared `EntityId` and `ItemUnit` from `@krishnas-kitchen/types`.
-- No feature UI, routes, navigation, persistence adapters, migrations, RLS, RPC, permission, or Product Horizons changes were made.
+- [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) now defines completion-report terminology for Residual Risks and Future Approved Work.
+- The refinement does not change Session Controller states, transitions, approval gates, Product Horizons, architecture boundaries, or runtime behavior.
+- No application code, tests, migrations, RLS, RPC, permissions, routes, navigation, persistence adapters, or Product Horizons changes were made.
 
 ## Implementation Evidence
 
-- Added recipe definition input and ingredient input domain types.
-- Added supported recipe ingredient units based on the existing shared item unit vocabulary.
-- Added validation for recipe name, servings/yield, ingredient item references, finite positive ingredient quantities, and supported units.
-- Added normalization for recipe name and optional ingredient notes.
-- Added recipe-specific validation errors and assertion helper.
-- Added recipe domain barrel exports.
-- Added focused Vitest coverage for valid recipes, normalization, required fields, invalid quantities, invalid units, and assertion errors.
+- Defined Residual Risks as milestone-specific risks that may affect correctness, security, reliability, maintainability, scalability, or operation of the completed milestone.
+- Defined Future Approved Work as planned, roadmap, or intentionally deferred capability outside the approved milestone.
+- Updated completion report guidance to include commit hash, git status, verification summary, documentation updates, Residual Risks, and Future Approved Work.
+- Updated Definition of Done and post-implementation review documentation/templates to separate residual risks from future approved work.
+- Updated this evidence report to model the refined reporting distinction.
 
 ## Documentation Validation
 
-- Living references now identify Recipe Definition Domain Foundation as the active implemented milestone.
-- Living docs record that recipe UI, persistence, availability checks, shopping-list generation, menu planning, procurement, analytics, and other higher-horizon behavior remain deferred.
+- Living references now identify Engineering Operating System Reporting Refinement as the current documentation-only milestone.
 - Product Horizons was not changed because the active horizon and exit criteria did not change.
-- Previously observed documentation drift around stale committed EOS/security milestone status was corrected only where required by this milestone handoff.
+- Session Controller behavior and approval boundaries were preserved.
 
 ## Verification Results
 
-Focused verification passed:
-
-- `corepack pnpm@9.15.4 exec vitest run apps/web/src/domains/recipes/domain/recipeDefinition.test.ts`
-
-Full verification passed:
+Documentation verification passed:
 
 - `corepack pnpm@9.15.4 format`
-- `corepack pnpm@9.15.4 typecheck`
-- `corepack pnpm@9.15.4 lint`
-- `corepack pnpm@9.15.4 test`
-- `corepack pnpm@9.15.4 build`
 - `git diff --check`
+- Targeted terminology search for stale completion-report wording.
 
 ## Residual Risks
 
-- Recipe persistence shape is not yet proven and may need organization, temple, authoring, identity, archival, and audit fields later.
-- The current slice validates recipe inputs only; it does not prove recipe scaling, availability checks, shopping-list generation, or offline recipe behavior.
-- Offline queue storage, replay workers, UI offline states, and server idempotency constraints remain unimplemented by design.
-- Future recipe write capability still requires a separate approved persistence and authorization model.
+None known for the completed reporting refinement.
+
+## Future Approved Work
+
+None for this documentation-only milestone.
 
 ## Evidence Location
 

@@ -58,13 +58,15 @@ The template is living. Individual reviews are historical once recorded.
 
 ## Performance
 
+## Residual Risks
+
 ## Lessons Learned
 
 ## Technical Debt
 
 ## Documentation Updated
 
-## Future Work
+## Future Approved Work
 ```
 
 ## Optional Sections
@@ -79,7 +81,7 @@ The template is living. Individual reviews are historical once recorded.
 
 - The summary distinguishes changed and unchanged areas.
 - Validation is specific.
-- Risks and follow-up are named.
+- Residual risks and future approved work are separated.
 - Documentation updates or gaps are listed.
 - Human review needs are clear.
 
@@ -88,4 +90,3 @@ The template is living. Individual reviews are historical once recorded.
 - [Post-Implementation Review](../process/POST_IMPLEMENTATION_REVIEW.md)
 - [Definition of Done](../process/DEFINITION_OF_DONE.md)
 - [Engineering Review Checklist](../process/ENGINEERING_REVIEW_CHECKLIST.md)
-

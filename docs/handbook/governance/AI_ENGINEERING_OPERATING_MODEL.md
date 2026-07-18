@@ -63,7 +63,7 @@ Repository Reconstruction always occurs at session start or resume. If repositor
 | Ready For Human Review | Present completed implementation for human review. | Verification passed; review found no commit-blocking issues. | Report status, implementation summary, files changed, findings, risks, verification results, confidence, evidence, and recommended next action. Do not commit. | Human accepts review, requests changes, asks for clarification, or explicitly approves commit. | Waiting For Commit Approval, Commit, Implementation, Blocked | Stop until human review response. | Required for commit approval or requested changes. |
 | Waiting For Commit Approval | Hold before commit until the human explicitly approves commit. | Human has reviewed or accepted the ready-for-review handoff, but commit approval has not yet been granted. | Wait for explicit commit approval. Do not stage or commit. | Human explicitly approves commit, requests changes, or asks for clarification. | Commit, Implementation, Blocked | Stop because commit requires approval. | Required. |
 | Commit | Commit only the approved scope. | Explicit commit approval received. | Update required living docs and evidence, confirm Product Horizons changes are allowed only when active horizon or exit criteria changed, rerun required verification, confirm diff scope, stage intended files, commit, and capture commit hash/status/evidence. | Commit succeeds and repository status is known, or commit cannot proceed safely. | Session Complete, Blocked | Stop only if human clarification is required or commit cannot proceed safely. | Explicit approval required before entering this state. |
-| Session Complete | Close the session with a clear handoff. | Commit completed, or a no-commit workflow has reached its requested stop point. | Report requested final fields, verification, evidence location, git status when relevant, and remaining risks. | Final handoff delivered. | Repository Reconstruction | None. A future user request starts a new session at Repository Reconstruction. | None. |
+| Session Complete | Close the session with a clear handoff. | Commit completed, or a no-commit workflow has reached its requested stop point. | Report requested final fields, verification, evidence location, git status when relevant, residual risks, and future approved work when relevant. | Final handoff delivered. | Repository Reconstruction | None. A future user request starts a new session at Repository Reconstruction. | None. |
 
 ### Automatic Transitions
 
@@ -93,6 +93,23 @@ After successful verification and before presenting `STATUS = READY FOR HUMAN RE
 
 Update required living documentation when the approved scope allows it. Otherwise, report the needed update or promotion candidate in the handoff.
 
+### Completion Reporting
+
+Completion reports must distinguish residual risks from future approved work.
+
+Residual risks are issues that may affect the correctness, security, reliability, maintainability, scalability, or operation of the completed milestone. Examples include known performance limitations, existing warnings, technical debt introduced by the implementation, validation limitations, external dependencies, and operational concerns. Report only risks that apply to the completed milestone.
+
+Future approved work is planned or intentionally deferred capability outside the approved milestone. Examples include future milestones, roadmap items, recipe persistence, shopping-list generation, authorization, offline recipe behavior, and future UI work. Do not report these as residual risks unless they directly affect the completed implementation.
+
+When completing a milestone, organize the final report as:
+
+- Commit hash.
+- Git status.
+- Verification summary.
+- Documentation updates.
+- Residual Risks, omitted when none are known.
+- Future Approved Work, omitted when no relevant roadmap items need highlighting.
+
 ## AI Responsibilities
 
 AI is responsible for:
@@ -107,7 +124,7 @@ AI is responsible for:
 - Running applicable verification.
 - Performing self-review, architecture review, security review, repository review, and documentation review.
 - Updating required living documentation when the milestone changes current state.
-- Reporting residual risk, confidence, and commit readiness.
+- Reporting residual risks, future approved work when relevant, confidence, and commit readiness.
 - Requesting separate commit approval before committing.
 
 ## Human Responsibilities
@@ -228,7 +245,7 @@ A milestone is commit-ready only when:
 - Applicable verification passes or exceptions are documented.
 - Required reviews are complete.
 - Required living documentation is updated.
-- Residual risks are documented.
+- Residual risks that apply to the completed milestone are documented.
 - The final diff contains only intended files.
 - Human commit approval has been granted.
 
@@ -278,7 +295,7 @@ When implementation or verification fails:
 3. Repair only within the approved milestone.
 4. Re-run the relevant verification.
 5. Escalate if repair requires new scope or authority.
-6. Report the failure, recovery attempt, and remaining risk.
+6. Report the failure, recovery attempt, and residual risk.
 
 ## Drift Detection
 

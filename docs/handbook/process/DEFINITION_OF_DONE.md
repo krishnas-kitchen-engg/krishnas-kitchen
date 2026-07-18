@@ -94,10 +94,10 @@ A milestone is done only when every applicable item below is satisfied or explic
 - Mobile, accessibility, offline, or operational validation was performed when relevant.
 - Manual validation gaps are documented.
 
-### Known Risks Documented
+### Completion Reporting
 
-- Residual risks are named.
-- Follow-up work is identified.
+- Residual risks that apply to the completed milestone are named.
+- Planned or intentionally deferred capabilities are listed separately as Future Approved Work when relevant.
 - Rollback or recovery considerations are documented when relevant.
 
 ## Commit Rule
@@ -132,4 +132,3 @@ Update this document when:
 - [AI Execution Protocol](../governance/AI_EXECUTION_PROTOCOL.md)
 - [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md)
 - [Engineering System](../governance/ENGINEERING_SYSTEM.md)
-
