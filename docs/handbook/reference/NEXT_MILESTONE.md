@@ -42,109 +42,104 @@ Implementation must not begin until the human approves one candidate. Commit app
 
 ## Status
 
-Implemented for the approved candidate. Commit approved.
+Implemented, verified, human-approved, and committed for the approved candidate.
 
 ## Approval
 
-Candidate 1, Record Horizon 1 Security Review Baseline, was approved for implementation.
+Candidate 1, Recipe Definition Domain Foundation, was approved for implementation.
 
 ## Recommended Candidate
 
-Candidate 1: Record Horizon 1 Security Review Baseline.
+Candidate 1: Recipe Definition Domain Foundation.
 
-Recommendation: Implemented and approved for commit.
+Recommendation: Implemented, verified, human-approved, and committed.
 
-Strategic Alignment: Strengthens Horizon 1 security posture, evidence generation, repository health, engineering documentation, and production-readiness discipline.
+Strategic Alignment: Opens Horizon 1 recipe work with a tested domain contract before UI, persistence, availability, scaling, or shopping-list workflows are added.
 
 Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
 
-Reason It Belongs To This Horizon: Horizon 1 includes RLS/RPC foundations, temporary volunteer access, inventory workflows, evidence generation, and engineering documentation.
+Reason It Belongs To This Horizon: Horizon 1 explicitly includes recipe definitions, recipe scaling, ingredient availability checks, and shopping list generation.
 
-Evidence Value: High. The milestone records the latest security review baseline so future sensitive work starts from explicit findings instead of an unrecorded posture gap.
+Evidence Value: High. It proves the recipe domain can reuse existing inventory item/unit concepts without expanding into workflow or persistence scope.
 
-Future Horizon Support Without Scope Expansion: Keeps authorization, audit, and offline replay constraints visible before larger planning, procurement, analytics, or operations domains are added.
+Future Horizon Support Without Scope Expansion: Gives future menu planning, forecasting, and operations horizons a stable recipe-definition vocabulary while implementing only the active Horizon 1 foundation.
 
-Implementation Note: Security Status now records the 2026-07-16 Horizon 1 security review baseline and clarifies that it is not production security approval.
+Confidence: 88%.
 
-Confidence: 87%.
+Rationale: Recipe definitions are the smallest Horizon 1 step that creates forward product value while preserving current inventory and security behavior.
 
-Rationale: Security architecture is canonicalized, but living docs still recorded the absence of a latest full security review result as a known risk.
-
-Estimated Effort: Low.
+Estimated Effort: Medium-low.
 
 Assumptions:
 
-- The review can be recorded from repository evidence without changing application code.
-- The review baseline should not imply production readiness or authorize temporary volunteer write capability.
+- Recipe ingredients should reference existing inventory items through `EntityId`.
+- Recipe ingredient units should reuse the existing shared `ItemUnit` vocabulary.
 
 Uncertainties:
 
-- Future candidate ranking may change after the next full repository reconstruction and verification cycle.
+- Future persistence may require additional recipe identity, organization, temple, authoring, and archival fields.
 
 Reasons Alternatives Were Not Recommended:
 
-- Candidate 2 is useful, but scanning documentation drift is less urgent than closing the explicit security-review evidence gap.
-- Candidate 3 is useful, but stack documentation drift does not de-risk security-sensitive Horizon 1 work as directly.
+- Candidate 2 is useful, but scanning documentation cleanup is documentation-only and lower product-evidence value than starting the next Horizon 1 recipe capability.
+- Candidate 3 is useful, but stack documentation reconciliation improves onboarding more than it advances the active product horizon.
 
-## Candidate 1: Record Horizon 1 Security Review Baseline
+## Candidate 1: Recipe Definition Domain Foundation
 
-Recommendation: Implemented and approved for commit.
+Recommendation: Implemented, verified, human-approved, and committed.
 
-Strategic Alignment: Keeps Horizon 1 security posture and evidence aligned with repository reality.
+Strategic Alignment: Starts Horizon 1 recipe functionality with a small tested domain foundation.
 
 Current Horizon: Horizon 1, Core Kitchen Inventory Platform.
 
-Reason It Belongs To This Horizon: Horizon 1 includes auth/RLS/RPC foundations, inventory authorization, temporary volunteer access, evidence generation, and engineering documentation.
+Reason It Belongs To This Horizon: Horizon 1 includes recipe definitions, recipe scaling, ingredient availability checks, and shopping list generation.
 
-Rationale: Security architecture ownership is consolidated, but the latest full security review result still needed to be recorded before security-sensitive follow-up work.
+Rationale: The repository has mature inventory item/unit concepts but no recipe domain source. A pure domain slice creates the first recipe contract without forcing UI or database decisions.
 
-Confidence: 87%.
+Confidence: 88%.
 
-Estimated Effort: Low.
+Estimated Effort: Medium-low.
 
 Dependencies:
 
-- [Security Architecture](../architecture/security.md).
-- [Security Status](./SECURITY_STATUS.md).
-- [Auth Architecture](../../AUTH_ARCHITECTURE.md).
-- [Permissions Matrix](../../PERMISSIONS_MATRIX.md).
-- Supabase migrations under `infra/supabase/migrations`.
-- [Current Milestone](./CURRENT_MILESTONE.md).
-- [Current State](./CURRENT_STATE.md).
-- [Project Reconstruction](./PROJECT_RECONSTRUCTION.md).
-- [Project Scorecard](./PROJECT_SCORECARD.md).
-- [Evidence Report](./EVIDENCE_REPORT.md).
+- [Product Horizons](../../PRODUCT_HORIZONS.md).
+- `packages/types/src/index.ts`.
+- `packages/utils/src/index.ts`.
+- `apps/web/src/domains/inventory`.
+- [ADR-0008](../adrs/0008-domain-driven-package-organization.md).
 
 Risk:
 
-- Low. Main risk is overstating baseline review as production approval or expanding into RLS/RPC implementation.
+- Medium-low. Future persistence may require additional fields, but pure validation keeps the current blast radius small.
 
-Expected Value: High. Future EOS sessions start from an explicit Horizon 1 security posture baseline instead of an unrecorded review gap.
+Expected Value: High. Establishes the first recipe domain contract that later Horizon 1 recipe scaling, availability, and shopping-list work can build on.
 
-Evidence Value: High. It directly resolves the documented absence of latest full security review results.
+Evidence Value: High. Demonstrates recipe work can begin safely inside Horizon 1 without UI, schema, permissions, or higher-horizon expansion.
 
-Future Horizon Support Without Scope Expansion: Preserves authorization and audit constraints for future planning, procurement, analytics, and operations work without implementing them.
+Future Horizon Support Without Scope Expansion: Creates a vocabulary future planning and forecasting can consume later, while deferring those higher-horizon workflows.
 
-Architecture Impact: Low. It records current architecture/security posture without changing boundaries.
+Architecture Impact: Low-medium. Adds a new `recipes` domain alongside `inventory` without crossing feature, app, or persistence boundaries.
 
-Security Impact: Medium documentation/evidence impact. Runtime security remains unchanged; review findings become explicit.
+Security Impact: Low. No new protected data access, browser trust boundary, RLS/RPC, or permission behavior is introduced.
 
 Testing Strategy:
 
-- Documentation/reference validation.
-- Full format, typecheck, lint, test, and build before human review.
+- Focused recipe domain validation tests.
+- Full format, typecheck, lint, test, build, and diff whitespace verification before human review.
 
 Expected Deliverables:
 
-- Recorded Horizon 1 security review baseline.
-- Refreshed affected living milestone, state, reconstruction, scorecard, memory, lessons, and evidence references.
-- Updated evidence report.
-- No runtime, migration, permission, RLS, RPC, Product Horizons, or application changes.
+- Recipe definition domain types.
+- Recipe validation and normalization helpers.
+- Recipe-specific validation error.
+- Recipe domain barrel export.
+- Focused tests.
+- Updated required living docs and evidence report.
 
 Validation Plan:
 
-- Confirm no references still describe latest full security review results as unrecorded.
-- Confirm no source, migration, policy, permission, RPC, Product Horizons, or runtime behavior changed.
+- Confirm no recipe UI, route, persistence, migration, RLS/RPC, permission, shopping-list, availability, scaling, menu-planning, procurement, or analytics behavior was added.
+- Run focused recipe tests and full verification suite.
 
 ## Candidate 2: Canonicalize Scanning Architecture Boundary
 

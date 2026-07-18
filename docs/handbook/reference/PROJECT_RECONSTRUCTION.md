@@ -49,7 +49,7 @@ Use this document after [Engineering Handbook](../README.md) and [AI Engineering
 
 Krishna's Kitchen is a mobile-first React/Vite/TypeScript PWA for volunteer-run temple kitchen operations. [Product Horizons](../../PRODUCT_HORIZONS.md) is the canonical long-term roadmap and active horizon source. Horizon 1, Core Kitchen Inventory Platform, is active. See [Product Vision](../../PRODUCT_VISION.md) and [MVP Scope](../../MVP_SCOPE.md) for supporting product context.
 
-Implementation maturity: active development. Repository evidence shows implemented authentication scaffolding, temporary volunteer session infrastructure, inventory domain services, Supabase repository adapters, mobile inventory lookup and receive/transfer/return/scan screens, volunteer home and tasks screens, migrations, and tests. It is not documented as production-ready; see [Current State](./CURRENT_STATE.md) and [Known Limitations](./KNOWN_LIMITATIONS.md).
+Implementation maturity: active development. Repository evidence shows implemented authentication scaffolding, temporary volunteer session infrastructure, inventory domain services, recipe definition domain foundation, Supabase repository adapters, mobile inventory lookup and receive/transfer/return/scan screens, volunteer home and tasks screens, migrations, and tests. It is not documented as production-ready; see [Current State](./CURRENT_STATE.md) and [Known Limitations](./KNOWN_LIMITATIONS.md).
 
 Engineering maturity: strong. The Engineering Operating System is frozen for production use, with a canonical Session Controller, Product Horizons, governance, process docs, templates, ADRs, living references, and a scorecard. Future EOS changes require implementation-driven justification.
 
@@ -57,7 +57,7 @@ Security maturity: foundation implemented, production approval not granted. RLS 
 
 Documentation maturity: high for engineering process and reconstruction, medium for application-state documentation. Canonical handbook docs exist, but older docs still contain drift, duplication, and some encoding artifacts. See [Document Index](./DOCUMENT_INDEX.md) and [Documentation Drift](./DOCUMENTATION_DRIFT.md).
 
-Overall project status: ready to continue controlled application development. The temporary volunteer login diagnostic worktree state, temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, security architecture ownership gap, and unrecorded security review baseline have been resolved; remaining high-priority risks include unimplemented offline queue/replay behavior and missing production security approval.
+Overall project status: ready to continue controlled application development. The temporary volunteer login diagnostic worktree state, temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, security architecture ownership gap, unrecorded security review baseline, and EOS Session Controller freeze have been resolved. Recipe definition domain work has started as a small Horizon 1 foundation; remaining high-priority risks include unimplemented offline queue/replay behavior and missing production security approval.
 
 ## Product Vision Summary
 
@@ -95,13 +95,14 @@ Long-term vision: become the operational backbone for volunteer-run kitchens glo
 | Undo/Reversal | Implemented with Canonical Terminology | reversal validation, transaction helpers, migrations, [ADR-0009](../adrs/0009-auditability-and-reversibility.md) | `undo` is the user-facing action and service operation; `reversal` is the current persisted correction transaction type; legacy persisted `undo` rows remain read-compatible history only. |
 | Unknown Barcodes | Implemented | unknown barcode domain/service/repository/tests; migration `20260606000400_add_unknown_barcodes.sql` | Home/tasks summary files also reference pending unknown barcodes. |
 | Low Stock | Implemented | low-stock threshold repository/mapper/tests; migration `20260606000500_add_inventory_low_stock_thresholds.sql` | Home and tasks summary components exist. |
+| Recipe Definitions | Domain Foundation Implemented | `apps/web/src/domains/recipes`; [Current Milestone](./CURRENT_MILESTONE.md) | Pure domain types, validation, normalization, exports, and tests exist. No recipe UI, persistence, availability, scaling, shopping-list generation, or planning behavior is implemented. |
 | Volunteer Home | Implemented | `apps/web/src/features/home` | Home summary, quick actions, low-stock and unknown barcode summaries exist. |
 | Tasks | Implemented | `apps/web/src/features/tasks` | Low-stock and unknown-barcode task cards exist; future task placeholder exists. |
 | Offline | Architecture Defined / Implementation Planned | [ADR-0005](../adrs/0005-mobile-first-offline-pwa.md); [Offline Sync Architecture](../architecture/offline-sync.md); [Known Limitations](./KNOWN_LIMITATIONS.md) | PWA tooling and offline-safe inventory metadata exist. Local queue storage and replay are not implemented. |
 | Settings | Planned / Unknown | No current source files found for a settings feature | Not enough repository evidence to classify as implemented. |
 | Administration | Planned / Unknown | Product docs mention admin needs; no dedicated admin feature files found | Admin workflows are not evidenced as implemented. |
 | Reporting | Planned | [Product Vision](../../PRODUCT_VISION.md); [MVP Scope](../../MVP_SCOPE.md) excludes advanced reporting | Advanced reporting is explicitly outside initial MVP. |
-| Recipes, Meal Planning, Procurement | Planned | [Product Vision](../../PRODUCT_VISION.md); [MVP Scope](../../MVP_SCOPE.md) | These are product domains or future expansion areas, not current implementation. |
+| Recipe Scaling, Meal Planning, Procurement | Planned | [Product Vision](../../PRODUCT_VISION.md); [MVP Scope](../../MVP_SCOPE.md) | Recipe scaling and shopping-list generation are later Horizon 1 work; meal planning and procurement remain future expansion areas. |
 
 ## Architecture Snapshot
 
@@ -117,6 +118,7 @@ Packages:
 Domains and features:
 
 - Domain logic lives under `apps/web/src/domains`, especially `domains/inventory`.
+- Recipe definition domain logic now lives under `apps/web/src/domains/recipes`.
 - Feature UI lives under `apps/web/src/features`, including `auth`, `home`, `inventory`, and `tasks`.
 - App composition, routing, shell, and providers live under `apps/web/src/app`.
 - Supabase integration lives under `apps/web/src/shared/integrations/supabase`.
@@ -179,9 +181,10 @@ This timeline is reconstructed from [Changelog Summary](./CHANGELOG_SUMMARY.md),
 | Engineering Handbook v1.3 freeze | Product Horizons integration, active-horizon milestone gating, offline-sync architecture, and final handbook consistency pass | `9275155 docs(handbook): freeze engineering handbook v1.3` |
 | Security architecture ownership consolidation | Living security architecture source and reference updates | `c8a4f5c docs(security): consolidate architecture ownership` |
 | Living state refresh after security commit | Milestone, reconstruction, scorecard, and evidence references aligned to committed security architecture history | `63dc374 docs(handbook): refresh milestone state after security commit` |
-| Engineering Operating System Session Controller freeze | Canonical Session Controller, repository-evidence resume, verification-integrated Evidence Capture, and simplified governance/process workflow references | Pending commit |
+| Engineering Operating System Session Controller freeze | Canonical Session Controller, repository-evidence resume, verification-integrated Evidence Capture, and simplified governance/process workflow references | `560ad58 docs(eos): freeze Session Controller workflow` |
+| Recipe definition domain foundation | Recipe definition types, validation, normalization, exports, and focused tests | Committed |
 
-Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Freeze Engineering Operating System Session Controller as the active implemented milestone approved for commit.
+Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Recipe Definition Domain Foundation as the active implemented milestone committed in the current Session Controller run.
 
 ## ADR Status
 
@@ -234,11 +237,11 @@ Use the EOS candidate flow in [AI Engineering Operating Model](../governance/AI_
 
 | Rank | Candidate | Strategic Alignment | Current Horizon | Reason It Belongs | Evidence Value | Future Horizon Support Without Scope Expansion | Recommendation |
 |---|---|---|---|---|---|---|---|
-| 1 | Freeze Engineering Operating System Session Controller | Keeps future execution deterministic and repository-grounded | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation | High: prevents workflow drift before further application work | Keeps future planning and operations work governed by active-horizon scope without implementing higher-horizon work | Implemented and approved for commit |
+| 1 | Recipe Definition Domain Foundation | Starts Horizon 1 recipe capability with a tested domain contract | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes recipe definitions, recipe scaling, ingredient availability checks, and shopping list generation | High: proves recipe work can reuse inventory item/unit concepts without UI or persistence scope | Gives future planning and forecasting a stable vocabulary while deferring higher-horizon workflows | Implemented, verified, human-approved, and committed |
 | 2 | Canonicalize scanning architecture boundary | Clarifies scan-first inventory workflow ownership | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes inventory workflows, barcode lookup, barcode catalog, unknown barcode workflow, inventory visibility, and mobile-first PWA | Medium: reduces scan workflow drift | Keeps future operational workflows compatible with a cleaner scan boundary without expanding scope | Defer |
 | 3 | Reconcile stack documentation against package manifests | Keeps repository architecture guidance aligned with package manifests | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation | Medium-low: reduces false stack assumptions | Gives future contributors accurate dependency truth before larger product domains are added | Defer |
 
-Recommended next action: commit the approved EOS Session Controller freeze. Do not implement offline queue storage, replay, idempotency constraints, permission expansion, scanning architecture work, or stack documentation reconciliation until a separate candidate milestone is approved.
+Recommended next action: start the next Session Controller run with repository reconstruction and active-horizon milestone selection. Do not implement recipe UI, persistence, availability, shopping-list generation, scaling, offline queue storage, replay, permission expansion, scanning architecture work, or stack documentation reconciliation until a separate candidate milestone is approved.
 
 ## Engineering Health
 
@@ -248,24 +251,23 @@ Recommended next action: commit the approved EOS Session Controller freeze. Do n
 | Security | Watch | RLS/RPC foundations exist; temporary volunteer browser permissions are restricted to read/session capabilities; the Horizon 1 security review baseline is recorded, but production security approval is not granted. |
 | Testing | Watch | Many tests exist across domain, repository, migration, auth, UI, and utilities; latest verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md), and future implementation milestones must rerun verification. |
 | Documentation | Good | EOS Session Controller is frozen for production use; Product Horizons, document index, drift register, ADRs, templates, and living references exist. |
-| Roadmap | Conditional | Temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, security architecture ownership, security review baseline recording, and EOS Session Controller freeze are complete or approved for commit. |
+| Roadmap | Conditional | Temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, security architecture ownership, security review baseline recording, EOS Session Controller freeze, and recipe definition domain foundation are complete. |
 | Technical Debt | Watch | Offline queue implementation, scanning documentation drift, schema reference drift, and older documentation drift remain open. |
 | Overall | Good for controlled development | The project has enough governance and implementation structure to resume application work after candidate approval. |
 
 ## Repository Health
 
-Working tree at latest reconstruction update before this milestone:
+Working tree at latest reconstruction update for this milestone:
 
-- No auth/routing application diff remains after temporary diagnostic cleanup.
-- Living documentation updates are present for the reconstruction, milestone, memory, state, changelog, implementation patterns, and engineering lessons.
 - Security architecture ownership is committed in `c8a4f5c`.
 - Living state refresh after the security commit is committed in `63dc374`.
 - Horizon 1 security review baseline is committed in `94e150f`.
-- EOS Session Controller freeze documentation is present in the current worktree and approved for commit.
+- EOS Session Controller freeze is committed in `560ad58`.
+- Recipe definition domain implementation and required living documentation updates were verified and committed in the current Session Controller run.
 
 Resolved debug work: [Project Memory](./PROJECT_MEMORY.md), [Common Failures and Engineering Lessons](./COMMON_FAILURES.md), and [Current Milestone](./CURRENT_MILESTONE.md) record that temporary volunteer login diagnostic instrumentation was removed and verified.
 
-Attention before development resumes: commit the EOS Session Controller freeze, then refresh candidate options and avoid mixing offline implementation, permission changes, scanning architecture, or stack documentation decisions into unrelated work.
+Attention before development resumes: start with repository reconstruction and recommend the next active-horizon milestone. Avoid mixing recipe UI, persistence, availability checks, shopping-list generation, scaling, offline implementation, permission changes, scanning architecture, or stack documentation decisions into unrelated work.
 
 ## Known Assumptions
 
@@ -281,6 +283,7 @@ Repository evidence shows these assumptions are currently baked into implementat
 - Offline capability is required; queue architecture is defined, but local queue storage and replay are not implemented.
 - Security-sensitive work requires security review before commit readiness.
 - Future EOS changes require implementation-driven justification.
+- Recipe definitions currently have domain validation only; persistence, authorization, UI, scaling, availability, and shopping-list behavior remain future approved slices.
 
 ## Lessons Worth Preserving
 
@@ -301,7 +304,7 @@ A brand-new senior engineer should understand first:
 - Krishna's Kitchen is an active-development, mobile-first PWA for volunteer kitchen inventory operations.
 - Inventory integrity, auditability, server-side authorization, and volunteer-friendly speed are the central constraints.
 - The frozen Engineering Operating System Session Controller is the canonical execution workflow.
-- The next application work should start with repository reconstruction, then follow the Session Controller through active-horizon milestone selection, approval, implementation, self review, verification, Evidence Capture, human review, and commit approval.
+- The latest application work is the Recipe Definition Domain Foundation, implemented as a pure Horizon 1 domain slice, verified, human-approved, and committed.
 
 They should avoid changing:
 
@@ -313,7 +316,7 @@ They should avoid changing:
 
 They should plan next:
 
-- Refresh candidate options after this EOS Session Controller freeze is committed.
+- Refresh candidate options after reconstructing repository state in the next Session Controller run.
 - Recommend only active-horizon milestones from [Product Horizons](../../PRODUCT_HORIZONS.md).
 - Keep any follow-up milestone small, independently verifiable, and reversible.
 - Preserve separate approval gates for implementation review and commit.

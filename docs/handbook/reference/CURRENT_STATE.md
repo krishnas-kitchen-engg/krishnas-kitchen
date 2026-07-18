@@ -65,11 +65,13 @@ The project is not documented as production-ready.
 - Security architecture ownership was consolidated and committed in `c8a4f5c`.
 - The Horizon 1 security review baseline was recorded in [Security Status](./SECURITY_STATUS.md) without changing runtime behavior.
 - The Engineering Operating System Session Controller was frozen for production use without changing application behavior.
+- Recipe definition domain foundation is implemented with pure domain types, validation, normalization, exports, and tests.
 
 ## Implemented Domains
 
 - `auth`: authentication provider, auth screens, temporary volunteer session storage, volunteer session repository/RPC integration.
 - `inventory`: inventory domain, validation, aggregation, visibility, barcode lookup/catalog, unknown barcode, repository adapters, scan workflows, receive/transfer/return workflows.
+- `recipes`: recipe definition domain inputs, ingredient validation, serving/yield validation, normalization, and recipe-specific validation errors.
 - `home`: volunteer home summary and shell integration.
 - `tasks`: task screen and inventory-related task summaries.
 
@@ -92,6 +94,12 @@ Canonical correction terminology: `undo` is the user-facing action and service o
 Canonical return semantics: current application-created return transactions use `transaction_type = "returned"` with `quantity_effect = "transfer"`. Returns move positive quantity from source location to destination location; migration support for `returned` plus `increase` is compatibility only.
 
 Canonical offline architecture: offline writes must preserve domain validation, immutable inventory semantics, audit/client request metadata, repository boundaries, idempotent replay, fail-closed authorization, and server/database authority. Local queue storage and replay are not implemented yet.
+
+## Recipe Status
+
+Recipe definition domain work has started inside Horizon 1. The current slice validates recipe names, servings/yield, inventory item references, supported item units, and positive finite ingredient quantities, and normalizes user-entered recipe text.
+
+No recipe UI, routes, persistence, migrations, availability checks, scaling workflow, shopping-list generation, menu planning, procurement, or higher-horizon kitchen planning behavior is implemented.
 
 ## Database Status
 
@@ -121,9 +129,13 @@ Offline architecture is now documented in [Offline Sync Architecture](../archite
 
 Vitest is configured. Tests exist for inventory domain logic, repository adapters, migrations, auth volunteer sessions, UI reducers/screens, shell navigation, and shared utilities.
 
-Latest documentation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md) for the Engineering Operating System Session Controller freeze.
+Latest implementation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md) for the Recipe Definition Domain Foundation.
 
 - `corepack pnpm@9.15.4 format`
+- `corepack pnpm@9.15.4 typecheck`
+- `corepack pnpm@9.15.4 lint`
+- `corepack pnpm@9.15.4 test`
+- `corepack pnpm@9.15.4 build`
 - `git diff --check`
 
 ## Documentation Status

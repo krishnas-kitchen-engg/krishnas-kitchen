@@ -33,37 +33,31 @@ Update this document whenever a milestone starts, pauses, completes, or changes 
 
 ## Current Active Milestone
 
-Freeze Engineering Operating System Session Controller.
+Recipe Definition Domain Foundation.
 
 ## Goal
 
-Freeze the Engineering Operating System for production use by making the Session Controller the canonical execution workflow, adding resume and evidence-capture rules, simplifying duplicate workflow language, and removing embedded operating-model version wording.
+Add the smallest production-quality recipe-definition domain foundation for Horizon 1 recipe work without adding UI, persistence, migrations, shopping-list generation, availability checks, menu planning, procurement, or higher-horizon behavior.
 
 ## Status
 
-Implemented, verified, reviewed, and approved for commit.
+Implemented, verified, human-approved, and committed.
 
 ## Scope
 
-- Make the Session Controller the canonical orchestration workflow in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md).
-- Add session resume behavior based on repository evidence without persistent session files.
-- Incorporate Evidence Capture into the Verification to Ready For Human Review transition without adding a new execution state.
-- Delegate repository scan details to [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md).
-- Align related governance/process docs to point at the Session Controller without duplicating workflow descriptions.
-- Refresh required living references for the EOS freeze.
-- Preserve Product Horizons, application code, migrations, runtime behavior, permissions, RLS/RPC behavior, and architecture boundaries.
+- Add recipe definition input and ingredient input domain types.
+- Validate recipe name, servings/yield, ingredient item references, positive finite ingredient quantities, and supported item units.
+- Normalize recipe name and optional ingredient notes before future persistence or UI work.
+- Export the recipe domain foundation through a new recipe domain barrel.
+- Add focused Vitest coverage for valid recipes, normalization, required fields, invalid units, invalid quantities, and recipe-specific assertion errors.
+- Preserve Product Horizons, runtime routes, UI screens, navigation, Supabase schema, migrations, RLS/RPC behavior, inventory behavior, auth behavior, and higher-horizon product scope.
 
 ## Files Affected
 
-- `docs/handbook/governance/AI_ENGINEERING_OPERATING_MODEL.md`
-- `docs/handbook/governance/AI_EXECUTION_PROTOCOL.md`
-- `docs/handbook/governance/ENGINEERING_PRINCIPLES.md`
-- `docs/handbook/governance/ENGINEERING_SYSTEM.md`
-- `docs/handbook/governance/README.md`
-- `docs/handbook/governance/REPOSITORY_REFRESH_PROTOCOL.md`
-- `docs/handbook/process/MILESTONE_LIFECYCLE.md`
-- `docs/handbook/process/QUALITY_GATES.md`
-- `docs/handbook/process/SESSION_LIFECYCLE.md`
+- `apps/web/src/domains/recipes/domain/types.ts`
+- `apps/web/src/domains/recipes/domain/recipeDefinition.ts`
+- `apps/web/src/domains/recipes/domain/recipeDefinition.test.ts`
+- `apps/web/src/domains/recipes/index.ts`
 - `docs/handbook/reference/CURRENT_MILESTONE.md`
 - `docs/handbook/reference/CURRENT_STATE.md`
 - `docs/handbook/reference/PROJECT_MEMORY.md`
@@ -80,16 +74,20 @@ None known for this milestone.
 
 ## Verification Status
 
-Documentation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
+Implementation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
 
-Documentation verification passed:
+Verification passed:
 
 - `corepack pnpm@9.15.4 format`
+- `corepack pnpm@9.15.4 typecheck`
+- `corepack pnpm@9.15.4 lint`
+- `corepack pnpm@9.15.4 test`
+- `corepack pnpm@9.15.4 build`
 - `git diff --check`
 
 ## Next Review
 
-Commit the approved documentation-only EOS freeze milestone.
+Session complete. Start the next session with repository reconstruction and active-horizon milestone selection.
 
 ## Owner
 

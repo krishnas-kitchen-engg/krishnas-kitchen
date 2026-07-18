@@ -42,6 +42,7 @@ Use it to prevent repeated mistakes and surface practical lessons. Keep durable 
 | Security baseline is mistaken for production approval | Review evidence can sound like a release decision if approval status is not explicit | Security Status now records the Horizon 1 baseline separately from production security approval | State whether a review is a baseline, a required-change list, or production approval before security-sensitive commit readiness |
 | Future horizon expands implementation scope | Long-term product vision can be mistaken for current implementation authority | Product Horizons now defines the active horizon and horizon rules | Reject implementation candidates outside the active horizon; allow future horizons to influence architecture only |
 | Resume restarts completed workflow | A resumed session can look like a new session if reconstruction ignores current repository evidence | Session Controller now requires reconstruction first, then continuation from the evidence-backed controller state | Do not create session files; use git status, living docs, and evidence reports to determine whether to resume or restart |
+| Recipe implementation becomes planning implementation | Recipe definitions sit upstream of availability, shopping lists, menu planning, procurement, and forecasting | Keep the first recipe slice domain-only and explicitly defer UI, persistence, availability, shopping-list, and higher-horizon behavior | For recipe milestones, state what is deferred and verify no routes, migrations, permissions, or planning workflows were added |
 
 ## Engineering Discoveries
 
@@ -62,6 +63,7 @@ Use it to prevent repeated mistakes and surface practical lessons. Keep durable 
 | Security baseline and production readiness are different decisions | A completed review can record current risks without clearing the system for production | Include approval status and required changes in every security review record |
 | Product vision looks like milestone scope | Future horizons describe legitimate long-term direction but are not active implementation scope | Include Horizon, reason it belongs to the horizon, and evidence value in every milestone recommendation |
 | Evidence capture becomes workflow sprawl | Evidence promotion and living-doc updates can become a separate process if not tied to completion | Session Controller now keeps Evidence Capture inside the Verification to Ready For Human Review transition | Identify lessons, patterns, memory needs, and promotion candidates during completion without adding states |
+| Recipe definitions can share inventory vocabulary | Recipe ingredients need item references and units, and the repository already owns `EntityId` and `ItemUnit` in shared types | Reusing shared types avoids parallel unit systems before recipe persistence exists | Prefer shared inventory-compatible primitives for recipe foundations unless an ADR introduces a new recipe-specific unit model |
 
 ## Owner
 

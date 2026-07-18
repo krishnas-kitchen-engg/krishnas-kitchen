@@ -30,53 +30,62 @@ This document records evidence gathered during the latest repository reconstruct
 
 Date: 2026-07-17.
 
-Milestone: Freeze Engineering Operating System Session Controller.
+Milestone: Recipe Definition Domain Foundation.
 
-Status: Implemented, verified, reviewed, and approved for commit.
+Status: Implemented, verified, human-approved, and committed.
 
 ## Repository Evidence
 
 - Branch: `docs/engineering-handbook`.
-- Working tree before implementation: contained approved, uncommitted EOS Session Controller refinement docs only.
-- Latest committed baseline before implementation: `94e150f docs(security): record Horizon 1 security review baseline`.
+- Working tree before implementation: clean.
+- Latest committed baseline before implementation: `560ad58 docs(eos): freeze Session Controller workflow`.
 - Product Horizons identifies Horizon 1, Core Kitchen Inventory Platform, as active.
-- The milestone is inside Horizon 1 because Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation.
+- The milestone is inside Horizon 1 because Horizon 1 includes recipe definitions, recipe scaling, ingredient availability checks, and shopping list generation.
 
 ## Architecture Evidence
 
-- [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) is the canonical Session Controller owner.
-- [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md) is the scan-detail authority for Repository Reconstruction.
-- No runtime, migration, RLS, RPC, permission, Product Horizons, or application architecture changes were made.
+- Recipe work is implemented under `apps/web/src/domains/recipes`, aligned with ADR-0008 domain-driven package organization.
+- Recipe ingredients reuse shared `EntityId` and `ItemUnit` from `@krishnas-kitchen/types`.
+- No feature UI, routes, navigation, persistence adapters, migrations, RLS, RPC, permission, or Product Horizons changes were made.
 
 ## Implementation Evidence
 
-- No TypeScript source, tests, migrations, RLS policies, RPCs, permissions, Product Horizons, or runtime behavior were changed.
-- The Session Controller now includes repository-evidence session resume before reconstruction, automatic transitions, stop conditions, verification repeat behavior, Evidence Capture before Ready For Human Review, and explicit commit approval.
-- Repository Reconstruction now delegates scan details to [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md).
-- Related governance/process docs now point to the Session Controller rather than restating duplicate workflow sequences.
-- Operating-model version wording was removed from [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md).
-- Required living references now record the EOS Session Controller freeze.
+- Added recipe definition input and ingredient input domain types.
+- Added supported recipe ingredient units based on the existing shared item unit vocabulary.
+- Added validation for recipe name, servings/yield, ingredient item references, finite positive ingredient quantities, and supported units.
+- Added normalization for recipe name and optional ingredient notes.
+- Added recipe-specific validation errors and assertion helper.
+- Added recipe domain barrel exports.
+- Added focused Vitest coverage for valid recipes, normalization, required fields, invalid quantities, invalid units, and assertion errors.
 
 ## Documentation Validation
 
-- Living references now treat the security architecture commit, state refresh, and Horizon 1 security review baseline as committed repository history.
-- Living references now identify the EOS Session Controller freeze as the current approved documentation milestone.
-- Higher-horizon work remains deferred and appears only as future architectural context.
-- Remaining open work is outside this milestone: offline queue implementation, scanning documentation overlap, stack docs drift, schema reference drift, naming drift, historical process overlap, older documentation duplication, production security approval, and unmeasured accessibility/performance status.
+- Living references now identify Recipe Definition Domain Foundation as the active implemented milestone.
+- Living docs record that recipe UI, persistence, availability checks, shopping-list generation, menu planning, procurement, analytics, and other higher-horizon behavior remain deferred.
+- Product Horizons was not changed because the active horizon and exit criteria did not change.
+- Previously observed documentation drift around stale committed EOS/security milestone status was corrected only where required by this milestone handoff.
 
 ## Verification Results
 
-Documentation verification passed:
+Focused verification passed:
+
+- `corepack pnpm@9.15.4 exec vitest run apps/web/src/domains/recipes/domain/recipeDefinition.test.ts`
+
+Full verification passed:
 
 - `corepack pnpm@9.15.4 format`
+- `corepack pnpm@9.15.4 typecheck`
+- `corepack pnpm@9.15.4 lint`
+- `corepack pnpm@9.15.4 test`
+- `corepack pnpm@9.15.4 build`
 - `git diff --check`
 
 ## Residual Risks
 
-- The milestone is documentation-only and depends on current code behavior remaining unchanged.
-- EOS changes should remain implementation-driven after this freeze.
+- Recipe persistence shape is not yet proven and may need organization, temple, authoring, identity, archival, and audit fields later.
+- The current slice validates recipe inputs only; it does not prove recipe scaling, availability checks, shopping-list generation, or offline recipe behavior.
 - Offline queue storage, replay workers, UI offline states, and server idempotency constraints remain unimplemented by design.
-- Future temporary volunteer write capability still requires a separate approved server-enforced write model.
+- Future recipe write capability still requires a separate approved persistence and authorization model.
 
 ## Evidence Location
 
