@@ -37,7 +37,7 @@ Use this document to understand how the repository's engineering knowledge fits 
 
 ## How Krishna's Kitchen Is Engineered
 
-Krishna's Kitchen is engineered through the repository-first operating loop defined in [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md).
+Krishna's Kitchen is engineered through the repository-first Session Controller defined in [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md).
 
 ## Relationship Between Knowledge Sources
 
@@ -61,7 +61,7 @@ When these sources disagree, use the decision hierarchy in [Project Constitution
 
 ## Milestone Lifecycle
 
-Milestones follow the state machine and scoring framework in [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md). They should be small enough to review, verify, and reverse.
+Milestones follow the Session Controller and scoring framework in [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md). They should be small enough to review, verify, and reverse.
 
 ## Review Lifecycle
 
@@ -96,7 +96,7 @@ Use [Handbook Conventions](../conventions.md) for lifecycle labels and required 
 Governance is layered:
 
 - [Project Constitution](./PROJECT_CONSTITUTION.md) defines mission, principles, hierarchy, and invariants.
-- [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md) defines the canonical engineering operating loop.
+- [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md) defines the canonical Session Controller.
 - [AI Execution Protocol](./AI_EXECUTION_PROTOCOL.md) governs AI-assisted work.
 - [Repository Refresh Protocol](./REPOSITORY_REFRESH_PROTOCOL.md) governs startup context and drift detection.
 - [Handbook Conventions](../conventions.md) govern documentation structure.

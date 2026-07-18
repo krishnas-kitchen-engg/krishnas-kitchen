@@ -27,7 +27,9 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 ## Current Memory
 
 - The Engineering Handbook is the canonical engineering operating system.
-- [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) is the single workflow contract for AI-assisted engineering sessions.
+- [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) is the single workflow contract for AI-assisted engineering sessions. Its Session Controller is the canonical execution workflow.
+- Session resume is repository-evidence based. Do not create persistent session files; reconstruct first, then continue from the appropriate controller state when evidence shows an interrupted workflow.
+- Evidence Capture belongs inside the Verification to Ready For Human Review transition, not in a separate workflow state.
 - [Product Horizons](../../PRODUCT_HORIZONS.md) is the canonical long-term product roadmap. Horizon 1 is active; milestone recommendations must come from the active horizon.
 - [Engineering Principles](../governance/ENGINEERING_PRINCIPLES.md) records timeless philosophy; workflow belongs in the operating model.
 - Existing project documentation remains useful source material; do not duplicate it into the handbook without a focused milestone.
@@ -64,6 +66,7 @@ Use it for institutional memory, not detailed architecture, feature specs, or pr
 | Security ownership was consolidated without source changes | Existing ADRs, security status, auth docs, permissions docs, Supabase docs, and migrations already described the boundary, but no living architecture page owned it | Future security-sensitive work needs one durable source before permission, write-path, or offline replay expansion | Use Security Architecture as the canonical boundary; update Security Status for posture/review evidence |
 | Security architecture commit left planning docs stale | Current/next milestone, reconstruction, state, and scorecard references still described committed work as pending | Future EOS sessions could restart completed work or misread repository health | Treat post-commit milestone-state refresh as a focused Horizon 1 documentation milestone when planning docs drift after commit |
 | Security review baseline was missing after architecture consolidation | Security boundaries were documented, but the latest full security review result still appeared as an unrecorded risk | Security-sensitive follow-up work needs explicit findings, risks, and approval status | Record security review baselines in Security Status and keep production approval separate from review evidence |
+| Session Controller freeze simplified the EOS | Resume behavior, verification repeat behavior, evidence capture, and commit approval needed one canonical controller instead of scattered workflow language | Future sessions need deterministic continuation without extra session files or competing workflow states | Use repository evidence to resume, keep Repository Refresh Protocol as scan authority, and keep Evidence Capture inside verification completion |
 
 ## Memory Update Rules
 

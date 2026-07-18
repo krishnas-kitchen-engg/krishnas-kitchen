@@ -46,9 +46,9 @@ Use this section to find governance documents and the canonical AI engineering o
 
 ## Approval Flow
 
-[AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md) is the single operational contract for AI-assisted engineering sessions. It defines the operating loop, state machine, milestone scoring framework, AI responsibilities, human responsibilities, approval boundaries, review expectations, escalation rules, and failure recovery.
+[AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md) is the single operational contract for AI-assisted engineering sessions. It defines the Session Controller, milestone scoring framework, AI responsibilities, human responsibilities, approval boundaries, review expectations, escalation rules, and failure recovery.
 
-Other governance documents support that operating model. They should not duplicate the operating loop.
+Other governance documents support that operating model. They should not duplicate the Session Controller.
 
 [Engineering Principles](./ENGINEERING_PRINCIPLES.md) captures enduring philosophy and should change rarely.
 

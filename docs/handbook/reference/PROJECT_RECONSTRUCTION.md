@@ -51,7 +51,7 @@ Krishna's Kitchen is a mobile-first React/Vite/TypeScript PWA for volunteer-run 
 
 Implementation maturity: active development. Repository evidence shows implemented authentication scaffolding, temporary volunteer session infrastructure, inventory domain services, Supabase repository adapters, mobile inventory lookup and receive/transfer/return/scan screens, volunteer home and tasks screens, migrations, and tests. It is not documented as production-ready; see [Current State](./CURRENT_STATE.md) and [Known Limitations](./KNOWN_LIMITATIONS.md).
 
-Engineering maturity: strong. The Engineering Operating System is Stable at v1.3, with a canonical operating model, Product Horizons, governance, process docs, templates, ADRs, living references, and a scorecard. Future EOS changes require implementation-driven justification.
+Engineering maturity: strong. The Engineering Operating System is frozen for production use, with a canonical Session Controller, Product Horizons, governance, process docs, templates, ADRs, living references, and a scorecard. Future EOS changes require implementation-driven justification.
 
 Security maturity: foundation implemented, production approval not granted. RLS is enabled on foundational tables, helper functions and controlled volunteer RPCs exist, authenticated inventory read policies exist, security ADRs are accepted, durable security boundaries are consolidated in [Security Architecture](../architecture/security.md), and the latest Horizon 1 security review baseline is recorded in [Security Status](./SECURITY_STATUS.md). Temporary volunteer browser permissions are restricted to read/session capabilities.
 
@@ -179,8 +179,9 @@ This timeline is reconstructed from [Changelog Summary](./CHANGELOG_SUMMARY.md),
 | Engineering Handbook v1.3 freeze | Product Horizons integration, active-horizon milestone gating, offline-sync architecture, and final handbook consistency pass | `9275155 docs(handbook): freeze engineering handbook v1.3` |
 | Security architecture ownership consolidation | Living security architecture source and reference updates | `c8a4f5c docs(security): consolidate architecture ownership` |
 | Living state refresh after security commit | Milestone, reconstruction, scorecard, and evidence references aligned to committed security architecture history | `63dc374 docs(handbook): refresh milestone state after security commit` |
+| Engineering Operating System Session Controller freeze | Canonical Session Controller, repository-evidence resume, verification-integrated Evidence Capture, and simplified governance/process workflow references | Pending commit |
 
-Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Record Horizon 1 Security Review Baseline as the active implemented milestone approved for commit.
+Current milestone: [Current Milestone](./CURRENT_MILESTONE.md) identifies Freeze Engineering Operating System Session Controller as the active implemented milestone approved for commit.
 
 ## ADR Status
 
@@ -233,11 +234,11 @@ Use the EOS candidate flow in [AI Engineering Operating Model](../governance/AI_
 
 | Rank | Candidate | Strategic Alignment | Current Horizon | Reason It Belongs | Evidence Value | Future Horizon Support Without Scope Expansion | Recommendation |
 |---|---|---|---|---|---|---|---|
-| 1 | Record Horizon 1 security review baseline | Keeps security posture and evidence aligned with repository reality | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes auth/RLS/RPC foundations, inventory authorization, temporary volunteer access, evidence generation, and engineering documentation | High: resolves the unrecorded security review baseline gap | Keeps future planning and operations work grounded in explicit authorization and audit constraints without implementing higher-horizon work | Implemented and approved for commit |
+| 1 | Freeze Engineering Operating System Session Controller | Keeps future execution deterministic and repository-grounded | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation | High: prevents workflow drift before further application work | Keeps future planning and operations work governed by active-horizon scope without implementing higher-horizon work | Implemented and approved for commit |
 | 2 | Canonicalize scanning architecture boundary | Clarifies scan-first inventory workflow ownership | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes inventory workflows, barcode lookup, barcode catalog, unknown barcode workflow, inventory visibility, and mobile-first PWA | Medium: reduces scan workflow drift | Keeps future operational workflows compatible with a cleaner scan boundary without expanding scope | Defer |
 | 3 | Reconcile stack documentation against package manifests | Keeps repository architecture guidance aligned with package manifests | Horizon 1, Core Kitchen Inventory Platform | Horizon 1 includes repository architecture, testing, evidence generation, and engineering documentation | Medium-low: reduces false stack assumptions | Gives future contributors accurate dependency truth before larger product domains are added | Defer |
 
-Recommended next action: commit the approved security review baseline. Do not implement offline queue storage, replay, idempotency constraints, permission expansion, scanning architecture work, or stack documentation reconciliation until a separate candidate milestone is approved.
+Recommended next action: commit the approved EOS Session Controller freeze. Do not implement offline queue storage, replay, idempotency constraints, permission expansion, scanning architecture work, or stack documentation reconciliation until a separate candidate milestone is approved.
 
 ## Engineering Health
 
@@ -246,8 +247,8 @@ Recommended next action: commit the approved security review baseline. Do not im
 | Architecture | Good with known gaps | ADRs and architecture references establish core boundaries; offline sync architecture and security architecture now exist. |
 | Security | Watch | RLS/RPC foundations exist; temporary volunteer browser permissions are restricted to read/session capabilities; the Horizon 1 security review baseline is recorded, but production security approval is not granted. |
 | Testing | Watch | Many tests exist across domain, repository, migration, auth, UI, and utilities; latest verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md), and future implementation milestones must rerun verification. |
-| Documentation | Good | EOS v1.3 is Stable; Product Horizons, document index, drift register, ADRs, templates, and living references exist. |
-| Roadmap | Conditional | Temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, security architecture ownership, and security review baseline recording are complete or approved for commit. |
+| Documentation | Good | EOS Session Controller is frozen for production use; Product Horizons, document index, drift register, ADRs, templates, and living references exist. |
+| Roadmap | Conditional | Temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, security architecture ownership, security review baseline recording, and EOS Session Controller freeze are complete or approved for commit. |
 | Technical Debt | Watch | Offline queue implementation, scanning documentation drift, schema reference drift, and older documentation drift remain open. |
 | Overall | Good for controlled development | The project has enough governance and implementation structure to resume application work after candidate approval. |
 
@@ -259,11 +260,12 @@ Working tree at latest reconstruction update before this milestone:
 - Living documentation updates are present for the reconstruction, milestone, memory, state, changelog, implementation patterns, and engineering lessons.
 - Security architecture ownership is committed in `c8a4f5c`.
 - Living state refresh after the security commit is committed in `63dc374`.
-- Security review baseline documentation is present in the current worktree and approved for commit.
+- Horizon 1 security review baseline is committed in `94e150f`.
+- EOS Session Controller freeze documentation is present in the current worktree and approved for commit.
 
 Resolved debug work: [Project Memory](./PROJECT_MEMORY.md), [Common Failures and Engineering Lessons](./COMMON_FAILURES.md), and [Current Milestone](./CURRENT_MILESTONE.md) record that temporary volunteer login diagnostic instrumentation was removed and verified.
 
-Attention before development resumes: commit the security review baseline, then refresh candidate options and avoid mixing offline implementation, permission changes, scanning architecture, or stack documentation decisions into unrelated work.
+Attention before development resumes: commit the EOS Session Controller freeze, then refresh candidate options and avoid mixing offline implementation, permission changes, scanning architecture, or stack documentation decisions into unrelated work.
 
 ## Known Assumptions
 
@@ -298,8 +300,8 @@ A brand-new senior engineer should understand first:
 
 - Krishna's Kitchen is an active-development, mobile-first PWA for volunteer kitchen inventory operations.
 - Inventory integrity, auditability, server-side authorization, and volunteer-friendly speed are the central constraints.
-- The EOS v1.3 handbook is the canonical engineering operating system.
-- The next application work should start from repository refresh, candidate approval, implementation, verification, review, living documentation update, then commit approval.
+- The frozen Engineering Operating System Session Controller is the canonical execution workflow.
+- The next application work should start with repository reconstruction, then follow the Session Controller through active-horizon milestone selection, approval, implementation, self review, verification, Evidence Capture, human review, and commit approval.
 
 They should avoid changing:
 
@@ -311,7 +313,7 @@ They should avoid changing:
 
 They should plan next:
 
-- Refresh candidate options after this security review baseline is committed.
+- Refresh candidate options after this EOS Session Controller freeze is committed.
 - Recommend only active-horizon milestones from [Product Horizons](../../PRODUCT_HORIZONS.md).
 - Keep any follow-up milestone small, independently verifiable, and reversible.
 - Preserve separate approval gates for implementation review and commit.

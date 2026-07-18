@@ -4,7 +4,7 @@ status: stable
 doc_type: governance
 lifecycle: living
 owner: engineering
-update_cadence: when the canonical engineering workflow, approval boundaries, state machine, or scoring framework changes
+update_cadence: when the canonical Session Controller, approval boundaries, or scoring framework changes
 last_reviewed: null
 related:
   - ./README.md
@@ -29,28 +29,69 @@ related:
 
 # AI Engineering Operating Model
 
-This document is the canonical operational contract for every future AI-assisted engineering session in Krishna's Kitchen. The Engineering Operating System is Stable as of v1.3.
+This document is the canonical operational contract for every future AI-assisted engineering session in Krishna's Kitchen.
 
 ## Purpose
 
-Use this document to run engineering work from repository refresh through commit readiness without creating parallel processes. Other governance and process documents define principles, checklists, or references; this document defines the operating loop.
+Use this document to run engineering work from repository reconstruction through session completion without creating parallel processes. Other governance and process documents define principles, checklists, or references; this document defines the Session Controller.
 
-## Operating Loop
+## Session Controller
 
-Every engineering session follows this sequence:
+The Session Controller is the canonical execution workflow for every AI-assisted engineering session. It is the only execution state machine in the Engineering Operating System.
 
-1. Repository refresh.
-2. Repository audit.
-3. Candidate micro-milestone proposal.
-4. Human approval.
-5. Implementation.
-6. Verification.
-7. Engineering review.
-8. Living documentation update.
-9. Commit approval.
-10. Commit.
+Before Repository Reconstruction begins, determine whether the request starts a new engineering session or continues a previously interrupted session. Do not create persistent session files. Repository evidence is the source of truth.
 
-Do not skip from refresh or audit directly into implementation. Do not treat implementation approval as commit approval.
+The controller advances automatically whenever the current state has met its exit conditions and the next state does not require human approval. It stops only when:
+
+- A milestone recommendation requires approval.
+- A human clarification is required.
+- A commit requires approval.
+
+Repository Reconstruction always occurs at session start or resume. If repository evidence clearly shows an interrupted session, reconstruction rebuilds context and continues from the appropriate Session Controller state instead of restarting the workflow. Milestone Selection always follows [Product Horizons](../../PRODUCT_HORIZONS.md). Implementation must remain inside the ACTIVE horizon. Verification repeats until `STATUS = READY FOR HUMAN REVIEW` or human clarification is required. Commit is never allowed without explicit approval.
+
+### State Machine
+
+| State | Purpose | Entry Conditions | Actions | Exit Conditions | Allowed Next States | Stop Conditions | Human Approval Requirements |
+|---|---|---|---|---|---|---|---|
+| Repository Reconstruction | Rebuild project understanding from repository evidence. | New session or resumed session; user request received. | Follow [Repository Refresh Protocol](./REPOSITORY_REFRESH_PROTOCOL.md). Reconstruct the current project state, validate living docs against repository reality, document drift, and identify whether evidence points to a new session or interrupted workflow continuation. | Repository state, constraints, drift, active horizon, and appropriate next controller state are understood. | Milestone Selection, Implementation, Self Review, Verification, Ready For Human Review, Waiting For Commit Approval, Commit, Blocked | Stop only if required sources are unavailable, instructions conflict, repository state is unsafe, or human clarification is required. | None unless evidence conflicts or clarification is needed. |
+| Milestone Selection | Identify the next safest active-horizon micro-milestone. | Repository Reconstruction complete; implementation work is appropriate. | Recommend exactly three production-ready micro-milestones from the ACTIVE horizon. Include required strategic alignment, horizon, complexity, risk, dependency, verification, evidence value, future-horizon support without scope expansion, and architectural impact fields. Recommend exactly one and explain rejected alternatives. Automatically reject out-of-horizon work. | Three valid candidates and one recommendation are ready. | Waiting For Approval, Blocked | Stop because milestone recommendation requires approval, or because no safe recommendation exists without clarification. | Required before implementation. |
+| Waiting For Approval | Hold before implementation until the human approves one milestone. | Milestone Selection produced a recommendation. | Wait for approval, rejection, redirection, or clarification. Do not implement. | Human approves exactly one milestone, redirects, or clarification changes scope. | Implementation, Repository Reconstruction, Blocked | Stop until human approval or clarification is provided. | Required. |
+| Implementation | Complete only the approved milestone. | Human approved exactly one milestone. | Implement the smallest vertical slice inside the ACTIVE horizon. Follow existing architecture, ADRs, patterns, security boundaries, and scope constraints. Avoid unrelated refactoring and prohibited files. Update living docs only when required by the milestone. | Approved scope is complete or implementation cannot proceed safely. | Self Review, Blocked | Stop only if human clarification is required, scope expansion is needed, or a required authority is missing. | Not required after milestone approval unless scope, architecture, security, dependency, migration, or product intent changes. |
+| Self Review | Inspect the implemented work before verification handoff. | Implementation complete. | Review security, architecture, correctness, edge cases, regressions, documentation, repository scope, and changed files. Fix issues that are inside scope. | No known in-scope review findings remain, or a finding requires human clarification. | Verification, Implementation, Blocked | Stop only if a finding requires human clarification or expanded scope. | Required only for clarification, expanded scope, or sensitive direction changes. |
+| Verification | Prove the implementation is ready or identify what must be repaired. | Self Review complete, or fixes require rerun. | Run required checks such as format, typecheck, lint, tests, build, and scoped validation. If checks fail, repair within scope and repeat. After successful verification, complete Evidence Capture before presenting `STATUS = READY FOR HUMAN REVIEW`. | Verification passes, Evidence Capture is complete, and `STATUS = READY FOR HUMAN REVIEW`; or human clarification is required. | Ready For Human Review, Implementation, Self Review, Blocked | Stop only if human clarification is required. Do not stop merely because verification failed if an in-scope repair is available. | Not required for in-scope repair. Required if failures imply new scope or unclear authority. |
+| Blocked | Preserve safety when progress requires a human decision or unavailable dependency. | Any state detects unclear product/security intent, conflicting authority, unsafe repository state, out-of-scope repair, unavailable required source, or repeated unexplained verification failure. | Report blocker, evidence, attempted recovery, options if known, and the smallest decision needed. | Human resolves blocker or redirects. | Repository Reconstruction, Milestone Selection, Implementation, Self Review, Verification, Waiting For Approval | Stop because human clarification is required. | Required. |
+| Ready For Human Review | Present completed implementation for human review. | Verification passed; review found no commit-blocking issues. | Report status, implementation summary, files changed, findings, risks, verification results, confidence, evidence, and recommended next action. Do not commit. | Human accepts review, requests changes, asks for clarification, or explicitly approves commit. | Waiting For Commit Approval, Commit, Implementation, Blocked | Stop until human review response. | Required for commit approval or requested changes. |
+| Waiting For Commit Approval | Hold before commit until the human explicitly approves commit. | Human has reviewed or accepted the ready-for-review handoff, but commit approval has not yet been granted. | Wait for explicit commit approval. Do not stage or commit. | Human explicitly approves commit, requests changes, or asks for clarification. | Commit, Implementation, Blocked | Stop because commit requires approval. | Required. |
+| Commit | Commit only the approved scope. | Explicit commit approval received. | Update required living docs and evidence, confirm Product Horizons changes are allowed only when active horizon or exit criteria changed, rerun required verification, confirm diff scope, stage intended files, commit, and capture commit hash/status/evidence. | Commit succeeds and repository status is known, or commit cannot proceed safely. | Session Complete, Blocked | Stop only if human clarification is required or commit cannot proceed safely. | Explicit approval required before entering this state. |
+| Session Complete | Close the session with a clear handoff. | Commit completed, or a no-commit workflow has reached its requested stop point. | Report requested final fields, verification, evidence location, git status when relevant, and remaining risks. | Final handoff delivered. | Repository Reconstruction | None. A future user request starts a new session at Repository Reconstruction. | None. |
+
+### Automatic Transitions
+
+The controller moves automatically through Repository Reconstruction, Implementation, Self Review, Verification, Commit, and Session Complete when their exit conditions are met and no human approval is required. It must not pause for stylistic confirmation, optional preference checks, or non-blocking uncertainty.
+
+The controller must not automatically cross these gates:
+
+- Milestone Selection to Implementation.
+- Ready For Human Review or Waiting For Commit Approval to Commit.
+- Any state to a broader scope than the approved milestone.
+
+### Status Outputs
+
+Implementation handoffs use `STATUS = READY FOR HUMAN REVIEW` only when implementation, self review, and verification have no known commit-blocking issues. Use `STATUS = BLOCKED` only when human clarification is required or progress would violate the Session Controller.
+
+### Evidence Capture
+
+Evidence Capture is part of the Verification to Ready For Human Review transition, not a separate execution state.
+
+After successful verification and before presenting `STATUS = READY FOR HUMAN REVIEW`, identify:
+
+- Implementation lessons.
+- Implementation patterns.
+- Whether [Project Memory](../reference/PROJECT_MEMORY.md) requires updating.
+- Whether other required living documentation should be updated.
+- Evidence that may later qualify for Evidence Promotion.
+
+Update required living documentation when the approved scope allows it. Otherwise, report the needed update or promotion candidate in the handoff.
 
 ## AI Responsibilities
 
@@ -137,23 +178,9 @@ Every implementation milestone must answer:
 
 If no safe candidate can be recommended, enter Blocked and request human direction.
 
-## Engineering Session State Machine
+## State Machine Authority
 
-| State | Inputs | Outputs | Exit Conditions | Failure Conditions |
-|---|---|---|---|---|
-| Repository Reconstruction | User request, git status, handbook reading paths, current docs | Reconstructed project state and constraints | Required sources read and current state understood | Required sources unavailable or instructions conflict |
-| Repository Audit | Reconstructed state, git diff/status, relevant docs/code/tests/migrations | Audit findings, dirty worktree risks, drift, technical debt | Risks and relevant unfinished work identified | Unsafe dirty worktree or contradictory authority cannot be resolved |
-| Candidate Generation | Audit findings, active product horizon, stewardship, ADRs, invariants, scorecard, project memory, implementation patterns, common failures | Top three active-horizon candidate micro-milestones, scores, and one recommendation | Candidates are small, verifiable, reversible, active-horizon aligned, and justified | No safe recommendation, candidate outside active horizon, or insufficient product/security intent |
-| Human Approval Pending | Candidate proposal and score | Approval, rejection, or redirection | Human approves implementation | Human rejects, redirects, or does not provide required decision |
-| Implementation | Approved candidate, affected files, local patterns | Focused implementation changes | Scope implemented without unrelated changes | Scope expands, architecture changes needed, or blocked dependency appears |
-| Testing | Implemented changes and verification plan | Typecheck, lint, tests, build, or scoped checks | Applicable checks pass or documented not applicable | Failing checks not understood or cannot be fixed in scope |
-| Repair | Failed verification or review finding | Focused fixes | Failures fixed and verification returns to Testing | Fix requires new scope, architecture change, or human decision |
-| Review | Verified changes, governance, checklists | Self-review, architecture, security, repository, documentation review | Required findings resolved or documented | Security/architecture risk unresolved |
-| Documentation Update | Reviewed changes, living docs | Updated living docs or documented gap | Required living docs updated or gap reported | Documentation change would exceed approved scope |
-| Commit Approval Pending | Final diff, verification results, review summary | Human commit approval or rejection | Human approves commit | Human rejects commit or requests more work |
-| Completed | Approved commit or no-commit handoff | Final report and clean handoff | User receives summary, risks, validation, and next candidate | Final state cannot be explained clearly |
-| Blocked | Missing authority, unsafe state, unavailable dependency | Blocker report and requested decision | Human resolves blocker or redirects | Same blocker persists across resumed attempts |
-| Failed | Unrecoverable verification, data, security, or tooling failure | Failure report and recovery recommendation | Human chooses recovery path | Failure affects repository integrity or cannot be diagnosed |
+Use the [Session Controller](#session-controller) for execution states, state transitions, automatic progression, stop conditions, and approval gates. Do not create or follow a second state machine in process or reference documents.
 
 ## Milestone Scoring Framework
 
@@ -217,7 +244,7 @@ Do not implement with Low confidence without human approval that explicitly acce
 
 ## Stop Conditions
 
-Stop and request human guidance when:
+Route to Blocked and request human guidance when:
 
 - An ADR is required before safe implementation.
 - Roadmap priorities conflict.
@@ -229,7 +256,7 @@ Stop and request human guidance when:
 - Handbook guidance conflicts and the decision hierarchy does not resolve it.
 - Confidence falls below the threshold required for the work.
 
-When a stop condition is met, report the blocker, evidence, options if known, and the smallest decision needed to continue.
+When one of these conditions is met, the Session Controller stops because human clarification is required. Report the blocker, evidence, options if known, and the smallest decision needed to continue.
 
 ## Escalation Rules
 
@@ -271,19 +298,9 @@ Record unresolved drift in [Documentation Drift](../reference/DOCUMENTATION_DRIF
 
 Every session begins from repository evidence, not conversation memory.
 
-Minimum reconstruction sources:
+The Session Controller defines when reconstruction happens and where the session should continue afterward. [Repository Refresh Protocol](./REPOSITORY_REFRESH_PROTOCOL.md) defines how to execute the repository scan.
 
-- [Engineering Handbook](../README.md)
-- [Reading Paths](../reading-paths.md)
-- [Product Horizons](../../PRODUCT_HORIZONS.md)
-- This operating model
-- [Current State](../reference/CURRENT_STATE.md)
-- [Current Milestone](../reference/CURRENT_MILESTONE.md)
-- [Next Milestone](../reference/NEXT_MILESTONE.md)
-- [Project Memory](../reference/PROJECT_MEMORY.md)
-- [Implementation Patterns](../reference/IMPLEMENTATION_PATTERNS.md)
-- [Common Failures and Engineering Lessons](../reference/COMMON_FAILURES.md)
-- Relevant ADRs, architecture docs, process docs, code, tests, and migrations for the task
+Use the required reading and scan rules in [Repository Refresh Protocol](./REPOSITORY_REFRESH_PROTOCOL.md). Product Horizons remains mandatory because it defines the active horizon for milestone selection.
 
 ## Living Or Historical
 
@@ -297,9 +314,8 @@ Engineering owns this document. Changes should receive human review because they
 
 Update this document when:
 
-- The operating loop changes.
+- The Session Controller changes.
 - Approval boundaries change.
-- The state machine changes.
 - The milestone scoring framework changes.
 - Repeated engineering sessions reveal missing escalation or recovery rules.
 

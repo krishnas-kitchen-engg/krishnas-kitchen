@@ -20,7 +20,7 @@ related:
 
 # Session Lifecycle
 
-This document summarizes session lifecycle expectations. The canonical state machine, operating loop, and approval boundaries live in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md).
+This document summarizes session lifecycle expectations. The canonical Session Controller and approval boundaries live in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md).
 
 ## Purpose
 
@@ -35,7 +35,7 @@ Use this document to keep each session grounded in repository context and to ens
 
 ## Operating States
 
-Use the state machine in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) for session states, inputs, outputs, exit conditions, and failure conditions.
+Use the Session Controller in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) for session states, entry conditions, actions, exit conditions, allowed next states, stop conditions, and human approval requirements.
 
 Use [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md) for refresh details, [Quality Gates](./QUALITY_GATES.md) for pass/fail gates, and [Definition of Done](./DEFINITION_OF_DONE.md) for completion criteria.
 

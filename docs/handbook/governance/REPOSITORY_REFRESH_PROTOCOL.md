@@ -30,7 +30,7 @@ related:
 
 # Repository Refresh Protocol
 
-This protocol defines repository refresh expectations for the operating loop in [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md).
+This protocol defines repository refresh expectations for the Session Controller in [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md). The Session Controller determines when reconstruction runs; this protocol defines how to scan the repository.
 
 ## Purpose
 
@@ -143,6 +143,7 @@ Externalize knowledge by:
 ## Session Startup Checklist
 
 - Confirm task objective and constraints.
+- Determine from repository evidence whether the request starts a new session or resumes an interrupted one; do not create persistent session files.
 - Check repository status.
 - Identify whether the task is documentation-only, code, tests, migrations, operations, or review.
 - Read the required handbook and project docs, including the canonical long-term product roadmap in [Product Horizons](../../PRODUCT_HORIZONS.md).

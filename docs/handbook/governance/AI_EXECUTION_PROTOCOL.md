@@ -31,7 +31,7 @@ related:
 
 This protocol defines AI-specific execution rules for Krishna's Kitchen.
 
-The canonical operating loop, state machine, scoring framework, approval boundaries, confidence thresholds, and escalation rules live in [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md).
+The canonical Session Controller, scoring framework, approval boundaries, confidence thresholds, and escalation rules live in [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md).
 
 This document applies those rules to AI behavior. Current task constraints always matter; when a user says documentation-only, implementation must remain documentation-only.
 
@@ -55,7 +55,7 @@ Required behavior:
 
 Follow [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md) for:
 
-- The engineering operating loop.
+- The Session Controller.
 - AI and human responsibilities.
 - Candidate milestone selection.
 - Milestone scoring.
@@ -130,6 +130,8 @@ AI sessions must update or recommend updates to documentation when work changes:
 - ADR status.
 
 Documentation changes must follow [Handbook Conventions](../conventions.md).
+
+Before a ready-for-review handoff, apply the Evidence Capture requirements in [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md). Do not create a separate evidence workflow.
 
 ## Commit Approval Process
 

@@ -41,6 +41,7 @@ Use it to prevent repeated mistakes and surface practical lessons. Keep durable 
 | Security ownership is split across status and source material | ADRs, migrations, auth docs, permission docs, and status notes described security boundaries without one living architecture owner | Security Architecture now owns durable auth/RLS/RPC/temporary-volunteer boundaries; Security Status tracks posture and review evidence | Update Security Architecture for boundary changes and Security Status for review outcomes |
 | Security baseline is mistaken for production approval | Review evidence can sound like a release decision if approval status is not explicit | Security Status now records the Horizon 1 baseline separately from production security approval | State whether a review is a baseline, a required-change list, or production approval before security-sensitive commit readiness |
 | Future horizon expands implementation scope | Long-term product vision can be mistaken for current implementation authority | Product Horizons now defines the active horizon and horizon rules | Reject implementation candidates outside the active horizon; allow future horizons to influence architecture only |
+| Resume restarts completed workflow | A resumed session can look like a new session if reconstruction ignores current repository evidence | Session Controller now requires reconstruction first, then continuation from the evidence-backed controller state | Do not create session files; use git status, living docs, and evidence reports to determine whether to resume or restart |
 
 ## Engineering Discoveries
 
@@ -60,6 +61,7 @@ Use it to prevent repeated mistakes and surface practical lessons. Keep durable 
 | Security posture and security architecture are different documents | A status page can age quickly, while architecture should hold durable boundaries | Keep implementation-independent security boundaries in [Security Architecture](../architecture/security.md) and record review freshness in [Security Status](./SECURITY_STATUS.md) |
 | Security baseline and production readiness are different decisions | A completed review can record current risks without clearing the system for production | Include approval status and required changes in every security review record |
 | Product vision looks like milestone scope | Future horizons describe legitimate long-term direction but are not active implementation scope | Include Horizon, reason it belongs to the horizon, and evidence value in every milestone recommendation |
+| Evidence capture becomes workflow sprawl | Evidence promotion and living-doc updates can become a separate process if not tied to completion | Session Controller now keeps Evidence Capture inside the Verification to Ready For Human Review transition | Identify lessons, patterns, memory needs, and promotion candidates during completion without adding states |
 
 ## Owner
 

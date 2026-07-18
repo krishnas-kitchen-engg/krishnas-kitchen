@@ -33,11 +33,11 @@ Update this document whenever a milestone starts, pauses, completes, or changes 
 
 ## Current Active Milestone
 
-Record Horizon 1 Security Review Baseline.
+Freeze Engineering Operating System Session Controller.
 
 ## Goal
 
-Record the latest Horizon 1 security review baseline in living documentation so future security-sensitive milestones start from explicit repository evidence.
+Freeze the Engineering Operating System for production use by making the Session Controller the canonical execution workflow, adding resume and evidence-capture rules, simplifying duplicate workflow language, and removing embedded operating-model version wording.
 
 ## Status
 
@@ -45,26 +45,33 @@ Implemented, verified, reviewed, and approved for commit.
 
 ## Scope
 
-- Review Horizon 1 security architecture, status, auth, permissions, Supabase migrations, RLS/RPC evidence, and living references.
-- Record the current security review baseline in [Security Status](./SECURITY_STATUS.md).
-- Refresh only affected living state, milestone, scorecard, reconstruction, memory, patterns, lessons, changelog, and evidence references.
-- Preserve immutable ledger behavior, positive quantity semantics, return/reversal semantics, migrations, Supabase policies, permissions, runtime behavior, Product Horizons, and architecture boundaries.
-- Do not implement local queue storage, background sync, service-worker replay, IndexedDB schema, server idempotency constraints, RLS/RPC changes, permission changes, scanning documentation consolidation, stack documentation reconciliation, schema reference generation, older documentation cleanup, or production security approval in this milestone.
+- Make the Session Controller the canonical orchestration workflow in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md).
+- Add session resume behavior based on repository evidence without persistent session files.
+- Incorporate Evidence Capture into the Verification to Ready For Human Review transition without adding a new execution state.
+- Delegate repository scan details to [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md).
+- Align related governance/process docs to point at the Session Controller without duplicating workflow descriptions.
+- Refresh required living references for the EOS freeze.
+- Preserve Product Horizons, application code, migrations, runtime behavior, permissions, RLS/RPC behavior, and architecture boundaries.
 
 ## Files Affected
 
-- `docs/handbook/reference/SECURITY_STATUS.md`
-- `docs/handbook/architecture/security.md`
+- `docs/handbook/governance/AI_ENGINEERING_OPERATING_MODEL.md`
+- `docs/handbook/governance/AI_EXECUTION_PROTOCOL.md`
+- `docs/handbook/governance/ENGINEERING_PRINCIPLES.md`
+- `docs/handbook/governance/ENGINEERING_SYSTEM.md`
+- `docs/handbook/governance/README.md`
+- `docs/handbook/governance/REPOSITORY_REFRESH_PROTOCOL.md`
+- `docs/handbook/process/MILESTONE_LIFECYCLE.md`
+- `docs/handbook/process/QUALITY_GATES.md`
+- `docs/handbook/process/SESSION_LIFECYCLE.md`
 - `docs/handbook/reference/CURRENT_MILESTONE.md`
 - `docs/handbook/reference/CURRENT_STATE.md`
-- `docs/handbook/reference/NEXT_MILESTONE.md`
 - `docs/handbook/reference/PROJECT_MEMORY.md`
 - `docs/handbook/reference/IMPLEMENTATION_PATTERNS.md`
 - `docs/handbook/reference/COMMON_FAILURES.md`
 - `docs/handbook/reference/CHANGELOG_SUMMARY.md`
 - `docs/handbook/reference/PROJECT_RECONSTRUCTION.md`
 - `docs/handbook/reference/PROJECT_SCORECARD.md`
-- `docs/handbook/reference/KNOWN_LIMITATIONS.md`
 - `docs/handbook/reference/EVIDENCE_REPORT.md`
 
 ## Known Blockers
@@ -73,19 +80,16 @@ None known for this milestone.
 
 ## Verification Status
 
-Implementation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
+Documentation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md).
 
-Implementation verification passed:
+Documentation verification passed:
 
 - `corepack pnpm@9.15.4 format`
-- `corepack pnpm@9.15.4 typecheck`
-- `corepack pnpm@9.15.4 lint`
-- `corepack pnpm@9.15.4 test`
-- `corepack pnpm@9.15.4 build`
+- `git diff --check`
 
 ## Next Review
 
-Commit the approved documentation-only milestone.
+Commit the approved documentation-only EOS freeze milestone.
 
 ## Owner
 

@@ -22,7 +22,7 @@ related:
 
 Quality gates define the progressive checks that every milestone must pass before it can be considered complete.
 
-The canonical operating loop and state machine live in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md). This document defines pass/fail gates used inside that model.
+The canonical Session Controller lives in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md). This document defines pass/fail gates used inside that controller.
 
 ## Purpose
 

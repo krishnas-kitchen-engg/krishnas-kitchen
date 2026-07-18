@@ -30,6 +30,8 @@ Keep this page concise. Link to ADRs, architecture docs, source files, and tests
 | Pattern | Guidance | References |
 |---|---|---|
 | Repository-first work | Read current docs, code, tests, migrations, and git status before implementation. | [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) |
+| Session Controller | Use the Session Controller as the canonical execution workflow. Reconstruct every session, then continue from the appropriate controller state when repository evidence shows an interrupted workflow. | [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md), [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md) |
+| Evidence Capture | After successful verification and before Ready For Human Review, identify lessons, patterns, Project Memory needs, required living-doc updates, and evidence that may later qualify for promotion. Do not add a separate evidence state. | [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) |
 | Active-horizon milestone selection | Recommend implementation milestones only from the active horizon in Product Horizons. Future horizons may influence architecture, but not implementation scope. | [Product Horizons](../../PRODUCT_HORIZONS.md), [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) |
 | Domain before UI | Keep core domain rules in `apps/web/src/domains`; keep user-facing workflows in `apps/web/src/features`. | [ADR-0008](../adrs/0008-domain-driven-package-organization.md) |
 | Repository boundary | UI and application services should depend on repository contracts, not raw persistence details. | [ADR-0006](../adrs/0006-repository-pattern.md) |

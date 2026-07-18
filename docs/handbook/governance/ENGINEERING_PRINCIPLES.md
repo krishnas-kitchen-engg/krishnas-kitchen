@@ -22,7 +22,7 @@ related:
 
 This document records the timeless engineering philosophy for Krishna's Kitchen. It explains how to think, not the step-by-step workflow.
 
-Use [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md) for the operating loop, approvals, scoring, stop conditions, and review requirements.
+Use [AI Engineering Operating Model](./AI_ENGINEERING_OPERATING_MODEL.md) for the Session Controller, approvals, scoring, stop conditions, and review requirements.
 
 ## Principles
 

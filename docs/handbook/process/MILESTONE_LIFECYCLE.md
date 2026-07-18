@@ -21,7 +21,7 @@ related:
 
 # Milestone Lifecycle
 
-This document summarizes the milestone lifecycle. The canonical operating loop, state machine, scoring framework, and approval boundaries live in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md).
+This document summarizes milestone lifecycle expectations. The canonical Session Controller, scoring framework, and approval boundaries live in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md).
 
 ## Purpose
 
@@ -29,18 +29,7 @@ Use this document to plan and run implementation work from initial request throu
 
 ## Lifecycle Summary
 
-Use the state machine in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md):
-
-1. Repository refresh.
-2. Repository audit.
-3. Candidate micro-milestone proposal.
-4. Human approval.
-5. Implementation.
-6. Verification.
-7. Engineering review.
-8. Living documentation update.
-9. Commit approval.
-10. Commit.
+Use the Session Controller in [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md). It defines the canonical execution states, automatic transitions, stop conditions, and human approval gates.
 
 Use [Repository Refresh Protocol](../governance/REPOSITORY_REFRESH_PROTOCOL.md) for refresh details, [Quality Gates](./QUALITY_GATES.md) for pass/fail gates, [Engineering Review Checklist](./ENGINEERING_REVIEW_CHECKLIST.md) for review detail, and [Definition of Done](./DEFINITION_OF_DONE.md) for commit readiness.
 

@@ -64,6 +64,7 @@ The project is not documented as production-ready.
 - Offline queue architecture was defined in a living architecture page without implementing queue storage, replay, or runtime sync behavior.
 - Security architecture ownership was consolidated and committed in `c8a4f5c`.
 - The Horizon 1 security review baseline was recorded in [Security Status](./SECURITY_STATUS.md) without changing runtime behavior.
+- The Engineering Operating System Session Controller was frozen for production use without changing application behavior.
 
 ## Implemented Domains
 
@@ -120,15 +121,10 @@ Offline architecture is now documented in [Offline Sync Architecture](../archite
 
 Vitest is configured. Tests exist for inventory domain logic, repository adapters, migrations, auth volunteer sessions, UI reducers/screens, shell navigation, and shared utilities.
 
-Latest full verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md) for the Horizon 1 security review baseline milestone.
+Latest documentation verification is recorded in [Evidence Report](./EVIDENCE_REPORT.md) for the Engineering Operating System Session Controller freeze.
 
 - `corepack pnpm@9.15.4 format`
-- `corepack pnpm@9.15.4 typecheck`
-- `corepack pnpm@9.15.4 lint`
-- `corepack pnpm@9.15.4 test` with 60 test files and 296 tests passing
-- `corepack pnpm@9.15.4 build`
-
-The production build emitted the existing Vite chunk-size warning, but completed successfully.
+- `git diff --check`
 
 ## Documentation Status
 
@@ -140,7 +136,7 @@ The handbook now contains governance, the canonical AI Engineering Operating Mod
 
 Temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, and security architecture ownership drift have been resolved.
 
-The Engineering Operating System is Stable at v1.3. Future EOS changes require implementation-driven justification rather than speculative improvement.
+The Engineering Operating System is stable for production use. [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) owns the Session Controller, including session resume, active-horizon milestone selection, verification repeat behavior, Evidence Capture, and commit approval gates. Future EOS changes require implementation-driven justification rather than speculative improvement.
 
 ## Known Gaps
 
