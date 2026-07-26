@@ -117,6 +117,84 @@ describe("AppRoutes", () => {
     assert.match(markup, /Inventory unavailable/);
   });
 
+  it("renders authenticated adjust route inside the mobile shell", () => {
+    stubWindow("/adjust");
+
+    const markup = renderToStaticMarkup(
+      <AuthContext.Provider value={createAuthValue()}>
+        <AppRoutes />
+      </AuthContext.Provider>
+    );
+
+    assert.match(markup, /Adjust/);
+    assert.match(markup, /Inventory unavailable/);
+  });
+
+  it("renders authenticated consume route inside the mobile shell", () => {
+    stubWindow("/consume");
+
+    const markup = renderToStaticMarkup(
+      <AuthContext.Provider value={createAuthValue()}>
+        <AppRoutes />
+      </AuthContext.Provider>
+    );
+
+    assert.match(markup, /Consume/);
+    assert.match(markup, /Inventory unavailable/);
+  });
+
+  it("renders authenticated dashboard route inside the mobile shell", () => {
+    stubWindow("/dashboard");
+
+    const markup = renderToStaticMarkup(
+      <AuthContext.Provider value={createAuthValue()}>
+        <AppRoutes />
+      </AuthContext.Provider>
+    );
+
+    assert.match(markup, /Dashboard/);
+    assert.match(markup, /Inventory unavailable/);
+  });
+
+  it("renders authenticated low-stock route inside the mobile shell", () => {
+    stubWindow("/low-stock");
+
+    const markup = renderToStaticMarkup(
+      <AuthContext.Provider value={createAuthValue()}>
+        <AppRoutes />
+      </AuthContext.Provider>
+    );
+
+    assert.match(markup, /Low Stock/);
+    assert.match(markup, /Inventory unavailable/);
+  });
+
+  it("renders authenticated items route inside the mobile shell", () => {
+    stubWindow("/items");
+
+    const markup = renderToStaticMarkup(
+      <AuthContext.Provider value={createAuthValue()}>
+        <AppRoutes />
+      </AuthContext.Provider>
+    );
+
+    assert.match(markup, /Items/);
+    assert.match(markup, /Inventory unavailable/);
+  });
+
+  it("renders authenticated locations route inside the mobile shell", () => {
+    stubWindow("/locations");
+
+    const markup = renderToStaticMarkup(
+      <AuthContext.Provider value={createAuthValue()}>
+        <AppRoutes />
+      </AuthContext.Provider>
+    );
+
+    assert.match(markup, /Locations/);
+    assert.match(markup, /Inventory unavailable/);
+  });
+
   it("renders authenticated transfer route inside the mobile shell", () => {
     stubWindow("/transfer");
 
@@ -140,6 +218,19 @@ describe("AppRoutes", () => {
     );
 
     assert.match(markup, /Return/);
+    assert.match(markup, /Inventory unavailable/);
+  });
+
+  it("renders authenticated recipes route inside the mobile shell", () => {
+    stubWindow("/recipes");
+
+    const markup = renderToStaticMarkup(
+      <AuthContext.Provider value={createAuthValue()}>
+        <AppRoutes />
+      </AuthContext.Provider>
+    );
+
+    assert.match(markup, /Recipes/);
     assert.match(markup, /Inventory unavailable/);
   });
 

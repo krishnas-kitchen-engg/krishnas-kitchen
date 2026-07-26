@@ -40,6 +40,7 @@ Validation rows use deterministic IDs and validation-specific labels:
   - `80000000-*`: low stock thresholds
   - `90000000-*`: unknown barcodes
   - `a0000000-*`: inventory transactions
+  - `b0000000-*`: user roles
 
 Cleanup deletes only this validation data. It does not truncate shared staging tables.
 
@@ -50,6 +51,13 @@ Validation manager auth user:
 - Email: `validation.manager@krishnas-kitchen.test`
 - Password: `validation-password`
 - App context: `Validation Krishna Kitchen Alpha`, `inventory_manager`, Main and Secondary temples
+
+Validation volunteer auth user:
+
+- Email: `validation.volunteer@krishnas-kitchen.test`
+- Password: `validation-password`
+- App context: `Validation Krishna Kitchen Alpha`, `volunteer`, Main temple
+- Pilot use: permanent volunteer receiving workflow with `inventory.receive` permission
 
 Temporary volunteer join codes:
 
@@ -169,33 +177,65 @@ Adds:
 
 Use this dataset for inventory search density, detail history, and mobile usability validation.
 
+## Receiving + Inventory Visibility Pilot Setup
+
+Use the core seed to prepare a clean controlled pilot environment for the current Receiving + Inventory Visibility delivery increment.
+
+Preparation:
+
+1. Apply the current Supabase migrations.
+2. Run `seed_validation_cleanup.sql`.
+3. Run `seed_validation_core.sql`.
+4. Do not run `seed_validation_expanded.sql` unless the pilot needs additional search-density data.
+
+Pilot users:
+
+- Volunteer receiving: sign in as `validation.volunteer@krishnas-kitchen.test` with password `validation-password`.
+- Manager verification: sign in as `validation.manager@krishnas-kitchen.test` with password `validation-password`.
+- Temporary volunteer sessions remain available for session-read validation, but temporary sessions do not have receiving permission.
+
+Pilot workflow coverage:
+
+- Barcode receiving: use Rice UPC-A `036000291452`, Oil EAN-13 `4006381333931`, or Milk EAN-8 `96385074`.
+- Manual item selection: search for `Validation Rice`, `Validation Oil`, `Validation Milk`, or `Validation Vegetables`.
+- Receiving locations: use `Validation Pantry`, `Validation Trailer A`, `Validation Kitchen`, or `Validation Freezer`.
+- Inventory visibility: manager can verify seeded and newly received balances by item, location, and transaction history.
+- Reversal visibility: the core seed includes an Oil reversal transaction and supports reversing pilot receive transactions through the existing undo workflow.
+- Low-stock readiness: Rice/Pantry and Milk/Freezer thresholds are present for visibility and task-context validation.
+
+Pilot assumptions:
+
+- The pilot environment is a staging Supabase database, not production.
+- Seed users are deterministic validation accounts and should be replaced by real pilot accounts before production readiness.
+- Seed data intentionally covers the current delivery increment only; it does not include recipe, procurement, shopping-list, analytics, or offline data.
+
 ## Scenario Coverage Matrix
 
-| Scenario                     | Core Seed | Expanded Seed | Notes                                    |
-| ---------------------------- | --------- | ------------- | ---------------------------------------- |
-| Volunteer login              | Yes       | Not required  | Use `ACTIVE123`.                         |
-| Session restore              | Yes       | Not required  | Login once, refresh browser.             |
-| Logout                       | Yes       | Not required  | Validates local session cleanup.         |
-| Expired session              | Yes       | Not required  | Use `EXPIRED123`.                        |
-| Revoked session              | Yes       | Not required  | Use `REVOKED123`.                        |
-| Short session expiration     | Yes       | Not required  | Use `SHORT123`.                          |
-| Inventory lookup             | Yes       | Yes           | Expanded improves search density.        |
-| Barcode lookup               | Yes       | Yes           | Known active UPC/EAN/QR values included. |
-| Malformed barcode validation | Yes       | Not required  | Manual invalid inputs documented above.  |
-| Unknown barcode workflow     | Yes       | Yes           | Pending records plus unmapped inputs.    |
-| Receive workflow             | Yes       | Yes           | Use Rice/Pantry or expanded items.       |
-| Transfer workflow            | Yes       | Yes           | Use Rice Pantry to Kitchen.              |
-| Return workflow              | Yes       | Yes           | Use Rice Kitchen to Pantry.              |
-| Reversal visibility          | Yes       | Not required  | Oil reversal transaction included.       |
-| Tasks - unknown barcode      | Yes       | Yes           | Pending unknown records included.        |
-| Tasks - low stock            | Yes       | Yes           | Rice/Pantry threshold included.          |
-| Multi-volunteer concurrency  | Yes       | Not required  | Use `ACTIVE123` and `ACTIVE456`.         |
-| Cross-temple isolation       | Yes       | Not required  | Use `ACTIVE123` and `SECONDARY123`.      |
-| Cross-organization isolation | Yes       | Not required  | Same Rice barcode exists in another org. |
-| Archived item filtering      | Yes       | Not required  | Archived Lentils and barcode included.   |
-| Archived location filtering  | Yes       | Not required  | Old Pantry included.                     |
-| Archived barcode filtering   | Yes       | Not required  | Archived Rice barcode included.          |
-| Network interruption         | Yes       | Not required  | Use any known workflow.                  |
+| Scenario                     | Core Seed | Expanded Seed | Notes                                                                                                           |
+| ---------------------------- | --------- | ------------- | --------------------------------------------------------------------------------------------------------------- |
+| Volunteer login              | Yes       | Not required  | Use `validation.volunteer@krishnas-kitchen.test` for receiving or `ACTIVE123` for temporary session validation. |
+| Session restore              | Yes       | Not required  | Login once, refresh browser.                                                                                    |
+| Logout                       | Yes       | Not required  | Validates local session cleanup.                                                                                |
+| Expired session              | Yes       | Not required  | Use `EXPIRED123`.                                                                                               |
+| Revoked session              | Yes       | Not required  | Use `REVOKED123`.                                                                                               |
+| Short session expiration     | Yes       | Not required  | Use `SHORT123`.                                                                                                 |
+| Inventory lookup             | Yes       | Yes           | Expanded improves search density.                                                                               |
+| Barcode lookup               | Yes       | Yes           | Known active UPC/EAN/QR values included.                                                                        |
+| Malformed barcode validation | Yes       | Not required  | Manual invalid inputs documented above.                                                                         |
+| Unknown barcode workflow     | Yes       | Yes           | Pending records plus unmapped inputs.                                                                           |
+| Receive workflow             | Yes       | Yes           | Use the validation volunteer with Rice/Pantry or expanded items.                                                |
+| Transfer workflow            | Yes       | Yes           | Use Rice Pantry to Kitchen.                                                                                     |
+| Return workflow              | Yes       | Yes           | Use Rice Kitchen to Pantry.                                                                                     |
+| Reversal visibility          | Yes       | Not required  | Oil reversal transaction included.                                                                              |
+| Tasks - unknown barcode      | Yes       | Yes           | Pending unknown records included.                                                                               |
+| Tasks - low stock            | Yes       | Yes           | Rice/Pantry threshold included.                                                                                 |
+| Multi-volunteer concurrency  | Yes       | Not required  | Use `ACTIVE123` and `ACTIVE456`.                                                                                |
+| Cross-temple isolation       | Yes       | Not required  | Use `ACTIVE123` and `SECONDARY123`.                                                                             |
+| Cross-organization isolation | Yes       | Not required  | Same Rice barcode exists in another org.                                                                        |
+| Archived item filtering      | Yes       | Not required  | Archived Lentils and barcode included.                                                                          |
+| Archived location filtering  | Yes       | Not required  | Old Pantry included.                                                                                            |
+| Archived barcode filtering   | Yes       | Not required  | Archived Rice barcode included.                                                                                 |
+| Network interruption         | Yes       | Not required  | Use any known workflow.                                                                                         |
 
 ## Cleanup and Reset
 

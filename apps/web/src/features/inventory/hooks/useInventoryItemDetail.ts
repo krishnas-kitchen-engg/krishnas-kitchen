@@ -18,6 +18,7 @@ export function useInventoryItemDetail(itemId: string) {
     item: null,
     transactions: []
   });
+  const [refreshIndex, setRefreshIndex] = useState(0);
   const organizationId = auth.currentOrganization?.id;
   const templeId = auth.currentTemple?.id;
 
@@ -91,7 +92,12 @@ export function useInventoryItemDetail(itemId: string) {
     return () => {
       isActive = false;
     };
-  }, [catalogQueries, itemId, organizationId, templeId, visibility]);
+  }, [catalogQueries, itemId, organizationId, refreshIndex, templeId, visibility]);
 
-  return state;
+  return {
+    ...state,
+    reload() {
+      setRefreshIndex((currentIndex) => currentIndex + 1);
+    }
+  };
 }

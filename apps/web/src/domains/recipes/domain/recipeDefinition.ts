@@ -81,7 +81,11 @@ function roundRecipeQuantity(quantity: number): number {
 export function normalizeRecipeDefinitionInput(
   input: RecipeDefinitionInput
 ): RecipeDefinitionInput {
+  const description = input.description?.trim();
+  const hasDescription = "description" in input;
+
   return {
+    ...(hasDescription ? { description: description || null } : {}),
     ingredients: input.ingredients.map((ingredient) => {
       const note = ingredient.note?.trim();
 

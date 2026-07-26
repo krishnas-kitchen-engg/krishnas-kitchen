@@ -15,6 +15,9 @@ export function ReceiveInventoryScreen() {
   const options = useReceiveCatalogOptions(state.manualSearchText);
   const selectedLocation =
     options.locations.find((location) => location.id === state.locationId) ?? null;
+  const canReviewReceiving = Boolean(
+    state.resolvedItem && state.quantityText.trim() && state.unit && state.locationId
+  );
 
   if (!workflow.canReceiveInventory) {
     return (
@@ -73,6 +76,7 @@ export function ReceiveInventoryScreen() {
             rawValue={state.barcode.rawValue}
           />
           <ReceiveItemPicker
+            isLoading={options.isLoading}
             items={options.items}
             onSearchChange={(value) => workflow.setManualSearchText(value)}
             onSelect={(item) => {
@@ -107,11 +111,17 @@ export function ReceiveInventoryScreen() {
           />
           <button
             className="min-h-11 w-full rounded-md bg-brand-900 px-4 text-sm font-semibold text-white"
+            disabled={!canReviewReceiving}
             onClick={() => workflow.setStep("confirm")}
             type="button"
           >
             Review receiving
           </button>
+          {!canReviewReceiving ? (
+            <p className="text-sm font-medium text-stone-600">
+              Enter quantity, unit, and location before reviewing.
+            </p>
+          ) : null}
         </section>
       ) : null}
 

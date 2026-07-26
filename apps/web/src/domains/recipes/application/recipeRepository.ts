@@ -9,10 +9,13 @@ export type RecipeRepositoryScope = {
 
 export type RecipeRepositoryRecord = RecipeDefinitionInput & {
   createdAt: string;
+  description?: string | null;
   id: EntityId;
+  isActive: boolean;
   organizationId: EntityId;
   templeId?: EntityId;
   updatedAt: string;
+  version: number;
 };
 
 export type RecipeRepositoryListQuery = RecipeRepositoryScope & {
@@ -24,6 +27,19 @@ export type RecipeRepositoryFindQuery = RecipeRepositoryScope & {
 };
 
 export type RecipeRepository = {
+  createRecipe: (
+    scope: RecipeRepositoryScope,
+    input: RecipeDefinitionInput
+  ) => Promise<RecipeRepositoryRecord>;
+  deactivateRecipe: (
+    query: RecipeRepositoryFindQuery,
+    updatedAt: string
+  ) => Promise<RecipeRepositoryRecord | null>;
   findRecipeById: (query: RecipeRepositoryFindQuery) => Promise<RecipeRepositoryRecord | null>;
   listRecipes: (query: RecipeRepositoryListQuery) => Promise<readonly RecipeRepositoryRecord[]>;
+  updateRecipe: (
+    query: RecipeRepositoryFindQuery,
+    input: RecipeDefinitionInput,
+    updatedAt: string
+  ) => Promise<RecipeRepositoryRecord | null>;
 };

@@ -2,13 +2,20 @@ import { useEffect, useState } from "react";
 
 export type AppPath =
   | "/"
+  | "/adjust"
+  | "/consume"
+  | "/dashboard"
   | "/inventory"
   | `/inventory/item/${string}`
   | `/inventory/location/${string}`
+  | "/items"
+  | "/locations"
+  | "/low-stock"
   | "/login"
   | "/profile"
   | "/receive"
   | "/return"
+  | "/recipes"
   | "/scan"
   | "/select-temple"
   | "/tasks"
@@ -17,11 +24,18 @@ export type AppPath =
 
 const appPaths = [
   "/",
+  "/adjust",
+  "/consume",
+  "/dashboard",
   "/inventory",
+  "/items",
+  "/locations",
+  "/low-stock",
   "/login",
   "/profile",
   "/receive",
   "/return",
+  "/recipes",
   "/scan",
   "/select-temple",
   "/tasks",
@@ -30,6 +44,18 @@ const appPaths = [
 ] satisfies string[];
 
 export type AppRoute =
+  | {
+      name: "adjust";
+      path: "/adjust";
+    }
+  | {
+      name: "consume";
+      path: "/consume";
+    }
+  | {
+      name: "dashboard";
+      path: "/dashboard";
+    }
   | {
       name: "home";
       path: "/";
@@ -49,6 +75,18 @@ export type AppRoute =
       path: `/inventory/location/${string}`;
     }
   | {
+      name: "items";
+      path: "/items";
+    }
+  | {
+      name: "locations";
+      path: "/locations";
+    }
+  | {
+      name: "low_stock";
+      path: "/low-stock";
+    }
+  | {
       name: "login";
       path: "/login";
     }
@@ -63,6 +101,10 @@ export type AppRoute =
   | {
       name: "return";
       path: "/return";
+    }
+  | {
+      name: "recipes";
+      path: "/recipes";
     }
   | {
       name: "scan";
@@ -122,9 +164,51 @@ export function getCurrentRoute(): AppRoute {
   }
 
   if (appPaths.includes(pathname)) {
+    if (pathname === "/adjust") {
+      return {
+        name: "adjust",
+        path: pathname
+      };
+    }
+
+    if (pathname === "/consume") {
+      return {
+        name: "consume",
+        path: pathname
+      };
+    }
+
+    if (pathname === "/dashboard") {
+      return {
+        name: "dashboard",
+        path: pathname
+      };
+    }
+
     if (pathname === "/inventory") {
       return {
         name: "inventory",
+        path: pathname
+      };
+    }
+
+    if (pathname === "/items") {
+      return {
+        name: "items",
+        path: pathname
+      };
+    }
+
+    if (pathname === "/locations") {
+      return {
+        name: "locations",
+        path: pathname
+      };
+    }
+
+    if (pathname === "/low-stock") {
+      return {
+        name: "low_stock",
         path: pathname
       };
     }
@@ -153,6 +237,13 @@ export function getCurrentRoute(): AppRoute {
     if (pathname === "/return") {
       return {
         name: "return",
+        path: pathname
+      };
+    }
+
+    if (pathname === "/recipes") {
+      return {
+        name: "recipes",
         path: pathname
       };
     }

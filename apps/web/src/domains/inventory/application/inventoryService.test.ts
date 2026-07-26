@@ -2,12 +2,16 @@ import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 
 import { calculateLocationItemBalance } from "../domain/aggregation";
+import { AdjustmentValidationError } from "../domain/adjustmentValidation";
+import { ConsumptionValidationError } from "../domain/consumptionValidation";
 import { ReceivingValidationError } from "../domain/receivingValidation";
 import { ReversalValidationError } from "../domain/reversalValidation";
 import { ReturnValidationError } from "../domain/returnValidation";
 import { TransferValidationError } from "../domain/transferValidation";
 import type {
   CreateReceivingTransactionInput,
+  CreateConsumptionTransactionInput,
+  CreateInventoryAdjustmentInput,
   CreateReturnTransactionInput,
   CreateTransferTransactionInput,
   InventoryTransaction,
@@ -17,6 +21,8 @@ import type {
 } from "../domain/types";
 import {
   createInventoryService,
+  type InventoryConsumptionCatalog,
+  type InventoryAdjustmentCatalog,
   type InventoryReceivingCatalog,
   type InventoryReturnCatalog,
   type InventoryTransferCatalog
@@ -54,6 +60,41 @@ const transferInput: CreateTransferTransactionInput = {
   organizationId: "org-1",
   quantity: 10,
   sourceLocationId: "trailer",
+  templeId: "temple-1",
+  unit: "kg"
+};
+
+const consumptionInput: CreateConsumptionTransactionInput = {
+  actor: {
+    type: "user",
+    userId: "cook-1"
+  },
+  auditMetadata: {
+    deviceId: "kitchen-phone"
+  },
+  itemId: "rice",
+  locationId: "pantry",
+  notes: "lunch service",
+  organizationId: "org-1",
+  quantity: 6,
+  templeId: "temple-1",
+  unit: "kg"
+};
+
+const adjustmentInput: CreateInventoryAdjustmentInput = {
+  actor: {
+    type: "user",
+    userId: "manager-1"
+  },
+  auditMetadata: {
+    deviceId: "manager-phone"
+  },
+  itemId: "rice",
+  locationId: "pantry",
+  notes: "shelf count",
+  organizationId: "org-1",
+  physicalQuantity: 20,
+  reason: "monthly count",
   templeId: "temple-1",
   unit: "kg"
 };
@@ -127,6 +168,46 @@ const receivingCatalog: InventoryReceivingCatalog = {
     });
   },
   findReceivingLocation(locationId) {
+    return Promise.resolve({
+      deletedAt: null,
+      id: locationId,
+      organizationId: "org-1",
+      templeId: "temple-1"
+    });
+  }
+};
+
+const consumptionCatalog: InventoryConsumptionCatalog = {
+  findConsumptionItem(itemId) {
+    return Promise.resolve({
+      consumptionUnits: ["kg"] as const,
+      defaultUnit: "kg" as const,
+      deletedAt: null,
+      id: itemId,
+      organizationId: "org-1"
+    });
+  },
+  findConsumptionLocation(locationId) {
+    return Promise.resolve({
+      deletedAt: null,
+      id: locationId,
+      organizationId: "org-1",
+      templeId: "temple-1"
+    });
+  }
+};
+
+const adjustmentCatalog: InventoryAdjustmentCatalog = {
+  findAdjustmentItem(itemId) {
+    return Promise.resolve({
+      adjustmentUnits: ["kg"] as const,
+      defaultUnit: "kg" as const,
+      deletedAt: null,
+      id: itemId,
+      organizationId: "org-1"
+    });
+  },
+  findAdjustmentLocation(locationId) {
     return Promise.resolve({
       deletedAt: null,
       id: locationId,
@@ -260,6 +341,104 @@ describe("inventory receiving service", () => {
     assert.equal(repository.transactions.length, 0);
   });
 
+  it("creates consumed transactions and updates projected balances", async () => {
+    const repository = createMemoryRepository();
+    const service = createInventoryService(repository, {
+      consumptionCatalog,
+      receivingCatalog
+    });
+    await service.receiveInventory(receiveInput);
+
+    const consumed = await service.consumeInventory(consumptionInput);
+
+    assert.equal(consumed.transactionType, "consumed");
+    assert.equal(consumed.quantityEffect, "decrease");
+    assert.equal(consumed.sourceLocationId, "pantry");
+    assert.equal(consumed.destinationLocationId, null);
+    assert.equal(repository.transactions.length, 2);
+    assert.equal(calculateLocationItemBalance(repository.transactions, "pantry", "rice"), 19);
+  });
+
+  it("rejects consumption above available inventory without mutating history", async () => {
+    const repository = createMemoryRepository();
+    const service = createInventoryService(repository, {
+      consumptionCatalog,
+      receivingCatalog
+    });
+    await service.receiveInventory({
+      ...receiveInput,
+      quantity: 4
+    });
+
+    await assert.rejects(
+      () => service.consumeInventory(consumptionInput),
+      ConsumptionValidationError
+    );
+    assert.equal(repository.transactions.length, 1);
+    assert.equal(calculateLocationItemBalance(repository.transactions, "pantry", "rice"), 4);
+  });
+
+  it("creates adjusted transactions from physical count deltas", async () => {
+    const repository = createMemoryRepository();
+    const service = createInventoryService(repository, {
+      adjustmentCatalog,
+      receivingCatalog
+    });
+    await service.receiveInventory(receiveInput);
+
+    const result = await service.adjustInventory(adjustmentInput);
+
+    assert.equal(result.currentQuantity, 25);
+    assert.equal(result.physicalQuantity, 20);
+    assert.equal(result.quantityDelta, -5);
+    assert.equal(result.transaction?.transactionType, "adjusted");
+    assert.equal(result.transaction?.quantityEffect, "decrease");
+    assert.equal(result.transaction?.sourceLocationId, "pantry");
+    assert.equal(result.transaction?.destinationLocationId, null);
+    assert.equal(result.transaction?.auditMetadata.reason, "monthly count");
+    assert.equal(repository.transactions.length, 2);
+    assert.equal(calculateLocationItemBalance(repository.transactions, "pantry", "rice"), 20);
+  });
+
+  it("does not create an adjustment transaction when counts already match", async () => {
+    const repository = createMemoryRepository();
+    const service = createInventoryService(repository, {
+      adjustmentCatalog,
+      receivingCatalog
+    });
+    await service.receiveInventory(receiveInput);
+
+    const result = await service.adjustInventory({
+      ...adjustmentInput,
+      physicalQuantity: 25
+    });
+
+    assert.equal(result.quantityDelta, 0);
+    assert.equal(result.transaction, null);
+    assert.equal(repository.transactions.length, 1);
+    assert.equal(calculateLocationItemBalance(repository.transactions, "pantry", "rice"), 25);
+  });
+
+  it("rejects invalid adjustment references before persistence", async () => {
+    const repository = createMemoryRepository();
+    const service = createInventoryService(repository, {
+      adjustmentCatalog: {
+        ...adjustmentCatalog,
+        findAdjustmentItem(itemId) {
+          return Promise.resolve({
+            defaultUnit: "kg",
+            deletedAt: "2026-06-01T00:00:00.000Z",
+            id: itemId,
+            organizationId: "org-1"
+          });
+        }
+      }
+    });
+
+    await assert.rejects(() => service.adjustInventory(adjustmentInput), AdjustmentValidationError);
+    assert.equal(repository.transactions.length, 0);
+  });
+
   it("supports undo through immutable reversal transactions", async () => {
     const repository = createMemoryRepository();
     const service = createInventoryService(repository, {
@@ -338,6 +517,24 @@ describe("inventory receiving service", () => {
     assert.equal(calculateLocationItemBalance(repository.transactions, "pantry", "rice"), 10);
   });
 
+  it("rejects transfers above source projected inventory without mutating history", async () => {
+    const repository = createMemoryRepository();
+    const service = createInventoryService(repository, {
+      receivingCatalog,
+      transferCatalog
+    });
+    await service.receiveInventory({
+      ...receiveInput,
+      locationId: "trailer",
+      quantity: 4
+    });
+
+    await assert.rejects(() => service.transferInventory(transferInput), TransferValidationError);
+    assert.equal(repository.transactions.length, 1);
+    assert.equal(calculateLocationItemBalance(repository.transactions, "trailer", "rice"), 4);
+    assert.equal(calculateLocationItemBalance(repository.transactions, "pantry", "rice"), 0);
+  });
+
   it("rejects invalid transfer references before persistence", async () => {
     const repository = createMemoryRepository();
     const service = createInventoryService(repository, {
@@ -380,6 +577,24 @@ describe("inventory receiving service", () => {
     assert.equal(repository.transactions.length, 2);
     assert.equal(calculateLocationItemBalance(repository.transactions, "kitchen", "rice"), 4);
     assert.equal(calculateLocationItemBalance(repository.transactions, "pantry", "rice"), 8);
+  });
+
+  it("rejects returns above source projected inventory without mutating history", async () => {
+    const repository = createMemoryRepository();
+    const service = createInventoryService(repository, {
+      receivingCatalog,
+      returnCatalog
+    });
+    await service.receiveInventory({
+      ...receiveInput,
+      locationId: "kitchen",
+      quantity: 4
+    });
+
+    await assert.rejects(() => service.returnInventory(returnInput), ReturnValidationError);
+    assert.equal(repository.transactions.length, 1);
+    assert.equal(calculateLocationItemBalance(repository.transactions, "kitchen", "rice"), 4);
+    assert.equal(calculateLocationItemBalance(repository.transactions, "pantry", "rice"), 0);
   });
 
   it("undoes transfer and return transactions through reversal movement", async () => {

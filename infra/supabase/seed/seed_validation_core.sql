@@ -94,6 +94,33 @@ values
     }'::jsonb,
     '{"full_name":"Validation Secondary Manager"}'::jsonb,
     false
+  ),
+  (
+    '00000000-0000-0000-0000-000000000000',
+    '30000000-0000-4000-8000-000000000003',
+    'authenticated',
+    'authenticated',
+    'validation.volunteer@krishnas-kitchen.test',
+    crypt('validation-password', gen_salt('bf')),
+    timezone('utc', now()),
+    timezone('utc', now()),
+    timezone('utc', now()),
+    '{
+      "provider":"email",
+      "providers":["email"],
+      "profile_id":"30000000-0000-4000-8000-000000000003",
+      "organization_id":"10000000-0000-4000-8000-000000000001",
+      "organization_name":"Validation Krishna Kitchen Alpha",
+      "roles":["volunteer"],
+      "temples":[
+        {
+          "id":"20000000-0000-4000-8000-000000000001",
+          "name":"Validation Main Temple"
+        }
+      ]
+    }'::jsonb,
+    '{"full_name":"Validation Volunteer"}'::jsonb,
+    false
   )
 on conflict (id) do update
 set
@@ -142,12 +169,54 @@ values
     '10000000-0000-4000-8000-000000000002',
     'Validation Secondary Manager',
     'validation.secondary@krishnas-kitchen.test'
+  ),
+  (
+    '30000000-0000-4000-8000-000000000003',
+    '10000000-0000-4000-8000-000000000001',
+    'Validation Volunteer',
+    'validation.volunteer@krishnas-kitchen.test'
   )
 on conflict (id) do update
 set
   full_name = excluded.full_name,
   email = excluded.email,
   organization_id = excluded.organization_id;
+
+insert into public.user_roles (
+  id,
+  organization_id,
+  temple_id,
+  user_id,
+  role
+)
+values
+  (
+    'b0000000-0000-4000-8000-000000000001',
+    '10000000-0000-4000-8000-000000000001',
+    null,
+    '30000000-0000-4000-8000-000000000001',
+    'inventory_manager'
+  ),
+  (
+    'b0000000-0000-4000-8000-000000000002',
+    '10000000-0000-4000-8000-000000000002',
+    null,
+    '30000000-0000-4000-8000-000000000002',
+    'inventory_manager'
+  ),
+  (
+    'b0000000-0000-4000-8000-000000000003',
+    '10000000-0000-4000-8000-000000000001',
+    '20000000-0000-4000-8000-000000000001',
+    '30000000-0000-4000-8000-000000000003',
+    'volunteer'
+  )
+on conflict (id) do update
+set
+  organization_id = excluded.organization_id,
+  temple_id = excluded.temple_id,
+  user_id = excluded.user_id,
+  role = excluded.role;
 
 -- -----------------------------------------------------
 -- Catalog

@@ -21,7 +21,9 @@ export type InventoryBarcodeUpdate = Database["public"]["Tables"]["item_barcodes
 export function mapInventoryItemRow(row: InventoryItemRow): InventoryCatalogItem {
   return {
     barcodes: [],
+    category: row.category,
     defaultUnit: row.default_unit,
+    description: row.description,
     deletedAt: row.deleted_at,
     id: row.id,
     name: row.name,
@@ -34,6 +36,7 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryCatalogItem
 
 export function mapInventoryLocationRow(row: InventoryLocationRow): InventoryCatalogLocation {
   return {
+    ...(row.description ? { description: row.description } : {}),
     deletedAt: row.deleted_at,
     id: row.id,
     name: row.name,

@@ -7,12 +7,16 @@ import type {
 import { createUuid } from "@/shared/lib/uuid";
 
 import { assertValidInventoryTransactionDraft } from "./validation";
+import { assertValidInventoryAdjustmentInput } from "./adjustmentValidation";
+import { assertValidConsumptionTransactionInput } from "./consumptionValidation";
 import { assertValidReceivingTransactionInput } from "./receivingValidation";
 import { assertValidReversalTransactionInput } from "./reversalValidation";
 import { assertValidReturnTransactionInput } from "./returnValidation";
 import { assertValidTransferTransactionInput } from "./transferValidation";
 import type {
   CreateAdjustmentTransactionInput,
+  CreateInventoryAdjustmentInput,
+  CreateConsumptionTransactionInput,
   CreateInventoryTransactionInput,
   CreateLocationTransactionInput,
   CreateReceivingTransactionInput,
@@ -77,12 +81,14 @@ export function createReceivingTransaction(
 }
 
 export function createConsumedTransaction(
-  input: CreateLocationTransactionInput
+  input: CreateConsumptionTransactionInput
 ): InventoryTransactionDraft {
+  const validInput = assertValidConsumptionTransactionInput(input);
+
   return assertValidInventoryTransactionDraft({
-    ...createBaseDraft(input, "consumed", "decrease"),
+    ...createBaseDraft(validInput, "consumed", "decrease"),
     destinationLocationId: null,
-    sourceLocationId: input.locationId
+    sourceLocationId: validInput.locationId
   });
 }
 
@@ -125,6 +131,35 @@ export function createAdjustmentTransaction(
     ...createBaseDraft(input, "adjusted", input.direction),
     destinationLocationId: input.direction === "increase" ? input.locationId : null,
     sourceLocationId: input.direction === "decrease" ? input.locationId : null
+  });
+}
+
+export function createInventoryAdjustmentTransaction(
+  input: CreateInventoryAdjustmentInput,
+  currentQuantity: number
+): InventoryTransactionDraft | null {
+  const validInput = assertValidInventoryAdjustmentInput(input);
+  const quantityDelta = validInput.physicalQuantity - currentQuantity;
+
+  if (quantityDelta === 0) {
+    return null;
+  }
+
+  return createAdjustmentTransaction({
+    actor: validInput.actor,
+    auditMetadata: {
+      reason: validInput.reason.trim(),
+      source: "online",
+      ...validInput.auditMetadata
+    },
+    direction: quantityDelta > 0 ? "increase" : "decrease",
+    itemId: validInput.itemId,
+    locationId: validInput.locationId,
+    notes: validInput.notes,
+    organizationId: validInput.organizationId,
+    quantity: Math.abs(quantityDelta),
+    templeId: validInput.templeId,
+    unit: validInput.unit
   });
 }
 

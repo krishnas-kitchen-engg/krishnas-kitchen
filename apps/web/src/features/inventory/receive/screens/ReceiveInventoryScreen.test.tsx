@@ -81,6 +81,13 @@ function renderScreen(auth: AuthContextValue) {
 }
 
 describe("ReceiveInventoryScreen", () => {
+  it("shows loading guidance instead of an empty item dead end on first render", () => {
+    const markup = renderScreen(createAuthValue());
+
+    assert.match(markup, /Loading receiving items/);
+    assert.doesNotMatch(markup, /No active receiving items are available/);
+  });
+
   it("blocks temporary volunteers without inventory.receive permission", () => {
     const markup = renderScreen(
       createAuthValue({

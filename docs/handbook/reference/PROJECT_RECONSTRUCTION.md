@@ -57,7 +57,7 @@ Security maturity: foundation implemented, production approval not granted. RLS 
 
 Documentation maturity: high for engineering process and reconstruction, medium for application-state documentation. Canonical handbook docs exist, and Delivery Management now provides a separate product-delivery reporting layer under `docs/delivery`. Older docs still contain drift, duplication, and some encoding artifacts. See [Document Index](./DOCUMENT_INDEX.md) and [Documentation Drift](./DOCUMENTATION_DRIFT.md).
 
-Overall project status: ready to continue controlled application development. The temporary volunteer login diagnostic worktree state, temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, security architecture ownership gap, unrecorded security review baseline, EOS Session Controller freeze, and Delivery Management handbook gap have been resolved. Recipe domain work has started as small Horizon 1 foundations; remaining high-priority risks include unimplemented offline queue/replay behavior, missing production security approval, and no formally selected Current Delivery Increment.
+Overall project status: ready for human review of the controlled Receiving + Inventory Visibility Pilot evidence posture. The temporary volunteer login diagnostic worktree state, temporary volunteer permission drift, undo/reversal terminology drift, return semantics drift, offline architecture drift, security architecture ownership gap, unrecorded security review baseline, EOS Session Controller freeze, and Delivery Management handbook gap have been resolved. Recipe domain work has started as small Horizon 1 foundations. Delivery Management now selects Receiving + Inventory Visibility Pilot as the Current Delivery Increment and records it as evidence-complete for controlled pilot review. Remaining high-priority risks include unimplemented offline queue/replay behavior, missing production security approval, and at-risk pilot posture from unmeasured accessibility and performance.
 
 ## Product Vision Summary
 
@@ -112,8 +112,11 @@ Delivery Management lives under `docs/delivery` and is separate from the Enginee
 |---|---|---|
 | [Delivery Model](../../delivery/DELIVERY_MODEL.md) | Delivery vocabulary, lifecycle, authority boundaries, and document responsibilities | Active and canonical for Delivery Management. |
 | [Capability Matrix](../../delivery/CAPABILITY_MATRIX.md) | Capability inventory and capability-level delivery/readiness status | Horizon 1 capabilities are tracked; capability-level readiness remains distinct from overall readiness. |
-| [Delivery Status](../../delivery/DELIVERY_STATUS.md) | Current Delivery Increment, delivery goal, included/excluded capabilities, and product-facing progress | No narrower Current Delivery Increment has been formally selected; Horizon 1 production-alpha path remains the delivery goal. |
-| [Delivery Readiness](../../delivery/DELIVERY_READINESS.md) | Increment, pilot, and production readiness; blockers; residual risks; future approved work; evidence summary | Increment readiness, pilot readiness, and production readiness are currently blocked. |
+| [Current Delivery Increment](../../delivery/CURRENT_DELIVERY_INCREMENT.md) | Detailed active increment scope, included stories, acceptance criteria, and pilot exit criteria | Receiving + Inventory Visibility Pilot is selected as the first complete temple pilot workflow. |
+| [Delivery Backlog](../../delivery/DELIVERY_BACKLOG.md) | Ordered delivery outcomes | Receiving + Inventory Visibility Pilot is first, followed by movement expansion, volunteer operations, recipe availability, shopping list, and production-alpha hardening. |
+| [Delivery Status](../../delivery/DELIVERY_STATUS.md) | Current Delivery Increment, delivery goal, included/excluded capabilities, and product-facing progress | Receiving + Inventory Visibility Pilot is selected; full Horizon 1 production-alpha remains broader future work. |
+| [Delivery Decisions](../../delivery/DELIVERY_DECISIONS.md) | Delivery selection and sequencing rationale | Receiving + Inventory Visibility Pilot was selected because it is the closest workflow to real pilot value. |
+| [Delivery Readiness](../../delivery/DELIVERY_READINESS.md) | Increment, pilot, and production readiness; blockers; residual risks; future approved work; evidence summary | Increment readiness is ready, pilot readiness is at risk, and production readiness is blocked. |
 
 ## Architecture Snapshot
 

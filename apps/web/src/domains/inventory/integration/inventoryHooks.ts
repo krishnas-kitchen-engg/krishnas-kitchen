@@ -9,6 +9,7 @@ import { useInventoryServices } from "./inventoryServiceHooks";
 export type InventoryPermissionFlags = {
   canAdjustInventory: boolean;
   canArchiveItems: boolean;
+  canConsumeInventory: boolean;
   canCreateItems: boolean;
   canEditItems: boolean;
   canManageLocations: boolean;
@@ -45,6 +46,7 @@ export function getInventoryPermissionFlags(
   return {
     canAdjustInventory: hasPermission(permissions, "inventory.adjust"),
     canArchiveItems: hasPermission(permissions, "items.archive"),
+    canConsumeInventory: hasPermission(permissions, "inventory.consume"),
     canCreateItems: hasPermission(permissions, "items.create"),
     canEditItems: hasPermission(permissions, "items.edit"),
     canManageLocations:
@@ -80,6 +82,10 @@ export function useInventoryVisibility() {
 
 export function useReceivingWorkflow() {
   return useInventoryServices().receivingWorkflow;
+}
+
+export function useConsumptionWorkflow() {
+  return useInventoryServices().consumptionWorkflow;
 }
 
 export function useTransferWorkflow() {

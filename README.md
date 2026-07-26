@@ -96,8 +96,10 @@ VITE_SUPABASE_ANON_KEY
 
 Keep secrets out of the client. Server-side Supabase service keys should only be added when a backend or edge function boundary exists.
 
+See `docs/DEPLOYMENT.md` for staging and production environment values.
+
 ## Architecture Notes
 
-The app is intentionally business-feature-free at this stage. New workflows should enter through `apps/web/src/features`, keep core rules in `apps/web/src/domains`, and depend on `shared` only for cross-cutting concerns such as configuration, API clients, styles, and infrastructure adapters.
+New workflows should enter through `apps/web/src/features`, keep core rules in `apps/web/src/domains`, and depend on `shared` only for cross-cutting concerns such as configuration, API clients, styles, and infrastructure adapters.
 
-Supabase access is prepared under `apps/web/src/shared/integrations/supabase`. Feature code should consume a thin application-facing API instead of importing Supabase directly once real data flows are introduced.
+Supabase access is prepared under `apps/web/src/shared/integrations/supabase`. Feature code should consume a thin application-facing API instead of importing Supabase directly.

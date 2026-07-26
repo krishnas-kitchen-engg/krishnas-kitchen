@@ -53,10 +53,12 @@ describe("recipe definition validation", () => {
             unit: "kg"
           }
         ],
+        description: "  Daily prasadam  ",
         name: "  Khichdi  ",
         servings: 12
       }),
       {
+        description: "Daily prasadam",
         ingredients: [
           {
             itemId: "item-rice",
@@ -68,6 +70,18 @@ describe("recipe definition validation", () => {
         name: "Khichdi",
         servings: 12
       }
+    );
+  });
+
+  it("preserves an explicit empty description as null so edits can clear it", () => {
+    assert.equal(
+      normalizeRecipeDefinitionInput({
+        description: " ",
+        ingredients: [ingredient],
+        name: "Khichdi",
+        servings: 12
+      }).description,
+      null
     );
   });
 
@@ -83,6 +97,27 @@ describe("recipe definition validation", () => {
       result.errors.map((error) => error.code),
       ["NAME_REQUIRED", "INGREDIENTS_REQUIRED"]
     );
+  });
+
+  it("allows duplicate ingredients for future grouped planning workflows", () => {
+    const result = validateRecipeDefinitionInput({
+      ingredients: [
+        {
+          itemId: "item-rice",
+          quantity: 2,
+          unit: "kg"
+        },
+        {
+          itemId: "item-rice",
+          quantity: 1,
+          unit: "kg"
+        }
+      ],
+      name: "Khichdi",
+      servings: 12
+    });
+
+    assert.deepEqual(result, { ok: true });
   });
 
   it("rejects invalid ingredient references, quantities, and units", () => {

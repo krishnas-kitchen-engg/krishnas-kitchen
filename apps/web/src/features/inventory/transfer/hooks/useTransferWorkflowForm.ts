@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useRef } from "react";
 import type { ItemUnit } from "@krishnas-kitchen/types";
 
 import {
@@ -359,6 +359,7 @@ function validateSubmit(state: TransferWorkflowUiState, hasActor: boolean, canTr
 
 export function useTransferWorkflowForm() {
   const [state, dispatch] = useReducer(transferWorkflowReducer, initialTransferWorkflowState);
+  const submitLock = useRef(false);
   const auth = useAuth();
   const actor = useInventoryActor();
   const permissions = useInventoryPermissions();
@@ -462,6 +463,10 @@ export function useTransferWorkflowForm() {
   }
 
   async function submitTransfer(input: TransferWorkflowSubmitInput = {}) {
+    if (submitLock.current || state.isSubmitting) {
+      return;
+    }
+
     const validation = validateSubmit(state, Boolean(actor), permissions.canTransferInventory);
 
     if (!validation.ok || !actor || !state.resolvedItem || !state.unit || !templeId) {
@@ -474,6 +479,7 @@ export function useTransferWorkflowForm() {
     }
 
     dispatch({ type: "submit_started" });
+    submitLock.current = true;
 
     try {
       const notes = state.notes.trim();
@@ -530,6 +536,8 @@ export function useTransferWorkflowForm() {
         error: error instanceof Error ? error.message : "Transfer failed.",
         type: "transfer_failed"
       });
+    } finally {
+      submitLock.current = false;
     }
   }
 

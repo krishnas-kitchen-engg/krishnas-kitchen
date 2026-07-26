@@ -8,9 +8,12 @@ export type RecipeIngredientInput = {
 };
 
 export type RecipeDefinitionInput = {
+  description?: string | null;
   ingredients: RecipeIngredientInput[];
+  isActive?: boolean;
   name: string;
   servings: number;
+  version?: number;
 };
 
 export type RecipeDefinitionValidationField =
@@ -18,5 +21,6 @@ export type RecipeDefinitionValidationField =
   | `ingredients[${number}].itemId`
   | `ingredients[${number}].quantity`
   | `ingredients[${number}].unit`
+  | "description"
   | "name"
   | "servings";

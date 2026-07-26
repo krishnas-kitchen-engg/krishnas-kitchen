@@ -60,6 +60,16 @@ describe("return validation", () => {
     assert.equal(validateReturnQuantity(RETURN_MAX_QUANTITY + 1).ok, false);
   });
 
+  it("rejects quantities above available projected inventory", () => {
+    const result = validateReturnQuantity(9, 8);
+
+    assert.equal(result.ok, false);
+    assert.deepEqual(
+      result.errors.map((error) => error.code),
+      ["QUANTITY_EXCEEDS_AVAILABLE"]
+    );
+  });
+
   it("validates units against item return units", () => {
     assert.equal(validateReturnUnit("kg", item).ok, true);
     assert.equal(validateReturnUnit("g", item).ok, false);
@@ -157,6 +167,7 @@ describe("return validation", () => {
             quantity: -1
           },
           {
+            availableQuantity: 8,
             destinationLocation: validLocation("pantry"),
             item,
             sourceLocation: validLocation("kitchen")

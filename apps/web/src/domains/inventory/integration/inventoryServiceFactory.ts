@@ -24,6 +24,10 @@ import {
 import type { InventoryTransactionRepository } from "../application/inventoryRepository";
 import { createInventoryService, type InventoryService } from "../application/inventoryService";
 import {
+  createConsumptionScanWorkflowService,
+  type ConsumptionScanWorkflowService
+} from "../application/consumptionScanWorkflowService";
+import {
   createInventoryVisibilityService,
   type InventoryLowStockThresholdRepository,
   type InventoryVisibilityService
@@ -74,6 +78,7 @@ export type InventoryServiceBundle = {
   barcodeLookup: InventoryBarcodeLookupService;
   cameraScanning: CameraScanningService | null;
   catalogQueries: InventoryCatalogQueryService;
+  consumptionWorkflow: ConsumptionScanWorkflowService;
   inventory: InventoryService;
   receivingWorkflow: ReceivingScanWorkflowService;
   returnWorkflow: ReturnScanWorkflowService;
@@ -85,17 +90,110 @@ export type InventoryServiceBundle = {
 export function createInventoryServiceBundle(
   input: InventoryServiceFactoryInput
 ): InventoryServiceBundle {
-  const inventory = createInventoryService(input.repositories.transactionRepository);
+  const catalogQueries = createInventoryCatalogQueryService({
+    catalogRepository: input.repositories.catalogQueryRepository,
+    transactionRepository: input.repositories.transactionRepository
+  });
+  const inventory = createInventoryService(input.repositories.transactionRepository, {
+    adjustmentCatalog: {
+      async findAdjustmentItem(itemId, scope) {
+        const item = await catalogQueries.findItemById(scope.organizationId, itemId);
+
+        return item
+          ? {
+              defaultUnit: item.defaultUnit,
+              deletedAt: item.deletedAt,
+              id: item.id,
+              organizationId: item.organizationId
+            }
+          : null;
+      },
+      async findAdjustmentLocation(locationId, scope) {
+        const location = await catalogQueries.findLocationById(
+          scope.organizationId,
+          scope.templeId,
+          locationId
+        );
+
+        return location
+          ? {
+              deletedAt: location.deletedAt,
+              id: location.id,
+              organizationId: location.organizationId,
+              templeId: location.templeId
+            }
+          : null;
+      }
+    },
+    consumptionCatalog: {
+      async findConsumptionItem(itemId, scope) {
+        const item = await catalogQueries.findItemById(scope.organizationId, itemId);
+
+        return item
+          ? {
+              defaultUnit: item.defaultUnit,
+              deletedAt: item.deletedAt,
+              id: item.id,
+              organizationId: item.organizationId,
+              ...(item.consumptionUnits ? { consumptionUnits: item.consumptionUnits } : {})
+            }
+          : null;
+      },
+      async findConsumptionLocation(locationId, scope) {
+        const location = await catalogQueries.findLocationById(
+          scope.organizationId,
+          scope.templeId,
+          locationId
+        );
+
+        return location
+          ? {
+              deletedAt: location.deletedAt,
+              id: location.id,
+              organizationId: location.organizationId,
+              templeId: location.templeId
+            }
+          : null;
+      }
+    },
+    receivingCatalog: {
+      async findReceivingItem(itemId, scope) {
+        const item = await catalogQueries.findItemById(scope.organizationId, itemId);
+
+        return item
+          ? {
+              defaultUnit: item.defaultUnit,
+              deletedAt: item.deletedAt,
+              id: item.id,
+              organizationId: item.organizationId,
+              ...(item.receivingUnits ? { receivingUnits: item.receivingUnits } : {})
+            }
+          : null;
+      },
+      async findReceivingLocation(locationId, scope) {
+        const location = await catalogQueries.findLocationById(
+          scope.organizationId,
+          scope.templeId,
+          locationId
+        );
+
+        return location
+          ? {
+              deletedAt: location.deletedAt,
+              id: location.id,
+              organizationId: location.organizationId,
+              templeId: location.templeId
+            }
+          : null;
+      }
+    }
+  });
   const visibility = createInventoryVisibilityService(input.repositories.transactionRepository, {
     lowStockThresholdRepository: input.repositories.lowStockThresholdRepository
   });
   const barcodeLookup = createInventoryBarcodeLookupService(
     input.repositories.barcodeLookupRepository
   );
-  const catalogQueries = createInventoryCatalogQueryService({
-    catalogRepository: input.repositories.catalogQueryRepository,
-    transactionRepository: input.repositories.transactionRepository
-  });
   const barcodeCatalog = createInventoryBarcodeCatalogService({
     barcodeRepository: input.repositories.barcodeCatalogRepository,
     itemRepository: input.repositories.barcodeCatalogItemRepository
@@ -119,6 +217,11 @@ export function createInventoryServiceBundle(
     inventoryService: inventory,
     visibilityService: visibility
   });
+  const consumptionWorkflow = createConsumptionScanWorkflowService({
+    barcodeLookupService: barcodeLookup,
+    inventoryService: inventory,
+    visibilityService: visibility
+  });
   const cameraScanning = input.cameraAdapters
     ? createCameraScanningService({
         barcodeLookupService: barcodeLookup,
@@ -133,6 +236,7 @@ export function createInventoryServiceBundle(
     barcodeLookup,
     cameraScanning,
     catalogQueries,
+    consumptionWorkflow,
     inventory,
     receivingWorkflow,
     returnWorkflow,

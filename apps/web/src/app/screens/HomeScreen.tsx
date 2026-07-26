@@ -2,7 +2,7 @@ import { Button } from "@krishnas-kitchen/ui";
 
 import { navigateTo } from "@/app/routes/router";
 import { useInventoryPermissions } from "@/domains/inventory";
-import { useAuth } from "@/features/auth";
+import { hasPermission, useAuth } from "@/features/auth";
 import {
   HomeSummaryLoading,
   LowStockSummary,
@@ -15,7 +15,10 @@ import {
   type VolunteerHomeQuickAction
 } from "@/features/home";
 
-function getVisibleQuickActions(permissions: ReturnType<typeof useInventoryPermissions>) {
+function getVisibleQuickActions(
+  permissions: ReturnType<typeof useInventoryPermissions>,
+  authPermissions: ReturnType<typeof useAuth>["permissions"]
+) {
   const actions: VolunteerHomeQuickAction[] = [
     {
       label: "Scan",
@@ -26,6 +29,36 @@ function getVisibleQuickActions(permissions: ReturnType<typeof useInventoryPermi
       label: "Receive",
       path: "/receive",
       requiredPermission: "inventory.receive"
+    },
+    {
+      label: "Consume",
+      path: "/consume",
+      requiredPermission: "inventory.consume"
+    },
+    {
+      label: "Adjust",
+      path: "/adjust",
+      requiredPermission: "inventory.adjust"
+    },
+    {
+      label: "Dashboard",
+      path: "/dashboard",
+      requiredPermission: "inventory.adjust"
+    },
+    {
+      label: "Low Stock",
+      path: "/low-stock",
+      requiredPermission: "inventory.adjust"
+    },
+    {
+      label: "Locations",
+      path: "/locations",
+      requiredPermission: "inventory.adjust"
+    },
+    {
+      label: "Items",
+      path: "/items",
+      requiredPermission: "items.edit"
     },
     {
       label: "Transfer",
@@ -41,6 +74,11 @@ function getVisibleQuickActions(permissions: ReturnType<typeof useInventoryPermi
       label: "Inventory",
       path: "/inventory",
       requiredPermission: "inventory.read"
+    },
+    {
+      label: "Recipes",
+      path: "/recipes",
+      requiredPermission: "recipes.read"
     }
   ];
 
@@ -53,8 +91,24 @@ function getVisibleQuickActions(permissions: ReturnType<typeof useInventoryPermi
       return permissions.canReceiveInventory;
     }
 
+    if (action.requiredPermission === "inventory.consume") {
+      return permissions.canConsumeInventory;
+    }
+
+    if (action.requiredPermission === "inventory.adjust") {
+      return permissions.canAdjustInventory;
+    }
+
     if (action.requiredPermission === "inventory.transfer") {
       return permissions.canTransferInventory;
+    }
+
+    if (action.requiredPermission === "items.edit") {
+      return permissions.canCreateItems || permissions.canEditItems;
+    }
+
+    if (action.requiredPermission === "recipes.read") {
+      return hasPermission(authPermissions, "recipes.read");
     }
 
     return permissions.canReturnInventory;
@@ -71,7 +125,7 @@ export function HomeScreen() {
       ? auth.roles.join(", ")
       : "No role assigned";
   const sessionLabel = auth.isTemporaryVolunteer ? "Temporary volunteer" : auth.status;
-  const quickActions = getVisibleQuickActions(permissions);
+  const quickActions = getVisibleQuickActions(permissions, auth.permissions);
 
   return (
     <section className="flex w-full flex-col gap-5">

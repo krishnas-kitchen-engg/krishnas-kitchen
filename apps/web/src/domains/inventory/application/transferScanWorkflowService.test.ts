@@ -72,8 +72,14 @@ function createInventoryService(): InventoryService & {
 
   return {
     transferInputs,
+    adjustInventory() {
+      throw new Error("Transfer scan workflow must not adjust inventory.");
+    },
     createTransaction() {
       throw new Error("Transfer scan workflow must not create generic transactions.");
+    },
+    consumeInventory() {
+      throw new Error("Transfer scan workflow must not consume inventory.");
     },
     getBalances() {
       return Promise.resolve([]);

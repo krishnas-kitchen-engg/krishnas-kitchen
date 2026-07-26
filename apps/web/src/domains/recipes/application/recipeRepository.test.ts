@@ -17,6 +17,7 @@ import type {
 
 const recipe: RecipeRepositoryRecord = {
   createdAt: "2026-07-17T00:00:00.000Z",
+  description: "Daily prasadam",
   id: "recipe-khichdi",
   ingredients: [
     {
@@ -32,16 +33,52 @@ const recipe: RecipeRepositoryRecord = {
   ],
   name: "Khichdi",
   organizationId: "org-1",
+  isActive: true,
   servings: 25,
   templeId: "temple-1",
-  updatedAt: "2026-07-17T00:00:00.000Z"
+  updatedAt: "2026-07-17T00:00:00.000Z",
+  version: 1
 };
 
 function createRecipeRepository(records: readonly RecipeRepositoryRecord[]): RecipeRepository {
+  const mutableRecords = [...records];
+
   return {
+    createRecipe(scope, input) {
+      const record = {
+        ...input,
+        createdAt: "2026-07-18T00:00:00.000Z",
+        id: "recipe-new",
+        isActive: input.isActive ?? true,
+        organizationId: scope.organizationId,
+        ...(scope.templeId ? { templeId: scope.templeId } : {}),
+        updatedAt: "2026-07-18T00:00:00.000Z",
+        version: input.version ?? 1
+      } satisfies RecipeRepositoryRecord;
+      mutableRecords.unshift(record);
+
+      return Promise.resolve(record);
+    },
+    deactivateRecipe(query, updatedAt) {
+      const record = mutableRecords.find(
+        (value) =>
+          value.id === query.recipeId &&
+          value.organizationId === query.organizationId &&
+          value.templeId === query.templeId
+      );
+
+      if (!record) {
+        return Promise.resolve(null);
+      }
+
+      record.isActive = false;
+      record.updatedAt = updatedAt;
+
+      return Promise.resolve(record);
+    },
     findRecipeById(query: RecipeRepositoryFindQuery) {
       return Promise.resolve(
-        records.find(
+        mutableRecords.find(
           (record) =>
             record.id === query.recipeId &&
             record.organizationId === query.organizationId &&
@@ -53,13 +90,32 @@ function createRecipeRepository(records: readonly RecipeRepositoryRecord[]): Rec
       const search = query.search?.trim().toLocaleLowerCase();
 
       return Promise.resolve(
-        records.filter(
+        mutableRecords.filter(
           (record) =>
             record.organizationId === query.organizationId &&
             record.templeId === query.templeId &&
             (!search || record.name.toLocaleLowerCase().includes(search))
         )
       );
+    },
+    updateRecipe(query, input, updatedAt) {
+      const record = mutableRecords.find(
+        (value) =>
+          value.id === query.recipeId &&
+          value.organizationId === query.organizationId &&
+          value.templeId === query.templeId
+      );
+
+      if (!record) {
+        return Promise.resolve(null);
+      }
+
+      Object.assign(record, input, {
+        updatedAt,
+        version: record.version
+      });
+
+      return Promise.resolve(record);
     }
   };
 }
@@ -138,5 +194,46 @@ describe("recipe repository contract", () => {
       shoppingList.items.map((item) => `${item.itemId}:${item.shortageQuantity}:${item.unit}`),
       ["item-rice:2:kg", "item-water:24:l"]
     );
+  });
+
+  it("supports create, update, and deactivate recipe records in scope", async () => {
+    const repository = createRecipeRepository([]);
+
+    const created = await repository.createRecipe(
+      {
+        organizationId: "org-1",
+        templeId: "temple-1"
+      },
+      {
+        ingredients: recipe.ingredients,
+        name: "Khichdi",
+        servings: 25
+      }
+    );
+    const updated = await repository.updateRecipe(
+      {
+        organizationId: "org-1",
+        recipeId: created.id,
+        templeId: "temple-1"
+      },
+      {
+        ...created,
+        name: "Temple Khichdi",
+        servings: 30
+      },
+      "2026-07-18T01:00:00.000Z"
+    );
+    const deactivated = await repository.deactivateRecipe(
+      {
+        organizationId: "org-1",
+        recipeId: created.id,
+        templeId: "temple-1"
+      },
+      "2026-07-18T02:00:00.000Z"
+    );
+
+    assert.equal(updated?.name, "Temple Khichdi");
+    assert.equal(updated?.version, 1);
+    assert.equal(deactivated?.isActive, false);
   });
 });

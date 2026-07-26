@@ -72,8 +72,14 @@ function createInventoryService(): InventoryService & {
 
   return {
     receivingInputs,
+    adjustInventory() {
+      throw new Error("Receiving scan workflow must not adjust inventory.");
+    },
     createTransaction() {
       throw new Error("Receiving scan workflow must not create generic transactions.");
+    },
+    consumeInventory() {
+      throw new Error("Receiving scan workflow must not consume inventory.");
     },
     getBalances() {
       return Promise.resolve([]);

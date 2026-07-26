@@ -231,31 +231,49 @@ class SupabaseClientStub {
 
 const items: InventoryItemRow[] = [
   {
+    category: null,
+    critical_threshold: null,
     default_unit: "kg",
+    description: null,
     deleted_at: null,
     id: "rice",
     name: "Rice",
     organization_id: "org-1",
+    preferred_purchase_unit: null,
+    preferred_vendor: null,
+    reorder_threshold: null,
     receiving_units: ["kg"],
     return_units: ["kg"],
     transfer_units: ["kg"]
   },
   {
+    category: null,
+    critical_threshold: null,
     default_unit: "kg",
+    description: null,
     deleted_at: "2026-06-01T00:00:00.000Z",
     id: "archived-dal",
     name: "Archived Dal",
     organization_id: "org-1",
+    preferred_purchase_unit: null,
+    preferred_vendor: null,
+    reorder_threshold: null,
     receiving_units: null,
     return_units: null,
     transfer_units: null
   },
   {
+    category: null,
+    critical_threshold: null,
     default_unit: "unit",
+    description: null,
     deleted_at: null,
     id: "other-rice",
     name: "Other Rice",
     organization_id: "org-2",
+    preferred_purchase_unit: null,
+    preferred_vendor: null,
+    reorder_threshold: null,
     receiving_units: null,
     return_units: null,
     transfer_units: null
@@ -264,24 +282,36 @@ const items: InventoryItemRow[] = [
 
 const locations: InventoryLocationRow[] = [
   {
+    description: null,
     deleted_at: null,
     id: "pantry",
+    location_type: "pantry",
     name: "Pantry",
     organization_id: "org-1",
+    parent_location_id: null,
+    qr_code: null,
     temple_id: "temple-1"
   },
   {
+    description: null,
     deleted_at: "2026-06-01T00:00:00.000Z",
     id: "old-freezer",
+    location_type: "freezer",
     name: "Old Freezer",
     organization_id: "org-1",
+    parent_location_id: null,
+    qr_code: null,
     temple_id: "temple-1"
   },
   {
+    description: null,
     deleted_at: null,
     id: "other-pantry",
+    location_type: "pantry",
     name: "Other Pantry",
     organization_id: "org-2",
+    parent_location_id: null,
+    qr_code: null,
     temple_id: "temple-2"
   }
 ];

@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useRef } from "react";
 import type { ItemUnit } from "@krishnas-kitchen/types";
 
 import {
@@ -266,8 +266,33 @@ function validateSubmit(state: ReceiveWorkflowUiState, hasActor: boolean, canRec
   };
 }
 
+function getBarcodeResolutionMessage(status: string): string {
+  if (status === "unknown") {
+    return "Barcode not found. Search for the item manually below and continue receiving.";
+  }
+
+  if (status === "ambiguous") {
+    return "Barcode matches more than one item. Search manually below and select the correct item.";
+  }
+
+  if (status === "invalid") {
+    return "Barcode is invalid. Check the barcode format and value, or search manually below.";
+  }
+
+  if (status === "duplicate") {
+    return "Barcode was scanned moments ago. Wait briefly or search manually below.";
+  }
+
+  if (status === "permission_denied") {
+    return "Barcode lookup is unavailable. Search for the item manually below.";
+  }
+
+  return "Barcode lookup did not find a receivable item. Search manually below.";
+}
+
 export function useReceiveWorkflowForm() {
   const [state, dispatch] = useReducer(receiveWorkflowReducer, initialReceiveWorkflowState);
+  const submitLock = useRef(false);
   const auth = useAuth();
   const actor = useInventoryActor();
   const permissions = useInventoryPermissions();
@@ -300,7 +325,7 @@ export function useReceiveWorkflowForm() {
 
       if (result.status !== "resolved") {
         dispatch({
-          error: `Barcode ${result.status.replace("_", " ")}.`,
+          error: getBarcodeResolutionMessage(result.status),
           status:
             result.status === "permission_denied" || result.status === "duplicate"
               ? "invalid"
@@ -371,6 +396,10 @@ export function useReceiveWorkflowForm() {
   }
 
   async function submitReceive(input: ReceiveWorkflowSubmitInput = {}) {
+    if (submitLock.current || state.isSubmitting) {
+      return;
+    }
+
     const validation = validateSubmit(state, Boolean(actor), permissions.canReceiveInventory);
 
     if (!validation.ok || !actor || !state.resolvedItem || !state.unit || !templeId) {
@@ -383,6 +412,7 @@ export function useReceiveWorkflowForm() {
     }
 
     dispatch({ type: "submit_started" });
+    submitLock.current = true;
 
     try {
       const notes = state.notes.trim();
@@ -417,6 +447,8 @@ export function useReceiveWorkflowForm() {
         error: error instanceof Error ? error.message : "Receiving failed.",
         type: "receive_failed"
       });
+    } finally {
+      submitLock.current = false;
     }
   }
 

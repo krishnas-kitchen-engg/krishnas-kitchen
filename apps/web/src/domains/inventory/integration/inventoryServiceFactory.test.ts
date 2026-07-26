@@ -40,9 +40,16 @@ const riceItem: InventoryBarcodeItemReference = {
   organizationId: "org-1"
 };
 
-function createRepositoryAdapters(): InventoryRepositoryAdapters & {
+function createRepositoryAdapters(
+  options: {
+    items?: readonly InventoryCatalogItem[];
+    locations?: readonly InventoryCatalogLocation[];
+  } = {}
+): InventoryRepositoryAdapters & {
+  receivedDrafts: ReceivingInventoryTransactionDraft[];
   transactionScopes: InventoryTransactionScope[];
 } {
+  const receivedDrafts: ReceivingInventoryTransactionDraft[] = [];
   const transactionScopes: InventoryTransactionScope[] = [];
 
   return {
@@ -94,10 +101,10 @@ function createRepositoryAdapters(): InventoryRepositoryAdapters & {
         return Promise.resolve([] satisfies InventoryCatalogBarcode[]);
       },
       listItems() {
-        return Promise.resolve([] satisfies InventoryCatalogItem[]);
+        return Promise.resolve([...(options.items ?? [])]);
       },
       listLocations() {
-        return Promise.resolve([] satisfies InventoryCatalogLocation[]);
+        return Promise.resolve([...(options.locations ?? [])]);
       }
     },
     lowStockThresholdRepository: {
@@ -106,8 +113,14 @@ function createRepositoryAdapters(): InventoryRepositoryAdapters & {
       }
     },
     transactionRepository: {
-      createReceivingTransaction(_draft: ReceivingInventoryTransactionDraft) {
-        throw new Error("Factory test should not create receiving transactions.");
+      createReceivingTransaction(draft: ReceivingInventoryTransactionDraft) {
+        receivedDrafts.push(draft);
+
+        return Promise.resolve({
+          ...draft,
+          createdAt: "2026-06-04T08:00:00.000Z",
+          id: draft.clientId
+        });
       },
       createTransaction(_draft: InventoryTransactionDraft) {
         throw new Error("Factory test should not create transactions.");
@@ -121,6 +134,7 @@ function createRepositoryAdapters(): InventoryRepositoryAdapters & {
         return Promise.resolve([] satisfies InventoryTransaction[]);
       }
     },
+    receivedDrafts,
     transactionScopes,
     unknownBarcodeItemRepository: {
       findItemForBarcodeLinking() {
@@ -176,6 +190,176 @@ describe("inventory service factory integration", () => {
     assert.equal(repositories.transactionScopes.length, 1);
   });
 
+  it("validates receiving references through active catalog adapters before persistence", async () => {
+    const repositories = createRepositoryAdapters({
+      items: [
+        {
+          barcodes: [],
+          defaultUnit: "kg",
+          deletedAt: null,
+          id: "rice",
+          name: "Rice",
+          organizationId: "org-1",
+          receivingUnits: ["kg"]
+        },
+        {
+          barcodes: [],
+          defaultUnit: "kg",
+          deletedAt: "2026-06-01T00:00:00.000Z",
+          id: "archived-rice",
+          name: "Archived Rice",
+          organizationId: "org-1",
+          receivingUnits: ["kg"]
+        }
+      ],
+      locations: [
+        {
+          deletedAt: null,
+          id: "pantry",
+          name: "Pantry",
+          organizationId: "org-1",
+          templeId: "temple-1"
+        },
+        {
+          deletedAt: null,
+          id: "other-pantry",
+          name: "Other Pantry",
+          organizationId: "org-1",
+          templeId: "temple-2"
+        }
+      ]
+    });
+    const services = createInventoryServiceBundle({ repositories });
+
+    await services.inventory.receiveInventory({
+      actor: {
+        type: "user",
+        userId: "volunteer-1"
+      },
+      itemId: "rice",
+      locationId: "pantry",
+      organizationId: "org-1",
+      quantity: 5,
+      templeId: "temple-1",
+      unit: "kg"
+    });
+
+    await assert.rejects(
+      () =>
+        services.inventory.receiveInventory({
+          actor: {
+            type: "user",
+            userId: "volunteer-1"
+          },
+          itemId: "archived-rice",
+          locationId: "pantry",
+          organizationId: "org-1",
+          quantity: 5,
+          templeId: "temple-1",
+          unit: "kg"
+        }),
+      /Receiving item was not found/
+    );
+    await assert.rejects(
+      () =>
+        services.inventory.receiveInventory({
+          actor: {
+            type: "user",
+            userId: "volunteer-1"
+          },
+          itemId: "rice",
+          locationId: "other-pantry",
+          organizationId: "org-1",
+          quantity: 5,
+          templeId: "temple-1",
+          unit: "kg"
+        }),
+      /Receiving location was not found/
+    );
+
+    assert.equal(repositories.receivedDrafts.length, 1);
+  });
+
+  it("validates consumption references and availability through factory-wired adapters", async () => {
+    const repositories = createRepositoryAdapters({
+      items: [
+        {
+          barcodes: [],
+          consumptionUnits: ["kg"],
+          defaultUnit: "kg",
+          deletedAt: null,
+          id: "rice",
+          name: "Rice",
+          organizationId: "org-1"
+        }
+      ],
+      locations: [
+        {
+          deletedAt: null,
+          id: "pantry",
+          name: "Pantry",
+          organizationId: "org-1",
+          templeId: "temple-1"
+        }
+      ]
+    });
+    const consumedDrafts: InventoryTransactionDraft[] = [];
+    repositories.transactionRepository.createTransaction = (draft) => {
+      consumedDrafts.push(draft);
+
+      return Promise.resolve({
+        ...draft,
+        createdAt: "2026-06-04T08:00:00.000Z",
+        id: draft.clientId
+      });
+    };
+    repositories.transactionRepository.listTransactions = (scope) => {
+      repositories.transactionScopes.push(scope);
+
+      return Promise.resolve([
+        {
+          actor: {
+            type: "user",
+            userId: "volunteer-1"
+          },
+          auditMetadata: {},
+          createdAt: "2026-06-04T07:00:00.000Z",
+          destinationLocationId: "pantry",
+          id: "received-1",
+          itemId: "rice",
+          notes: null,
+          organizationId: "org-1",
+          quantity: 10,
+          quantityEffect: "increase",
+          reversalOfTransactionId: null,
+          sourceLocationId: null,
+          templeId: "temple-1",
+          transactionType: "received",
+          unit: "kg"
+        }
+      ] satisfies InventoryTransaction[]);
+    };
+    const services = createInventoryServiceBundle({ repositories });
+
+    const transaction = await services.inventory.consumeInventory({
+      actor: {
+        type: "user",
+        userId: "volunteer-1"
+      },
+      itemId: "rice",
+      locationId: "pantry",
+      organizationId: "org-1",
+      quantity: 4,
+      templeId: "temple-1",
+      unit: "kg"
+    });
+
+    assert.equal(transaction.transactionType, "consumed");
+    assert.equal(consumedDrafts.length, 1);
+    assert.equal(consumedDrafts[0]?.sourceLocationId, "pantry");
+    assert.equal(repositories.transactionScopes[0]?.locationId, "pantry");
+  });
+
   it("resolves inventory actors from authenticated and temporary auth state", () => {
     const userActor = resolveInventoryActor({
       isTemporaryVolunteer: false,
@@ -217,6 +401,7 @@ describe("inventory service factory integration", () => {
     const flags = getInventoryPermissionFlags([
       "inventory.read",
       "inventory.receive",
+      "inventory.consume",
       "inventory.transfer",
       "items.create",
       "locations.edit"
@@ -224,6 +409,7 @@ describe("inventory service factory integration", () => {
 
     assert.equal(flags.canReadInventory, true);
     assert.equal(flags.canReceiveInventory, true);
+    assert.equal(flags.canConsumeInventory, true);
     assert.equal(flags.canTransferInventory, true);
     assert.equal(flags.canReturnInventory, false);
     assert.equal(flags.canCreateItems, true);

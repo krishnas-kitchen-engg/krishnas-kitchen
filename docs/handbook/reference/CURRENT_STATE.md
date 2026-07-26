@@ -156,13 +156,14 @@ Temporary volunteer permission drift, undo/reversal terminology drift, return se
 
 The Engineering Operating System is stable for production use. [AI Engineering Operating Model](../governance/AI_ENGINEERING_OPERATING_MODEL.md) owns the Session Controller, including session resume, active-horizon milestone selection, verification repeat behavior, Evidence Capture, commit approval gates, and completion-report terminology. Future EOS changes require implementation-driven justification rather than speculative improvement.
 
-Delivery Management is active under `docs/delivery`. It is separate from the Engineering Operating System and owns product-facing capability status, current delivery status, and readiness assessment. [Delivery Status](../../delivery/DELIVERY_STATUS.md) records that no narrower Current Delivery Increment has been formally selected; [Delivery Readiness](../../delivery/DELIVERY_READINESS.md) currently assesses increment, pilot, and production readiness as blocked.
+Delivery Management is active under `docs/delivery`. It is separate from the Engineering Operating System and owns product-facing capability status, current delivery status, and readiness assessment. [Delivery Status](../../delivery/DELIVERY_STATUS.md) records Receiving + Inventory Visibility Pilot as the Current Delivery Increment; [Delivery Readiness](../../delivery/DELIVERY_READINESS.md) currently assesses increment readiness as ready, pilot readiness as at risk, and production readiness as blocked.
 
 ## Known Gaps
 
 - Offline queue implementation is not present; the living architecture defines the future queue and replay boundary.
 - Production security approval is not granted; the current security review baseline records posture and findings only.
-- Delivery Management currently records readiness as blocked because no formal Current Delivery Increment has been selected and pilot/production approval is not documented.
+- Delivery Management currently records Receiving + Inventory Visibility Pilot as evidence-complete for controlled pilot review, with pilot readiness at risk until a human accepts documented residual risks.
+- Production readiness remains blocked because production security approval is not granted and Horizon 1 production expectations are incomplete.
 - Existing docs still contain duplication and some encoding artifacts.
 - Older docs are classified in the document index, but content has not been physically migrated.
 

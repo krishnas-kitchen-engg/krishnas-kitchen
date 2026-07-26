@@ -21,6 +21,7 @@ export type TransferValidationErrorCode =
   | "ITEM_ARCHIVED"
   | "ITEM_NOT_FOUND"
   | "ITEM_ORGANIZATION_MISMATCH"
+  | "QUANTITY_EXCEEDS_AVAILABLE"
   | "QUANTITY_NOT_FINITE"
   | "QUANTITY_NOT_POSITIVE"
   | "QUANTITY_TOO_LARGE"
@@ -122,7 +123,10 @@ function validateTransferActor(actor: InventoryActor): TransferValidationErrorDe
   return [];
 }
 
-export function validateTransferQuantity(quantity: number): TransferValidationResult {
+export function validateTransferQuantity(
+  quantity: number,
+  availableQuantity?: number
+): TransferValidationResult {
   const errors: TransferValidationErrorDetail[] = [];
 
   if (!Number.isFinite(quantity)) {
@@ -143,6 +147,13 @@ export function validateTransferQuantity(quantity: number): TransferValidationRe
       "QUANTITY_TOO_LARGE",
       "quantity",
       `Transfer quantity must be ${TRANSFER_MAX_QUANTITY} or less.`
+    );
+    pushTransferError(
+      errors,
+      typeof availableQuantity === "number" && quantity > availableQuantity,
+      "QUANTITY_EXCEEDS_AVAILABLE",
+      "quantity",
+      "Transfer quantity cannot exceed available inventory."
     );
   }
 
@@ -286,6 +297,7 @@ function validateTransferLocation(
 export function validateTransferTransactionInput(
   input: CreateTransferTransactionInput,
   references?: {
+    availableQuantity?: number;
     destinationLocation?: InventoryLocationReference | null;
     item?: InventoryItemReference | null;
     sourceLocation?: InventoryLocationReference | null;
@@ -339,7 +351,10 @@ export function validateTransferTransactionInput(
 
   errors.push(...validateTransferActor(input.actor));
 
-  const quantityValidation = validateTransferQuantity(input.quantity);
+  const quantityValidation = validateTransferQuantity(
+    input.quantity,
+    references?.availableQuantity
+  );
   if (!quantityValidation.ok) {
     errors.push(...quantityValidation.errors);
   }
@@ -382,6 +397,7 @@ export function validateTransferTransactionInput(
 export function assertValidTransferTransactionInput(
   input: CreateTransferTransactionInput,
   references?: {
+    availableQuantity?: number;
     destinationLocation?: InventoryLocationReference | null;
     item?: InventoryItemReference | null;
     sourceLocation?: InventoryLocationReference | null;

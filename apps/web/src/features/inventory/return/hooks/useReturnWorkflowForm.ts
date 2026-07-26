@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useRef } from "react";
 import type { ItemUnit } from "@krishnas-kitchen/types";
 
 import {
@@ -359,6 +359,7 @@ function validateSubmit(state: ReturnWorkflowUiState, hasActor: boolean, canRetu
 
 export function useReturnWorkflowForm() {
   const [state, dispatch] = useReducer(returnWorkflowReducer, initialReturnWorkflowState);
+  const submitLock = useRef(false);
   const auth = useAuth();
   const actor = useInventoryActor();
   const permissions = useInventoryPermissions();
@@ -462,6 +463,10 @@ export function useReturnWorkflowForm() {
   }
 
   async function submitReturn(input: ReturnWorkflowSubmitInput = {}) {
+    if (submitLock.current || state.isSubmitting) {
+      return;
+    }
+
     const validation = validateSubmit(state, Boolean(actor), permissions.canReturnInventory);
 
     if (!validation.ok || !actor || !state.resolvedItem || !state.unit || !templeId) {
@@ -474,6 +479,7 @@ export function useReturnWorkflowForm() {
     }
 
     dispatch({ type: "submit_started" });
+    submitLock.current = true;
 
     try {
       const notes = state.notes.trim();
@@ -530,6 +536,8 @@ export function useReturnWorkflowForm() {
         error: error instanceof Error ? error.message : "Return failed.",
         type: "return_failed"
       });
+    } finally {
+      submitLock.current = false;
     }
   }
 

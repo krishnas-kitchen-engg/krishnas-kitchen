@@ -59,21 +59,31 @@ function createVolunteerAdapters(responses: Partial<Record<RpcName, unknown[]>> 
 }
 
 const itemRow: InventoryItemRow = {
+  category: null,
+  critical_threshold: null,
   default_unit: "kg",
+  description: null,
   deleted_at: null,
   id: "rice",
   name: "Rice",
   organization_id: "org-from-session",
+  preferred_purchase_unit: null,
+  preferred_vendor: null,
+  reorder_threshold: null,
   receiving_units: ["kg"],
   return_units: ["kg"],
   transfer_units: ["kg"]
 };
 
 const locationRow: InventoryLocationRow = {
+  description: null,
   deleted_at: null,
   id: "pantry",
+  location_type: "pantry",
   name: "Pantry",
   organization_id: "org-from-session",
+  parent_location_id: null,
+  qr_code: null,
   temple_id: "temple-from-session"
 };
 

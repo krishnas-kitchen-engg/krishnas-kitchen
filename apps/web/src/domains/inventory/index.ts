@@ -2,8 +2,15 @@ export { createInventoryBarcodeLookupService } from "./application/barcodeLookup
 export { createInventoryBarcodeCatalogService } from "./application/barcodeCatalogService";
 export { createCameraScanningService } from "./application/cameraScanningService";
 export { createInventoryCatalogQueryService } from "./application/inventoryCatalogQueryService";
+export {
+  createItemManagementService,
+  ITEM_MANAGEMENT_UNITS,
+  ItemManagementValidationError
+} from "./application/itemManagementService";
+export { createLocationManagementService } from "./application/locationManagementService";
 export { createInventoryService } from "./application/inventoryService";
 export { createInventoryVisibilityService } from "./application/inventoryVisibilityService";
+export { createConsumptionScanWorkflowService } from "./application/consumptionScanWorkflowService";
 export { createReceivingScanWorkflowService } from "./application/receivingScanWorkflowService";
 export { createReturnScanWorkflowService } from "./application/returnScanWorkflowService";
 export { createTransferScanWorkflowService } from "./application/transferScanWorkflowService";
@@ -25,6 +32,7 @@ export {
   useInventoryCatalogQueries,
   useInventoryPermissions,
   useInventoryVisibility,
+  useConsumptionWorkflow,
   useReceivingWorkflow,
   useReturnWorkflow,
   useTransferWorkflow,
@@ -50,7 +58,26 @@ export type {
   InventoryCatalogQueryService
 } from "./application/inventoryCatalogQueryService";
 export type {
+  CreateManagedItemInput,
+  ItemManagementRepository,
+  ItemManagementScope,
+  ItemManagementService,
+  ManagedInventoryItem,
+  UpdateManagedItemInput
+} from "./application/itemManagementService";
+export type {
+  CreateManagedLocationInput,
+  LocationManagementRepository,
+  LocationManagementScope,
+  LocationManagementService,
+  ManagedInventoryLocation,
+  UpdateManagedLocationInput
+} from "./application/locationManagementService";
+export type { ConsumptionScanWorkflowService } from "./application/consumptionScanWorkflowService";
+export type {
+  InventoryAdjustmentCatalog,
   InventoryReceivingCatalog,
+  InventoryConsumptionCatalog,
   InventoryReturnCatalog,
   InventoryService,
   InventoryTransferCatalog
@@ -162,6 +189,10 @@ export type {
   CameraTorchState
 } from "./domain/cameraScanning";
 export {
+  createConsumptionManualItemResolution,
+  validateConsumptionScanPermission
+} from "./domain/consumptionScanWorkflow";
+export {
   createReceivingManualItemResolution,
   validateReceivingScanPermission
 } from "./domain/receivingScanWorkflow";
@@ -185,6 +216,16 @@ export {
   validateUnknownBarcodePending,
   validateUnknownBarcodeScanInput
 } from "./domain/unknownBarcode";
+export type {
+  ConsumptionManualItemOverrideInput,
+  ConsumptionResolvedItem,
+  ConsumptionResolvedItemSource,
+  ConsumptionScanConsumeInput,
+  ConsumptionScanConsumeResult,
+  ConsumptionScanPermissionResult,
+  ConsumptionScanResolutionInput,
+  ConsumptionScanResolutionResult
+} from "./domain/consumptionScanWorkflow";
 export type {
   ReceivingManualItemOverrideInput,
   ReceivingResolvedItem,
@@ -240,6 +281,7 @@ export {
 export {
   createAdjustmentTransaction,
   createConsumedTransaction,
+  createInventoryAdjustmentTransaction,
   createReceivedTransaction,
   createReceivingTransaction,
   createReservationTransaction,
@@ -251,6 +293,8 @@ export {
 } from "./domain/transactionHelpers";
 export type {
   CreateAdjustmentTransactionInput,
+  CreateInventoryAdjustmentInput,
+  CreateConsumptionTransactionInput,
   CreateInventoryTransactionInput,
   CreateLocationTransactionInput,
   CreateReceivingTransactionInput,
@@ -276,6 +320,39 @@ export type {
   ReturnInventoryTransactionDraft,
   TransferInventoryTransactionDraft
 } from "./domain/types";
+export {
+  ADJUSTMENT_MAX_PHYSICAL_QUANTITY,
+  ADJUSTMENT_UNITS,
+  AdjustmentValidationError,
+  assertValidInventoryAdjustmentInput,
+  validateAdjustmentItem,
+  validateAdjustmentLocation,
+  validateAdjustmentPhysicalQuantity,
+  validateAdjustmentReason,
+  validateAdjustmentUnit,
+  validateInventoryAdjustmentInput
+} from "./domain/adjustmentValidation";
+export type {
+  AdjustmentValidationErrorCode,
+  AdjustmentValidationErrorDetail,
+  AdjustmentValidationResult
+} from "./domain/adjustmentValidation";
+export {
+  assertValidConsumptionTransactionInput,
+  CONSUMPTION_MAX_QUANTITY,
+  CONSUMPTION_UNITS,
+  ConsumptionValidationError,
+  validateConsumptionItem,
+  validateConsumptionLocation,
+  validateConsumptionQuantity,
+  validateConsumptionTransactionInput,
+  validateConsumptionUnit
+} from "./domain/consumptionValidation";
+export type {
+  ConsumptionValidationErrorCode,
+  ConsumptionValidationErrorDetail,
+  ConsumptionValidationResult
+} from "./domain/consumptionValidation";
 export {
   assertValidReceivingTransactionInput,
   RECEIVING_MAX_QUANTITY,
@@ -353,3 +430,5 @@ export {
   UnsupportedInventoryRepositoryAdapterError
 } from "./infrastructure/supabase/supabaseInventoryRepositoryAdapters";
 export { createSupabaseInventoryTransactionRepository } from "./infrastructure/supabase/supabaseInventoryTransactionRepository";
+export { createSupabaseItemManagementRepository } from "./infrastructure/supabase/supabaseItemManagementRepository";
+export { createSupabaseLocationManagementRepository } from "./infrastructure/supabase/supabaseLocationManagementRepository";

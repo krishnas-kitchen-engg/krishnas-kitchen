@@ -2,11 +2,21 @@ import type { EntityId } from "@krishnas-kitchen/types";
 
 import { calculateInventoryBalances } from "../domain/aggregation";
 import {
+  createConsumedTransaction,
+  createInventoryAdjustmentTransaction,
   createReversalTransaction,
   createReceivingTransaction,
   createReturnedTransaction,
   createTransferTransaction
 } from "../domain/transactionHelpers";
+import {
+  AdjustmentValidationError,
+  validateInventoryAdjustmentInput
+} from "../domain/adjustmentValidation";
+import {
+  ConsumptionValidationError,
+  validateConsumptionTransactionInput
+} from "../domain/consumptionValidation";
 import {
   ReceivingValidationError,
   validateReceivingTransactionInput
@@ -23,6 +33,8 @@ import {
 import { assertValidInventoryTransactionDraft } from "../domain/validation";
 import type {
   CreateInventoryTransactionInput,
+  CreateConsumptionTransactionInput,
+  CreateInventoryAdjustmentInput,
   CreateReceivingTransactionInput,
   CreateReversalTransactionInput,
   CreateReturnTransactionInput,
@@ -44,6 +56,28 @@ export type InventoryReceivingCatalog = {
   findReceivingLocation: (
     locationId: EntityId,
     scope: Pick<CreateReceivingTransactionInput, "organizationId" | "templeId">
+  ) => Promise<InventoryLocationReference | null>;
+};
+
+export type InventoryConsumptionCatalog = {
+  findConsumptionItem: (
+    itemId: EntityId,
+    scope: Pick<CreateConsumptionTransactionInput, "organizationId">
+  ) => Promise<InventoryItemReference | null>;
+  findConsumptionLocation: (
+    locationId: EntityId,
+    scope: Pick<CreateConsumptionTransactionInput, "organizationId" | "templeId">
+  ) => Promise<InventoryLocationReference | null>;
+};
+
+export type InventoryAdjustmentCatalog = {
+  findAdjustmentItem: (
+    itemId: EntityId,
+    scope: Pick<CreateInventoryAdjustmentInput, "organizationId">
+  ) => Promise<InventoryItemReference | null>;
+  findAdjustmentLocation: (
+    locationId: EntityId,
+    scope: Pick<CreateInventoryAdjustmentInput, "organizationId" | "templeId">
   ) => Promise<InventoryLocationReference | null>;
 };
 
@@ -78,7 +112,14 @@ export type InventoryTransferCatalog = {
 };
 
 export type InventoryService = {
+  adjustInventory: (input: CreateInventoryAdjustmentInput) => Promise<{
+    currentQuantity: number;
+    physicalQuantity: number;
+    quantityDelta: number;
+    transaction: InventoryTransaction | null;
+  }>;
   createTransaction: (draft: InventoryTransactionDraft) => Promise<InventoryTransaction>;
+  consumeInventory: (input: CreateConsumptionTransactionInput) => Promise<InventoryTransaction>;
   getBalances: (scope: InventoryTransactionScope) => Promise<InventoryBalance[]>;
   getTransactions: (scope: InventoryTransactionScope) => Promise<InventoryTransaction[]>;
   receiveInventory: (input: CreateReceivingTransactionInput) => Promise<InventoryTransaction>;
@@ -90,17 +131,109 @@ export type InventoryService = {
   ) => Promise<InventoryTransaction>;
 };
 
+async function getAvailableQuantity(
+  repository: InventoryTransactionRepository,
+  input: {
+    itemId: EntityId;
+    locationId: EntityId;
+    organizationId: EntityId;
+    templeId: EntityId;
+    unit: string;
+  }
+): Promise<number> {
+  return (
+    calculateInventoryBalances(
+      await repository.listTransactions({
+        itemId: input.itemId,
+        locationId: input.locationId,
+        organizationId: input.organizationId,
+        templeId: input.templeId
+      })
+    ).find(
+      (balance) =>
+        balance.itemId === input.itemId &&
+        balance.locationId === input.locationId &&
+        balance.unit === input.unit
+    )?.quantity ?? 0
+  );
+}
+
 export function createInventoryService(
   repository: InventoryTransactionRepository,
   options: {
+    adjustmentCatalog?: InventoryAdjustmentCatalog;
+    consumptionCatalog?: InventoryConsumptionCatalog;
     receivingCatalog?: InventoryReceivingCatalog;
     returnCatalog?: InventoryReturnCatalog;
     transferCatalog?: InventoryTransferCatalog;
   } = {}
 ): InventoryService {
   return {
+    async adjustInventory(input) {
+      const item = await options.adjustmentCatalog?.findAdjustmentItem(input.itemId, {
+        organizationId: input.organizationId
+      });
+      const location = await options.adjustmentCatalog?.findAdjustmentLocation(input.locationId, {
+        organizationId: input.organizationId,
+        templeId: input.templeId
+      });
+      const validation = validateInventoryAdjustmentInput(
+        input,
+        options.adjustmentCatalog ? { item: item ?? null, location: location ?? null } : undefined
+      );
+
+      if (!validation.ok) {
+        throw new AdjustmentValidationError(validation.errors);
+      }
+
+      const currentQuantity =
+        calculateInventoryBalances(
+          await repository.listTransactions({
+            itemId: input.itemId,
+            locationId: input.locationId,
+            organizationId: input.organizationId,
+            templeId: input.templeId
+          })
+        ).find(
+          (balance) =>
+            balance.itemId === input.itemId &&
+            balance.locationId === input.locationId &&
+            balance.unit === input.unit
+        )?.quantity ?? 0;
+      const quantityDelta = input.physicalQuantity - currentQuantity;
+      const draft = createInventoryAdjustmentTransaction(input, currentQuantity);
+
+      return {
+        currentQuantity,
+        physicalQuantity: input.physicalQuantity,
+        quantityDelta,
+        transaction: draft ? await repository.createTransaction(draft) : null
+      };
+    },
+
     async createTransaction(draft) {
       return repository.createTransaction(assertValidInventoryTransactionDraft(draft));
+    },
+
+    async consumeInventory(input) {
+      const item = await options.consumptionCatalog?.findConsumptionItem(input.itemId, {
+        organizationId: input.organizationId
+      });
+      const location = await options.consumptionCatalog?.findConsumptionLocation(input.locationId, {
+        organizationId: input.organizationId,
+        templeId: input.templeId
+      });
+      const availableQuantity = await getAvailableQuantity(repository, input);
+      const validation = validateConsumptionTransactionInput(input, {
+        availableQuantity,
+        ...(options.consumptionCatalog ? { item: item ?? null, location: location ?? null } : {})
+      });
+
+      if (!validation.ok) {
+        throw new ConsumptionValidationError(validation.errors);
+      }
+
+      return repository.createTransaction(createConsumedTransaction(input));
     },
 
     async getBalances(scope) {
@@ -149,16 +282,23 @@ export function createInventoryService(
           templeId: input.templeId
         }
       );
-      const validation = validateReturnTransactionInput(
-        input,
-        options.returnCatalog
+      const availableQuantity = await getAvailableQuantity(repository, {
+        itemId: input.itemId,
+        locationId: input.sourceLocationId,
+        organizationId: input.organizationId,
+        templeId: input.templeId,
+        unit: input.unit
+      });
+      const validation = validateReturnTransactionInput(input, {
+        availableQuantity,
+        ...(options.returnCatalog
           ? {
               destinationLocation: destinationLocation ?? null,
               item: item ?? null,
               sourceLocation: sourceLocation ?? null
             }
-          : undefined
-      );
+          : {})
+      });
 
       if (!validation.ok) {
         throw new ReturnValidationError(validation.errors);
@@ -185,16 +325,23 @@ export function createInventoryService(
           templeId: input.templeId
         }
       );
-      const validation = validateTransferTransactionInput(
-        input,
-        options.transferCatalog
+      const availableQuantity = await getAvailableQuantity(repository, {
+        itemId: input.itemId,
+        locationId: input.sourceLocationId,
+        organizationId: input.organizationId,
+        templeId: input.templeId,
+        unit: input.unit
+      });
+      const validation = validateTransferTransactionInput(input, {
+        availableQuantity,
+        ...(options.transferCatalog
           ? {
               destinationLocation: destinationLocation ?? null,
               item: item ?? null,
               sourceLocation: sourceLocation ?? null
             }
-          : undefined
-      );
+          : {})
+      });
 
       if (!validation.ok) {
         throw new TransferValidationError(validation.errors);

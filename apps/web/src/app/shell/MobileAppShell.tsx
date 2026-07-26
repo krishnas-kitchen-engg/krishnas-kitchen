@@ -7,6 +7,10 @@ import { BottomNavigation } from "./BottomNavigation";
 import { MobileTopBar } from "./MobileTopBar";
 
 function getRouteTitle(routeName: ReturnType<typeof useCurrentRoute>["name"]): string {
+  if (routeName === "adjust") {
+    return "Adjust";
+  }
+
   if (routeName === "inventory_item") {
     return "Item detail";
   }
@@ -19,8 +23,28 @@ function getRouteTitle(routeName: ReturnType<typeof useCurrentRoute>["name"]): s
     return "Inventory";
   }
 
+  if (routeName === "items") {
+    return "Items";
+  }
+
+  if (routeName === "low_stock") {
+    return "Low Stock";
+  }
+
+  if (routeName === "locations") {
+    return "Locations";
+  }
+
   if (routeName === "profile") {
     return "Profile";
+  }
+
+  if (routeName === "consume") {
+    return "Consume";
+  }
+
+  if (routeName === "dashboard") {
+    return "Dashboard";
   }
 
   if (routeName === "receive") {
@@ -29,6 +53,10 @@ function getRouteTitle(routeName: ReturnType<typeof useCurrentRoute>["name"]): s
 
   if (routeName === "return") {
     return "Return";
+  }
+
+  if (routeName === "recipes") {
+    return "Recipes";
   }
 
   if (routeName === "scan") {

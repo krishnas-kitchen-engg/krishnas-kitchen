@@ -5,10 +5,14 @@ export type VolunteerHomeQuickAction = {
   label: string;
   path: AppPath;
   requiredPermission:
+    | "inventory.adjust"
+    | "inventory.consume"
     | "inventory.read"
     | "inventory.receive"
     | "inventory.return"
-    | "inventory.transfer";
+    | "inventory.transfer"
+    | "items.edit"
+    | "recipes.read";
 };
 
 export type VolunteerHomeActivityItem = {

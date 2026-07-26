@@ -21,6 +21,7 @@ export type ReturnValidationErrorCode =
   | "ITEM_ARCHIVED"
   | "ITEM_NOT_FOUND"
   | "ITEM_ORGANIZATION_MISMATCH"
+  | "QUANTITY_EXCEEDS_AVAILABLE"
   | "QUANTITY_NOT_FINITE"
   | "QUANTITY_NOT_POSITIVE"
   | "QUANTITY_TOO_LARGE"
@@ -122,7 +123,10 @@ function validateReturnActor(actor: InventoryActor): ReturnValidationErrorDetail
   return [];
 }
 
-export function validateReturnQuantity(quantity: number): ReturnValidationResult {
+export function validateReturnQuantity(
+  quantity: number,
+  availableQuantity?: number
+): ReturnValidationResult {
   const errors: ReturnValidationErrorDetail[] = [];
 
   if (!Number.isFinite(quantity)) {
@@ -143,6 +147,13 @@ export function validateReturnQuantity(quantity: number): ReturnValidationResult
       "QUANTITY_TOO_LARGE",
       "quantity",
       `Return quantity must be ${RETURN_MAX_QUANTITY} or less.`
+    );
+    pushReturnError(
+      errors,
+      typeof availableQuantity === "number" && quantity > availableQuantity,
+      "QUANTITY_EXCEEDS_AVAILABLE",
+      "quantity",
+      "Return quantity cannot exceed available inventory."
     );
   }
 
@@ -281,6 +292,7 @@ function validateReturnLocation(
 export function validateReturnTransactionInput(
   input: CreateReturnTransactionInput,
   references?: {
+    availableQuantity?: number;
     destinationLocation?: InventoryLocationReference | null;
     item?: InventoryItemReference | null;
     sourceLocation?: InventoryLocationReference | null;
@@ -334,7 +346,7 @@ export function validateReturnTransactionInput(
 
   errors.push(...validateReturnActor(input.actor));
 
-  const quantityValidation = validateReturnQuantity(input.quantity);
+  const quantityValidation = validateReturnQuantity(input.quantity, references?.availableQuantity);
   if (!quantityValidation.ok) {
     errors.push(...quantityValidation.errors);
   }
@@ -377,6 +389,7 @@ export function validateReturnTransactionInput(
 export function assertValidReturnTransactionInput(
   input: CreateReturnTransactionInput,
   references?: {
+    availableQuantity?: number;
     destinationLocation?: InventoryLocationReference | null;
     item?: InventoryItemReference | null;
     sourceLocation?: InventoryLocationReference | null;

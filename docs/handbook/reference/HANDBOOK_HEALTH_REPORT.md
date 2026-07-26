@@ -39,7 +39,7 @@ Scores use a 1-5 scale where 5 means strong and currently usable, 3 means usable
 | Templates | 5 | Template library covers ADRs, architecture, features, living docs, reviews, RCA, security, tests, validation, release, future work, and debt. | Avoid adding templates without repeated need. |
 | ADRs | 4 | Ten initial ADRs capture implemented/documented decisions and are indexed with reading order. | Add ADRs only when new durable decisions are made; resolve terminology drift through ADR or reference updates. |
 | Living Docs | 4 | Living reference layer exists and records current state and known gaps. | Keep updated after every milestone; add latest verification baseline. |
-| Delivery Management | 4 | Delivery model, capability matrix, delivery status, and delivery readiness docs now exist as a separate product-delivery reporting layer. | Select a formal Current Delivery Increment and update delivery status/readiness from future repository evidence. |
+| Delivery Management | 4 | Delivery model, current increment, capability matrix, delivery backlog, delivery decisions, delivery status, and delivery readiness docs now exist as a separate product-delivery reporting layer. | Complete Receiving + Inventory Visibility Pilot evidence and update readiness from future repository evidence. |
 | Navigation | 5 | Handbook README and reading paths route future AI sessions through the operating model before supporting docs. | Maintain only when entry points change. |
 | Cross-linking | 5 | Handbook pages link to governance, operating model, process, templates, ADRs, reference, and existing source docs. | Repair stale links when found. |
 | Consistency | 4 | Handbook workflow is consolidated around the operating model; known project-document drift remains recorded. | Resolve documented contradictions in `DOCUMENTATION_DRIFT.md` through focused milestones. |
@@ -60,7 +60,7 @@ Scores use a 1-5 scale where 5 means strong and currently usable, 3 means usable
 - Documentation drift is recorded but unresolved.
 - Latest full verification result is not captured in living docs.
 - Older docs remain in place by design and should be migrated only through focused milestones.
-- Delivery Management is active, but no formal Current Delivery Increment has been selected.
+- Delivery Management is active, and Receiving + Inventory Visibility Pilot is the selected Current Delivery Increment. Pilot readiness remains blocked pending workflow evidence.
 
 ## Owner
 

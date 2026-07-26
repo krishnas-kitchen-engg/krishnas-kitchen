@@ -91,21 +91,27 @@ describe("HomeScreen", () => {
         permissions: [
           "inventory.read",
           "inventory.receive",
+          "inventory.consume",
           "inventory.transfer",
-          "inventory.return"
+          "inventory.return",
+          "recipes.read"
         ]
       })
     );
 
     assert.match(markup, /Scan/);
     assert.match(markup, /Receive/);
+    assert.match(markup, /Consume/);
     assert.match(markup, /Transfer/);
     assert.match(markup, /Return/);
     assert.match(markup, /Inventory/);
+    assert.match(markup, /Recipes/);
     assert.ok(markup.indexOf("Scan") < markup.indexOf("Receive"));
-    assert.ok(markup.indexOf("Receive") < markup.indexOf("Transfer"));
+    assert.ok(markup.indexOf("Receive") < markup.indexOf("Consume"));
+    assert.ok(markup.indexOf("Consume") < markup.indexOf("Transfer"));
     assert.ok(markup.indexOf("Transfer") < markup.indexOf("Return"));
     assert.ok(markup.indexOf("Return") < markup.indexOf("Inventory"));
+    assert.ok(markup.indexOf("Inventory") < markup.indexOf("Recipes"));
   });
 
   it("hides unauthorized quick actions", () => {
@@ -118,8 +124,10 @@ describe("HomeScreen", () => {
     assert.match(markup, /Scan/);
     assert.match(markup, /Inventory/);
     assert.doesNotMatch(markup, />Receive</);
+    assert.doesNotMatch(markup, />Consume</);
     assert.doesNotMatch(markup, />Transfer</);
     assert.doesNotMatch(markup, />Return</);
+    assert.doesNotMatch(markup, />Recipes</);
   });
 
   it("renders pending unknown barcode empty state", () => {

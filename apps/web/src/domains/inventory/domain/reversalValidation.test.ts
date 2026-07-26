@@ -3,6 +3,7 @@ import { describe, it } from "vitest";
 
 import { calculateLocationItemBalance } from "./aggregation";
 import {
+  createConsumedTransaction,
   createReceivingTransaction,
   createReversalTransaction,
   createReturnedTransaction,
@@ -84,6 +85,23 @@ const returned = {
   id: "return-1"
 } satisfies InventoryTransaction;
 
+const consumed = {
+  ...createConsumedTransaction({
+    actor: {
+      type: "user",
+      userId: "manager-1"
+    },
+    itemId: "rice",
+    locationId: "pantry",
+    organizationId: "org-1",
+    quantity: 6,
+    templeId: "temple-1",
+    unit: "kg"
+  }),
+  createdAt: "2026-06-04T08:30:00.000Z",
+  id: "consumed-1"
+} satisfies InventoryTransaction;
+
 function getErrorCodes(result: ReversalValidationResult): ReversalValidationErrorCode[] {
   assert.equal(result.ok, false);
 
@@ -134,19 +152,27 @@ describe("reversal validation", () => {
     assert.equal(calculateLocationItemBalance([returned, reversal], "pantry", "rice"), 0);
   });
 
+  it("reverses consumed transactions by returning quantity to the source location", () => {
+    const reversal = {
+      ...createReversalTransaction(consumed, reversalInput),
+      createdAt: "2026-06-04T08:31:00.000Z",
+      id: "reversal-consumed-1"
+    };
+
+    assert.equal(reversal.transactionType, "reversal");
+    assert.equal(reversal.quantityEffect, "increase");
+    assert.equal(reversal.quantity, 6);
+    assert.equal(reversal.sourceLocationId, null);
+    assert.equal(reversal.destinationLocationId, "pantry");
+    assert.equal(reversal.reversalOfTransactionId, consumed.id);
+    assert.equal(calculateLocationItemBalance([consumed, reversal], "pantry", "rice"), 0);
+  });
+
   it("rejects missing originals, reversals, unsupported types, and duplicate reversals", () => {
     const reversal = {
       ...createReversalTransaction(received, reversalInput),
       createdAt: "2026-06-04T08:01:00.000Z",
       id: "reversal-1"
-    } satisfies InventoryTransaction;
-    const consumed = {
-      ...received,
-      destinationLocationId: null,
-      id: "consumed-1",
-      quantityEffect: "decrease" as const,
-      sourceLocationId: "pantry",
-      transactionType: "consumed" as const
     } satisfies InventoryTransaction;
 
     assert.deepEqual(getErrorCodes(validateReversalEligibility(null)), [
@@ -156,9 +182,15 @@ describe("reversal validation", () => {
       "ORIGINAL_IS_REVERSAL",
       "UNSUPPORTED_TRANSACTION_TYPE"
     ]);
-    assert.deepEqual(getErrorCodes(validateReversalEligibility(consumed)), [
-      "UNSUPPORTED_TRANSACTION_TYPE"
-    ]);
+    assert.deepEqual(
+      getErrorCodes(
+        validateReversalEligibility({
+          ...consumed,
+          transactionType: "wasted"
+        })
+      ),
+      ["UNSUPPORTED_TRANSACTION_TYPE"]
+    );
     assert.deepEqual(getErrorCodes(validateReversalEligibility(received, reversal)), [
       "ALREADY_REVERSED"
     ]);

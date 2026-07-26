@@ -3,6 +3,12 @@ export { InventoryUnavailableState } from "./components/InventoryUnavailableStat
 export { InventoryLookupScreen } from "./screens/InventoryLookupScreen";
 export { InventoryItemDetailScreen } from "./screens/InventoryItemDetailScreen";
 export { InventoryLocationDetailScreen } from "./screens/InventoryLocationDetailScreen";
+export { AdjustInventoryScreen } from "./adjust";
+export { ConsumeInventoryScreen } from "./consume";
+export { InventoryDashboardScreen } from "./dashboard";
+export { ItemManagementScreen } from "./items";
+export { LocationManagementScreen } from "./locations";
+export { LowStockCenterScreen } from "./low-stock";
 export { ReceiveInventoryScreen } from "./receive";
 export { ReturnInventoryScreen } from "./return";
 export { ScanInventoryScreen } from "./scan";

@@ -71,6 +71,48 @@ describe("router", () => {
       path: "/receive"
     });
 
+    stubWindow("/adjust");
+    assert.equal(getCurrentPath(), "/adjust");
+    assert.deepEqual(getCurrentRoute(), {
+      name: "adjust",
+      path: "/adjust"
+    });
+
+    stubWindow("/consume");
+    assert.equal(getCurrentPath(), "/consume");
+    assert.deepEqual(getCurrentRoute(), {
+      name: "consume",
+      path: "/consume"
+    });
+
+    stubWindow("/dashboard");
+    assert.equal(getCurrentPath(), "/dashboard");
+    assert.deepEqual(getCurrentRoute(), {
+      name: "dashboard",
+      path: "/dashboard"
+    });
+
+    stubWindow("/low-stock");
+    assert.equal(getCurrentPath(), "/low-stock");
+    assert.deepEqual(getCurrentRoute(), {
+      name: "low_stock",
+      path: "/low-stock"
+    });
+
+    stubWindow("/items");
+    assert.equal(getCurrentPath(), "/items");
+    assert.deepEqual(getCurrentRoute(), {
+      name: "items",
+      path: "/items"
+    });
+
+    stubWindow("/locations");
+    assert.equal(getCurrentPath(), "/locations");
+    assert.deepEqual(getCurrentRoute(), {
+      name: "locations",
+      path: "/locations"
+    });
+
     stubWindow("/transfer");
     assert.equal(getCurrentPath(), "/transfer");
     assert.deepEqual(getCurrentRoute(), {
@@ -83,6 +125,13 @@ describe("router", () => {
     assert.deepEqual(getCurrentRoute(), {
       name: "return",
       path: "/return"
+    });
+
+    stubWindow("/recipes");
+    assert.equal(getCurrentPath(), "/recipes");
+    assert.deepEqual(getCurrentRoute(), {
+      name: "recipes",
+      path: "/recipes"
     });
 
     stubWindow("/tasks");

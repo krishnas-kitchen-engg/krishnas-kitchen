@@ -3,7 +3,7 @@ import { isNonEmptyString } from "@krishnas-kitchen/utils";
 import type { CreateReversalTransactionInput, InventoryActor, InventoryTransaction } from "./types";
 
 export type ReversibleInventoryTransaction = InventoryTransaction & {
-  transactionType: "received" | "returned" | "transfer";
+  transactionType: "consumed" | "received" | "returned" | "transfer";
 };
 
 export type ReversalValidationErrorCode =
@@ -92,6 +92,7 @@ function isReversibleTransaction(
 ): transaction is ReversibleInventoryTransaction {
   return (
     transaction.transactionType === "received" ||
+    transaction.transactionType === "consumed" ||
     transaction.transactionType === "returned" ||
     transaction.transactionType === "transfer"
   );
@@ -143,7 +144,7 @@ export function validateReversalEligibility(
       createReversalError(
         "UNSUPPORTED_TRANSACTION_TYPE",
         "transactionType",
-        "Only received, transfer, and returned transactions can be reversed."
+        "Only received, consumed, transfer, and returned transactions can be reversed."
       )
     );
   }
@@ -178,6 +179,16 @@ export function validateReversalEligibility(
         "MISSING_DESTINATION_LOCATION",
         "destinationLocationId",
         "Received transactions require a destination location to reverse."
+      )
+    );
+  }
+
+  if (original.transactionType === "consumed" && !original.sourceLocationId) {
+    errors.push(
+      createReversalError(
+        "MISSING_SOURCE_LOCATION",
+        "sourceLocationId",
+        "Consumed transactions require a source location to reverse."
       )
     );
   }

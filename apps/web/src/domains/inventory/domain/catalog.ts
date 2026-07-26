@@ -4,17 +4,21 @@ import type { InventoryBarcode } from "./barcode";
 
 export type InventoryCatalogItem = {
   barcodes: readonly InventoryBarcode[];
+  category?: string | null;
   defaultUnit: ItemUnit;
+  description?: string | null;
   deletedAt: string | null;
   id: EntityId;
   name: string;
   organizationId: EntityId;
+  consumptionUnits?: readonly ItemUnit[];
   receivingUnits?: readonly ItemUnit[];
   returnUnits?: readonly ItemUnit[];
   transferUnits?: readonly ItemUnit[];
 };
 
 export type InventoryCatalogLocation = {
+  description?: string | null;
   deletedAt: string | null;
   id: EntityId;
   name: string;

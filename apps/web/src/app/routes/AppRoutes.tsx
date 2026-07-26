@@ -10,15 +10,22 @@ import {
   useAuth
 } from "@/features/auth";
 import {
+  AdjustInventoryScreen,
   InventoryAvailabilityBoundary,
+  InventoryDashboardScreen,
+  ConsumeInventoryScreen,
   InventoryItemDetailScreen,
+  ItemManagementScreen,
   InventoryLocationDetailScreen,
   InventoryLookupScreen,
+  LocationManagementScreen,
+  LowStockCenterScreen,
   ReceiveInventoryScreen,
   ReturnInventoryScreen,
   ScanInventoryScreen,
   TransferInventoryScreen
 } from "@/features/inventory";
+import { RecipesScreen } from "@/features/recipes";
 import { TasksScreen } from "@/features/tasks";
 
 import { RouteGuard } from "./RouteGuard";
@@ -98,6 +105,54 @@ function AuthenticatedRoutes() {
     );
   }
 
+  if (route.name === "adjust") {
+    screen = (
+      <InventoryAvailabilityBoundary>
+        <AdjustInventoryScreen />
+      </InventoryAvailabilityBoundary>
+    );
+  }
+
+  if (route.name === "consume") {
+    screen = (
+      <InventoryAvailabilityBoundary>
+        <ConsumeInventoryScreen />
+      </InventoryAvailabilityBoundary>
+    );
+  }
+
+  if (route.name === "dashboard") {
+    screen = (
+      <InventoryAvailabilityBoundary>
+        <InventoryDashboardScreen />
+      </InventoryAvailabilityBoundary>
+    );
+  }
+
+  if (route.name === "low_stock") {
+    screen = (
+      <InventoryAvailabilityBoundary>
+        <LowStockCenterScreen />
+      </InventoryAvailabilityBoundary>
+    );
+  }
+
+  if (route.name === "items") {
+    screen = (
+      <InventoryAvailabilityBoundary>
+        <ItemManagementScreen />
+      </InventoryAvailabilityBoundary>
+    );
+  }
+
+  if (route.name === "locations") {
+    screen = (
+      <InventoryAvailabilityBoundary>
+        <LocationManagementScreen />
+      </InventoryAvailabilityBoundary>
+    );
+  }
+
   if (route.name === "transfer") {
     screen = (
       <InventoryAvailabilityBoundary>
@@ -118,6 +173,14 @@ function AuthenticatedRoutes() {
     screen = (
       <InventoryAvailabilityBoundary>
         <ScanInventoryScreen />
+      </InventoryAvailabilityBoundary>
+    );
+  }
+
+  if (route.name === "recipes") {
+    screen = (
+      <InventoryAvailabilityBoundary>
+        <RecipesScreen />
       </InventoryAvailabilityBoundary>
     );
   }

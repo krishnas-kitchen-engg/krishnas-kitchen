@@ -56,6 +56,16 @@ describe("transfer validation", () => {
     assert.equal(validateTransferQuantity(TRANSFER_MAX_QUANTITY + 1).ok, false);
   });
 
+  it("rejects quantities above available projected inventory", () => {
+    const result = validateTransferQuantity(11, 10);
+
+    assert.equal(result.ok, false);
+    assert.deepEqual(
+      result.errors.map((error) => error.code),
+      ["QUANTITY_EXCEEDS_AVAILABLE"]
+    );
+  });
+
   it("validates units against item transfer units", () => {
     assert.equal(validateTransferUnit("kg", item).ok, true);
     assert.equal(validateTransferUnit("g", item).ok, false);
@@ -153,6 +163,7 @@ describe("transfer validation", () => {
             quantity: -1
           },
           {
+            availableQuantity: 10,
             destinationLocation: validLocation("pantry"),
             item,
             sourceLocation: validLocation("trailer")

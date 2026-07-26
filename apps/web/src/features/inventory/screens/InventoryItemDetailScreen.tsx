@@ -2,8 +2,10 @@ import { InventoryBalanceList } from "../components/InventoryBalanceList";
 import { InventoryEmptyState } from "../components/InventoryEmptyState";
 import { InventoryErrorState } from "../components/InventoryErrorState";
 import { InventoryLoadingState } from "../components/InventoryLoadingState";
+import { InventoryReversalConfirmation } from "../components/InventoryReversalConfirmation";
 import { InventoryTransactionList } from "../components/InventoryTransactionList";
 import { useInventoryItemDetail } from "../hooks/useInventoryItemDetail";
+import { useInventoryReversalWorkflow } from "../hooks/useInventoryReversalWorkflow";
 
 type InventoryItemDetailScreenProps = {
   itemId: string;
@@ -11,6 +13,7 @@ type InventoryItemDetailScreenProps = {
 
 export function InventoryItemDetailScreen({ itemId }: InventoryItemDetailScreenProps) {
   const detail = useInventoryItemDetail(itemId);
+  const reversal = useInventoryReversalWorkflow();
 
   if (detail.isLoading) {
     return <InventoryLoadingState />;
@@ -38,7 +41,36 @@ export function InventoryItemDetailScreen({ itemId }: InventoryItemDetailScreenP
 
       <section className="space-y-2">
         <h3 className="text-sm font-semibold uppercase text-stone-600">Recent transactions</h3>
-        <InventoryTransactionList transactions={detail.transactions} />
+        {reversal.state.reversedTransaction ? (
+          <div className="rounded-md border border-green-200 bg-green-50 p-3 text-sm font-medium text-green-800">
+            Reversal {reversal.state.reversedTransaction.id} was recorded.
+          </div>
+        ) : null}
+        {reversal.state.selectedTransaction ? (
+          <InventoryReversalConfirmation
+            error={reversal.state.error}
+            isSubmitting={reversal.state.isSubmitting}
+            notes={reversal.state.notes}
+            onCancel={() => reversal.clearSelection()}
+            onConfirm={() => {
+              void reversal.confirmReversal().then((transaction) => {
+                if (transaction) {
+                  detail.reload();
+                }
+              });
+            }}
+            onNotesChange={(notes) => reversal.setNotes(notes)}
+            transaction={reversal.state.selectedTransaction}
+          />
+        ) : null}
+        <InventoryTransactionList
+          canReverse={reversal.canReverseInventory}
+          onReverseRequest={(transaction) => reversal.selectTransaction(transaction)}
+          reversingTransactionId={
+            reversal.state.isSubmitting ? (reversal.state.selectedTransaction?.id ?? null) : null
+          }
+          transactions={detail.transactions}
+        />
       </section>
     </section>
   );

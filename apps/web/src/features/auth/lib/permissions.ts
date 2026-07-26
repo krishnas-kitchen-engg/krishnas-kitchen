@@ -27,6 +27,8 @@ const operationalInventoryPermissions = [
   "inventory.return"
 ] satisfies Permission[];
 
+const recipeManagementPermissions = ["recipes.read", "recipes.manage"] satisfies Permission[];
+
 export const rolePermissions = {
   volunteer: [
     "locations.read",
@@ -50,6 +52,7 @@ export const rolePermissions = {
     "items.create",
     "items.edit",
     ...operationalInventoryPermissions,
+    ...recipeManagementPermissions,
     "volunteer_sessions.create"
   ],
   inventory_manager: [
@@ -61,6 +64,7 @@ export const rolePermissions = {
     "items.edit",
     "items.archive",
     ...inventoryPermissions,
+    ...recipeManagementPermissions,
     "volunteer_sessions.create",
     "volunteer_sessions.expire"
   ],
@@ -76,6 +80,7 @@ export const rolePermissions = {
     "items.edit",
     "items.archive",
     ...inventoryPermissions,
+    ...recipeManagementPermissions,
     "volunteer_sessions.create",
     "volunteer_sessions.expire",
     "audit.read"
@@ -93,6 +98,7 @@ export const rolePermissions = {
     "items.edit",
     "items.archive",
     ...inventoryPermissions,
+    ...recipeManagementPermissions,
     "volunteer_sessions.create",
     "volunteer_sessions.expire",
     "audit.read"

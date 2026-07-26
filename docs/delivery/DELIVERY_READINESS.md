@@ -27,13 +27,13 @@ This document does not define product scope, engineering workflow, capability in
 
 ## Readiness Summary
 
-Current Delivery Increment readiness: Blocked.
+Current Delivery Increment readiness: Ready.
 
-Pilot readiness: Blocked.
+Pilot readiness: At Risk.
 
 Production readiness: Blocked.
 
-Primary reason: [Delivery Status](./DELIVERY_STATUS.md) does not yet identify a formally selected Current Delivery Increment, and repository evidence does not document Krishna's Kitchen as pilot-ready or production-ready.
+Primary reason: [Delivery Status](./DELIVERY_STATUS.md) identifies Receiving + Inventory Visibility Pilot as the Current Delivery Increment, and smoke-path, seed data, receiving hardening, manager visibility, reversal, and readiness evidence are now documented. Pilot readiness remains at risk because accessibility and performance posture are not measured by a dedicated tool in the current repository. Production readiness remains blocked because production security approval is not granted and Horizon 1 production expectations are incomplete.
 
 ## Canonical Ownership
 
@@ -63,6 +63,8 @@ This document is not the canonical owner of:
 
 [Delivery Status](./DELIVERY_STATUS.md) owns the Current Delivery Increment and delivery progress summary.
 
+[Current Delivery Increment](./CURRENT_DELIVERY_INCREMENT.md) owns the detailed increment scope, acceptance criteria, and exit criteria.
+
 [Capability Matrix](./CAPABILITY_MATRIX.md) owns detailed capability status.
 
 [Product Horizons](../PRODUCT_HORIZONS.md) owns product scope and Horizon 1 exit criteria.
@@ -74,6 +76,7 @@ This document consumes those sources to assess delivery readiness. It does not o
 ## Inputs
 
 - [Delivery Status](./DELIVERY_STATUS.md) for the Current Delivery Increment, delivery goal, included capabilities, excluded capabilities, and delivery progress summary.
+- [Current Delivery Increment](./CURRENT_DELIVERY_INCREMENT.md) for increment acceptance criteria and exit criteria.
 - [Capability Matrix](./CAPABILITY_MATRIX.md) for capability-level delivery status and capability readiness markers.
 - [Product Horizons](../PRODUCT_HORIZONS.md) for active product scope and horizon exit criteria.
 - [Current State](../handbook/reference/CURRENT_STATE.md) for current implementation reality.
@@ -91,79 +94,43 @@ This document consumes those sources to assess delivery readiness. It does not o
 - Future approved work.
 - Evidence summary.
 
-## Consumers
-
-- Repository Reconstruction.
-- [Delivery Status](./DELIVERY_STATUS.md).
-- [Capability Matrix](./CAPABILITY_MATRIX.md).
-- Product and delivery reviewers.
-- Engineering milestone recommendation.
-- Pilot readiness reviewers.
-- Production readiness reviewers.
-
-## Update Triggers
-
-Update this document when:
-
-- Increment readiness changes.
-- Pilot readiness changes.
-- Production readiness changes.
-- Remaining blockers change.
-- Residual risks affecting the current delivery increment change.
-- Future Approved Work needs to be separated from residual risk.
-- Evidence Summary changes materially.
-- Repository evidence proves a readiness assessment is inaccurate.
-- A Current Delivery Increment is formally selected in [Delivery Status](./DELIVERY_STATUS.md).
-- A committed milestone materially changes pilot or production readiness.
-- Security review, accessibility review, performance review, or operational review changes readiness posture.
-
-Do not update this document when:
-
-- Capability status changes but readiness does not.
-- Engineering evidence changes without readiness impact.
-- Product roadmap changes outside the current delivery increment and does not affect readiness.
-- Verification reruns produce no new readiness-relevant evidence.
-- [Delivery Status](./DELIVERY_STATUS.md) changes wording without changing readiness.
-- [Capability Matrix](./CAPABILITY_MATRIX.md) changes notes without changing readiness state.
-
 ## Current Delivery Increment
 
-Current Delivery Increment: Not formally selected in Delivery Management.
+Current Delivery Increment: [Receiving + Inventory Visibility Pilot](./CURRENT_DELIVERY_INCREMENT.md).
 
 Source: [Delivery Status](./DELIVERY_STATUS.md).
 
-Readiness impact: Increment readiness is blocked until a formal Current Delivery Increment is selected or Delivery Management explicitly treats the full Horizon 1 production-alpha path as the current increment.
+Readiness impact: Increment readiness is ready for controlled pilot review because the selected receiving-through-visibility workflow now satisfies the documented evidence requirements.
 
 This document references the Current Delivery Increment from [Delivery Status](./DELIVERY_STATUS.md). It does not redefine it.
 
 ## Increment Readiness
 
-Status: Blocked.
+Status: Ready.
 
 Reason:
 
-- No formal Current Delivery Increment has been selected in Delivery Management.
-- Included capabilities have not been marked as part of a scoped increment in [Capability Matrix](./CAPABILITY_MATRIX.md).
-- No evidence-backed increment readiness criteria have been applied.
+- The active increment stories are complete.
+- Pilot-facing evidence is recorded in [Pilot Evidence](./PILOT_EVIDENCE.md).
+- Included capabilities are consistently marked in [Capability Matrix](./CAPABILITY_MATRIX.md).
+- Known limitations are recorded as residual risks.
 
 Readiness requirement:
 
-- Select or confirm the Current Delivery Increment in [Delivery Status](./DELIVERY_STATUS.md).
-- Mark included capabilities in [Capability Matrix](./CAPABILITY_MATRIX.md).
+- Complete the current increment stories in [Current Delivery Increment](./CURRENT_DELIVERY_INCREMENT.md).
 - Verify that the increment has enough implemented, tested, documented, and secure behavior to deliver usable value.
 - Record evidence supporting the readiness conclusion.
 
 ## Pilot Readiness
 
-Status: Blocked.
+Status: At Risk.
 
 Reason:
 
-- The application is not documented as pilot-ready.
-- The Current Delivery Increment has not been formally selected.
-- Delivery readiness has not previously been assessed.
-- Horizon 1 exit criteria are not documented as complete.
-- Accessibility and performance status are not measured in current living docs.
+- The selected workflow has smoke-path, seed data, receiving hardening, manager visibility, reversal, and readiness evidence.
+- No known blocker prevents human review of a controlled temple pilot for the selected workflow.
+- Accessibility and performance status are not measured by a dedicated tool in the current repository.
+- Pilot limitations are documented below as residual risks and require human acceptance before live pilot operation.
 
 Pilot readiness requires evidence that a controlled pilot can safely use the selected delivery increment with known limitations, acceptable security posture, and clear operational boundaries.
 
@@ -191,15 +158,10 @@ These blockers prevent increment, pilot, or production readiness:
 
 | Blocker | Affects | Evidence | Required Resolution |
 |---|---|---|---|
-| No formal Current Delivery Increment selected | Increment, Pilot, Production | [Delivery Status](./DELIVERY_STATUS.md) | Select or confirm the delivery increment and included capabilities. |
-| Increment capabilities not marked in Capability Matrix | Increment, Pilot, Production | [Capability Matrix](./CAPABILITY_MATRIX.md) | Update Current Delivery markers after the increment is selected. |
-| Horizon 1 exit criteria not documented as complete | Pilot, Production | [Product Horizons](../PRODUCT_HORIZONS.md); [Delivery Status](./DELIVERY_STATUS.md) | Complete or explicitly defer required Horizon 1 exit criteria before readiness approval. |
-| Recipe UI, persistence, authorization, and integration gaps remain | Pilot, Production | [Delivery Status](./DELIVERY_STATUS.md); [Current State](../handbook/reference/CURRENT_STATE.md) | Complete or defer the gaps needed for recipe availability and shopping-list delivery. |
-| Temporary volunteer workflow completion not documented | Pilot, Production | [Delivery Status](./DELIVERY_STATUS.md); [Current State](../handbook/reference/CURRENT_STATE.md) | Verify and document whether the volunteer workflow satisfies Horizon 1 exit criteria. |
 | Production security approval not granted | Production | [Security Status](../handbook/reference/SECURITY_STATUS.md) | Complete production security review and resolve required findings. |
 | Offline queueing and runtime replay not implemented | Production | [Known Limitations](../handbook/reference/KNOWN_LIMITATIONS.md); [Security Status](../handbook/reference/SECURITY_STATUS.md) | Implement or explicitly defer offline runtime behavior for the production readiness decision. |
-| Accessibility status not measured | Pilot, Production | [Known Limitations](../handbook/reference/KNOWN_LIMITATIONS.md) | Measure accessibility posture for the selected delivery increment. |
-| Performance status not measured | Pilot, Production | [Known Limitations](../handbook/reference/KNOWN_LIMITATIONS.md) | Measure performance posture for the selected delivery increment. |
+| Accessibility status not measured | Production | [Known Limitations](../handbook/reference/KNOWN_LIMITATIONS.md) | Measure accessibility posture before production readiness. |
+| Performance status not measured | Production | [Known Limitations](../handbook/reference/KNOWN_LIMITATIONS.md) | Measure performance posture before production readiness. |
 
 ## Residual Risks
 
@@ -209,8 +171,8 @@ These risks may affect readiness of the current delivery path:
 |---|---|---|---|
 | Security posture is documented as a baseline, not a production approval | Production | [Security Status](../handbook/reference/SECURITY_STATUS.md) | Treat production readiness as blocked until production security approval exists. |
 | Offline architecture exists without runtime queue/replay behavior | Production | [Known Limitations](../handbook/reference/KNOWN_LIMITATIONS.md) | Treat offline behavior as future approved work unless selected for implementation. |
-| Accessibility is unmeasured | Pilot, Production | [Known Limitations](../handbook/reference/KNOWN_LIMITATIONS.md) | Require measurement before readiness approval. |
-| Performance is unmeasured | Pilot, Production | [Known Limitations](../handbook/reference/KNOWN_LIMITATIONS.md) | Require measurement before readiness approval. |
+| Accessibility is unmeasured by a dedicated tool | Pilot, Production | [Known Limitations](../handbook/reference/KNOWN_LIMITATIONS.md); [Pilot Evidence](./PILOT_EVIDENCE.md) | Accept only for controlled pilot review if the human reviewer accepts the limitation; require measurement before production readiness. |
+| Performance is unmeasured by a dedicated tool | Pilot, Production | [Known Limitations](../handbook/reference/KNOWN_LIMITATIONS.md); [Pilot Evidence](./PILOT_EVIDENCE.md) | Accept only for controlled pilot review if the human reviewer accepts the limitation; require measurement before production readiness. |
 | Older docs contain duplication and encoding artifacts | Maintainability | [Known Limitations](../handbook/reference/KNOWN_LIMITATIONS.md) | Keep as documentation health risk unless it affects delivery evidence clarity. |
 
 Do not use this section for planned product capabilities unless they directly affect the selected delivery increment or readiness decision.
@@ -219,7 +181,16 @@ Do not use this section for planned product capabilities unless they directly af
 
 These items are planned or intentionally deferred. They are not residual risks unless they directly affect the selected delivery increment or readiness decision.
 
-Horizon 1 future approved work:
+Current increment story status:
+
+- Receiving Pilot Smoke Path: Complete.
+- Pilot Inventory Seed Data: Complete.
+- Receiving Error And Empty State Hardening: Complete.
+- Manager Visibility Verification: Complete.
+- Reversal And Undo Pilot Path: Complete.
+- Pilot Readiness Evidence: Complete.
+
+Horizon 1 future approved work outside the current increment:
 
 - Recipe UI and routes.
 - Recipe persistence implementation.
@@ -234,30 +205,26 @@ Horizon 1 future approved work:
 - Accessibility measurement.
 - Performance measurement.
 
-Higher-horizon future approved work remains deferred by [Product Horizons](../PRODUCT_HORIZONS.md):
-
-- Forecasting.
-- Donation intelligence.
-- AI recommendations.
-- Menu planning.
-- Festival planning.
-- Volunteer scheduling.
-- Analytics dashboards.
-- Supplier optimization.
-- Kitchen planning.
-- Temple operations.
+Higher-horizon future approved work remains deferred by [Product Horizons](../PRODUCT_HORIZONS.md).
 
 ## Evidence Summary
 
 Evidence supporting this readiness assessment:
 
-- [Delivery Status](./DELIVERY_STATUS.md) records that no formal Current Delivery Increment has been selected.
-- [Delivery Status](./DELIVERY_STATUS.md) records partial Horizon 1 delivery completion and no pilot or production readiness.
-- [Capability Matrix](./CAPABILITY_MATRIX.md) records capability delivery states but leaves Current Delivery markers unset and readiness unassessed.
+- [Delivery Status](./DELIVERY_STATUS.md) records Receiving + Inventory Visibility Pilot as the Current Delivery Increment.
+- [Current Delivery Increment](./CURRENT_DELIVERY_INCREMENT.md) records increment acceptance criteria and pilot exit criteria.
+- `apps/web/src/domains/inventory/application/receivingPilotSmokePath.test.ts` records smoke-path evidence for barcode resolution, volunteer receiving, persisted transaction history, manager-visible balance projection, and inventory summary projection.
+- `apps/web/src/features/inventory/receive/components/ReceivePilotHardening.test.tsx` records receiving hardening evidence for loading, empty, unavailable-location, and unavailable-unit guidance.
+- `apps/web/src/features/inventory/receive/screens/ReceiveInventoryScreen.test.tsx` records screen-level evidence that initial receiving render avoids an empty item dead end.
+- `apps/web/src/features/inventory/components/InventoryTransactionList.test.tsx` records manager history evidence for item, quantity, location, actor, and timestamp.
+- `apps/web/src/domains/inventory/application/reversalPilotValidation.test.ts` records correction-path evidence for receiving undo, balance restoration, immutable original transaction preservation, reversal traceability, and two-action transaction history.
+- `apps/web/src/domains/inventory/infrastructure/supabase/validationSeedData.test.ts` records pilot seed evidence for permanent volunteer and manager users, database-backed role rows, items, barcodes, locations, received and reversal transactions, low-stock thresholds, and repeatable cleanup/runbook coverage.
+- `infra/supabase/seed/VALIDATION_SEED_DATA.md` documents how to prepare a controlled staging pilot environment with cleanup plus core seed assets.
+- [Pilot Evidence](./PILOT_EVIDENCE.md) records pilot-facing evidence, acceptance criteria, readiness conclusion, residual risks, and known limitations.
+- [Capability Matrix](./CAPABILITY_MATRIX.md) records capability delivery states and marks selected increment capabilities.
 - [Current State](../handbook/reference/CURRENT_STATE.md) records substantial inventory implementation, auth and volunteer foundations, mobile PWA foundations, security architecture, recipe-domain foundations, and current recipe gaps.
 - [Security Status](../handbook/reference/SECURITY_STATUS.md) records that the latest Horizon 1 security review baseline is not a production security approval.
 - [Known Limitations](../handbook/reference/KNOWN_LIMITATIONS.md) records that the project is not documented as production-ready, offline queueing is not implemented, accessibility is unmeasured, and performance is unmeasured.
-- [Evidence Report](../handbook/reference/EVIDENCE_REPORT.md) records the latest verification evidence for the Recipe Repository Contract Foundation.
 
 Detailed engineering verification remains in [Evidence Report](../handbook/reference/EVIDENCE_REPORT.md).
 
@@ -265,10 +232,10 @@ Detailed engineering verification remains in [Evidence Report](../handbook/refer
 
 Repository Reconstruction should use this document to determine:
 
-- Current Delivery Increment readiness: Blocked.
-- Pilot readiness: Blocked.
+- Current Delivery Increment readiness: Ready.
+- Pilot readiness: At Risk.
 - Production readiness: Blocked.
-- Primary blocker: no formal Current Delivery Increment is selected.
+- Primary pilot risk: accessibility and performance posture are not measured by a dedicated tool in the current repository.
 - Production blocker: production security approval is not granted.
 - Readiness evidence source: this document plus its cross references.
 
@@ -284,6 +251,10 @@ If this document conflicts with [Product Horizons](../PRODUCT_HORIZONS.md), Prod
 
 - [Product Horizons](../PRODUCT_HORIZONS.md).
 - [Delivery Model](./DELIVERY_MODEL.md).
+- [Current Delivery Increment](./CURRENT_DELIVERY_INCREMENT.md).
+- [Delivery Backlog](./DELIVERY_BACKLOG.md).
+- [Delivery Decisions](./DELIVERY_DECISIONS.md).
+- [Pilot Evidence](./PILOT_EVIDENCE.md).
 - [Capability Matrix](./CAPABILITY_MATRIX.md).
 - [Delivery Status](./DELIVERY_STATUS.md).
 - [Current State](../handbook/reference/CURRENT_STATE.md).
@@ -305,25 +276,6 @@ It does not define:
 - Engineering living-document update rules.
 
 Engineering implementation milestones may use this document as delivery context, but implementation remains governed by the Engineering Operating System and [Product Horizons](../PRODUCT_HORIZONS.md).
-
-## Relationship To Product Horizons
-
-[Product Horizons](../PRODUCT_HORIZONS.md) defines product scope and horizon exit criteria. This document assesses readiness against delivery and product expectations within that scope.
-
-This document must not:
-
-- Add implementation scope outside the active horizon.
-- Promote horizons.
-- Redefine product scope.
-- Treat future-horizon work as readiness-required unless Product Horizons makes it active.
-
-## Relationship To Other Delivery Management Documents
-
-- [Delivery Model](./DELIVERY_MODEL.md) defines readiness terminology and ownership rules.
-- [Delivery Status](./DELIVERY_STATUS.md) owns the Current Delivery Increment and delivery progress summary.
-- [Capability Matrix](./CAPABILITY_MATRIX.md) owns detailed capability delivery state and capability-level readiness markers.
-
-This document may reference those documents, but it must not take over their responsibilities.
 
 ## Maintenance Rules
 

@@ -34,6 +34,8 @@ export type Permission =
   | "inventory.return"
   | "inventory.adjust"
   | "inventory.undo"
+  | "recipes.read"
+  | "recipes.manage"
   | "volunteer_sessions.create"
   | "volunteer_sessions.expire"
   | "audit.read";
@@ -234,50 +236,181 @@ export type Database = {
           archived_by_actor_type?: ActorType | null;
           archived_by_actor_user_id?: string | null;
           minimum_quantity?: number;
+          unit?: ItemUnit;
           updated_at?: string;
         };
         Relationships: [];
       };
       items: {
         Row: {
+          category: string | null;
+          critical_threshold: number | null;
           default_unit: ItemUnit;
+          description: string | null;
           deleted_at: string | null;
           id: string;
           name: string;
           organization_id: string;
+          preferred_purchase_unit: string | null;
+          preferred_vendor: string | null;
+          reorder_threshold: number | null;
           receiving_units: ItemUnit[] | null;
           return_units: ItemUnit[] | null;
           transfer_units: ItemUnit[] | null;
         };
         Insert: {
+          category?: string | null;
+          critical_threshold?: number | null;
           default_unit: ItemUnit;
+          description?: string | null;
           deleted_at?: string | null;
           id?: string;
           name: string;
           organization_id: string;
+          preferred_purchase_unit?: string | null;
+          preferred_vendor?: string | null;
+          reorder_threshold?: number | null;
           receiving_units?: ItemUnit[] | null;
           return_units?: ItemUnit[] | null;
           transfer_units?: ItemUnit[] | null;
         };
-        Update: never;
+        Update: {
+          category?: string | null;
+          critical_threshold?: number | null;
+          default_unit?: ItemUnit;
+          description?: string | null;
+          deleted_at?: string | null;
+          name?: string;
+          preferred_purchase_unit?: string | null;
+          preferred_vendor?: string | null;
+          reorder_threshold?: number | null;
+          receiving_units?: ItemUnit[] | null;
+          return_units?: ItemUnit[] | null;
+          transfer_units?: ItemUnit[] | null;
+        };
         Relationships: [];
       };
       locations: {
         Row: {
+          description: string | null;
           deleted_at: string | null;
           id: string;
+          location_type: "warehouse" | "trailer" | "pantry" | "freezer" | "shelf" | "bin" | "other";
           name: string;
           organization_id: string;
+          parent_location_id: string | null;
+          qr_code: string | null;
           temple_id: string;
         };
         Insert: {
+          description?: string | null;
           deleted_at?: string | null;
           id?: string;
+          location_type?:
+            | "warehouse"
+            | "trailer"
+            | "pantry"
+            | "freezer"
+            | "shelf"
+            | "bin"
+            | "other";
           name: string;
           organization_id: string;
+          parent_location_id?: string | null;
+          qr_code?: string | null;
+          temple_id: string;
+        };
+        Update: {
+          description?: string | null;
+          deleted_at?: string | null;
+          location_type?:
+            | "warehouse"
+            | "trailer"
+            | "pantry"
+            | "freezer"
+            | "shelf"
+            | "bin"
+            | "other";
+          name?: string;
+          parent_location_id?: string | null;
+          qr_code?: string | null;
+        };
+        Relationships: [];
+      };
+      recipe_production_runs: {
+        Row: {
+          actor_temp_session_id: string | null;
+          actor_type: ActorType;
+          actor_user_id: string | null;
+          batch_count: number;
+          consumption_transaction_ids: string[];
+          created_at: string;
+          id: string;
+          location_id: string;
+          notes: string | null;
+          organization_id: string;
+          recipe_id: string;
+          recipe_name: string;
+          recipe_version: number;
+          servings: number;
+          temple_id: string;
+        };
+        Insert: {
+          actor_temp_session_id?: string | null;
+          actor_type: ActorType;
+          actor_user_id?: string | null;
+          batch_count: number;
+          consumption_transaction_ids?: string[];
+          created_at?: string;
+          id?: string;
+          location_id: string;
+          notes?: string | null;
+          organization_id: string;
+          recipe_id: string;
+          recipe_name: string;
+          recipe_version: number;
+          servings: number;
           temple_id: string;
         };
         Update: never;
+        Relationships: [];
+      };
+      recipes: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          id: string;
+          ingredients: Json;
+          is_active: boolean;
+          name: string;
+          organization_id: string;
+          servings: number;
+          temple_id: string;
+          updated_at: string;
+          version: number;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          ingredients: Json;
+          is_active?: boolean;
+          name: string;
+          organization_id: string;
+          servings: number;
+          temple_id: string;
+          updated_at?: string;
+          version?: number;
+        };
+        Update: {
+          description?: string | null;
+          ingredients?: Json;
+          is_active?: boolean;
+          name?: string;
+          servings?: number;
+          updated_at?: string;
+          version?: number;
+        };
         Relationships: [];
       };
       unknown_barcodes: {

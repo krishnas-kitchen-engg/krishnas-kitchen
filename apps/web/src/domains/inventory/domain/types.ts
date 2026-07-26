@@ -145,6 +145,8 @@ export type InventoryItemReference = {
   deletedAt: string | null;
   id: EntityId;
   organizationId: EntityId;
+  adjustmentUnits?: readonly ItemUnit[];
+  consumptionUnits?: readonly ItemUnit[];
   receivingUnits?: readonly ItemUnit[];
   returnUnits?: readonly ItemUnit[];
   transferUnits?: readonly ItemUnit[];
@@ -176,6 +178,10 @@ export type CreateReceivingTransactionInput = CreateInventoryTransactionInput & 
   locationId: EntityId;
 };
 
+export type CreateConsumptionTransactionInput = CreateInventoryTransactionInput & {
+  locationId: EntityId;
+};
+
 export type CreateTransferTransactionInput = CreateInventoryTransactionInput & {
   destinationLocationId: EntityId;
   sourceLocationId: EntityId;
@@ -193,4 +199,10 @@ export type CreateReversalTransactionInput = Pick<
 
 export type CreateAdjustmentTransactionInput = CreateLocationTransactionInput & {
   direction: Extract<InventoryQuantityEffect, "increase" | "decrease">;
+};
+
+export type CreateInventoryAdjustmentInput = Omit<CreateInventoryTransactionInput, "quantity"> & {
+  locationId: EntityId;
+  physicalQuantity: number;
+  reason: string;
 };

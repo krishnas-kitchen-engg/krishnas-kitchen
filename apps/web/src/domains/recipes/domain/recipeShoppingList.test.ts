@@ -4,6 +4,7 @@ import { describe, it } from "vitest";
 import type { InventoryItemBalance } from "@/domains/inventory";
 
 import { evaluateRecipeAvailability } from "./recipeAvailability";
+import { analyzeRecipeIngredientAvailability } from "./recipePlanning";
 import { generateRecipeShoppingList } from "./recipeShoppingList";
 import type { RecipeDefinitionInput } from "./types";
 
@@ -238,6 +239,49 @@ describe("recipe shopping list", () => {
     assert.deepEqual(
       shoppingList.items.map((item) => `${item.itemId}:${item.unit}:${item.shortageQuantity}`),
       ["item-rice:kg:1", "item-rice:g:500"]
+    );
+  });
+
+  it("derives scaled shopping lists from recipe planning results", () => {
+    const planningResult = analyzeRecipeIngredientAvailability({
+      balances,
+      recipe,
+      targetServings: 50
+    });
+
+    const shoppingList = generateRecipeShoppingList(planningResult);
+
+    assert.deepEqual(
+      shoppingList.items.map((item) => ({
+        availableQuantity: item.availableQuantity,
+        itemId: item.itemId,
+        requiredQuantity: item.requiredQuantity,
+        shortageQuantity: item.shortageQuantity,
+        unit: item.unit
+      })),
+      [
+        {
+          availableQuantity: 5,
+          itemId: "item-rice",
+          requiredQuantity: 10,
+          shortageQuantity: 5,
+          unit: "kg"
+        },
+        {
+          availableQuantity: 4,
+          itemId: "item-water",
+          requiredQuantity: 24,
+          shortageQuantity: 20,
+          unit: "l"
+        },
+        {
+          availableQuantity: 0,
+          itemId: "item-spice",
+          requiredQuantity: 500,
+          shortageQuantity: 500,
+          unit: "g"
+        }
+      ]
     );
   });
 });
