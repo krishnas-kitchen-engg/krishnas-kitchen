@@ -15,6 +15,10 @@ export {
 } from "./application/procurementAdminService";
 export { createPurchaseRequestService } from "./application/purchaseRequestService";
 export {
+  createPurchaseRequestQueueService,
+  PurchaseRequestQueueValidationError
+} from "./application/purchaseRequestQueueService";
+export {
   createPurchaseRequestReviewService,
   PurchaseRequestReviewValidationError
 } from "./application/purchaseRequestReviewService";
@@ -48,6 +52,10 @@ export type {
   PurchaseLocationArchiveInput,
   UpdatePurchaseLocationInput
 } from "./application/procurementAdminService";
+export type {
+  ApprovedPurchaseRequestCreateInput,
+  PurchaseRequestQueueService
+} from "./application/purchaseRequestQueueService";
 export type {
   PurchaseRequestCatalogRepository,
   PurchaseRequestRepository,

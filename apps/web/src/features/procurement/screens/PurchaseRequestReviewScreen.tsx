@@ -49,6 +49,135 @@ export function PurchaseRequestReviewScreen() {
             {review.approvedRequests.length === 1 ? "" : "s"} ready for the next purchaser list.
           </p>
         </div>
+        <section className="space-y-3 rounded-md border border-brand-100 bg-brand-50 p-3">
+          <div>
+            <p className="text-xs font-semibold uppercase text-brand-800">Add to queue</p>
+            <p className="mt-1 text-sm text-stone-700">
+              Add an item directly to the approved publish queue with your reviewer audit.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              className={`min-h-11 rounded-md border px-3 text-sm font-semibold ${
+                review.addForm.mode === "existing_item"
+                  ? "border-brand-900 bg-brand-900 text-white"
+                  : "border-stone-300 bg-white text-stone-800"
+              }`}
+              onClick={() => review.setAddMode("existing_item")}
+              type="button"
+            >
+              Existing item
+            </button>
+            <button
+              className={`min-h-11 rounded-md border px-3 text-sm font-semibold ${
+                review.addForm.mode === "new_item_suggestion"
+                  ? "border-brand-900 bg-brand-900 text-white"
+                  : "border-stone-300 bg-white text-stone-800"
+              }`}
+              onClick={() => review.setAddMode("new_item_suggestion")}
+              type="button"
+            >
+              Suggest new
+            </button>
+          </div>
+          {review.addForm.mode === "existing_item" ? (
+            <>
+              <label className="block text-sm font-medium text-stone-800">
+                Search item
+                <input
+                  className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+                  onChange={(event) => review.setAddSearchText(event.target.value)}
+                  placeholder="Rice, milk, vegetables..."
+                  value={review.addForm.searchText}
+                />
+              </label>
+              <label className="block text-sm font-medium text-stone-800">
+                Select item
+                <select
+                  className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+                  onChange={(event) => review.setAddItemId(event.target.value)}
+                  value={review.addForm.itemId}
+                >
+                  <option value="">Choose item from search results</option>
+                  {review.addCatalogItems.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name} ({item.defaultUnit})
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </>
+          ) : (
+            <>
+              <label className="block text-sm font-medium text-stone-800">
+                New item name
+                <input
+                  className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+                  onChange={(event) => review.setAddSuggestedName(event.target.value)}
+                  placeholder="Hing, curry leaves, jaggery..."
+                  value={review.addForm.suggestedName}
+                />
+              </label>
+              <label className="block text-sm font-medium text-stone-800">
+                Category
+                <input
+                  className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+                  onChange={(event) => review.setAddCategory(event.target.value)}
+                  placeholder="Spices, produce, dairy..."
+                  value={review.addForm.category}
+                />
+              </label>
+            </>
+          )}
+          <div className="grid grid-cols-2 gap-2">
+            <label className="block text-sm font-medium text-stone-800">
+              Quantity
+              <input
+                className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+                inputMode="decimal"
+                onChange={(event) => review.setAddQuantityText(event.target.value)}
+                type="number"
+                value={review.addForm.quantityText}
+              />
+            </label>
+            <label className="block text-sm font-medium text-stone-800">
+              Unit
+              <select
+                className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+                onChange={(event) => review.setAddUnit(event.target.value as ItemUnit | "")}
+                value={review.addForm.unit}
+              >
+                <option value="">Unit</option>
+                {review.units.map((unit) => (
+                  <option key={unit} value={unit}>
+                    {unit}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <label className="block text-sm font-medium text-stone-800">
+            Notes
+            <textarea
+              className="mt-2 min-h-16 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-950"
+              onChange={(event) => review.setAddNotes(event.target.value)}
+              placeholder="Reason, preferred brand, or purchasing detail"
+              value={review.addForm.notes}
+            />
+          </label>
+          <button
+            className="min-h-11 w-full rounded-md bg-brand-900 px-3 text-sm font-semibold text-white disabled:bg-stone-300"
+            disabled={
+              !review.canAddApprovedRequest || review.submittingRequestId === "add-approved"
+            }
+            onClick={() => {
+              void review.addApprovedRequest();
+            }}
+            type="button"
+          >
+            {review.submittingRequestId === "add-approved" ? "Adding..." : "Add approved request"}
+          </button>
+        </section>
         {review.approvedRequests.length > 0 ? (
           <div className="space-y-3">
             {review.approvedRequests.map((request) => {

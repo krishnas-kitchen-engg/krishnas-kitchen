@@ -4,10 +4,14 @@ import type { ItemUnit } from "@krishnas-kitchen/types";
 import { useInventoryActor } from "@/domains/inventory";
 import {
   createPurchaseListPublishService,
+  createPurchaseRequestQueueService,
+  createPurchaseRequestService,
   createPurchaseRequestReviewService,
   createSupabasePurchaseListRepository,
+  createSupabasePurchaseRequestCatalogRepository,
   createSupabasePurchaseRequestRepository,
   PROCUREMENT_ITEM_UNITS,
+  type CatalogItemSummary,
   type ProcurementActor,
   type PurchaseListRecord,
   type PurchaseRequestRecord,
@@ -20,6 +24,30 @@ type ReviewDraft = {
   quantityText: string;
   requestId: string;
   unit: ItemUnit | "";
+};
+
+type QueueAddMode = "existing_item" | "new_item_suggestion";
+
+type QueueAddForm = {
+  category: string;
+  itemId: string;
+  mode: QueueAddMode;
+  notes: string;
+  quantityText: string;
+  searchText: string;
+  suggestedName: string;
+  unit: ItemUnit | "";
+};
+
+const initialQueueAddForm: QueueAddForm = {
+  category: "",
+  itemId: "",
+  mode: "existing_item",
+  notes: "",
+  quantityText: "",
+  searchText: "",
+  suggestedName: "",
+  unit: "kg"
 };
 
 function toProcurementActor(actor: ReturnType<typeof useInventoryActor>): ProcurementActor | null {
@@ -62,7 +90,18 @@ export function usePurchaseRequestReview() {
   const organizationId = auth.currentOrganization?.id;
   const templeId = auth.currentTemple?.id;
   const canReviewRequests = hasPermission(auth.permissions, "procurement.requests.review");
+  const canCreateRequests = hasPermission(auth.permissions, "procurement.requests.create");
   const submitLock = useRef(false);
+  const requestCreateService = useMemo(() => {
+    if (!auth.client) {
+      return null;
+    }
+
+    return createPurchaseRequestService({
+      catalogRepository: createSupabasePurchaseRequestCatalogRepository(auth.client),
+      requestRepository: createSupabasePurchaseRequestRepository(auth.client)
+    });
+  }, [auth.client]);
   const requestReviewService = useMemo(() => {
     if (!auth.client) {
       return null;
@@ -70,6 +109,16 @@ export function usePurchaseRequestReview() {
 
     return createPurchaseRequestReviewService(createSupabasePurchaseRequestRepository(auth.client));
   }, [auth.client]);
+  const requestQueueService = useMemo(() => {
+    if (!requestCreateService || !requestReviewService) {
+      return null;
+    }
+
+    return createPurchaseRequestQueueService({
+      requestService: requestCreateService,
+      reviewService: requestReviewService
+    });
+  }, [requestCreateService, requestReviewService]);
   const purchaseListService = useMemo(() => {
     if (!auth.client) {
       return null;
@@ -78,6 +127,8 @@ export function usePurchaseRequestReview() {
     return createPurchaseListPublishService(createSupabasePurchaseListRepository(auth.client));
   }, [auth.client]);
   const [refreshIndex, setRefreshIndex] = useState(0);
+  const [addCatalogItems, setAddCatalogItems] = useState<readonly CatalogItemSummary[]>([]);
+  const [addForm, setAddForm] = useState<QueueAddForm>(initialQueueAddForm);
   const [listName, setListName] = useState("Next Purchase List");
   const [purchaseLists, setPurchaseLists] = useState<readonly PurchaseListRecord[]>([]);
   const [requests, setRequests] = useState<readonly PurchaseRequestRecord[]>([]);
@@ -96,6 +147,15 @@ export function usePurchaseRequestReview() {
     () => requests.filter((request) => request.status === "approved"),
     [requests]
   );
+  const canAddApprovedRequest =
+    canReviewRequests &&
+    canCreateRequests &&
+    !submittingRequestId &&
+    Boolean(addForm.quantityText.trim()) &&
+    Boolean(addForm.unit) &&
+    (addForm.mode === "existing_item"
+      ? Boolean(addForm.itemId)
+      : Boolean(addForm.suggestedName.trim()));
 
   useEffect(() => {
     if (
@@ -160,6 +220,33 @@ export function usePurchaseRequestReview() {
     requestReviewService,
     templeId
   ]);
+
+  useEffect(() => {
+    if (!organizationId || !requestCreateService || !addForm.searchText.trim()) {
+      setAddCatalogItems([]);
+      return;
+    }
+
+    let isActive = true;
+
+    requestCreateService
+      .searchCatalogItems(organizationId, addForm.searchText)
+      .then((items) => {
+        if (isActive) {
+          setAddCatalogItems(items);
+        }
+      })
+      .catch((searchError) => {
+        if (isActive) {
+          setError(searchError instanceof Error ? searchError.message : "Item search failed.");
+          setAddCatalogItems([]);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [addForm.searchText, organizationId, requestCreateService]);
 
   function refresh() {
     setRefreshIndex((currentIndex) => currentIndex + 1);
@@ -311,6 +398,57 @@ export function usePurchaseRequestReview() {
     }
   }
 
+  async function addApprovedRequest() {
+    if (
+      submitLock.current ||
+      submittingRequestId ||
+      !canAddApprovedRequest ||
+      !organizationId ||
+      !templeId ||
+      !procurementActor ||
+      procurementActor.type !== "user" ||
+      !requestQueueService ||
+      !addForm.unit
+    ) {
+      return;
+    }
+
+    submitLock.current = true;
+    setError(null);
+    setSubmittingRequestId("add-approved");
+
+    try {
+      await requestQueueService.addApprovedPurchaseRequest({
+        approvedBy: procurementActor,
+        item:
+          addForm.mode === "existing_item"
+            ? {
+                itemId: addForm.itemId,
+                type: "existing_item"
+              }
+            : {
+                category: addForm.category,
+                suggestedName: addForm.suggestedName,
+                type: "new_item_suggestion"
+              },
+        notes: addForm.notes,
+        organizationId,
+        quantity: Number(addForm.quantityText),
+        templeId,
+        unit: addForm.unit
+      });
+
+      setAddForm(initialQueueAddForm);
+      setSubmittingRequestId(null);
+      refresh();
+    } catch (addError) {
+      setError(addError instanceof Error ? addError.message : "Approved request creation failed.");
+      setSubmittingRequestId(null);
+    } finally {
+      submitLock.current = false;
+    }
+  }
+
   async function publishApprovedRequests() {
     if (
       submitLock.current ||
@@ -350,7 +488,11 @@ export function usePurchaseRequestReview() {
   }
 
   return {
+    addApprovedRequest,
+    addCatalogItems,
+    addForm,
     approvedRequests,
+    canAddApprovedRequest,
     canReviewRequests,
     drafts,
     error,
@@ -361,6 +503,57 @@ export function usePurchaseRequestReview() {
     removeApprovedRequest,
     reviewRequest,
     reviewableRequests,
+    setAddCategory(category: string) {
+      setAddForm((currentForm) => ({
+        ...currentForm,
+        category
+      }));
+    },
+    setAddItemId(itemId: string) {
+      const item = addCatalogItems.find((candidate) => candidate.id === itemId);
+      setAddForm((currentForm) => ({
+        ...currentForm,
+        itemId,
+        unit: item?.defaultUnit ?? currentForm.unit
+      }));
+    },
+    setAddMode(mode: QueueAddMode) {
+      setAddForm((currentForm) => ({
+        ...currentForm,
+        mode
+      }));
+    },
+    setAddNotes(notes: string) {
+      setAddForm((currentForm) => ({
+        ...currentForm,
+        notes
+      }));
+    },
+    setAddQuantityText(quantityText: string) {
+      setAddForm((currentForm) => ({
+        ...currentForm,
+        quantityText
+      }));
+    },
+    setAddSearchText(searchText: string) {
+      setAddForm((currentForm) => ({
+        ...currentForm,
+        itemId: "",
+        searchText
+      }));
+    },
+    setAddSuggestedName(suggestedName: string) {
+      setAddForm((currentForm) => ({
+        ...currentForm,
+        suggestedName
+      }));
+    },
+    setAddUnit(unit: ItemUnit | "") {
+      setAddForm((currentForm) => ({
+        ...currentForm,
+        unit
+      }));
+    },
     setListName,
     setDraftNotes(requestId: string, notes: string) {
       updateDraft(requestId, { notes });

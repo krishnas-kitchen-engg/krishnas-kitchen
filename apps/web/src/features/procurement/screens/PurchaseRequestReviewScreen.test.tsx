@@ -87,6 +87,8 @@ describe("PurchaseRequestReviewScreen", () => {
 
     assert.match(markup, /Review purchase requests/);
     assert.match(markup, /Approver view/);
+    assert.match(markup, /Add to queue/);
+    assert.match(markup, /Add approved request/);
     assert.match(markup, /No purchase requests are waiting for review/);
   });
 });
