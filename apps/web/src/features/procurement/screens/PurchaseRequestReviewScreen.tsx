@@ -275,19 +275,66 @@ export function PurchaseRequestReviewScreen() {
             value={review.listName}
           />
         </label>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            className={`min-h-11 rounded-md border px-3 text-sm font-semibold ${
+              review.publishMode === "manual"
+                ? "border-brand-900 bg-brand-900 text-white"
+                : "border-stone-300 text-stone-800"
+            }`}
+            onClick={() => review.setPublishMode("manual")}
+            type="button"
+          >
+            Manual
+          </button>
+          <button
+            className={`min-h-11 rounded-md border px-3 text-sm font-semibold ${
+              review.publishMode === "scheduled"
+                ? "border-brand-900 bg-brand-900 text-white"
+                : "border-stone-300 text-stone-800"
+            }`}
+            onClick={() => review.setPublishMode("scheduled")}
+            type="button"
+          >
+            Scheduled
+          </button>
+        </div>
+        {review.publishMode === "scheduled" ? (
+          <label className="block text-sm font-medium text-stone-800">
+            Publish time
+            <input
+              className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
+              onChange={(event) => review.setScheduledPublishAt(event.target.value)}
+              type="datetime-local"
+              value={review.scheduledPublishAt}
+            />
+          </label>
+        ) : null}
         <button
           className="min-h-11 w-full rounded-md bg-brand-900 px-4 text-sm font-semibold text-white disabled:bg-stone-300"
           disabled={
             review.approvedRequests.length === 0 ||
-            review.submittingRequestId === "publish" ||
-            !review.listName.trim()
+            (review.publishMode === "manual" && review.submittingRequestId === "publish") ||
+            (review.publishMode === "scheduled" && review.submittingRequestId === "schedule") ||
+            !review.listName.trim() ||
+            (review.publishMode === "scheduled" && !review.scheduledPublishAt)
           }
           onClick={() => {
-            void review.publishApprovedRequests();
+            if (review.publishMode === "scheduled") {
+              void review.scheduleApprovedRequests();
+            } else {
+              void review.publishApprovedRequests();
+            }
           }}
           type="button"
         >
-          {review.submittingRequestId === "publish" ? "Publishing..." : "Publish purchase list"}
+          {review.submittingRequestId === "publish"
+            ? "Publishing..."
+            : review.submittingRequestId === "schedule"
+              ? "Scheduling..."
+              : review.publishMode === "scheduled"
+                ? "Schedule purchase list"
+                : "Publish purchase list"}
         </button>
       </section>
 
@@ -406,20 +453,39 @@ export function PurchaseRequestReviewScreen() {
         <h2 className="text-lg font-semibold text-stone-950">Published lists</h2>
         {review.purchaseLists.length > 0 ? (
           review.purchaseLists.map((list) => (
-            <article className="rounded-md border border-stone-200 bg-white p-4" key={list.id}>
+            <article
+              className="space-y-3 rounded-md border border-stone-200 bg-white p-4"
+              key={list.id}
+            >
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="text-base font-semibold text-stone-950">{list.name}</h3>
                   <p className="mt-1 text-sm text-stone-600">
-                    {list.publishedAt
-                      ? new Date(list.publishedAt).toLocaleString()
-                      : "Not published"}
+                    {list.publishMode === "scheduled" && list.scheduledPublishAt
+                      ? `Scheduled for ${new Date(list.scheduledPublishAt).toLocaleString()}`
+                      : list.publishedAt
+                        ? new Date(list.publishedAt).toLocaleString()
+                        : "Not published"}
                   </p>
                 </div>
                 <span className="rounded-md border border-green-200 bg-green-50 px-2 py-1 text-xs font-semibold text-green-800">
                   {list.status.replaceAll("_", " ")}
                 </span>
               </div>
+              {list.publishMode === "scheduled" && list.status === "ready_to_publish" ? (
+                <button
+                  className="min-h-11 w-full rounded-md border border-brand-900 px-3 text-sm font-semibold text-brand-900 disabled:border-stone-300 disabled:text-stone-400"
+                  disabled={review.submittingRequestId === `scheduled:${list.id}`}
+                  onClick={() => {
+                    void review.publishScheduledList(list.id);
+                  }}
+                  type="button"
+                >
+                  {review.submittingRequestId === `scheduled:${list.id}`
+                    ? "Publishing..."
+                    : "Publish if due"}
+                </button>
+              ) : null}
             </article>
           ))
         ) : (

@@ -971,6 +971,25 @@ export type Database = {
         };
         Returns: Database["public"]["Tables"]["purchase_receipts"]["Row"];
       };
+      publish_scheduled_purchase_list: {
+        Args: {
+          p_organization_id: string;
+          p_published_by_user_id: string;
+          p_purchase_list_id: string;
+          p_temple_id: string;
+        };
+        Returns: Database["public"]["Tables"]["purchase_lists"]["Row"];
+      };
+      schedule_approved_purchase_requests: {
+        Args: {
+          p_name: string;
+          p_organization_id: string;
+          p_scheduled_by_user_id: string;
+          p_scheduled_publish_at: string;
+          p_temple_id: string;
+        };
+        Returns: Database["public"]["Tables"]["purchase_lists"]["Row"];
+      };
     };
     Enums: {
       actor_type: ActorType;

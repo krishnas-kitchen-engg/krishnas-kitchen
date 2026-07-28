@@ -13,6 +13,13 @@ const receivingMigration = readFileSync(
   ),
   "utf8"
 );
+const scheduledPublishMigration = readFileSync(
+  resolve(
+    process.cwd(),
+    "infra/supabase/migrations/20260728000300_add_scheduled_purchase_publish.sql"
+  ),
+  "utf8"
+);
 
 describe("procurement setup migration", () => {
   it("creates purchase setup tables with tenant and temple scope", () => {
@@ -131,6 +138,32 @@ describe("procurement setup migration", () => {
     );
     expect(migration).toMatch(
       /inventory_transaction_id uuid references public\.inventory_transactions\(id\)/i
+    );
+  });
+
+  it("stores and publishes scheduled purchase list intents through guarded functions", () => {
+    expect(scheduledPublishMigration).toMatch(
+      /create or replace function public\.schedule_approved_purchase_requests/i
+    );
+    expect(scheduledPublishMigration).toMatch(/'ready_to_publish'/i);
+    expect(scheduledPublishMigration).toMatch(/'scheduled'/i);
+    expect(scheduledPublishMigration).toMatch(/p_scheduled_publish_at is null/i);
+    expect(scheduledPublishMigration).toMatch(
+      /p_scheduled_publish_at <= timezone\('utc', now\(\)\)/i
+    );
+    expect(scheduledPublishMigration).toMatch(
+      /create or replace function public\.publish_scheduled_purchase_list/i
+    );
+    expect(scheduledPublishMigration).toMatch(
+      /scheduled_list\.scheduled_publish_at > timezone\('utc', now\(\)\)/i
+    );
+    expect(scheduledPublishMigration).toMatch(/public\.publish_approved_purchase_requests/i);
+    expect(scheduledPublishMigration).toMatch(/set status = 'completed'/i);
+    expect(scheduledPublishMigration).toMatch(
+      /grant execute on function public\.schedule_approved_purchase_requests/i
+    );
+    expect(scheduledPublishMigration).toMatch(
+      /grant execute on function public\.publish_scheduled_purchase_list/i
     );
   });
 });

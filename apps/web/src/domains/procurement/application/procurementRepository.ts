@@ -9,9 +9,11 @@ import type {
   PurchaseListInput,
   PurchaseListItemStatus,
   PurchaseListPublishInput,
+  PurchaseListScheduleInput,
   PurchaseListStatus,
   PurchaseLocationInput,
   PurchasePublishMode,
+  ScheduledPurchaseListPublishInput,
   PurchaseReceiptUploadInput,
   PurchaseInventoryReceiveInput,
   PurchaseReceiptStatus,
@@ -119,6 +121,12 @@ export type PurchaseRequestReviewUpdate = PurchaseRequestReviewInput & {
 export type PurchaseListPublishRepository = {
   listPurchaseLists: (scope: ProcurementScope) => Promise<readonly PurchaseListRecord[]>;
   publishApprovedPurchaseRequests: (input: PurchaseListPublishInput) => Promise<PurchaseListRecord>;
+  publishScheduledPurchaseList: (
+    input: ScheduledPurchaseListPublishInput
+  ) => Promise<PurchaseListRecord>;
+  scheduleApprovedPurchaseRequests: (
+    input: PurchaseListScheduleInput
+  ) => Promise<PurchaseListRecord>;
 };
 
 export type PurchaseListItemProgressUpdate = PurchaseListItemProgressInput & {

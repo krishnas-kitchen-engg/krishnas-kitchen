@@ -130,8 +130,10 @@ export function usePurchaseRequestReview() {
   const [addCatalogItems, setAddCatalogItems] = useState<readonly CatalogItemSummary[]>([]);
   const [addForm, setAddForm] = useState<QueueAddForm>(initialQueueAddForm);
   const [listName, setListName] = useState("Next Purchase List");
+  const [publishMode, setPublishMode] = useState<"manual" | "scheduled">("manual");
   const [purchaseLists, setPurchaseLists] = useState<readonly PurchaseListRecord[]>([]);
   const [requests, setRequests] = useState<readonly PurchaseRequestRecord[]>([]);
+  const [scheduledPublishAt, setScheduledPublishAt] = useState("");
   const [drafts, setDrafts] = useState<Record<string, ReviewDraft>>({});
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -156,6 +158,13 @@ export function usePurchaseRequestReview() {
     (addForm.mode === "existing_item"
       ? Boolean(addForm.itemId)
       : Boolean(addForm.suggestedName.trim()));
+  const scheduledLists = useMemo(
+    () =>
+      purchaseLists.filter(
+        (list) => list.publishMode === "scheduled" && list.status === "ready_to_publish"
+      ),
+    [purchaseLists]
+  );
 
   useEffect(() => {
     if (
@@ -487,6 +496,86 @@ export function usePurchaseRequestReview() {
     }
   }
 
+  async function scheduleApprovedRequests() {
+    if (
+      submitLock.current ||
+      submittingRequestId ||
+      !canReviewRequests ||
+      !organizationId ||
+      !templeId ||
+      !procurementActor ||
+      procurementActor.type !== "user" ||
+      !purchaseListService ||
+      !scheduledPublishAt
+    ) {
+      return;
+    }
+
+    submitLock.current = true;
+    setError(null);
+    setSubmittingRequestId("schedule");
+
+    try {
+      await purchaseListService.scheduleApprovedPurchaseRequests({
+        name: listName,
+        organizationId,
+        scheduledBy: procurementActor,
+        scheduledPublishAt: new Date(scheduledPublishAt).toISOString(),
+        templeId
+      });
+
+      setSubmittingRequestId(null);
+      refresh();
+    } catch (scheduleError) {
+      setError(
+        scheduleError instanceof Error ? scheduleError.message : "Purchase list scheduling failed."
+      );
+      setSubmittingRequestId(null);
+    } finally {
+      submitLock.current = false;
+    }
+  }
+
+  async function publishScheduledList(listId: string) {
+    if (
+      submitLock.current ||
+      submittingRequestId ||
+      !canReviewRequests ||
+      !organizationId ||
+      !templeId ||
+      !procurementActor ||
+      procurementActor.type !== "user" ||
+      !purchaseListService
+    ) {
+      return;
+    }
+
+    submitLock.current = true;
+    setError(null);
+    setSubmittingRequestId(`scheduled:${listId}`);
+
+    try {
+      await purchaseListService.publishScheduledPurchaseList({
+        listId,
+        organizationId,
+        publishedBy: procurementActor,
+        templeId
+      });
+
+      setSubmittingRequestId(null);
+      refresh();
+    } catch (publishError) {
+      setError(
+        publishError instanceof Error
+          ? publishError.message
+          : "Scheduled purchase list publishing failed."
+      );
+      setSubmittingRequestId(null);
+    } finally {
+      submitLock.current = false;
+    }
+  }
+
   return {
     addApprovedRequest,
     addCatalogItems,
@@ -499,10 +588,15 @@ export function usePurchaseRequestReview() {
     isLoading,
     listName,
     publishApprovedRequests,
+    publishMode,
+    publishScheduledList,
     purchaseLists,
     removeApprovedRequest,
     reviewRequest,
     reviewableRequests,
+    scheduleApprovedRequests,
+    scheduledLists,
+    scheduledPublishAt,
     setAddCategory(category: string) {
       setAddForm((currentForm) => ({
         ...currentForm,
@@ -555,6 +649,8 @@ export function usePurchaseRequestReview() {
       }));
     },
     setListName,
+    setPublishMode,
+    setScheduledPublishAt,
     setDraftNotes(requestId: string, notes: string) {
       updateDraft(requestId, { notes });
     },

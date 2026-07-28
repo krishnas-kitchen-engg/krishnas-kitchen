@@ -96,6 +96,37 @@ export function createSupabasePurchaseListRepository(
       }
 
       return mapPurchaseList(data);
+    },
+
+    async publishScheduledPurchaseList(input) {
+      const { data, error } = await client.rpc("publish_scheduled_purchase_list", {
+        p_organization_id: input.organizationId,
+        p_published_by_user_id: input.publishedBy.userId ?? "",
+        p_purchase_list_id: input.listId,
+        p_temple_id: input.templeId
+      });
+
+      if (error || !data) {
+        throw error ?? new Error("Scheduled purchase list publishing returned no row.");
+      }
+
+      return mapPurchaseList(data);
+    },
+
+    async scheduleApprovedPurchaseRequests(input) {
+      const { data, error } = await client.rpc("schedule_approved_purchase_requests", {
+        p_name: input.name,
+        p_organization_id: input.organizationId,
+        p_scheduled_by_user_id: input.scheduledBy.userId ?? "",
+        p_scheduled_publish_at: input.scheduledPublishAt,
+        p_temple_id: input.templeId
+      });
+
+      if (error || !data) {
+        throw error ?? new Error("Purchase list scheduling returned no row.");
+      }
+
+      return mapPurchaseList(data);
     }
   };
 }

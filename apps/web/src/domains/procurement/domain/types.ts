@@ -145,6 +145,17 @@ export type PurchaseListPublishInput = ProcurementScope & {
   publishedBy: ProcurementActor;
 };
 
+export type PurchaseListScheduleInput = ProcurementScope & {
+  name: string;
+  scheduledBy: ProcurementActor;
+  scheduledPublishAt: string;
+};
+
+export type ScheduledPurchaseListPublishInput = ProcurementScope & {
+  listId: EntityId;
+  publishedBy: ProcurementActor;
+};
+
 export type PurchaseListItemProgressStatus =
   | "bought"
   | "partially_bought"
