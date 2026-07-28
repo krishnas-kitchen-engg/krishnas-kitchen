@@ -28,6 +28,7 @@ import {
 import { RecipesScreen } from "@/features/recipes";
 import {
   ProcurementAdminSetupScreen,
+  PurchaseReceiptReviewScreen,
   PurchaseRequestReviewScreen,
   PurchaseRequestsScreen,
   PurchaserListScreen
@@ -209,6 +210,10 @@ function AuthenticatedRoutes() {
 
   if (route.name === "purchase_review") {
     screen = <PurchaseRequestReviewScreen />;
+  }
+
+  if (route.name === "receipt_review") {
+    screen = <PurchaseReceiptReviewScreen />;
   }
 
   if (route.name === "purchase_requests") {

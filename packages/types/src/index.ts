@@ -591,6 +591,7 @@ export type Database = {
       purchase_receipts: {
         Row: {
           created_at: string;
+          finance_review_notes: string | null;
           id: string;
           notes: string | null;
           organization_id: string;
@@ -610,12 +611,17 @@ export type Database = {
           temple_id: string;
           total_cost: number | null;
           updated_at: string;
+          reviewed_at: string | null;
+          reviewed_by_actor_temp_session_id: string | null;
+          reviewed_by_actor_type: ActorType | null;
+          reviewed_by_actor_user_id: string | null;
           uploaded_by_actor_temp_session_id: string | null;
           uploaded_by_actor_type: ActorType;
           uploaded_by_actor_user_id: string | null;
         };
         Insert: {
           created_at?: string;
+          finance_review_notes?: string | null;
           id?: string;
           notes?: string | null;
           organization_id: string;
@@ -629,12 +635,21 @@ export type Database = {
           temple_id: string;
           total_cost?: number | null;
           updated_at?: string;
+          reviewed_at?: string | null;
+          reviewed_by_actor_temp_session_id?: string | null;
+          reviewed_by_actor_type?: ActorType | null;
+          reviewed_by_actor_user_id?: string | null;
           uploaded_by_actor_temp_session_id?: string | null;
           uploaded_by_actor_type: ActorType;
           uploaded_by_actor_user_id?: string | null;
         };
         Update: {
+          finance_review_notes?: string | null;
           notes?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by_actor_temp_session_id?: string | null;
+          reviewed_by_actor_type?: ActorType | null;
+          reviewed_by_actor_user_id?: string | null;
           status?: "matched" | "needs_review" | "partially_matched" | "reconciled" | "rejected";
           updated_at?: string;
         };
@@ -968,6 +983,22 @@ export type Database = {
           p_temple_id: string;
           p_total_cost: number | null;
           p_uploaded_by_user_id: string;
+        };
+        Returns: Database["public"]["Tables"]["purchase_receipts"]["Row"];
+      };
+      review_purchase_receipt: {
+        Args: {
+          p_finance_review_notes: string | null;
+          p_organization_id: string;
+          p_receipt_id: string;
+          p_review_status:
+            | "matched"
+            | "needs_review"
+            | "partially_matched"
+            | "reconciled"
+            | "rejected";
+          p_reviewed_by_user_id: string;
+          p_temple_id: string;
         };
         Returns: Database["public"]["Tables"]["purchase_receipts"]["Row"];
       };

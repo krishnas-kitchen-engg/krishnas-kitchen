@@ -15,6 +15,7 @@ export type AppPath =
   | "/my-purchases"
   | "/profile"
   | "/procurement-admin"
+  | "/receipt-review"
   | "/purchase-review"
   | "/purchase-requests"
   | "/receive"
@@ -39,6 +40,7 @@ const appPaths = [
   "/my-purchases",
   "/profile",
   "/procurement-admin",
+  "/receipt-review",
   "/purchase-review",
   "/purchase-requests",
   "/receive",
@@ -109,6 +111,10 @@ export type AppRoute =
   | {
       name: "procurement_admin";
       path: "/procurement-admin";
+    }
+  | {
+      name: "receipt_review";
+      path: "/receipt-review";
     }
   | {
       name: "purchase_review";
@@ -261,6 +267,13 @@ export function getCurrentRoute(): AppRoute {
     if (pathname === "/procurement-admin") {
       return {
         name: "procurement_admin",
+        path: pathname
+      };
+    }
+
+    if (pathname === "/receipt-review") {
+      return {
+        name: "receipt_review",
         path: pathname
       };
     }

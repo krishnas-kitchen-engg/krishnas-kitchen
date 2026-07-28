@@ -20,6 +20,13 @@ const scheduledPublishMigration = readFileSync(
   ),
   "utf8"
 );
+const receiptReviewMigration = readFileSync(
+  resolve(
+    process.cwd(),
+    "infra/supabase/migrations/20260728000400_add_purchase_receipt_review.sql"
+  ),
+  "utf8"
+);
 
 describe("procurement setup migration", () => {
   it("creates purchase setup tables with tenant and temple scope", () => {
@@ -164,6 +171,28 @@ describe("procurement setup migration", () => {
     );
     expect(scheduledPublishMigration).toMatch(
       /grant execute on function public\.publish_scheduled_purchase_list/i
+    );
+  });
+
+  it("records purchase receipt finance review through an audited guarded function", () => {
+    expect(receiptReviewMigration).toMatch(/finance_review_notes text/i);
+    expect(receiptReviewMigration).toMatch(/reviewed_by_actor_type public\.actor_type/i);
+    expect(receiptReviewMigration).toMatch(
+      /reviewed_by_actor_user_id uuid references public\.users/i
+    );
+    expect(receiptReviewMigration).toMatch(/reviewed_at timestamptz/i);
+    expect(receiptReviewMigration).toMatch(/purchase_receipts_reviewer_context/i);
+    expect(receiptReviewMigration).toMatch(
+      /create or replace function public\.review_purchase_receipt/i
+    );
+    expect(receiptReviewMigration).toMatch(/auth\.uid\(\) <> p_reviewed_by_user_id/i);
+    expect(receiptReviewMigration).toMatch(/p_review_status not in/i);
+    expect(receiptReviewMigration).toMatch(/public\.current_authenticated_user_roles\(\)/i);
+    expect(receiptReviewMigration).toMatch(/'inventory_manager'/i);
+    expect(receiptReviewMigration).toMatch(/'temple_admin'/i);
+    expect(receiptReviewMigration).toMatch(/'super_admin'/i);
+    expect(receiptReviewMigration).toMatch(
+      /grant execute on function public\.review_purchase_receipt/i
     );
   });
 });

@@ -35,6 +35,12 @@ function createRepository(): PurchaseReceiptRepository & {
   uploadedPath: string | null;
 } {
   return {
+    createReceiptImageUrl(path) {
+      return Promise.resolve(`https://receipts.test/${path}`);
+    },
+    listPurchaseReceipts() {
+      return Promise.resolve([receiptRecord]);
+    },
     recordPurchaseReceipt(input) {
       if (this.shouldFailRecord) {
         return Promise.reject(new Error("record failed"));
@@ -54,6 +60,9 @@ function createRepository(): PurchaseReceiptRepository & {
     },
     shouldFailRecord: false,
     uploadedPath: null,
+    reviewPurchaseReceipt() {
+      return Promise.resolve(receiptRecord);
+    },
     uploadReceiptImage(input) {
       this.uploadedPath = input.path;
       return Promise.resolve(input.path);

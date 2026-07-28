@@ -50,6 +50,13 @@ function mapPurchaseReceipt(row: PurchaseReceiptRow): PurchaseReceiptRecord {
     purchaseLocationId: row.purchase_location_id,
     purchaserUserId: row.purchaser_user_id,
     receiptImagePath: row.receipt_image_path,
+    financeReviewNotes: row.finance_review_notes,
+    reviewedAt: row.reviewed_at,
+    reviewedBy: mapActor({
+      actor_temp_session_id: row.reviewed_by_actor_temp_session_id,
+      actor_type: row.reviewed_by_actor_type,
+      actor_user_id: row.reviewed_by_actor_user_id
+    }),
     status: row.status,
     templeId: row.temple_id,
     totalCost: row.total_cost,
@@ -66,6 +73,40 @@ export function createSupabasePurchaseReceiptRepository(
   client: SupabaseClient<Database>
 ): PurchaseReceiptRepository {
   return {
+    async createReceiptImageUrl(path) {
+      const { data, error } = await client.storage
+        .from(purchaseReceiptBucket)
+        .createSignedUrl(path, 60 * 60);
+
+      if (error || !data?.signedUrl) {
+        throw error ?? new Error("Receipt image URL could not be created.");
+      }
+
+      return data.signedUrl;
+    },
+
+    async listPurchaseReceipts(query) {
+      let request = client
+        .from("purchase_receipts")
+        .select("*")
+        .eq("organization_id", query.organizationId)
+        .eq("temple_id", query.templeId)
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: true });
+
+      if (query.status) {
+        request = request.eq("status", query.status);
+      }
+
+      const { data, error } = await request;
+
+      if (error) {
+        throw error;
+      }
+
+      return data.map(mapPurchaseReceipt);
+    },
+
     async removeReceiptImage(path) {
       const { error } = await client.storage.from(purchaseReceiptBucket).remove([path]);
 
@@ -107,6 +148,23 @@ export function createSupabasePurchaseReceiptRepository(
       }
 
       return data.path;
+    },
+
+    async reviewPurchaseReceipt(input) {
+      const { data, error } = await client.rpc("review_purchase_receipt", {
+        p_finance_review_notes: input.notes ?? null,
+        p_organization_id: input.organizationId,
+        p_receipt_id: input.receiptId,
+        p_review_status: input.status,
+        p_reviewed_by_user_id: input.reviewedBy.userId ?? "",
+        p_temple_id: input.templeId
+      });
+
+      if (error || !data) {
+        throw error ?? new Error("Purchase receipt review returned no row.");
+      }
+
+      return mapPurchaseReceipt(data);
     }
   };
 }

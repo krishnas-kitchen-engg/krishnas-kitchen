@@ -47,6 +47,13 @@ export type PurchaseReceiptStatus =
   | "rejected"
   | "uploaded";
 
+export type PurchaseReceiptReviewDecision =
+  | "matched"
+  | "needs_review"
+  | "partially_matched"
+  | "reconciled"
+  | "rejected";
+
 export type PurchasePublishMode = "manual" | "scheduled";
 
 export type PurchaseItemReference =
@@ -180,6 +187,13 @@ export type PurchaseReceiptUploadInput = ProcurementScope & {
   purchaseDate?: string | null;
   totalCost?: number | null;
   uploadedBy: ProcurementActor;
+};
+
+export type PurchaseReceiptReviewInput = ProcurementScope & {
+  notes?: string | null;
+  receiptId: EntityId;
+  reviewedBy: ProcurementActor;
+  status: PurchaseReceiptReviewDecision;
 };
 
 export type PurchaseInventoryReceiveInput = ProcurementScope & {

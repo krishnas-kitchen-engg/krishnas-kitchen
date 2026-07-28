@@ -6,6 +6,7 @@ export type {
   PurchaseListRecord,
   PurchaseLocationRecord,
   PurchaseReceiptRecord,
+  PurchaseReceiptReviewQuery,
   PurchaseRequestListQuery,
   PurchaseRequestRecord
 } from "./application/procurementRepository";
@@ -34,6 +35,10 @@ export {
   createPurchaseReceiptService,
   PurchaseReceiptValidationError
 } from "./application/purchaseReceiptService";
+export {
+  createPurchaseReceiptReviewService,
+  PurchaseReceiptReviewValidationError
+} from "./application/purchaseReceiptReviewService";
 export {
   createPurchaserListService,
   PurchaserListValidationError
@@ -71,6 +76,7 @@ export type {
   PurchaseInventoryReceivingService
 } from "./application/purchaseInventoryReceivingService";
 export type { PurchaseReceiptService } from "./application/purchaseReceiptService";
+export type { PurchaseReceiptReviewService } from "./application/purchaseReceiptReviewService";
 export type { PurchaserListService } from "./application/purchaserListService";
 export {
   assertValidPurchaseRequestInput,
@@ -96,6 +102,8 @@ export type {
   PurchaseListStatus,
   PurchaseLocationInput,
   PurchasePublishMode,
+  PurchaseReceiptReviewDecision,
+  PurchaseReceiptReviewInput,
   PurchaseReceiptStatus,
   PurchaseReceiptUploadInput,
   PurchaseRequestInput,

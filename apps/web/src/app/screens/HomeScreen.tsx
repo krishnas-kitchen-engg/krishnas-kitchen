@@ -96,6 +96,11 @@ function getVisibleQuickActions(
       requiredPermission: "procurement.requests.review"
     },
     {
+      label: "Receipts",
+      path: "/receipt-review",
+      requiredPermission: "procurement.receipts.review"
+    },
+    {
       label: "Procurement",
       path: "/procurement-admin",
       requiredPermission: "procurement.admin"
@@ -145,6 +150,10 @@ function getVisibleQuickActions(
 
     if (action.requiredPermission === "procurement.requests.review") {
       return hasPermission(authPermissions, "procurement.requests.review");
+    }
+
+    if (action.requiredPermission === "procurement.receipts.review") {
+      return hasPermission(authPermissions, "procurement.receipts.review");
     }
 
     return permissions.canReturnInventory;

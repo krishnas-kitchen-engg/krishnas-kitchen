@@ -14,6 +14,7 @@ export type VolunteerHomeQuickAction = {
     | "items.edit"
     | "procurement.admin"
     | "procurement.purchases.read_assigned"
+    | "procurement.receipts.review"
     | "procurement.requests.review"
     | "procurement.requests.create"
     | "recipes.read";

@@ -14,6 +14,7 @@ import type {
   PurchaseLocationInput,
   PurchasePublishMode,
   ScheduledPurchaseListPublishInput,
+  PurchaseReceiptReviewInput,
   PurchaseReceiptUploadInput,
   PurchaseInventoryReceiveInput,
   PurchaseReceiptStatus,
@@ -97,6 +98,7 @@ export type PurchaseListItemRecord = TimestampFields &
 
 export type PurchaseReceiptRecord = TimestampFields &
   ProcurementScope & {
+    financeReviewNotes?: string | null;
     id: EntityId;
     notes?: string | null;
     purchaseDate?: string | null;
@@ -107,7 +109,13 @@ export type PurchaseReceiptRecord = TimestampFields &
     status: PurchaseReceiptStatus;
     totalCost?: number | null;
     uploadedBy: ProcurementActor;
+    reviewedAt?: string | null;
+    reviewedBy?: ProcurementActor | null;
   };
+
+export type PurchaseReceiptReviewQuery = ProcurementScope & {
+  status?: PurchaseReceiptStatus;
+};
 
 export type PurchaseRequestListQuery = ProcurementScope & {
   requesterUserId?: EntityId;
@@ -154,8 +162,13 @@ export type PurchaseReceiptRecordInput = Omit<PurchaseReceiptUploadInput, "file"
 };
 
 export type PurchaseReceiptRepository = {
+  createReceiptImageUrl: (path: string) => Promise<string>;
+  listPurchaseReceipts: (
+    query: PurchaseReceiptReviewQuery
+  ) => Promise<readonly PurchaseReceiptRecord[]>;
   recordPurchaseReceipt: (input: PurchaseReceiptRecordInput) => Promise<PurchaseReceiptRecord>;
   removeReceiptImage: (path: string) => Promise<void>;
+  reviewPurchaseReceipt: (input: PurchaseReceiptReviewInput) => Promise<PurchaseReceiptRecord>;
   uploadReceiptImage: (input: {
     file: File;
     organizationId: EntityId;

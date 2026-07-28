@@ -55,6 +55,10 @@ function getRouteTitle(routeName: ReturnType<typeof useCurrentRoute>["name"]): s
     return "Requests";
   }
 
+  if (routeName === "receipt_review") {
+    return "Receipts";
+  }
+
   if (routeName === "consume") {
     return "Consume";
   }
