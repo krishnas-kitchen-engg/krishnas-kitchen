@@ -1,6 +1,6 @@
 # Procurement Workflow
 
-Status: In Progress
+Status: Implementation Complete For Manual-First Procurement
 
 Owner: Product / Engineering
 
@@ -486,7 +486,7 @@ Goal: approvers can review requests, edit/merge lines, assign stores/purchasers,
 
 Includes manual publish first. Scheduled publish can follow only after manual publish works.
 
-Status: Partially complete. Approvers can review submitted requests, adjust quantity/unit/notes, approve, reject, request clarification, and manually publish approved requests into an audited purchase list. Merge/add/remove and scheduled publish remain future work.
+Status: Complete for approver review, quantity/unit/notes edits, approver-added items, removal from approved queue, audited consolidation, manual publish, scheduled publish intent, and due scheduled publish.
 
 ### Slice 5: Purchaser Assigned List
 
@@ -494,7 +494,7 @@ Goal: purchasers can see assigned store lists and mark buy progress.
 
 Includes bought, partially bought, unavailable, substitution notes, quantity, and cost.
 
-Status: Complete for assigned purchaser list viewing and manual purchase progress updates. Receipt upload, reconciliation, and inventory receiving remain separate slices.
+Status: Complete for assigned purchaser list viewing and manual purchase progress updates. Receipt upload, reconciliation, and inventory receiving are complete in later slices.
 
 ### Slice 6: Receipt Upload And Manual Reconciliation
 
@@ -502,7 +502,7 @@ Goal: purchasers upload receipt images and manually attach cost evidence to purc
 
 Includes receipt storage, finance-audit metadata, and duplicate-counting protections.
 
-Status: Complete for receipt photo upload, receipt metadata storage, line-level attachment, and no-inventory-mutation protection. Finance review remains a separate slice.
+Status: Complete for receipt photo upload, receipt metadata storage, line-level attachment, and no-inventory-mutation protection.
 
 ### Slice 7: Purchase-To-Inventory Receiving
 
@@ -510,17 +510,23 @@ Goal: confirmed purchased quantities can be received into inventory through exis
 
 Includes line-level reconciliation state and inventory transaction links.
 
+Status: Complete. Purchased existing inventory items can be received into inventory through the existing immutable receiving service, and purchase-list lines store the inventory transaction link to prevent duplicate receiving.
+
 ### Slice 8: Finance Review
 
 Goal: finance can review receipts, totals, purchasers, dates, and inventory links.
 
 No accounting integration.
 
+Status: Complete for manual finance review, receipt evidence viewing, review status, finance notes, reviewer audit metadata, and CSV export for finance/card reconciliation.
+
 ### Slice 9: Receipt OCR Assistance
 
 Goal: extract receipt lines and suggest matches for human confirmation.
 
 No automatic inventory mutation.
+
+Status: Deferred. Manual receipt upload and review are the first-release authority. OCR requires a separate provider/security decision and must not block deployment or PWA readiness.
 
 ## Open Decisions
 
@@ -551,18 +557,18 @@ No automatic inventory mutation.
 | Staff can suggest new item | User Request View | Slice 3 | Complete |
 | Duplicate item creation is discouraged | User Request View | Slice 3 | Complete |
 | Requester identity and timestamp are captured | User Request View | Slice 3 | Complete |
-| Approver can review/edit/add/remove items | Approver View | Slice 4 | Partial |
-| Approver edits are audited | Approver View | Slice 4 | Complete for request review |
+| Approver can review/edit/add/remove items | Approver View | Slice 4 | Complete |
+| Approver edits are audited | Approver View | Slice 4 | Complete |
 | Purchase list can be manually published | Approver View | Slice 4 | Complete |
-| Purchase list can be auto-published at preset time | Approver View | Later scheduling slice | Planned |
+| Purchase list can be auto-published at preset time | Approver View | Slice 4 | Complete |
 | Purchasers receive assigned store-specific list | Purchaser View | Slice 5 | Complete |
 | Items can be tagged to purchase locations | Admin View | Slice 2 | Complete |
 | Purchaser can mark bought quantities and costs | Purchaser View | Slice 5 | Complete |
 | Purchaser can upload receipt photo | Purchaser View | Slice 6 | Complete |
 | Receipt is stored for audit and finance | Receipt / Finance | Slice 6 | Complete |
-| Receipt data can support card/finance review | Finance Review | Slice 8 | Partial |
-| System avoids double counting checklist plus receipt | Reconciliation | Slice 6 / Slice 7 | Partial |
-| Confirmed purchases update inventory safely | Inventory Reconciliation | Slice 7 | Planned |
+| Receipt data can support card/finance review | Finance Review | Slice 8 | Complete |
+| System avoids double counting checklist plus receipt | Reconciliation | Slice 6 / Slice 7 | Complete |
+| Confirmed purchases update inventory safely | Inventory Reconciliation | Slice 7 | Complete |
 | Forecasting is not included | Product Scope | All slices | Removed |
 
 ## Validation Expectations
