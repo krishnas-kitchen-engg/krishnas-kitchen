@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useInventoryActor } from "@/domains/inventory";
 import {
+  createPurchaseReceiptCsv,
+  createPurchaseReceiptExportFilename,
   createPurchaseReceiptReviewService,
   createSupabasePurchaseReceiptRepository,
   type ProcurementActor,
@@ -194,10 +196,27 @@ export function usePurchaseReceiptReview() {
     }
   }
 
+  function exportReceipts() {
+    if (receipts.length === 0) {
+      return;
+    }
+
+    const blob = new Blob([createPurchaseReceiptCsv(receipts)], {
+      type: "text/csv;charset=utf-8"
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = createPurchaseReceiptExportFilename();
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   return {
     canReviewReceipts,
     drafts,
     error,
+    exportReceipts,
     imageUrls,
     isLoading,
     receipts,

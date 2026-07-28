@@ -87,6 +87,8 @@ describe("PurchaseReceiptReviewScreen", () => {
 
     assert.match(markup, /Finance review/);
     assert.match(markup, /Receipt review/);
+    assert.match(markup, /Finance export/);
+    assert.match(markup, /Export CSV/);
     assert.match(markup, /No purchase receipts have been uploaded yet/);
   });
 });

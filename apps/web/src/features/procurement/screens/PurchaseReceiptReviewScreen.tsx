@@ -76,6 +76,26 @@ export function PurchaseReceiptReviewScreen() {
         </p>
       </div>
 
+      <section className="rounded-md border border-stone-200 bg-white p-4">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-stone-950">Finance export</p>
+            <p className="mt-1 text-sm text-stone-600">
+              {receiptReview.receipts.length} receipt
+              {receiptReview.receipts.length === 1 ? "" : "s"} available for audit.
+            </p>
+          </div>
+          <button
+            className="min-h-11 rounded-md bg-stone-900 px-3 text-sm font-semibold text-white disabled:bg-stone-300"
+            disabled={receiptReview.receipts.length === 0}
+            onClick={receiptReview.exportReceipts}
+            type="button"
+          >
+            Export CSV
+          </button>
+        </div>
+      </section>
+
       {receiptReview.error ? (
         <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-800">
           {receiptReview.error}
