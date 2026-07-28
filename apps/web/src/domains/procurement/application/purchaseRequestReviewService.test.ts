@@ -31,6 +31,15 @@ const submittedRequest: PurchaseRequestRecord = {
   unit: "kg",
   updatedAt: "2026-07-28T00:00:00Z"
 };
+const approvedRequest: PurchaseRequestRecord = {
+  ...submittedRequest,
+  reviewedAt: "2026-07-28T01:00:00Z",
+  reviewedBy: {
+    type: "user",
+    userId: "reviewer-1"
+  },
+  status: "approved"
+};
 
 function createRepository(
   request: PurchaseRequestRecord | null = submittedRequest
@@ -147,7 +156,96 @@ describe("createPurchaseRequestReviewService", () => {
           },
           templeId: "temple-1"
         }),
-      /Reviewed quantity must be greater than zero/
+      /Reviewed quantity must be a finite number greater than zero/
+    );
+  });
+
+  it("rejects non-finite approved quantity updates", async () => {
+    const service = createPurchaseRequestReviewService(createRepository(approvedRequest));
+
+    await assert.rejects(
+      () =>
+        service.updateApprovedPurchaseRequest({
+          organizationId: "org-1",
+          quantity: Number.NaN,
+          requestId: "request-1",
+          reviewedBy: {
+            type: "user",
+            userId: "reviewer-2"
+          },
+          templeId: "temple-1",
+          unit: "kg"
+        }),
+      /Approved quantity must be a finite number greater than zero/
+    );
+  });
+
+  it("updates an approved request before publishing", async () => {
+    const repository = createRepository(approvedRequest);
+    const service = createPurchaseRequestReviewService(repository);
+
+    const updatedRequest = await service.updateApprovedPurchaseRequest({
+      notes: "Increase for festival",
+      organizationId: "org-1",
+      quantity: 14,
+      requestId: "request-1",
+      reviewedBy: {
+        type: "user",
+        userId: "reviewer-2"
+      },
+      templeId: "temple-1",
+      unit: "kg"
+    });
+
+    assert.equal(updatedRequest.status, "approved");
+    assert.equal(updatedRequest.quantity, 14);
+    assert.equal(updatedRequest.notes, "Increase for festival");
+    assert.deepEqual(updatedRequest.reviewedBy, {
+      type: "user",
+      userId: "reviewer-2"
+    });
+  });
+
+  it("removes an approved request from the publish queue", async () => {
+    const service = createPurchaseRequestReviewService(createRepository(approvedRequest));
+
+    const removedRequest = await service.removeApprovedPurchaseRequest({
+      notes: "Already purchased directly",
+      organizationId: "org-1",
+      requestId: "request-1",
+      reviewedBy: {
+        type: "user",
+        userId: "reviewer-2"
+      },
+      templeId: "temple-1"
+    });
+
+    assert.equal(removedRequest.status, "rejected");
+    assert.equal(removedRequest.notes, "Already purchased directly");
+  });
+
+  it("rejects editing already published requests", async () => {
+    const service = createPurchaseRequestReviewService(
+      createRepository({
+        ...approvedRequest,
+        includedPurchaseListItemId: "list-item-1"
+      })
+    );
+
+    await assert.rejects(
+      () =>
+        service.updateApprovedPurchaseRequest({
+          organizationId: "org-1",
+          quantity: 14,
+          requestId: "request-1",
+          reviewedBy: {
+            type: "user",
+            userId: "reviewer-2"
+          },
+          templeId: "temple-1",
+          unit: "kg"
+        }),
+      /Published purchase requests cannot be edited/
     );
   });
 });

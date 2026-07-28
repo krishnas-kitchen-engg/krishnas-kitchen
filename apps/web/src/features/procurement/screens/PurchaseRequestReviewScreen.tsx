@@ -49,6 +49,95 @@ export function PurchaseRequestReviewScreen() {
             {review.approvedRequests.length === 1 ? "" : "s"} ready for the next purchaser list.
           </p>
         </div>
+        {review.approvedRequests.length > 0 ? (
+          <div className="space-y-3">
+            {review.approvedRequests.map((request) => {
+              const draft = review.drafts[request.id];
+              const isUpdating = review.submittingRequestId === `approved:${request.id}`;
+              const isRemoving = review.submittingRequestId === `remove:${request.id}`;
+
+              return (
+                <article
+                  className="rounded-md border border-stone-200 bg-stone-50 p-3"
+                  key={request.id}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="text-sm font-semibold text-stone-950">
+                        {formatRequestItem(request)}
+                      </h3>
+                      <p className="mt-1 text-xs text-stone-600">Approved for publish queue</p>
+                    </div>
+                    <span className="rounded-md border border-green-200 bg-green-50 px-2 py-1 text-xs font-semibold text-green-800">
+                      approved
+                    </span>
+                  </div>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <label className="block text-sm font-medium text-stone-800">
+                      Quantity
+                      <input
+                        className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+                        inputMode="decimal"
+                        onChange={(event) =>
+                          review.setDraftQuantity(request.id, event.target.value)
+                        }
+                        type="number"
+                        value={draft?.quantityText ?? ""}
+                      />
+                    </label>
+                    <label className="block text-sm font-medium text-stone-800">
+                      Unit
+                      <select
+                        className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+                        onChange={(event) =>
+                          review.setDraftUnit(request.id, event.target.value as ItemUnit | "")
+                        }
+                        value={draft?.unit ?? ""}
+                      >
+                        <option value="">Unit</option>
+                        {review.units.map((unit) => (
+                          <option key={unit} value={unit}>
+                            {unit}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                  <label className="mt-3 block text-sm font-medium text-stone-800">
+                    Notes
+                    <textarea
+                      className="mt-2 min-h-16 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-950"
+                      onChange={(event) => review.setDraftNotes(request.id, event.target.value)}
+                      value={draft?.notes ?? ""}
+                    />
+                  </label>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <button
+                      className="min-h-11 rounded-md bg-brand-900 px-3 text-sm font-semibold text-white disabled:bg-stone-300"
+                      disabled={isUpdating || isRemoving || !draft?.quantityText || !draft?.unit}
+                      onClick={() => {
+                        void review.updateApprovedRequest(request.id);
+                      }}
+                      type="button"
+                    >
+                      {isUpdating ? "Saving..." : "Save changes"}
+                    </button>
+                    <button
+                      className="min-h-11 rounded-md border border-red-200 bg-red-50 px-3 text-sm font-semibold text-red-800 disabled:text-red-300"
+                      disabled={isUpdating || isRemoving}
+                      onClick={() => {
+                        void review.removeApprovedRequest(request.id);
+                      }}
+                      type="button"
+                    >
+                      {isRemoving ? "Removing..." : "Remove"}
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        ) : null}
         <label className="block text-sm font-medium text-stone-800">
           Purchase list name
           <input

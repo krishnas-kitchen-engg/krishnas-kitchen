@@ -80,6 +80,14 @@ export type PurchaseRequestReviewInput = ProcurementScope & {
   unit?: ItemUnit | null;
 };
 
+export type ApprovedPurchaseRequestUpdateInput = ProcurementScope & {
+  notes?: string | null;
+  quantity: number;
+  requestId: EntityId;
+  reviewedBy: ProcurementActor;
+  unit: ItemUnit;
+};
+
 export type PurchaseRequestValidationField =
   | "item"
   | "item.itemId"

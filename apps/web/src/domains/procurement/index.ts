@@ -73,6 +73,7 @@ export {
   validatePurchaseRequestInput
 } from "./domain/procurementValidation";
 export type {
+  ApprovedPurchaseRequestUpdateInput,
   CatalogItemSummary,
   ItemPurchasePreferenceInput,
   ProcurementActor,

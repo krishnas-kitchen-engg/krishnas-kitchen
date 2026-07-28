@@ -225,6 +225,92 @@ export function usePurchaseRequestReview() {
     }
   }
 
+  async function updateApprovedRequest(requestId: string) {
+    const draft = drafts[requestId];
+
+    if (
+      submitLock.current ||
+      submittingRequestId ||
+      !canReviewRequests ||
+      !organizationId ||
+      !templeId ||
+      !procurementActor ||
+      procurementActor.type !== "user" ||
+      !requestReviewService ||
+      !draft ||
+      !draft.unit
+    ) {
+      return;
+    }
+
+    submitLock.current = true;
+    setError(null);
+    setSubmittingRequestId(`approved:${requestId}`);
+
+    try {
+      await requestReviewService.updateApprovedPurchaseRequest({
+        notes: draft.notes,
+        organizationId,
+        quantity: Number(draft.quantityText),
+        requestId,
+        reviewedBy: procurementActor,
+        templeId,
+        unit: draft.unit
+      });
+
+      setSubmittingRequestId(null);
+      refresh();
+    } catch (updateError) {
+      setError(
+        updateError instanceof Error ? updateError.message : "Approved request update failed."
+      );
+      setSubmittingRequestId(null);
+    } finally {
+      submitLock.current = false;
+    }
+  }
+
+  async function removeApprovedRequest(requestId: string) {
+    const draft = drafts[requestId];
+
+    if (
+      submitLock.current ||
+      submittingRequestId ||
+      !canReviewRequests ||
+      !organizationId ||
+      !templeId ||
+      !procurementActor ||
+      procurementActor.type !== "user" ||
+      !requestReviewService
+    ) {
+      return;
+    }
+
+    submitLock.current = true;
+    setError(null);
+    setSubmittingRequestId(`remove:${requestId}`);
+
+    try {
+      await requestReviewService.removeApprovedPurchaseRequest({
+        notes: draft?.notes ?? null,
+        organizationId,
+        requestId,
+        reviewedBy: procurementActor,
+        templeId
+      });
+
+      setSubmittingRequestId(null);
+      refresh();
+    } catch (removeError) {
+      setError(
+        removeError instanceof Error ? removeError.message : "Approved request removal failed."
+      );
+      setSubmittingRequestId(null);
+    } finally {
+      submitLock.current = false;
+    }
+  }
+
   async function publishApprovedRequests() {
     if (
       submitLock.current ||
@@ -272,6 +358,7 @@ export function usePurchaseRequestReview() {
     listName,
     publishApprovedRequests,
     purchaseLists,
+    removeApprovedRequest,
     reviewRequest,
     reviewableRequests,
     setListName,
@@ -285,6 +372,7 @@ export function usePurchaseRequestReview() {
       updateDraft(requestId, { unit });
     },
     submittingRequestId,
+    updateApprovedRequest,
     units: PROCUREMENT_ITEM_UNITS
   };
 }
