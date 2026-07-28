@@ -79,6 +79,26 @@ function getVisibleQuickActions(
       label: "Recipes",
       path: "/recipes",
       requiredPermission: "recipes.read"
+    },
+    {
+      label: "Request",
+      path: "/purchase-requests",
+      requiredPermission: "procurement.requests.create"
+    },
+    {
+      label: "My Purchases",
+      path: "/my-purchases",
+      requiredPermission: "procurement.purchases.read_assigned"
+    },
+    {
+      label: "Review",
+      path: "/purchase-review",
+      requiredPermission: "procurement.requests.review"
+    },
+    {
+      label: "Procurement",
+      path: "/procurement-admin",
+      requiredPermission: "procurement.admin"
     }
   ];
 
@@ -109,6 +129,22 @@ function getVisibleQuickActions(
 
     if (action.requiredPermission === "recipes.read") {
       return hasPermission(authPermissions, "recipes.read");
+    }
+
+    if (action.requiredPermission === "procurement.admin") {
+      return hasPermission(authPermissions, "procurement.admin");
+    }
+
+    if (action.requiredPermission === "procurement.requests.create") {
+      return hasPermission(authPermissions, "procurement.requests.create");
+    }
+
+    if (action.requiredPermission === "procurement.purchases.read_assigned") {
+      return hasPermission(authPermissions, "procurement.purchases.read_assigned");
+    }
+
+    if (action.requiredPermission === "procurement.requests.review") {
+      return hasPermission(authPermissions, "procurement.requests.review");
     }
 
     return permissions.canReturnInventory;

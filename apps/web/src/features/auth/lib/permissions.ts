@@ -29,6 +29,32 @@ const operationalInventoryPermissions = [
 
 const recipeManagementPermissions = ["recipes.read", "recipes.manage"] satisfies Permission[];
 
+const procurementRequestPermissions = [
+  "procurement.requests.create",
+  "procurement.requests.read_own"
+] satisfies Permission[];
+
+const procurementPurchaserPermissions = [
+  "procurement.purchases.read_assigned",
+  "procurement.purchases.update_assigned",
+  "procurement.receipts.upload"
+] satisfies Permission[];
+
+const procurementApprovalPermissions = [
+  "procurement.requests.review",
+  "procurement.lists.manage",
+  "procurement.lists.publish",
+  "procurement.receipts.review"
+] satisfies Permission[];
+
+const procurementAdminPermissions = [
+  ...procurementRequestPermissions,
+  ...procurementPurchaserPermissions,
+  ...procurementApprovalPermissions,
+  "procurement.admin",
+  "procurement.audit.read"
+] satisfies Permission[];
+
 export const rolePermissions = {
   volunteer: [
     "locations.read",
@@ -38,12 +64,15 @@ export const rolePermissions = {
     "inventory.transfer",
     "inventory.consume",
     "inventory.return",
+    ...procurementRequestPermissions,
     "volunteer_sessions.create"
   ],
   cook: [
     "locations.read",
     "items.read",
     ...operationalInventoryPermissions,
+    ...procurementRequestPermissions,
+    ...procurementPurchaserPermissions,
     "volunteer_sessions.create"
   ],
   senior_cook: [
@@ -53,6 +82,9 @@ export const rolePermissions = {
     "items.edit",
     ...operationalInventoryPermissions,
     ...recipeManagementPermissions,
+    ...procurementRequestPermissions,
+    ...procurementPurchaserPermissions,
+    ...procurementApprovalPermissions,
     "volunteer_sessions.create"
   ],
   inventory_manager: [
@@ -65,6 +97,7 @@ export const rolePermissions = {
     "items.archive",
     ...inventoryPermissions,
     ...recipeManagementPermissions,
+    ...procurementAdminPermissions,
     "volunteer_sessions.create",
     "volunteer_sessions.expire"
   ],
@@ -81,6 +114,7 @@ export const rolePermissions = {
     "items.archive",
     ...inventoryPermissions,
     ...recipeManagementPermissions,
+    ...procurementAdminPermissions,
     "volunteer_sessions.create",
     "volunteer_sessions.expire",
     "audit.read"
@@ -99,6 +133,7 @@ export const rolePermissions = {
     "items.archive",
     ...inventoryPermissions,
     ...recipeManagementPermissions,
+    ...procurementAdminPermissions,
     "volunteer_sessions.create",
     "volunteer_sessions.expire",
     "audit.read"

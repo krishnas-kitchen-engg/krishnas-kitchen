@@ -12,7 +12,11 @@ export type AppPath =
   | "/locations"
   | "/low-stock"
   | "/login"
+  | "/my-purchases"
   | "/profile"
+  | "/procurement-admin"
+  | "/purchase-review"
+  | "/purchase-requests"
   | "/receive"
   | "/return"
   | "/recipes"
@@ -32,7 +36,11 @@ const appPaths = [
   "/locations",
   "/low-stock",
   "/login",
+  "/my-purchases",
   "/profile",
+  "/procurement-admin",
+  "/purchase-review",
+  "/purchase-requests",
   "/receive",
   "/return",
   "/recipes",
@@ -91,8 +99,24 @@ export type AppRoute =
       path: "/login";
     }
   | {
+      name: "my_purchases";
+      path: "/my-purchases";
+    }
+  | {
       name: "profile";
       path: "/profile";
+    }
+  | {
+      name: "procurement_admin";
+      path: "/procurement-admin";
+    }
+  | {
+      name: "purchase_review";
+      path: "/purchase-review";
+    }
+  | {
+      name: "purchase_requests";
+      path: "/purchase-requests";
     }
   | {
       name: "receive";
@@ -220,9 +244,37 @@ export function getCurrentRoute(): AppRoute {
       };
     }
 
+    if (pathname === "/my-purchases") {
+      return {
+        name: "my_purchases",
+        path: pathname
+      };
+    }
+
     if (pathname === "/profile") {
       return {
         name: "profile",
+        path: pathname
+      };
+    }
+
+    if (pathname === "/procurement-admin") {
+      return {
+        name: "procurement_admin",
+        path: pathname
+      };
+    }
+
+    if (pathname === "/purchase-review") {
+      return {
+        name: "purchase_review",
+        path: pathname
+      };
+    }
+
+    if (pathname === "/purchase-requests") {
+      return {
+        name: "purchase_requests",
         path: pathname
       };
     }

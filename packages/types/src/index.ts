@@ -36,6 +36,17 @@ export type Permission =
   | "inventory.undo"
   | "recipes.read"
   | "recipes.manage"
+  | "procurement.requests.create"
+  | "procurement.requests.read_own"
+  | "procurement.requests.review"
+  | "procurement.lists.manage"
+  | "procurement.lists.publish"
+  | "procurement.purchases.read_assigned"
+  | "procurement.purchases.update_assigned"
+  | "procurement.receipts.upload"
+  | "procurement.receipts.review"
+  | "procurement.admin"
+  | "procurement.audit.read"
   | "volunteer_sessions.create"
   | "volunteer_sessions.expire"
   | "audit.read";
@@ -337,6 +348,322 @@ export type Database = {
         };
         Relationships: [];
       };
+      item_purchase_preferences: {
+        Row: {
+          archived_at: string | null;
+          backup_purchase_location_id: string | null;
+          created_at: string;
+          created_by_actor_temp_session_id: string | null;
+          created_by_actor_type: ActorType;
+          created_by_actor_user_id: string | null;
+          estimated_unit_cost: number | null;
+          id: string;
+          item_id: string;
+          notes: string | null;
+          organization_id: string;
+          pack_size: number | null;
+          preferred_purchase_location_id: string;
+          preferred_purchase_unit: ItemUnit | null;
+          purchaser_user_id: string | null;
+          temple_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          archived_at?: string | null;
+          backup_purchase_location_id?: string | null;
+          created_at?: string;
+          created_by_actor_temp_session_id?: string | null;
+          created_by_actor_type: ActorType;
+          created_by_actor_user_id?: string | null;
+          estimated_unit_cost?: number | null;
+          id?: string;
+          item_id: string;
+          notes?: string | null;
+          organization_id: string;
+          pack_size?: number | null;
+          preferred_purchase_location_id: string;
+          preferred_purchase_unit?: ItemUnit | null;
+          purchaser_user_id?: string | null;
+          temple_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          archived_at?: string | null;
+          backup_purchase_location_id?: string | null;
+          estimated_unit_cost?: number | null;
+          notes?: string | null;
+          pack_size?: number | null;
+          preferred_purchase_location_id?: string;
+          preferred_purchase_unit?: ItemUnit | null;
+          purchaser_user_id?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      purchase_locations: {
+        Row: {
+          archived_at: string | null;
+          created_at: string;
+          created_by_actor_temp_session_id: string | null;
+          created_by_actor_type: ActorType;
+          created_by_actor_user_id: string | null;
+          default_purchaser_user_id: string | null;
+          description: string | null;
+          id: string;
+          name: string;
+          notes: string | null;
+          organization_id: string;
+          temple_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          archived_at?: string | null;
+          created_at?: string;
+          created_by_actor_temp_session_id?: string | null;
+          created_by_actor_type: ActorType;
+          created_by_actor_user_id?: string | null;
+          default_purchaser_user_id?: string | null;
+          description?: string | null;
+          id?: string;
+          name: string;
+          notes?: string | null;
+          organization_id: string;
+          temple_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          archived_at?: string | null;
+          default_purchaser_user_id?: string | null;
+          description?: string | null;
+          name?: string;
+          notes?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      purchase_list_items: {
+        Row: {
+          approved_quantity: number;
+          assigned_purchaser_user_id: string | null;
+          created_at: string;
+          id: string;
+          inventory_transaction_id: string | null;
+          item_id: string | null;
+          item_reference_type: "existing_item" | "new_item_suggestion";
+          notes: string | null;
+          organization_id: string;
+          purchase_date: string | null;
+          purchase_list_id: string;
+          purchase_location_id: string | null;
+          purchased_at: string | null;
+          purchased_by_actor_temp_session_id: string | null;
+          purchased_by_actor_type: ActorType | null;
+          purchased_by_actor_user_id: string | null;
+          purchased_quantity: number | null;
+          source_purchase_request_ids: string[];
+          status:
+            | "bought"
+            | "cancelled"
+            | "partially_bought"
+            | "pending_purchase"
+            | "receipt_uploaded"
+            | "received_into_inventory"
+            | "reconciled"
+            | "substituted"
+            | "unavailable";
+          suggested_item_category: string | null;
+          suggested_item_name: string | null;
+          temple_id: string;
+          total_cost: number | null;
+          unit: ItemUnit;
+          unit_cost: number | null;
+          updated_at: string;
+        };
+        Insert: {
+          approved_quantity: number;
+          assigned_purchaser_user_id?: string | null;
+          created_at?: string;
+          id?: string;
+          inventory_transaction_id?: string | null;
+          item_id?: string | null;
+          item_reference_type: "existing_item" | "new_item_suggestion";
+          notes?: string | null;
+          organization_id: string;
+          purchase_date?: string | null;
+          purchase_list_id: string;
+          purchase_location_id?: string | null;
+          purchased_at?: string | null;
+          purchased_by_actor_temp_session_id?: string | null;
+          purchased_by_actor_type?: ActorType | null;
+          purchased_by_actor_user_id?: string | null;
+          purchased_quantity?: number | null;
+          source_purchase_request_ids: string[];
+          status?: "pending_purchase";
+          suggested_item_category?: string | null;
+          suggested_item_name?: string | null;
+          temple_id: string;
+          total_cost?: number | null;
+          unit: ItemUnit;
+          unit_cost?: number | null;
+          updated_at?: string;
+        };
+        Update: {
+          assigned_purchaser_user_id?: string | null;
+          inventory_transaction_id?: string | null;
+          notes?: string | null;
+          purchase_date?: string | null;
+          purchase_location_id?: string | null;
+          purchased_at?: string | null;
+          purchased_by_actor_temp_session_id?: string | null;
+          purchased_by_actor_type?: ActorType | null;
+          purchased_by_actor_user_id?: string | null;
+          purchased_quantity?: number | null;
+          status?:
+            | "bought"
+            | "cancelled"
+            | "partially_bought"
+            | "pending_purchase"
+            | "receipt_uploaded"
+            | "received_into_inventory"
+            | "reconciled"
+            | "substituted"
+            | "unavailable";
+          total_cost?: number | null;
+          unit_cost?: number | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      purchase_lists: {
+        Row: {
+          created_at: string;
+          created_by_actor_temp_session_id: string | null;
+          created_by_actor_type: ActorType;
+          created_by_actor_user_id: string | null;
+          id: string;
+          name: string;
+          organization_id: string;
+          publish_mode: "manual" | "scheduled";
+          published_at: string | null;
+          published_by_actor_temp_session_id: string | null;
+          published_by_actor_type: ActorType | null;
+          published_by_actor_user_id: string | null;
+          scheduled_publish_at: string | null;
+          status:
+            | "cancelled"
+            | "completed"
+            | "draft"
+            | "in_progress"
+            | "published"
+            | "ready_to_publish";
+          temple_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by_actor_temp_session_id?: string | null;
+          created_by_actor_type: ActorType;
+          created_by_actor_user_id?: string | null;
+          id?: string;
+          name: string;
+          organization_id: string;
+          publish_mode?: "manual" | "scheduled";
+          published_at?: string | null;
+          published_by_actor_temp_session_id?: string | null;
+          published_by_actor_type?: ActorType | null;
+          published_by_actor_user_id?: string | null;
+          scheduled_publish_at?: string | null;
+          status?: "published";
+          temple_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          published_at?: string | null;
+          published_by_actor_temp_session_id?: string | null;
+          published_by_actor_type?: ActorType | null;
+          published_by_actor_user_id?: string | null;
+          scheduled_publish_at?: string | null;
+          status?: "cancelled" | "completed" | "in_progress" | "published";
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      purchase_requests: {
+        Row: {
+          created_at: string;
+          id: string;
+          included_purchase_list_item_id: string | null;
+          item_id: string | null;
+          item_reference_type: "existing_item" | "new_item_suggestion";
+          needed_by: string | null;
+          notes: string | null;
+          organization_id: string;
+          quantity: number;
+          requested_by_actor_temp_session_id: string | null;
+          requested_by_actor_type: ActorType;
+          requested_by_actor_user_id: string | null;
+          reviewed_at: string | null;
+          reviewed_by_actor_temp_session_id: string | null;
+          reviewed_by_actor_type: ActorType | null;
+          reviewed_by_actor_user_id: string | null;
+          status:
+            | "approved"
+            | "cancelled"
+            | "draft"
+            | "included_in_published_list"
+            | "needs_clarification"
+            | "rejected"
+            | "submitted";
+          suggested_item_category: string | null;
+          suggested_item_name: string | null;
+          temple_id: string;
+          unit: ItemUnit;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          included_purchase_list_item_id?: string | null;
+          item_id?: string | null;
+          item_reference_type: "existing_item" | "new_item_suggestion";
+          needed_by?: string | null;
+          notes?: string | null;
+          organization_id: string;
+          quantity: number;
+          requested_by_actor_temp_session_id?: string | null;
+          requested_by_actor_type: ActorType;
+          requested_by_actor_user_id?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by_actor_temp_session_id?: string | null;
+          reviewed_by_actor_type?: ActorType | null;
+          reviewed_by_actor_user_id?: string | null;
+          status?: "submitted";
+          suggested_item_category?: string | null;
+          suggested_item_name?: string | null;
+          temple_id: string;
+          unit: ItemUnit;
+          updated_at?: string;
+        };
+        Update: {
+          included_purchase_list_item_id?: string | null;
+          needed_by?: string | null;
+          notes?: string | null;
+          quantity?: number;
+          reviewed_at?: string | null;
+          reviewed_by_actor_temp_session_id?: string | null;
+          reviewed_by_actor_type?: ActorType | null;
+          reviewed_by_actor_user_id?: string | null;
+          status?:
+            | "approved"
+            | "cancelled"
+            | "included_in_published_list"
+            | "needs_clarification"
+            | "rejected";
+          unit?: ItemUnit;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       recipe_production_runs: {
         Row: {
           actor_temp_session_id: string | null;
@@ -559,7 +886,17 @@ export type Database = {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      publish_approved_purchase_requests: {
+        Args: {
+          p_name: string;
+          p_organization_id: string;
+          p_published_by_user_id: string;
+          p_temple_id: string;
+        };
+        Returns: Database["public"]["Tables"]["purchase_lists"]["Row"];
+      };
+    };
     Enums: {
       actor_type: ActorType;
       barcode_format: BarcodeFormat;

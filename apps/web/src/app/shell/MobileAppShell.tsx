@@ -35,8 +35,24 @@ function getRouteTitle(routeName: ReturnType<typeof useCurrentRoute>["name"]): s
     return "Locations";
   }
 
+  if (routeName === "my_purchases") {
+    return "Purchases";
+  }
+
   if (routeName === "profile") {
     return "Profile";
+  }
+
+  if (routeName === "procurement_admin") {
+    return "Procurement";
+  }
+
+  if (routeName === "purchase_review") {
+    return "Review";
+  }
+
+  if (routeName === "purchase_requests") {
+    return "Requests";
   }
 
   if (routeName === "consume") {

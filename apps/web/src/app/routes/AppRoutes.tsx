@@ -26,6 +26,12 @@ import {
   TransferInventoryScreen
 } from "@/features/inventory";
 import { RecipesScreen } from "@/features/recipes";
+import {
+  ProcurementAdminSetupScreen,
+  PurchaseRequestReviewScreen,
+  PurchaseRequestsScreen,
+  PurchaserListScreen
+} from "@/features/procurement";
 import { TasksScreen } from "@/features/tasks";
 
 import { RouteGuard } from "./RouteGuard";
@@ -195,6 +201,22 @@ function AuthenticatedRoutes() {
 
   if (path === "/profile") {
     screen = <ShellPlaceholder title="Profile" />;
+  }
+
+  if (route.name === "procurement_admin") {
+    screen = <ProcurementAdminSetupScreen />;
+  }
+
+  if (route.name === "purchase_review") {
+    screen = <PurchaseRequestReviewScreen />;
+  }
+
+  if (route.name === "purchase_requests") {
+    screen = <PurchaseRequestsScreen />;
+  }
+
+  if (route.name === "my_purchases") {
+    screen = <PurchaserListScreen />;
   }
 
   return (

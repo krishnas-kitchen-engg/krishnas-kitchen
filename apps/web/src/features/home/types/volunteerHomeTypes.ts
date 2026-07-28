@@ -12,6 +12,10 @@ export type VolunteerHomeQuickAction = {
     | "inventory.return"
     | "inventory.transfer"
     | "items.edit"
+    | "procurement.admin"
+    | "procurement.purchases.read_assigned"
+    | "procurement.requests.review"
+    | "procurement.requests.create"
     | "recipes.read";
 };
 
