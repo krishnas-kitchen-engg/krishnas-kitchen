@@ -17,3 +17,7 @@ export function useInventoryServices(): InventoryServiceBundle {
 
   return context.services;
 }
+
+export function useOptionalInventoryServices(): InventoryServiceBundle | null {
+  return useContext(InventoryIntegrationContext)?.services ?? null;
+}

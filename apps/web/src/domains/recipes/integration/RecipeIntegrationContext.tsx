@@ -1,6 +1,10 @@
 import { useMemo, type PropsWithChildren } from "react";
 
-import { useInventoryCatalogQueries, useInventoryServices } from "@/domains/inventory";
+import {
+  useInventoryAvailability,
+  useOptionalInventoryServices,
+  type InventoryServiceBundle
+} from "@/domains/inventory";
 import { useAuth } from "@/features/auth";
 
 import { createRecipeProductionService } from "../application/recipeProductionService";
@@ -11,50 +15,70 @@ import { RecipeIntegrationContext, type RecipeIntegrationContextValue } from "./
 
 export function RecipeProviderBridge({ children }: PropsWithChildren) {
   const auth = useAuth();
-  const catalogQueries = useInventoryCatalogQueries();
-  const inventoryServices = useInventoryServices();
-  const value = useMemo<RecipeIntegrationContextValue>(() => {
-    if (!auth.client) {
-      throw new Error("Recipe persistence requires Supabase.");
+  const inventoryAvailability = useInventoryAvailability();
+  const inventoryServices = useOptionalInventoryServices();
+  const value = useMemo<RecipeIntegrationContextValue | null>(() => {
+    if (!auth.client || inventoryAvailability.status !== "ready" || !inventoryServices) {
+      return null;
     }
 
-    const repository = createSupabaseRecipeRepository(auth.client);
     const productionRunRepository = createSupabaseRecipeProductionRunRepository(auth.client);
 
-    return {
-      productionRunRepository,
-      productionService: createRecipeProductionService({
-        catalog: {
-          findProductionItem(organizationId, itemId) {
-            return catalogQueries.findItemById(organizationId, itemId);
-          },
-          findProductionLocation(organizationId, templeId, locationId) {
-            return catalogQueries.findLocationById(organizationId, templeId, locationId);
-          }
-        },
-        inventoryService: inventoryServices.inventory,
-        productionRunRepository,
-        visibilityService: inventoryServices.visibility
-      }),
-      service: createRecipeService(repository, {
-        catalog: {
-          async findIngredientItem(itemId, scope) {
-            const item = await catalogQueries.findItemById(scope.organizationId, itemId);
+    return createRecipeIntegrationValue(auth.client, inventoryServices, productionRunRepository);
+  }, [auth.client, inventoryAvailability.status, inventoryServices]);
 
-            return item
-              ? {
-                  deletedAt: item.deletedAt,
-                  id: item.id,
-                  organizationId: item.organizationId
-                }
-              : null;
-          }
-        }
-      })
-    };
-  }, [auth.client, catalogQueries, inventoryServices.inventory, inventoryServices.visibility]);
+  if (!value) {
+    return children;
+  }
 
   return (
     <RecipeIntegrationContext.Provider value={value}>{children}</RecipeIntegrationContext.Provider>
   );
+}
+
+function createRecipeIntegrationValue(
+  client: NonNullable<ReturnType<typeof useAuth>["client"]>,
+  inventoryServices: InventoryServiceBundle,
+  productionRunRepository: ReturnType<typeof createSupabaseRecipeProductionRunRepository>
+): RecipeIntegrationContextValue {
+  const repository = createSupabaseRecipeRepository(client);
+
+  return {
+    productionRunRepository,
+    productionService: createRecipeProductionService({
+      catalog: {
+        findProductionItem(organizationId, itemId) {
+          return inventoryServices.catalogQueries.findItemById(organizationId, itemId);
+        },
+        findProductionLocation(organizationId, templeId, locationId) {
+          return inventoryServices.catalogQueries.findLocationById(
+            organizationId,
+            templeId,
+            locationId
+          );
+        }
+      },
+      inventoryService: inventoryServices.inventory,
+      productionRunRepository,
+      visibilityService: inventoryServices.visibility
+    }),
+    service: createRecipeService(repository, {
+      catalog: {
+        async findIngredientItem(itemId, scope) {
+          const item = await inventoryServices.catalogQueries.findItemById(
+            scope.organizationId,
+            itemId
+          );
+
+          return item
+            ? {
+                deletedAt: item.deletedAt,
+                id: item.id,
+                organizationId: item.organizationId
+              }
+            : null;
+        }
+      }
+    })
+  };
 }

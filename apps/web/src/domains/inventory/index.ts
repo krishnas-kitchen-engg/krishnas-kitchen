@@ -19,6 +19,7 @@ export { InventoryIntegrationProvider } from "./integration/InventoryIntegration
 export { InventoryProviderBridge } from "./integration/InventoryProviderBridge";
 export {
   useInventoryAvailability,
+  useOptionalInventoryServices,
   useInventoryServices
 } from "./integration/inventoryServiceHooks";
 export { createInventoryServiceBundle } from "./integration/inventoryServiceFactory";
