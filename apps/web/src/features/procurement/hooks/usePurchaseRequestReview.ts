@@ -12,6 +12,7 @@ import {
   createSupabasePurchaseRequestRepository,
   PROCUREMENT_ITEM_UNITS,
   type CatalogItemSummary,
+  type PurchaseListItemRecord,
   type ProcurementActor,
   type PurchaseListRecord,
   type PurchaseRequestRecord,
@@ -132,6 +133,7 @@ export function usePurchaseRequestReview() {
   const [listName, setListName] = useState("Next Purchase List");
   const [publishMode, setPublishMode] = useState<"manual" | "scheduled">("manual");
   const [purchaseLists, setPurchaseLists] = useState<readonly PurchaseListRecord[]>([]);
+  const [purchaseListItems, setPurchaseListItems] = useState<readonly PurchaseListItemRecord[]>([]);
   const [requests, setRequests] = useState<readonly PurchaseRequestRecord[]>([]);
   const [scheduledPublishAt, setScheduledPublishAt] = useState("");
   const [drafts, setDrafts] = useState<Record<string, ReviewDraft>>({});
@@ -177,6 +179,7 @@ export function usePurchaseRequestReview() {
       setRequests([]);
       setDrafts({});
       setPurchaseLists([]);
+      setPurchaseListItems([]);
       return;
     }
 
@@ -193,14 +196,16 @@ export function usePurchaseRequestReview() {
       setError(null);
 
       try {
-        const [nextRequests, nextPurchaseLists] = await Promise.all([
+        const [nextRequests, nextPurchaseLists, nextPurchaseListItems] = await Promise.all([
           currentRequestReviewService.listRequestsForReview(scope),
-          currentPurchaseListService.listPurchaseLists(scope)
+          currentPurchaseListService.listPurchaseLists(scope),
+          currentPurchaseListService.listPurchaseListItems(scope)
         ]);
 
         if (isActive) {
           setRequests(nextRequests);
           setPurchaseLists(nextPurchaseLists);
+          setPurchaseListItems(nextPurchaseListItems);
           setDrafts(
             Object.fromEntries(nextRequests.map((request) => [request.id, createDraft(request)]))
           );
@@ -590,6 +595,7 @@ export function usePurchaseRequestReview() {
     publishApprovedRequests,
     publishMode,
     publishScheduledList,
+    purchaseListItems,
     purchaseLists,
     removeApprovedRequest,
     reviewRequest,

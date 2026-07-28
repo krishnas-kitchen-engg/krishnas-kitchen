@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 
-import type { PurchaseListPublishRepository, PurchaseListRecord } from "./procurementRepository";
+import type {
+  PurchaseListItemRecord,
+  PurchaseListPublishRepository,
+  PurchaseListRecord
+} from "./procurementRepository";
 import {
   createPurchaseListPublishService,
   PurchaseListPublishValidationError
@@ -28,11 +32,40 @@ const publishedList: PurchaseListRecord = {
   updatedAt: "2026-07-28T00:00:00Z"
 };
 
+const publishedListItem: PurchaseListItemRecord = {
+  approvedQuantity: 10,
+  assignedPurchaserUserId: "purchaser-1",
+  createdAt: "2026-07-28T00:00:00Z",
+  id: "list-item-1",
+  inventoryTransactionId: null,
+  item: {
+    itemId: "item-1",
+    type: "existing_item"
+  },
+  notes: null,
+  organizationId: "org-1",
+  purchaseListId: "list-1",
+  purchaseLocationId: "purchase-location-1",
+  purchasedAt: null,
+  purchasedBy: null,
+  purchasedQuantity: null,
+  sourcePurchaseRequestIds: ["request-1"],
+  status: "pending_purchase",
+  templeId: "temple-1",
+  totalCost: null,
+  unit: "kg",
+  unitCost: null,
+  updatedAt: "2026-07-28T00:00:00Z"
+};
+
 function createRepository(): PurchaseListPublishRepository & {
   publishedName: string | null;
   scheduledAt: string | null;
 } {
   return {
+    listPurchaseListItems() {
+      return Promise.resolve([publishedListItem]);
+    },
     listPurchaseLists() {
       return Promise.resolve([publishedList]);
     },
@@ -69,6 +102,18 @@ function createRepository(): PurchaseListPublishRepository & {
 }
 
 describe("createPurchaseListPublishService", () => {
+  it("lists purchase list items for status summaries", async () => {
+    const service = createPurchaseListPublishService(createRepository());
+
+    const result = await service.listPurchaseListItems({
+      organizationId: "org-1",
+      templeId: "temple-1"
+    });
+
+    assert.equal(result.length, 1);
+    assert.equal(result[0]?.purchaseListId, "list-1");
+  });
+
   it("publishes approved requests with a trimmed list name", async () => {
     const repository = createRepository();
     const service = createPurchaseListPublishService(repository);

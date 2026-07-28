@@ -3,7 +3,11 @@ import type {
   PurchaseListScheduleInput,
   ScheduledPurchaseListPublishInput
 } from "../domain/types";
-import type { PurchaseListPublishRepository, PurchaseListRecord } from "./procurementRepository";
+import type {
+  PurchaseListItemRecord,
+  PurchaseListPublishRepository,
+  PurchaseListRecord
+} from "./procurementRepository";
 
 export class PurchaseListPublishValidationError extends Error {
   constructor(message: string) {
@@ -13,6 +17,9 @@ export class PurchaseListPublishValidationError extends Error {
 }
 
 export type PurchaseListPublishService = {
+  listPurchaseListItems: (
+    scope: Pick<PurchaseListPublishInput, "organizationId" | "templeId">
+  ) => Promise<readonly PurchaseListItemRecord[]>;
   listPurchaseLists: (
     scope: Pick<PurchaseListPublishInput, "organizationId" | "templeId">
   ) => Promise<readonly PurchaseListRecord[]>;
@@ -90,6 +97,10 @@ export function createPurchaseListPublishService(
   repository: PurchaseListPublishRepository
 ): PurchaseListPublishService {
   return {
+    listPurchaseListItems(scope) {
+      return repository.listPurchaseListItems(scope);
+    },
+
     listPurchaseLists(scope) {
       return repository.listPurchaseLists(scope);
     },

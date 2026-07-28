@@ -6,6 +6,7 @@ import type {
   PurchaseListRecord
 } from "../../application/procurementRepository";
 import type { ProcurementActor } from "../../domain/types";
+import { mapPurchaseListItem } from "./supabasePurchaserListRepository";
 
 type PurchaseListRow = Database["public"]["Tables"]["purchase_lists"]["Row"];
 
@@ -66,6 +67,22 @@ export function createSupabasePurchaseListRepository(
   client: SupabaseClient<Database>
 ): PurchaseListPublishRepository {
   return {
+    async listPurchaseListItems(scope) {
+      const { data, error } = await client
+        .from("purchase_list_items")
+        .select("*")
+        .eq("organization_id", scope.organizationId)
+        .eq("temple_id", scope.templeId)
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: true });
+
+      if (error) {
+        throw error;
+      }
+
+      return data.map(mapPurchaseListItem);
+    },
+
     async listPurchaseLists(scope) {
       const { data, error } = await client
         .from("purchase_lists")

@@ -127,6 +127,7 @@ export type PurchaseRequestReviewUpdate = PurchaseRequestReviewInput & {
 };
 
 export type PurchaseListPublishRepository = {
+  listPurchaseListItems: (scope: ProcurementScope) => Promise<readonly PurchaseListItemRecord[]>;
   listPurchaseLists: (scope: ProcurementScope) => Promise<readonly PurchaseListRecord[]>;
   publishApprovedPurchaseRequests: (input: PurchaseListPublishInput) => Promise<PurchaseListRecord>;
   publishScheduledPurchaseList: (

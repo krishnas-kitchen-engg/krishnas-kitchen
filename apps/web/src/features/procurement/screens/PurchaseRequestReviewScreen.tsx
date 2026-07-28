@@ -1,7 +1,12 @@
 import type { ItemUnit } from "@krishnas-kitchen/types";
 
-import { usePurchaseRequestReview } from "../hooks/usePurchaseRequestReview";
+import {
+  createEmptyPurchaseListProgressSummary,
+  summarizePurchaseListProgress,
+  type PurchaseListProgressSummary
+} from "@/domains/procurement";
 
+import { usePurchaseRequestReview } from "../hooks/usePurchaseRequestReview";
 function formatRequestItem(request: {
   item:
     | { itemId: string; type: "existing_item" }
@@ -10,8 +15,28 @@ function formatRequestItem(request: {
   return request.item.type === "existing_item" ? request.item.itemId : request.item.suggestedName;
 }
 
+function progressSummaryClass(summary: PurchaseListProgressSummary) {
+  if (summary.total > 0 && summary.received === summary.total) {
+    return "border-emerald-200 bg-emerald-50 text-emerald-800";
+  }
+
+  if (summary.issue > 0) {
+    return "border-amber-200 bg-amber-50 text-amber-800";
+  }
+
+  return "border-stone-300 bg-stone-100 text-stone-700";
+}
+
+function formatMoney(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    currency: "USD",
+    style: "currency"
+  }).format(value);
+}
+
 export function PurchaseRequestReviewScreen() {
   const review = usePurchaseRequestReview();
+  const listSummaries = summarizePurchaseListProgress(review.purchaseListItems);
 
   if (!review.canReviewRequests) {
     return (
@@ -457,21 +482,40 @@ export function PurchaseRequestReviewScreen() {
               className="space-y-3 rounded-md border border-stone-200 bg-white p-4"
               key={list.id}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h3 className="text-base font-semibold text-stone-950">{list.name}</h3>
-                  <p className="mt-1 text-sm text-stone-600">
-                    {list.publishMode === "scheduled" && list.scheduledPublishAt
-                      ? `Scheduled for ${new Date(list.scheduledPublishAt).toLocaleString()}`
-                      : list.publishedAt
-                        ? new Date(list.publishedAt).toLocaleString()
-                        : "Not published"}
-                  </p>
-                </div>
-                <span className="rounded-md border border-green-200 bg-green-50 px-2 py-1 text-xs font-semibold text-green-800">
-                  {list.status.replaceAll("_", " ")}
-                </span>
-              </div>
+              {(() => {
+                const summary = listSummaries[list.id] ?? createEmptyPurchaseListProgressSummary();
+
+                return (
+                  <>
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="text-base font-semibold text-stone-950">{list.name}</h3>
+                        <p className="mt-1 text-sm text-stone-600">
+                          {list.publishMode === "scheduled" && list.scheduledPublishAt
+                            ? `Scheduled for ${new Date(list.scheduledPublishAt).toLocaleString()}`
+                            : list.publishedAt
+                              ? new Date(list.publishedAt).toLocaleString()
+                              : "Not published"}
+                        </p>
+                      </div>
+                      <span className="rounded-md border border-green-200 bg-green-50 px-2 py-1 text-xs font-semibold text-green-800">
+                        {list.status.replaceAll("_", " ")}
+                      </span>
+                    </div>
+                    <div
+                      className={`rounded-md border p-3 text-sm ${progressSummaryClass(summary)}`}
+                    >
+                      <p className="font-semibold">
+                        {summary.received} of {summary.total} items received
+                      </p>
+                      <p className="mt-1">
+                        Pending {summary.pending} - Bought {summary.bought} - Issues {summary.issue}{" "}
+                        - Spend {formatMoney(summary.totalCost)}
+                      </p>
+                    </div>
+                  </>
+                );
+              })()}
               {list.publishMode === "scheduled" && list.status === "ready_to_publish" ? (
                 <button
                   className="min-h-11 w-full rounded-md border border-brand-900 px-3 text-sm font-semibold text-brand-900 disabled:border-stone-300 disabled:text-stone-400"

@@ -39,7 +39,7 @@ function mapActor(row: {
   };
 }
 
-function mapPurchaseListItem(row: PurchaseListItemRow): PurchaseListItemRecord {
+export function mapPurchaseListItem(row: PurchaseListItemRow): PurchaseListItemRecord {
   return {
     approvedQuantity: row.approved_quantity,
     assignedPurchaserUserId: row.assigned_purchaser_user_id,
