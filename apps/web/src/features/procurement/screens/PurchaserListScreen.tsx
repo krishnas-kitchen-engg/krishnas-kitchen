@@ -146,6 +146,42 @@ export function PurchaserListScreen() {
                   />
                 </label>
 
+                <section className="space-y-3 rounded-md border border-stone-200 bg-stone-50 p-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase text-stone-500">Receipt</p>
+                    <p className="mt-1 text-sm text-stone-600">
+                      Upload a receipt photo for audit. This does not receive inventory.
+                    </p>
+                  </div>
+                  <input
+                    accept="image/jpeg,image/png,image/webp"
+                    className="block w-full text-sm text-stone-700 file:mr-3 file:min-h-10 file:rounded-md file:border-0 file:bg-stone-900 file:px-3 file:text-sm file:font-semibold file:text-white"
+                    onChange={(event) =>
+                      purchaserList.setDraftReceiptFile(
+                        item.id,
+                        event.target.files?.item(0) ?? null
+                      )
+                    }
+                    type="file"
+                  />
+                  <button
+                    className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-sm font-semibold text-stone-800 disabled:text-stone-400"
+                    disabled={
+                      purchaserList.submittingItemId === `receipt:${item.id}` ||
+                      !purchaserList.canUploadReceipts ||
+                      !draft?.receiptFile
+                    }
+                    onClick={() => {
+                      void purchaserList.uploadReceipt(item.id);
+                    }}
+                    type="button"
+                  >
+                    {purchaserList.submittingItemId === `receipt:${item.id}`
+                      ? "Uploading..."
+                      : "Upload receipt"}
+                  </button>
+                </section>
+
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     className="min-h-11 rounded-md bg-brand-900 px-3 text-sm font-semibold text-white disabled:bg-stone-300"

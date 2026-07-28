@@ -12,6 +12,7 @@ import type {
   PurchaseListStatus,
   PurchaseLocationInput,
   PurchasePublishMode,
+  PurchaseReceiptUploadInput,
   PurchaseReceiptStatus,
   PurchaseRequestInput,
   PurchaseRequestReviewInput,
@@ -130,6 +131,22 @@ export type PurchaserListRepository = {
   updatePurchaseListItemProgress: (
     input: PurchaseListItemProgressUpdate
   ) => Promise<PurchaseListItemRecord>;
+};
+
+export type PurchaseReceiptRecordInput = Omit<PurchaseReceiptUploadInput, "file"> & {
+  receiptImagePath: string;
+  uploadedAt: string;
+};
+
+export type PurchaseReceiptRepository = {
+  recordPurchaseReceipt: (input: PurchaseReceiptRecordInput) => Promise<PurchaseReceiptRecord>;
+  removeReceiptImage: (path: string) => Promise<void>;
+  uploadReceiptImage: (input: {
+    file: File;
+    organizationId: EntityId;
+    path: string;
+    templeId: EntityId;
+  }) => Promise<string>;
 };
 
 export type ProcurementRepository = {

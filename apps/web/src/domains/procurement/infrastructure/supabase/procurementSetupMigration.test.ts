@@ -92,4 +92,14 @@ describe("procurement setup migration", () => {
       /status in \(\s*'bought',\s*'partially_bought',\s*'unavailable',\s*'substituted'\s*\)/i
     );
   });
+
+  it("creates receipt storage and metadata without inventory mutation", () => {
+    expect(migration).toMatch(/'purchase-receipts'/i);
+    expect(migration).toMatch(/Authenticated purchasers can remove own purchase receipt uploads/i);
+    expect(migration).toMatch(/create table if not exists public\.purchase_receipts/i);
+    expect(migration).toMatch(/purchase_receipts_unique_list_item/i);
+    expect(migration).toMatch(/create or replace function public\.record_purchase_receipt\(/i);
+    expect(migration).toMatch(/status = 'receipt_uploaded'/i);
+    expect(migration).not.toMatch(/insert into public\.inventory_transactions/i);
+  });
 });

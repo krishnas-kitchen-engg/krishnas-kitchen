@@ -685,6 +685,238 @@ create policy "Assigned purchasers can update purchase list item progress"
     )
   );
 
+insert into storage.buckets (
+  id,
+  name,
+  public,
+  file_size_limit,
+  allowed_mime_types
+)
+values (
+  'purchase-receipts',
+  'purchase-receipts',
+  false,
+  10485760,
+  array['image/jpeg', 'image/png', 'image/webp']
+)
+on conflict (id) do update
+set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "Authenticated purchasers can upload purchase receipts"
+  on storage.objects;
+
+create policy "Authenticated purchasers can upload purchase receipts"
+  on storage.objects
+  for insert
+  to authenticated
+  with check (
+    bucket_id = 'purchase-receipts'
+    and split_part(name, '/', 3) = auth.uid()::text
+    and public.is_authenticated_user_in_organization(split_part(name, '/', 1)::uuid)
+    and public.is_authenticated_user_assigned_to_temple(split_part(name, '/', 2)::uuid)
+  );
+
+drop policy if exists "Authenticated users can read scoped purchase receipts"
+  on storage.objects;
+
+create policy "Authenticated users can read scoped purchase receipts"
+  on storage.objects
+  for select
+  to authenticated
+  using (
+    bucket_id = 'purchase-receipts'
+    and public.is_authenticated_user_in_organization(split_part(name, '/', 1)::uuid)
+    and public.is_authenticated_user_assigned_to_temple(split_part(name, '/', 2)::uuid)
+  );
+
+drop policy if exists "Authenticated purchasers can remove own purchase receipt uploads"
+  on storage.objects;
+
+create policy "Authenticated purchasers can remove own purchase receipt uploads"
+  on storage.objects
+  for delete
+  to authenticated
+  using (
+    bucket_id = 'purchase-receipts'
+    and split_part(name, '/', 3) = auth.uid()::text
+  );
+
+create table if not exists public.purchase_receipts (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id),
+  temple_id uuid not null references public.temples(id),
+  purchase_list_id uuid not null references public.purchase_lists(id),
+  purchase_list_item_id uuid not null references public.purchase_list_items(id),
+  purchase_location_id uuid references public.purchase_locations(id),
+  purchaser_user_id uuid not null references public.users(id),
+  receipt_image_path text not null,
+  status text not null default 'uploaded',
+  purchase_date date,
+  total_cost numeric(12, 2),
+  notes text,
+  uploaded_by_actor_type public.actor_type not null,
+  uploaded_by_actor_user_id uuid references public.users(id),
+  uploaded_by_actor_temp_session_id uuid,
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now()),
+
+  constraint purchase_receipts_status check (
+    status in (
+      'uploaded',
+      'needs_review',
+      'matched',
+      'partially_matched',
+      'reconciled',
+      'rejected'
+    )
+  ),
+  constraint purchase_receipts_total_cost_non_negative check (
+    total_cost is null or total_cost >= 0
+  ),
+  constraint purchase_receipts_uploaded_actor_context check (
+    (uploaded_by_actor_type = 'user' and uploaded_by_actor_user_id is not null and uploaded_by_actor_temp_session_id is null)
+    or (uploaded_by_actor_type = 'temporary_volunteer' and uploaded_by_actor_temp_session_id is not null and uploaded_by_actor_user_id is null)
+    or (uploaded_by_actor_type = 'system' and uploaded_by_actor_user_id is null and uploaded_by_actor_temp_session_id is null)
+  )
+);
+
+create unique index if not exists purchase_receipts_unique_list_item
+  on public.purchase_receipts(purchase_list_item_id);
+
+create unique index if not exists purchase_receipts_unique_image_path
+  on public.purchase_receipts(receipt_image_path);
+
+create index if not exists idx_purchase_receipts_org_temple
+  on public.purchase_receipts(organization_id, temple_id);
+
+create trigger purchase_receipts_updated_at
+before update on public.purchase_receipts
+for each row
+execute procedure public.set_updated_at();
+
+alter table public.purchase_receipts enable row level security;
+
+drop policy if exists "Authenticated users can read scoped purchase receipt records"
+  on public.purchase_receipts;
+
+create policy "Authenticated users can read scoped purchase receipt records"
+  on public.purchase_receipts
+  for select
+  to authenticated
+  using (
+    public.is_authenticated_user_in_organization(organization_id)
+    and public.is_authenticated_user_assigned_to_temple(temple_id)
+  );
+
+create or replace function public.record_purchase_receipt(
+  p_organization_id uuid,
+  p_temple_id uuid,
+  p_purchase_list_item_id uuid,
+  p_receipt_image_path text,
+  p_purchase_date date,
+  p_total_cost numeric,
+  p_notes text,
+  p_uploaded_by_user_id uuid
+)
+returns public.purchase_receipts
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  created_receipt public.purchase_receipts;
+  target_item public.purchase_list_items;
+begin
+  if auth.uid() is null or auth.uid() <> p_uploaded_by_user_id then
+    raise exception 'Uploader must match the signed-in user.';
+  end if;
+
+  if nullif(trim(p_receipt_image_path), '') is null then
+    raise exception 'Receipt image path is required.';
+  end if;
+
+  if p_total_cost is not null and p_total_cost < 0 then
+    raise exception 'Receipt total cannot be negative.';
+  end if;
+
+  select *
+  into target_item
+  from public.purchase_list_items item
+  where item.organization_id = p_organization_id
+    and item.temple_id = p_temple_id
+    and item.id = p_purchase_list_item_id
+    and item.assigned_purchaser_user_id = auth.uid()
+    and item.status in (
+      'pending_purchase',
+      'bought',
+      'partially_bought',
+      'unavailable',
+      'substituted'
+    )
+  for update;
+
+  if target_item.id is null then
+    raise exception 'Purchase list item is not assigned to this purchaser.';
+  end if;
+
+  insert into public.purchase_receipts (
+    organization_id,
+    temple_id,
+    purchase_list_id,
+    purchase_list_item_id,
+    purchase_location_id,
+    purchaser_user_id,
+    receipt_image_path,
+    status,
+    purchase_date,
+    total_cost,
+    notes,
+    uploaded_by_actor_type,
+    uploaded_by_actor_user_id
+  )
+  values (
+    p_organization_id,
+    p_temple_id,
+    target_item.purchase_list_id,
+    target_item.id,
+    target_item.purchase_location_id,
+    p_uploaded_by_user_id,
+    trim(p_receipt_image_path),
+    'uploaded',
+    p_purchase_date,
+    p_total_cost,
+    nullif(trim(coalesce(p_notes, '')), ''),
+    'user',
+    p_uploaded_by_user_id
+  )
+  returning * into created_receipt;
+
+  update public.purchase_list_items item
+  set
+    status = 'receipt_uploaded',
+    purchase_date = coalesce(p_purchase_date, item.purchase_date),
+    total_cost = coalesce(p_total_cost, item.total_cost),
+    notes = coalesce(nullif(trim(coalesce(p_notes, '')), ''), item.notes),
+    purchased_at = coalesce(item.purchased_at, timezone('utc', now())),
+    purchased_by_actor_type = coalesce(item.purchased_by_actor_type, 'user'),
+    purchased_by_actor_user_id = coalesce(item.purchased_by_actor_user_id, p_uploaded_by_user_id),
+    purchased_by_actor_temp_session_id = null,
+    updated_at = timezone('utc', now())
+  where item.id = target_item.id;
+
+  return created_receipt;
+end;
+$$;
+
+revoke execute on function public.record_purchase_receipt(uuid, uuid, uuid, text, date, numeric, text, uuid)
+  from public;
+
+grant execute on function public.record_purchase_receipt(uuid, uuid, uuid, text, date, numeric, text, uuid)
+  to authenticated;
+
 create or replace function public.publish_approved_purchase_requests(
   p_organization_id uuid,
   p_temple_id uuid,

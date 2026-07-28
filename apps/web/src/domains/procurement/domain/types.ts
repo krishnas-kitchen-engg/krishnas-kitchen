@@ -153,3 +153,12 @@ export type PurchaseListItemProgressInput = ProcurementScope & {
   totalCost?: number | null;
   unitCost?: number | null;
 };
+
+export type PurchaseReceiptUploadInput = ProcurementScope & {
+  file: File;
+  itemId: EntityId;
+  notes?: string | null;
+  purchaseDate?: string | null;
+  totalCost?: number | null;
+  uploadedBy: ProcurementActor;
+};

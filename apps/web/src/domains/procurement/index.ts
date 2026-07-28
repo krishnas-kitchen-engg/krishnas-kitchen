@@ -23,10 +23,15 @@ export {
   PurchaseListPublishValidationError
 } from "./application/purchaseListPublishService";
 export {
+  createPurchaseReceiptService,
+  PurchaseReceiptValidationError
+} from "./application/purchaseReceiptService";
+export {
   createPurchaserListService,
   PurchaserListValidationError
 } from "./application/purchaserListService";
 export { createSupabasePurchaseListRepository } from "./infrastructure/supabase/supabasePurchaseListRepository";
+export { createSupabasePurchaseReceiptRepository } from "./infrastructure/supabase/supabasePurchaseReceiptRepository";
 export { createSupabasePurchaserListRepository } from "./infrastructure/supabase/supabasePurchaserListRepository";
 export { createSupabaseProcurementAdminRepository } from "./infrastructure/supabase/supabaseProcurementAdminRepository";
 export {
@@ -49,6 +54,7 @@ export type {
   PurchaseRequestReviewService
 } from "./application/purchaseRequestReviewService";
 export type { PurchaseListPublishService } from "./application/purchaseListPublishService";
+export type { PurchaseReceiptService } from "./application/purchaseReceiptService";
 export type { PurchaserListService } from "./application/purchaserListService";
 export {
   assertValidPurchaseRequestInput,
@@ -73,6 +79,7 @@ export type {
   PurchaseLocationInput,
   PurchasePublishMode,
   PurchaseReceiptStatus,
+  PurchaseReceiptUploadInput,
   PurchaseRequestInput,
   PurchaseRequestReviewDecision,
   PurchaseRequestReviewInput,

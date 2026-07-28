@@ -588,6 +588,58 @@ export type Database = {
         };
         Relationships: [];
       };
+      purchase_receipts: {
+        Row: {
+          created_at: string;
+          id: string;
+          notes: string | null;
+          organization_id: string;
+          purchase_date: string | null;
+          purchase_list_id: string;
+          purchase_list_item_id: string;
+          purchase_location_id: string | null;
+          purchaser_user_id: string;
+          receipt_image_path: string;
+          status:
+            | "matched"
+            | "needs_review"
+            | "partially_matched"
+            | "reconciled"
+            | "rejected"
+            | "uploaded";
+          temple_id: string;
+          total_cost: number | null;
+          updated_at: string;
+          uploaded_by_actor_temp_session_id: string | null;
+          uploaded_by_actor_type: ActorType;
+          uploaded_by_actor_user_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          notes?: string | null;
+          organization_id: string;
+          purchase_date?: string | null;
+          purchase_list_id: string;
+          purchase_list_item_id: string;
+          purchase_location_id?: string | null;
+          purchaser_user_id: string;
+          receipt_image_path: string;
+          status?: "uploaded";
+          temple_id: string;
+          total_cost?: number | null;
+          updated_at?: string;
+          uploaded_by_actor_temp_session_id?: string | null;
+          uploaded_by_actor_type: ActorType;
+          uploaded_by_actor_user_id?: string | null;
+        };
+        Update: {
+          notes?: string | null;
+          status?: "matched" | "needs_review" | "partially_matched" | "reconciled" | "rejected";
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       purchase_requests: {
         Row: {
           created_at: string;
@@ -895,6 +947,19 @@ export type Database = {
           p_temple_id: string;
         };
         Returns: Database["public"]["Tables"]["purchase_lists"]["Row"];
+      };
+      record_purchase_receipt: {
+        Args: {
+          p_notes: string | null;
+          p_organization_id: string;
+          p_purchase_date: string | null;
+          p_purchase_list_item_id: string;
+          p_receipt_image_path: string;
+          p_temple_id: string;
+          p_total_cost: number | null;
+          p_uploaded_by_user_id: string;
+        };
+        Returns: Database["public"]["Tables"]["purchase_receipts"]["Row"];
       };
     };
     Enums: {

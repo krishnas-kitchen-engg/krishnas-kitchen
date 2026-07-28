@@ -502,6 +502,8 @@ Goal: purchasers upload receipt images and manually attach cost evidence to purc
 
 Includes receipt storage, finance-audit metadata, and duplicate-counting protections.
 
+Status: Complete for receipt photo upload, receipt metadata storage, line-level attachment, and no-inventory-mutation protection. Finance review remains a separate slice.
+
 ### Slice 7: Purchase-To-Inventory Receiving
 
 Goal: confirmed purchased quantities can be received into inventory through existing immutable receiving transactions.
@@ -556,10 +558,10 @@ No automatic inventory mutation.
 | Purchasers receive assigned store-specific list | Purchaser View | Slice 5 | Complete |
 | Items can be tagged to purchase locations | Admin View | Slice 2 | Complete |
 | Purchaser can mark bought quantities and costs | Purchaser View | Slice 5 | Complete |
-| Purchaser can upload receipt photo | Purchaser View | Slice 6 | Planned |
-| Receipt is stored for audit and finance | Receipt / Finance | Slice 6 | Planned |
-| Receipt data can support card/finance review | Finance Review | Slice 8 | Planned |
-| System avoids double counting checklist plus receipt | Reconciliation | Slice 6 / Slice 7 | Planned |
+| Purchaser can upload receipt photo | Purchaser View | Slice 6 | Complete |
+| Receipt is stored for audit and finance | Receipt / Finance | Slice 6 | Complete |
+| Receipt data can support card/finance review | Finance Review | Slice 8 | Partial |
+| System avoids double counting checklist plus receipt | Reconciliation | Slice 6 / Slice 7 | Partial |
 | Confirmed purchases update inventory safely | Inventory Reconciliation | Slice 7 | Planned |
 | Forecasting is not included | Product Scope | All slices | Removed |
 

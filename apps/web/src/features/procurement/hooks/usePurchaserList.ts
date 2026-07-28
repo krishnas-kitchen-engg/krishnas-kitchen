@@ -2,7 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useInventoryActor } from "@/domains/inventory";
 import {
+  createPurchaseReceiptService,
   createPurchaserListService,
+  createSupabasePurchaseReceiptRepository,
   createSupabasePurchaserListRepository,
   type ProcurementActor,
   type PurchaseListItemProgressStatus,
@@ -11,6 +13,7 @@ import {
 import { hasPermission, useAuth } from "@/features/auth";
 
 type ProgressDraft = {
+  receiptFile: File | null;
   notes: string;
   purchaseDate: string;
   purchasedQuantityText: string;
@@ -47,6 +50,7 @@ function createDraft(item: PurchaseListItemRecord): ProgressDraft {
     notes: item.notes ?? "",
     purchaseDate: "",
     purchasedQuantityText: item.purchasedQuantity ? String(item.purchasedQuantity) : "",
+    receiptFile: null,
     totalCostText: item.totalCost ? String(item.totalCost) : "",
     unitCostText: item.unitCost ? String(item.unitCost) : ""
   };
@@ -73,6 +77,7 @@ export function usePurchaserList() {
     auth.permissions,
     "procurement.purchases.update_assigned"
   );
+  const canUploadReceipts = hasPermission(auth.permissions, "procurement.receipts.upload");
   const submitLock = useRef(false);
   const service = useMemo(() => {
     if (!auth.client) {
@@ -80,6 +85,13 @@ export function usePurchaserList() {
     }
 
     return createPurchaserListService(createSupabasePurchaserListRepository(auth.client));
+  }, [auth.client]);
+  const receiptService = useMemo(() => {
+    if (!auth.client) {
+      return null;
+    }
+
+    return createPurchaseReceiptService(createSupabasePurchaseReceiptRepository(auth.client));
   }, [auth.client]);
   const [refreshIndex, setRefreshIndex] = useState(0);
   const [items, setItems] = useState<readonly PurchaseListItemRecord[]>([]);
@@ -146,6 +158,7 @@ export function usePurchaserList() {
           notes: "",
           purchaseDate: "",
           purchasedQuantityText: "",
+          receiptFile: null,
           totalCostText: "",
           unitCostText: ""
         }),
@@ -201,8 +214,52 @@ export function usePurchaserList() {
     }
   }
 
+  async function uploadReceipt(itemId: string) {
+    const draft = drafts[itemId];
+
+    if (
+      submitLock.current ||
+      submittingItemId ||
+      !canUploadReceipts ||
+      !organizationId ||
+      !templeId ||
+      !procurementActor ||
+      procurementActor.type !== "user" ||
+      !receiptService ||
+      !draft?.receiptFile
+    ) {
+      return;
+    }
+
+    submitLock.current = true;
+    setError(null);
+    setSubmittingItemId(`receipt:${itemId}`);
+
+    try {
+      await receiptService.uploadPurchaseReceipt({
+        file: draft.receiptFile,
+        itemId,
+        notes: draft.notes,
+        organizationId,
+        purchaseDate: draft.purchaseDate,
+        templeId,
+        totalCost: optionalNumber(draft.totalCostText),
+        uploadedBy: procurementActor
+      });
+
+      setSubmittingItemId(null);
+      refresh();
+    } catch (uploadError) {
+      setError(uploadError instanceof Error ? uploadError.message : "Receipt upload failed.");
+      setSubmittingItemId(null);
+    } finally {
+      submitLock.current = false;
+    }
+  }
+
   return {
     canUpdatePurchases,
+    canUploadReceipts,
     canUsePurchaserList,
     drafts,
     error,
@@ -217,6 +274,9 @@ export function usePurchaserList() {
     setDraftPurchasedQuantity(itemId: string, purchasedQuantityText: string) {
       updateDraft(itemId, { purchasedQuantityText });
     },
+    setDraftReceiptFile(itemId: string, receiptFile: File | null) {
+      updateDraft(itemId, { receiptFile });
+    },
     setDraftTotalCost(itemId: string, totalCostText: string) {
       updateDraft(itemId, { totalCostText });
     },
@@ -224,6 +284,7 @@ export function usePurchaserList() {
       updateDraft(itemId, { unitCostText });
     },
     submittingItemId,
+    uploadReceipt,
     updateProgress
   };
 }
