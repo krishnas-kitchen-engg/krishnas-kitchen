@@ -162,3 +162,10 @@ export type PurchaseReceiptUploadInput = ProcurementScope & {
   totalCost?: number | null;
   uploadedBy: ProcurementActor;
 };
+
+export type PurchaseInventoryReceiveInput = ProcurementScope & {
+  itemId: EntityId;
+  locationId: EntityId;
+  notes?: string | null;
+  receivedBy: ProcurementActor;
+};

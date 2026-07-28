@@ -948,6 +948,16 @@ export type Database = {
         };
         Returns: Database["public"]["Tables"]["purchase_lists"]["Row"];
       };
+      mark_purchase_list_item_received: {
+        Args: {
+          p_inventory_transaction_id: string;
+          p_organization_id: string;
+          p_purchase_list_item_id: string;
+          p_received_by_user_id: string;
+          p_temple_id: string;
+        };
+        Returns: Database["public"]["Tables"]["purchase_list_items"]["Row"];
+      };
       record_purchase_receipt: {
         Args: {
           p_notes: string | null;

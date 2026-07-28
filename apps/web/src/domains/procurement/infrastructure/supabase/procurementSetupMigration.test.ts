@@ -6,6 +6,13 @@ const migration = readFileSync(
   resolve(process.cwd(), "infra/supabase/migrations/20260728000100_add_procurement_setup.sql"),
   "utf8"
 );
+const receivingMigration = readFileSync(
+  resolve(
+    process.cwd(),
+    "infra/supabase/migrations/20260728000200_add_purchase_inventory_receiving.sql"
+  ),
+  "utf8"
+);
 
 describe("procurement setup migration", () => {
   it("creates purchase setup tables with tenant and temple scope", () => {
@@ -101,5 +108,29 @@ describe("procurement setup migration", () => {
     expect(migration).toMatch(/create or replace function public\.record_purchase_receipt\(/i);
     expect(migration).toMatch(/status = 'receipt_uploaded'/i);
     expect(migration).not.toMatch(/insert into public\.inventory_transactions/i);
+  });
+
+  it("links purchased items to immutable receiving transactions through one guarded function", () => {
+    expect(receivingMigration).toMatch(
+      /create or replace function public\.mark_purchase_list_item_received/i
+    );
+    expect(receivingMigration).toMatch(/security definer/i);
+    expect(receivingMigration).toMatch(/for update/i);
+    expect(receivingMigration).toMatch(/target_item\.item_reference_type <> 'existing_item'/i);
+    expect(receivingMigration).toMatch(/target_item\.inventory_transaction_id is not null/i);
+    expect(receivingMigration).toMatch(
+      /target_item\.status not in \('bought', 'partially_bought', 'receipt_uploaded'\)/i
+    );
+    expect(receivingMigration).toMatch(/received_transaction\.transaction_type <> 'received'/i);
+    expect(receivingMigration).toMatch(
+      /received_transaction\.quantity <> target_item\.purchased_quantity/i
+    );
+    expect(receivingMigration).toMatch(/status = 'received_into_inventory'/i);
+    expect(receivingMigration).toMatch(
+      /grant execute on function public\.mark_purchase_list_item_received/i
+    );
+    expect(migration).toMatch(
+      /inventory_transaction_id uuid references public\.inventory_transactions\(id\)/i
+    );
   });
 });

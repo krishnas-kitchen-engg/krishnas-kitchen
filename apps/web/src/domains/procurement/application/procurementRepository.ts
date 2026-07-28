@@ -13,6 +13,7 @@ import type {
   PurchaseLocationInput,
   PurchasePublishMode,
   PurchaseReceiptUploadInput,
+  PurchaseInventoryReceiveInput,
   PurchaseReceiptStatus,
   PurchaseRequestInput,
   PurchaseRequestReviewInput,
@@ -125,9 +126,15 @@ export type PurchaseListItemProgressUpdate = PurchaseListItemProgressInput & {
 };
 
 export type PurchaserListRepository = {
+  findPurchaseListItemById: (
+    scope: ProcurementScope & { itemId: EntityId }
+  ) => Promise<PurchaseListItemRecord | null>;
   listAssignedPurchaseListItems: (
     scope: ProcurementScope & { purchaserUserId: EntityId }
   ) => Promise<readonly PurchaseListItemRecord[]>;
+  markPurchaseListItemReceived: (
+    input: PurchaseInventoryReceiveInput & { inventoryTransactionId: EntityId }
+  ) => Promise<PurchaseListItemRecord>;
   updatePurchaseListItemProgress: (
     input: PurchaseListItemProgressUpdate
   ) => Promise<PurchaseListItemRecord>;

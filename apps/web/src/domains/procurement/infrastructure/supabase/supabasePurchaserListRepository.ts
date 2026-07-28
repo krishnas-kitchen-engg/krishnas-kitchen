@@ -101,6 +101,22 @@ export function createSupabasePurchaserListRepository(
   client: SupabaseClient<Database>
 ): PurchaserListRepository {
   return {
+    async findPurchaseListItemById(scope) {
+      const { data, error } = await client
+        .from("purchase_list_items")
+        .select("*")
+        .eq("organization_id", scope.organizationId)
+        .eq("temple_id", scope.templeId)
+        .eq("id", scope.itemId)
+        .maybeSingle();
+
+      if (error) {
+        throw error;
+      }
+
+      return data ? mapPurchaseListItem(data) : null;
+    },
+
     async listAssignedPurchaseListItems(query) {
       const { data, error } = await client
         .from("purchase_list_items")
@@ -116,6 +132,22 @@ export function createSupabasePurchaserListRepository(
       }
 
       return data.map(mapPurchaseListItem);
+    },
+
+    async markPurchaseListItemReceived(input) {
+      const { data, error } = await client.rpc("mark_purchase_list_item_received", {
+        p_inventory_transaction_id: input.inventoryTransactionId,
+        p_organization_id: input.organizationId,
+        p_purchase_list_item_id: input.itemId,
+        p_received_by_user_id: input.receivedBy.userId ?? "",
+        p_temple_id: input.templeId
+      });
+
+      if (error || !data) {
+        throw error ?? new Error("Purchase list item receive linkage returned no row.");
+      }
+
+      return mapPurchaseListItem(data);
     },
 
     async updatePurchaseListItemProgress(input) {

@@ -23,6 +23,10 @@ export {
   PurchaseListPublishValidationError
 } from "./application/purchaseListPublishService";
 export {
+  createPurchaseInventoryReceivingService,
+  PurchaseInventoryReceivingValidationError
+} from "./application/purchaseInventoryReceivingService";
+export {
   createPurchaseReceiptService,
   PurchaseReceiptValidationError
 } from "./application/purchaseReceiptService";
@@ -54,6 +58,10 @@ export type {
   PurchaseRequestReviewService
 } from "./application/purchaseRequestReviewService";
 export type { PurchaseListPublishService } from "./application/purchaseListPublishService";
+export type {
+  PurchaseInventoryReceivingResult,
+  PurchaseInventoryReceivingService
+} from "./application/purchaseInventoryReceivingService";
 export type { PurchaseReceiptService } from "./application/purchaseReceiptService";
 export type { PurchaserListService } from "./application/purchaserListService";
 export {
@@ -70,6 +78,7 @@ export type {
   ProcurementActor,
   ProcurementScope,
   PurchaseItemReference,
+  PurchaseInventoryReceiveInput,
   PurchaseListInput,
   PurchaseListItemProgressInput,
   PurchaseListItemProgressStatus,

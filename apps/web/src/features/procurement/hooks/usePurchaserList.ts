@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { useInventoryActor } from "@/domains/inventory";
+import { useInventoryActor, useOptionalInventoryServices } from "@/domains/inventory";
 import {
+  createPurchaseInventoryReceivingService,
   createPurchaseReceiptService,
   createPurchaserListService,
   createSupabasePurchaseReceiptRepository,
@@ -12,7 +13,10 @@ import {
 } from "@/domains/procurement";
 import { hasPermission, useAuth } from "@/features/auth";
 
+import type { InventoryCatalogLocation } from "@/domains/inventory";
+
 type ProgressDraft = {
+  receiveLocationId: string;
   receiptFile: File | null;
   notes: string;
   purchaseDate: string;
@@ -50,6 +54,7 @@ function createDraft(item: PurchaseListItemRecord): ProgressDraft {
     notes: item.notes ?? "",
     purchaseDate: "",
     purchasedQuantityText: item.purchasedQuantity ? String(item.purchasedQuantity) : "",
+    receiveLocationId: "",
     receiptFile: null,
     totalCostText: item.totalCost ? String(item.totalCost) : "",
     unitCostText: item.unitCost ? String(item.unitCost) : ""
@@ -65,6 +70,8 @@ function optionalNumber(value: string): number | null {
 export function usePurchaserList() {
   const auth = useAuth();
   const inventoryActor = useInventoryActor();
+  const inventoryServices = useOptionalInventoryServices();
+  const catalogQueries = inventoryServices?.catalogQueries ?? null;
   const procurementActor = useMemo(() => toProcurementActor(inventoryActor), [inventoryActor]);
   const organizationId = auth.currentOrganization?.id;
   const templeId = auth.currentTemple?.id;
@@ -78,6 +85,7 @@ export function usePurchaserList() {
     "procurement.purchases.update_assigned"
   );
   const canUploadReceipts = hasPermission(auth.permissions, "procurement.receipts.upload");
+  const canReceiveInventory = hasPermission(auth.permissions, "inventory.receive");
   const submitLock = useRef(false);
   const service = useMemo(() => {
     if (!auth.client) {
@@ -93,8 +101,19 @@ export function usePurchaserList() {
 
     return createPurchaseReceiptService(createSupabasePurchaseReceiptRepository(auth.client));
   }, [auth.client]);
+  const receivingService = useMemo(() => {
+    if (!auth.client || !inventoryServices) {
+      return null;
+    }
+
+    return createPurchaseInventoryReceivingService({
+      inventoryService: inventoryServices.inventory,
+      repository: createSupabasePurchaserListRepository(auth.client)
+    });
+  }, [auth.client, inventoryServices]);
   const [refreshIndex, setRefreshIndex] = useState(0);
   const [items, setItems] = useState<readonly PurchaseListItemRecord[]>([]);
+  const [locations, setLocations] = useState<readonly InventoryCatalogLocation[]>([]);
   const [drafts, setDrafts] = useState<Record<string, ProgressDraft>>({});
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -158,6 +177,7 @@ export function usePurchaserList() {
           notes: "",
           purchaseDate: "",
           purchasedQuantityText: "",
+          receiveLocationId: "",
           receiptFile: null,
           totalCostText: "",
           unitCostText: ""
@@ -214,6 +234,90 @@ export function usePurchaserList() {
     }
   }
 
+  useEffect(() => {
+    if (!organizationId || !templeId) {
+      setLocations([]);
+      return;
+    }
+
+    let isActive = true;
+    const currentOrganizationId = organizationId;
+    const currentTempleId = templeId;
+
+    async function loadLocations() {
+      try {
+        if (!catalogQueries) {
+          setLocations([]);
+          return;
+        }
+
+        const nextLocations = await catalogQueries.listActiveLocations({
+          limit: 50,
+          organizationId: currentOrganizationId,
+          templeId: currentTempleId
+        });
+
+        if (isActive) {
+          setLocations(nextLocations);
+        }
+      } catch (loadError) {
+        if (isActive) {
+          setError(
+            loadError instanceof Error ? loadError.message : "Inventory locations failed to load."
+          );
+          setLocations([]);
+        }
+      }
+    }
+
+    void loadLocations();
+
+    return () => {
+      isActive = false;
+    };
+  }, [catalogQueries, organizationId, templeId]);
+
+  async function receiveIntoInventory(itemId: string) {
+    const draft = drafts[itemId];
+
+    if (
+      submitLock.current ||
+      submittingItemId ||
+      !canReceiveInventory ||
+      !organizationId ||
+      !templeId ||
+      !procurementActor ||
+      procurementActor.type !== "user" ||
+      !receivingService ||
+      !draft?.receiveLocationId
+    ) {
+      return;
+    }
+
+    submitLock.current = true;
+    setError(null);
+    setSubmittingItemId(`receive:${itemId}`);
+
+    try {
+      await receivingService.receivePurchasedItem({
+        itemId,
+        locationId: draft.receiveLocationId,
+        notes: draft.notes,
+        organizationId,
+        receivedBy: procurementActor,
+        templeId
+      });
+
+      setSubmittingItemId(null);
+      refresh();
+    } catch (receiveError) {
+      setError(receiveError instanceof Error ? receiveError.message : "Purchase receiving failed.");
+      setSubmittingItemId(null);
+    } finally {
+      submitLock.current = false;
+    }
+  }
+
   async function uploadReceipt(itemId: string) {
     const draft = drafts[itemId];
 
@@ -260,11 +364,14 @@ export function usePurchaserList() {
   return {
     canUpdatePurchases,
     canUploadReceipts,
+    canReceiveInventory,
     canUsePurchaserList,
     drafts,
     error,
     isLoading,
     items,
+    locations,
+    receiveIntoInventory,
     setDraftNotes(itemId: string, notes: string) {
       updateDraft(itemId, { notes });
     },
@@ -276,6 +383,9 @@ export function usePurchaserList() {
     },
     setDraftReceiptFile(itemId: string, receiptFile: File | null) {
       updateDraft(itemId, { receiptFile });
+    },
+    setDraftReceiveLocation(itemId: string, receiveLocationId: string) {
+      updateDraft(itemId, { receiveLocationId });
     },
     setDraftTotalCost(itemId: string, totalCostText: string) {
       updateDraft(itemId, { totalCostText });

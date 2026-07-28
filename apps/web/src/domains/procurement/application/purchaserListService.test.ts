@@ -35,8 +35,14 @@ function createRepository(): PurchaserListRepository & {
 } {
   return {
     lastStatus: null,
+    findPurchaseListItemById() {
+      return Promise.resolve(assignedItem);
+    },
     listAssignedPurchaseListItems() {
       return Promise.resolve([assignedItem]);
+    },
+    markPurchaseListItemReceived() {
+      throw new Error("Purchaser progress must not receive inventory.");
     },
     updatePurchaseListItemProgress(input) {
       this.lastStatus = input.status;

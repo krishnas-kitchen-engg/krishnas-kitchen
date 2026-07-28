@@ -9,6 +9,10 @@ function formatItem(item: {
 }
 
 function statusClass(status: string) {
+  if (status === "received_into_inventory") {
+    return "border-emerald-200 bg-emerald-50 text-emerald-800";
+  }
+
   if (status === "bought") {
     return "border-green-200 bg-green-50 text-green-800";
   }
@@ -63,6 +67,17 @@ export function PurchaserListScreen() {
           {purchaserList.items.map((item) => {
             const draft = purchaserList.drafts[item.id];
             const isSubmitting = purchaserList.submittingItemId === item.id;
+            const isReceiveSubmitting = purchaserList.submittingItemId === `receive:${item.id}`;
+            const isReceived =
+              item.status === "received_into_inventory" || Boolean(item.inventoryTransactionId);
+            const canReceiveItem =
+              purchaserList.canReceiveInventory &&
+              item.item.type === "existing_item" &&
+              !isReceived &&
+              (item.status === "bought" ||
+                item.status === "partially_bought" ||
+                item.status === "receipt_uploaded") &&
+              Boolean(item.purchasedQuantity && item.purchasedQuantity > 0);
 
             return (
               <article
@@ -182,10 +197,58 @@ export function PurchaserListScreen() {
                   </button>
                 </section>
 
+                <section className="space-y-3 rounded-md border border-brand-100 bg-brand-50 p-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase text-brand-800">
+                      Inventory receiving
+                    </p>
+                    <p className="mt-1 text-sm text-stone-700">
+                      Receive the purchased quantity into an active inventory location.
+                    </p>
+                  </div>
+                  <label className="block text-sm font-medium text-stone-800">
+                    Receive location
+                    <select
+                      className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+                      disabled={!canReceiveItem || isReceiveSubmitting}
+                      onChange={(event) =>
+                        purchaserList.setDraftReceiveLocation(item.id, event.target.value)
+                      }
+                      value={draft?.receiveLocationId ?? ""}
+                    >
+                      <option value="">Select location</option>
+                      {purchaserList.locations.map((location) => (
+                        <option key={location.id} value={location.id}>
+                          {location.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  {item.item.type === "new_item_suggestion" ? (
+                    <p className="text-sm text-amber-800">
+                      Add this suggested item to the inventory catalog before receiving.
+                    </p>
+                  ) : isReceived ? (
+                    <p className="text-sm text-emerald-800">
+                      Received in transaction {item.inventoryTransactionId}.
+                    </p>
+                  ) : null}
+                  <button
+                    className="min-h-11 w-full rounded-md bg-brand-900 px-3 text-sm font-semibold text-white disabled:bg-stone-300"
+                    disabled={!canReceiveItem || isReceiveSubmitting || !draft?.receiveLocationId}
+                    onClick={() => {
+                      void purchaserList.receiveIntoInventory(item.id);
+                    }}
+                    type="button"
+                  >
+                    {isReceiveSubmitting ? "Receiving..." : "Receive into inventory"}
+                  </button>
+                </section>
+
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     className="min-h-11 rounded-md bg-brand-900 px-3 text-sm font-semibold text-white disabled:bg-stone-300"
-                    disabled={isSubmitting || !purchaserList.canUpdatePurchases}
+                    disabled={isSubmitting || isReceived || !purchaserList.canUpdatePurchases}
                     onClick={() => {
                       void purchaserList.updateProgress(item.id, "bought");
                     }}
@@ -195,7 +258,7 @@ export function PurchaserListScreen() {
                   </button>
                   <button
                     className="min-h-11 rounded-md border border-amber-300 px-3 text-sm font-semibold text-amber-800 disabled:text-stone-400"
-                    disabled={isSubmitting || !purchaserList.canUpdatePurchases}
+                    disabled={isSubmitting || isReceived || !purchaserList.canUpdatePurchases}
                     onClick={() => {
                       void purchaserList.updateProgress(item.id, "partially_bought");
                     }}
@@ -205,7 +268,7 @@ export function PurchaserListScreen() {
                   </button>
                   <button
                     className="min-h-11 rounded-md border border-stone-300 px-3 text-sm font-semibold text-stone-800 disabled:text-stone-400"
-                    disabled={isSubmitting || !purchaserList.canUpdatePurchases}
+                    disabled={isSubmitting || isReceived || !purchaserList.canUpdatePurchases}
                     onClick={() => {
                       void purchaserList.updateProgress(item.id, "substituted");
                     }}
@@ -215,7 +278,7 @@ export function PurchaserListScreen() {
                   </button>
                   <button
                     className="min-h-11 rounded-md border border-red-200 bg-red-50 px-3 text-sm font-semibold text-red-800 disabled:text-red-300"
-                    disabled={isSubmitting || !purchaserList.canUpdatePurchases}
+                    disabled={isSubmitting || isReceived || !purchaserList.canUpdatePurchases}
                     onClick={() => {
                       void purchaserList.updateProgress(item.id, "unavailable");
                     }}
