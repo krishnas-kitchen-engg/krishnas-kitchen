@@ -8,13 +8,18 @@ export function LoginScreen() {
   const auth = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [signupDisplayName, setSignupDisplayName] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
   const [volunteerName, setVolunteerName] = useState("");
   const [joinCode, setJoinCode] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrorMessage(null);
+    setSuccessMessage(null);
 
     try {
       await auth.signInWithEmail(email, password);
@@ -27,6 +32,7 @@ export function LoginScreen() {
   async function handleTemporaryVolunteer(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrorMessage(null);
+    setSuccessMessage(null);
 
     if (!volunteerName.trim() || !joinCode.trim()) {
       setErrorMessage("Enter volunteer name and join code.");
@@ -46,6 +52,28 @@ export function LoginScreen() {
     }
   }
 
+  async function handleSignUp(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    try {
+      await auth.signUpWithEmail({
+        displayName: signupDisplayName,
+        email: signupEmail,
+        password: signupPassword
+      });
+      setSuccessMessage(
+        "Account request submitted. After an admin approves your temple access, sign in with this email."
+      );
+      setSignupDisplayName("");
+      setSignupEmail("");
+      setSignupPassword("");
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Unable to request account.");
+    }
+  }
+
   return (
     <main className="min-h-dvh bg-stone-50 px-5 py-6 text-stone-950">
       <section className="mx-auto flex min-h-[calc(100dvh-3rem)] w-full max-w-sm flex-col justify-center gap-6">
@@ -62,6 +90,11 @@ export function LoginScreen() {
         {errorMessage ? (
           <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
             {errorMessage}
+          </p>
+        ) : null}
+        {successMessage ? (
+          <p className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+            {successMessage}
           </p>
         ) : null}
 
@@ -93,6 +126,42 @@ export function LoginScreen() {
               Supabase environment variables are not configured yet.
             </p>
           ) : null}
+        </form>
+
+        <form
+          className="space-y-3 border-t border-stone-200 pt-5"
+          onSubmit={(event) => void handleSignUp(event)}
+        >
+          <div>
+            <p className="text-sm font-semibold text-stone-900">Request account</p>
+            <p className="mt-1 text-xs leading-5 text-stone-600">
+              New accounts stay pending until an admin assigns temple access and roles.
+            </p>
+          </div>
+          <input
+            className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
+            onChange={(event) => setSignupDisplayName(event.target.value)}
+            placeholder="Full name"
+            value={signupDisplayName}
+          />
+          <input
+            className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
+            inputMode="email"
+            onChange={(event) => setSignupEmail(event.target.value)}
+            placeholder="Email"
+            type="email"
+            value={signupEmail}
+          />
+          <input
+            className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
+            onChange={(event) => setSignupPassword(event.target.value)}
+            placeholder="Password"
+            type="password"
+            value={signupPassword}
+          />
+          <Button className="w-full bg-brand-900 hover:bg-brand-800" type="submit">
+            Request access
+          </Button>
         </form>
 
         <form

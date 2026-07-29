@@ -26,6 +26,9 @@ function createAuthValue(overrides: Partial<AuthContextValue> = {}): AuthContext
     signInWithEmail() {
       return Promise.resolve();
     },
+    signUpWithEmail() {
+      return Promise.resolve();
+    },
     signOut() {
       return Promise.resolve();
     },
@@ -53,6 +56,12 @@ describe("LoginScreen", () => {
     );
 
     assert.match(markup, /Temporary volunteer/);
+    assert.match(markup, /Request account/);
+    assert.match(
+      markup,
+      /New accounts stay pending until an admin assigns temple access and roles/
+    );
+    assert.match(markup, /Request access/);
     assert.match(markup, /Display name/);
     assert.match(markup, /Join code/);
     assert.doesNotMatch(markup, /Organization ID/);

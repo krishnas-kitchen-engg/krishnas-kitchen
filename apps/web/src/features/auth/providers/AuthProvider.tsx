@@ -206,6 +206,44 @@ export function AuthProvider({ children }: PropsWithChildren) {
     [supabaseAuth.client]
   );
 
+  const signUpWithEmail = useCallback(
+    async (input: { displayName: string; email: string; password: string }) => {
+      if (!supabaseAuth.client) {
+        throw new Error("Supabase is not configured.");
+      }
+
+      const displayName = input.displayName.trim();
+      const email = input.email.trim();
+
+      if (!displayName) {
+        throw new Error("Display name is required.");
+      }
+
+      if (!email) {
+        throw new Error("Email is required.");
+      }
+
+      if (input.password.length < 8) {
+        throw new Error("Password must be at least 8 characters.");
+      }
+
+      const { error } = await supabaseAuth.client.auth.signUp({
+        email,
+        password: input.password,
+        options: {
+          data: {
+            display_name: displayName
+          }
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+    },
+    [supabaseAuth.client]
+  );
+
   const signOut = useCallback(async () => {
     const signOutAuthenticatedUser =
       supabaseAuth.client && supabaseAuth.session
@@ -302,6 +340,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       selectTemple,
       session: supabaseAuth.session,
       signInWithEmail,
+      signUpWithEmail,
       signOut,
       startTemporaryVolunteerSession,
       status,
@@ -315,6 +354,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       roles,
       selectTemple,
       signInWithEmail,
+      signUpWithEmail,
       signOut,
       startTemporaryVolunteerSession,
       status,

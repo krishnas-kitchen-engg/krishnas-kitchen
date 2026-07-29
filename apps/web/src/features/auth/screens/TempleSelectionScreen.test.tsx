@@ -1,33 +1,34 @@
 import assert from "node:assert/strict";
-import { renderToStaticMarkup } from "react-dom/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@krishnas-kitchen/types";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, it, vi } from "vitest";
 
 import { AuthContext } from "@/features/auth/providers/AuthContext";
 import type { AuthContextValue } from "@/features/auth/providers/AuthContext";
 
-import { MobileAppShell } from "./MobileAppShell";
+import { TempleSelectionScreen } from "./TempleSelectionScreen";
 
-function createAuthValue(): AuthContextValue {
+function createAuthValue(overrides: Partial<AuthContextValue> = {}): AuthContextValue {
   return {
     client: {} as SupabaseClient<Database>,
-    currentOrganization: {
-      id: "org-1",
-      name: "Krishna's Kitchen"
-    },
-    currentTemple: {
-      id: "temple-1",
-      name: "Main Temple",
-      organizationId: "org-1"
-    },
+    currentOrganization: null,
+    currentTemple: null,
     isAuthenticated: true,
     isConfigured: true,
     isLoading: false,
     isTemporaryVolunteer: false,
-    permissions: ["inventory.read"],
-    profile: null,
-    roles: ["volunteer"],
+    permissions: [],
+    profile: {
+      authUserId: "auth-user-1",
+      displayName: "Pending User",
+      email: "pending@krishnas-kitchen.test",
+      id: "auth-user-1",
+      organization: null,
+      roles: [],
+      temples: []
+    },
+    roles: [],
     selectTemple() {},
     session: null,
     signInWithEmail() {
@@ -43,32 +44,27 @@ function createAuthValue(): AuthContextValue {
       return Promise.resolve();
     },
     status: "authenticated",
-    temporaryVolunteerSession: null
+    temporaryVolunteerSession: null,
+    ...overrides
   };
 }
 
-describe("MobileAppShell", () => {
-  it("renders top bar, content, and bottom navigation", () => {
+describe("TempleSelectionScreen", () => {
+  it("shows approval-pending guidance for authenticated users without assignments", () => {
     vi.stubGlobal("window", {
-      addEventListener() {},
       location: {
-        pathname: "/"
-      },
-      removeEventListener() {}
+        pathname: "/select-temple"
+      }
     });
 
     const markup = renderToStaticMarkup(
       <AuthContext.Provider value={createAuthValue()}>
-        <MobileAppShell>
-          <p>Shell content</p>
-        </MobileAppShell>
+        <TempleSelectionScreen />
       </AuthContext.Provider>
     );
 
-    assert.match(markup, /Krishna&#x27;s Kitchen/);
-    assert.match(markup, /Main Temple/);
-    assert.match(markup, /Shell content/);
-    assert.match(markup, /Home/);
-    assert.match(markup, /Inventory/);
+    assert.match(markup, /Approval pending/);
+    assert.match(markup, /admin still needs to assign temple access and roles/);
+    assert.match(markup, /No temple assignments were found/);
   });
 });

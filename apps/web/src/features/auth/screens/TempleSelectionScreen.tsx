@@ -6,6 +6,7 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 export function TempleSelectionScreen() {
   const auth = useAuth();
   const temples = auth.profile?.temples ?? [];
+  const isPendingApproval = auth.status === "authenticated" && temples.length === 0;
 
   function handleSelectTemple(templeId: string) {
     auth.selectTemple(templeId);
@@ -19,9 +20,13 @@ export function TempleSelectionScreen() {
           <p className="text-sm font-medium uppercase tracking-wide text-brand-700">
             {auth.currentOrganization?.name ?? "Organization"}
           </p>
-          <h1 className="text-3xl font-semibold text-brand-900">Select temple</h1>
+          <h1 className="text-3xl font-semibold text-brand-900">
+            {isPendingApproval ? "Approval pending" : "Select temple"}
+          </h1>
           <p className="text-sm leading-6 text-stone-700">
-            Choose the temple context for this session. Authorization remains enforced by RLS.
+            {isPendingApproval
+              ? "Your account exists, but an admin still needs to assign temple access and roles before you can use Krishna's Kitchen."
+              : "Choose the temple context for this session. Authorization remains enforced by RLS."}
           </p>
         </div>
 

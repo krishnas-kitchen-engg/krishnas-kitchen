@@ -531,7 +531,7 @@ Status: Deferred. Manual receipt upload and review are the first-release authori
 ## Open Decisions
 
 1. Should self-registered users be inactive until admin approval?
-   - Recommendation: yes.
+   - Decision: yes. Self-registration creates an account request only; users remain pending until an admin assigns temple access and roles.
 2. What role names should represent head Mataji / approver and purchaser?
    - Recommendation: add explicit app roles only if current roles cannot clearly express responsibilities.
 3. Should new item suggestions create catalog records immediately?
@@ -551,7 +551,7 @@ Status: Deferred. Manual receipt upload and review are the first-release authori
 |---|---|---|---|
 | Admin can make all procurement setup decisions | Admin View | Slice 2 | Partial |
 | Admin UI is intuitive and sectioned | Admin View | Slice 2 | Partial |
-| Staff can self-register or request access | Auth / Admin View | Later auth slice | Open decision |
+| Staff can self-register or request access | Auth / Admin View | Auth access slice | Complete |
 | Staff can request existing item purchase | User Request View | Slice 3 | Complete |
 | Staff can search/filter existing items | User Request View | Slice 3 | Complete |
 | Staff can suggest new item | User Request View | Slice 3 | Complete |

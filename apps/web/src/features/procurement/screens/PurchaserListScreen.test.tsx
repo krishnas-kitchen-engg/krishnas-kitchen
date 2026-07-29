@@ -50,6 +50,9 @@ function createAuthValue(overrides: Partial<AuthContextValue> = {}): AuthContext
     signInWithEmail() {
       return Promise.resolve();
     },
+    signUpWithEmail() {
+      return Promise.resolve();
+    },
     signOut() {
       return Promise.resolve();
     },

@@ -17,6 +17,12 @@ export type StartTemporaryVolunteerInput = {
   joinCode: string;
 };
 
+export type SignUpWithEmailInput = {
+  displayName: string;
+  email: string;
+  password: string;
+};
+
 export type AuthContextValue = {
   client: SupabaseClient<Database> | null;
   currentOrganization: AuthOrganization | null;
@@ -31,6 +37,7 @@ export type AuthContextValue = {
   selectTemple: (templeId: string) => void;
   session: Session | null;
   signInWithEmail: (email: string, password: string) => Promise<void>;
+  signUpWithEmail: (input: SignUpWithEmailInput) => Promise<void>;
   signOut: () => Promise<void>;
   startTemporaryVolunteerSession: (input: StartTemporaryVolunteerInput) => Promise<void>;
   status: AuthStatus;
