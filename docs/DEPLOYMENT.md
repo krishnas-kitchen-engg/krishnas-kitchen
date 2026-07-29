@@ -16,6 +16,7 @@ Production status: not yet production-approved until production tenant setup, no
 - Supabase CLI config: `infra/supabase/config.toml`
 - Supabase seed data: `infra/supabase/seed/`
 - Supabase seed entrypoint: `infra/supabase/seed.sql`
+- Supabase Storage bucket and policies: `infra/supabase/migrations/20260728000100_add_procurement_setup.sql`
 - Browser environment contract: `.env.example`, `.env.local.example`, `apps/web/src/shared/config/env.ts`
 - Vercel deployment config: `vercel.json`
 - PWA manifest and service worker config: `apps/web/vite.config.ts`
@@ -57,7 +58,8 @@ Recommended Vercel environments:
    - Enable Email authentication for internal testing.
    - Set Site URL to the deployed Vercel URL for the environment.
    - Add redirect URLs for the deployed Vercel URL, any preview URLs used for testing, and `http://localhost:5173` for local development.
-   - Disable open public sign-up for production unless temple leadership explicitly approves self-service access.
+   - Enable Email sign-up when using the access-request workflow. Newly registered users remain approval-pending until an admin assigns the required organization, temple, and role metadata.
+   - For production, pair Email sign-up with the approved temple access-review process and email confirmations if leadership requires verified email ownership before review.
 4. Apply migrations in filename order from `infra/supabase/migrations/`.
 5. For demo/staging only, seed validation data through `infra/supabase/seed.sql`, or run the seed files manually in this order:
    - `infra/supabase/seed/seed_validation_cleanup.sql`
@@ -66,7 +68,7 @@ Recommended Vercel environments:
 6. Confirm RLS is enabled on all application tables.
 7. Confirm authenticated policies exist for inventory, recipes, production runs, item management, and location management.
 8. Confirm volunteer RPC functions exist and are executable by the intended roles.
-9. Confirm no Supabase Storage buckets are required for the current release candidate.
+9. Confirm the private `purchase-receipts` Supabase Storage bucket and policies exist. They are created by the procurement setup migration and are required for purchaser receipt uploads and finance review.
 
 Clean database expectation: a new project can be initialized from repository migrations. The validation seed can prepare a controlled inventory/authentication dataset for staging. Current seed data is staging-only and should not be run against production.
 
@@ -86,6 +88,7 @@ Manual hosted-project steps still required:
 - Create the hosted Supabase project.
 - Link the local CLI to the hosted project if desired.
 - Configure Auth Site URL and redirect URLs in the hosted dashboard.
+- Configure Email sign-up and confirmation settings to match the environment access-review policy.
 - Apply migrations to the hosted project.
 - Run validation seed data only against demo/staging.
 
@@ -124,65 +127,70 @@ The deployment config includes SPA routing fallback to `index.html`, long-lived 
 2. Configure authentication providers, site URL, redirect URLs, and sign-up policy.
 3. Apply every SQL migration from `infra/supabase/migrations/` in order.
 4. Do not run validation seed files against production.
-5. Create real organizations, temples, users, roles, locations, items, thresholds, and initial inventory records through the approved production setup path.
-6. Configure Vercel project from repository root.
-7. Add production environment variables.
-8. Deploy preview or protected production candidate.
-9. Verify application health:
+5. Confirm the private `purchase-receipts` Storage bucket and policies exist after migrations.
+6. Create real organizations, temples, users, roles, locations, items, thresholds, and initial inventory records through the approved production setup path.
+7. Configure Vercel project from repository root.
+8. Add production environment variables.
+9. Deploy preview or protected production candidate.
+10. Verify application health:
    - Login succeeds.
    - Temple context loads.
    - Inventory catalog loads.
    - Inventory balances load.
    - Transaction history loads.
    - Recipe list loads.
-10. Install as PWA on iPhone and Android.
-11. Run smoke tests.
+11. Install as PWA on iPhone and Android.
+12. Run smoke tests.
 
 ## Staging Deployment Checklist
 
 Target completion time: under 30 minutes after Supabase and Vercel accounts are available.
 
 1. Create or reset the staging Supabase project.
-2. Configure Email Auth, Site URL, and redirect URLs for the staging Vercel URL.
+2. Configure Email Auth, Email sign-up, Site URL, and redirect URLs for the staging Vercel URL.
 3. Apply repository migrations in order.
 4. Run `infra/supabase/seed.sql`.
-5. Configure Vercel Preview variables:
+5. Confirm the private `purchase-receipts` Storage bucket and policies exist.
+6. Configure Vercel Preview variables:
    - `VITE_APP_NAME="Krishna's Kitchen Demo"`
    - `VITE_APP_ENV=staging`
    - `VITE_APP_URL=<staging Vercel URL>`
    - `VITE_SUPABASE_URL=<staging Supabase URL>`
    - `VITE_SUPABASE_ANON_KEY=<staging anon key>`
-6. Deploy the Vercel preview.
-7. Run the smoke tests below.
+7. Deploy the Vercel preview.
+8. Run the smoke tests below.
 
 ## Smoke Tests
 
 Run these against demo/staging after deployment. Prioritize this list; it is designed to fit within 30 minutes.
 
 1. Sign in as validation manager.
-2. View inventory dashboard.
-3. Receive inventory into an active location.
-4. Confirm inventory balance increases.
-5. Consume inventory.
-6. Confirm inventory balance decreases.
-7. Transfer inventory from one active location to another.
-8. Return inventory from one active location to another.
-9. Attempt an overdraw transfer and confirm it is rejected.
-10. Attempt an overdraw return and confirm it is rejected.
-11. Reverse a recent transaction as manager.
-12. Create and edit a recipe.
-13. Scale the recipe and review availability.
-14. Generate a shopping list from shortages.
-15. Execute a production run with sufficient stock.
-16. Confirm production run history and inventory balances update.
-17. Open Low Stock Center and confirm dashboard low-stock counts are consistent.
-18. Archive and restore a test location.
-19. Archive and restore a test inventory item.
-20. Refresh the browser and confirm session/context recovery.
-21. Sign out and sign in as validation volunteer.
-22. Confirm volunteer permissions do not expose manager-only administration or reversal actions.
-23. Scan or manually enter a known validation barcode.
-24. Confirm offline shell behavior by loading the app once, disabling network, and refreshing the installed or browser app.
+2. Register a new access-request user and confirm the approval-pending path appears before sign-out.
+3. View inventory dashboard.
+4. Receive inventory into an active location.
+5. Confirm inventory balance increases.
+6. Consume inventory.
+7. Confirm inventory balance decreases.
+8. Transfer inventory from one active location to another.
+9. Return inventory from one active location to another.
+10. Attempt an overdraw transfer and confirm it is rejected.
+11. Attempt an overdraw return and confirm it is rejected.
+12. Reverse a recent transaction as manager.
+13. Create and edit a recipe.
+14. Scale the recipe and review availability.
+15. Generate a shopping list from shortages.
+16. Execute a production run with sufficient stock.
+17. Confirm production run history and inventory balances update.
+18. Open Low Stock Center and confirm dashboard low-stock counts are consistent.
+19. Submit, approve, publish, and purchase a procurement request.
+20. Upload a purchase receipt and confirm it is visible in receipt review.
+21. Archive and restore a test location.
+22. Archive and restore a test inventory item.
+23. Refresh the browser and confirm session/context recovery.
+24. Sign out and sign in as validation volunteer.
+25. Confirm volunteer permissions do not expose manager-only administration or reversal actions.
+26. Scan or manually enter a known validation barcode.
+27. Confirm offline shell behavior by loading the app once, disabling network, and refreshing the installed or browser app.
 
 ## Missing Infrastructure Items
 
@@ -191,6 +199,7 @@ Run these against demo/staging after deployment. Prioritize this list; it is des
 - Validation seed data does not seed recipe and production-run demo content. The demo can still create this content through the UI, but a full V1 demo seed would make rehearsals faster.
 - Content Security Policy is not configured in `vercel.json` because the Supabase project host changes by environment. Add an environment-specific CSP before public production launch.
 - Offline behavior is limited to the generated PWA shell unless online Supabase operations have already loaded and cached assets. Data mutation while offline is not a production capability in this release.
+- Receipt uploads require Supabase Storage to be enabled in each hosted environment. The migration creates the `purchase-receipts` bucket, but hosted project storage availability should still be verified during setup.
 
 ## Demo/Staging Recommendation
 
