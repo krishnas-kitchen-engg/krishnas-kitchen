@@ -19,6 +19,7 @@ Production status: not yet production-approved until production tenant setup, no
 - Supabase Storage bucket and policies: `infra/supabase/migrations/20260728000100_add_procurement_setup.sql`
 - Browser environment contract: `.env.example`, `.env.local.example`, `apps/web/src/shared/config/env.ts`
 - Vercel deployment config: `vercel.json`
+- Vercel web-root deployment config: `apps/web/vercel.json`
 - PWA manifest and service worker config: `apps/web/vite.config.ts`
 - PWA icon assets: `apps/web/public/`
 
@@ -95,13 +96,15 @@ Manual hosted-project steps still required:
 ## Vercel Setup
 
 1. Import the repository into Vercel.
-2. Use the root of the repository as the project root.
-3. Confirm Vercel reads `vercel.json`.
+2. Use either the repository root or `apps/web` as the Vercel Root Directory.
+3. Confirm Vercel reads the matching config:
+   - Repository root: `vercel.json`, output directory `apps/web/dist`.
+   - `apps/web`: `apps/web/vercel.json`, output directory `dist`.
 4. Use these settings:
    - Framework preset: Vite
    - Install command: `corepack pnpm@9.15.4 install --frozen-lockfile`
    - Build command: `corepack pnpm@9.15.4 build`
-   - Output directory: `apps/web/dist`
+   - Output directory: `apps/web/dist` for repository root, or `dist` for `apps/web`.
 5. Add environment variables for the selected Vercel environment.
 6. Deploy a preview.
 7. Promote to production only after the smoke tests pass.
