@@ -526,7 +526,7 @@ Goal: extract receipt lines and suggest matches for human confirmation.
 
 No automatic inventory mutation.
 
-Status: Deferred. Manual receipt upload and review are the first-release authority. OCR requires a separate provider/security decision and must not block deployment or PWA readiness.
+Status: Complete for server-assisted receipt parsing suggestions. OCR can suggest merchant, date, total, and receipt lines from a purchaser-uploaded image, with the provider key kept server-side. OCR does not mutate inventory, mark checklist items bought, or receive inventory; human confirmation remains the authority.
 
 ## Open Decisions
 

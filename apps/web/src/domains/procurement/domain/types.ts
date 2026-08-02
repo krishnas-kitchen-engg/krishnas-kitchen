@@ -189,6 +189,27 @@ export type PurchaseReceiptUploadInput = ProcurementScope & {
   uploadedBy: ProcurementActor;
 };
 
+export type PurchaseReceiptOcrLine = {
+  description: string;
+  lineTotal?: number | null;
+  quantity?: number | null;
+  unitPrice?: number | null;
+};
+
+export type PurchaseReceiptOcrResult = {
+  confidence: "high" | "low" | "medium";
+  lines: PurchaseReceiptOcrLine[];
+  merchantName?: string | null;
+  purchaseDate?: string | null;
+  rawText?: string | null;
+  totalCost?: number | null;
+  warnings: string[];
+};
+
+export type PurchaseReceiptOcrInput = {
+  file: File;
+};
+
 export type PurchaseReceiptReviewInput = ProcurementScope & {
   notes?: string | null;
   receiptId: EntityId;

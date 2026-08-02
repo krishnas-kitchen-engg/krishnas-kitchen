@@ -2,14 +2,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useInventoryActor, useOptionalInventoryServices } from "@/domains/inventory";
 import {
+  createHttpPurchaseReceiptOcrRepository,
   createPurchaseInventoryReceivingService,
+  createPurchaseReceiptOcrService,
   createPurchaseReceiptService,
   createPurchaserListService,
   createSupabasePurchaseReceiptRepository,
   createSupabasePurchaserListRepository,
   type ProcurementActor,
   type PurchaseListItemProgressStatus,
-  type PurchaseListItemRecord
+  type PurchaseListItemRecord,
+  type PurchaseReceiptOcrResult
 } from "@/domains/procurement";
 import { hasPermission, useAuth } from "@/features/auth";
 
@@ -23,6 +26,12 @@ type ProgressDraft = {
   purchasedQuantityText: string;
   totalCostText: string;
   unitCostText: string;
+};
+
+type ReceiptOcrState = {
+  error: string | null;
+  isParsing: boolean;
+  result: PurchaseReceiptOcrResult | null;
 };
 
 function toProcurementActor(actor: ReturnType<typeof useInventoryActor>): ProcurementActor | null {
@@ -67,6 +76,29 @@ function optionalNumber(value: string): number | null {
   return trimmedValue ? Number(trimmedValue) : null;
 }
 
+function createEmptyReceiptOcrState(): ReceiptOcrState {
+  return {
+    error: null,
+    isParsing: false,
+    result: null
+  };
+}
+
+function buildOcrNotes(result: PurchaseReceiptOcrResult): string {
+  const parts = [
+    result.merchantName ? `Merchant: ${result.merchantName}` : null,
+    result.lines.length > 0
+      ? `OCR lines: ${result.lines
+          .slice(0, 5)
+          .map((line) => line.description)
+          .join("; ")}`
+      : null,
+    result.warnings.length > 0 ? `OCR warnings: ${result.warnings.join("; ")}` : null
+  ].filter(Boolean);
+
+  return parts.join("\n");
+}
+
 export function usePurchaserList() {
   const auth = useAuth();
   const inventoryActor = useInventoryActor();
@@ -101,6 +133,15 @@ export function usePurchaserList() {
 
     return createPurchaseReceiptService(createSupabasePurchaseReceiptRepository(auth.client));
   }, [auth.client]);
+  const receiptOcrService = useMemo(
+    () =>
+      createPurchaseReceiptOcrService(
+        createHttpPurchaseReceiptOcrRepository({
+          accessToken: auth.session?.access_token ?? null
+        })
+      ),
+    [auth.session?.access_token]
+  );
   const receivingService = useMemo(() => {
     if (!auth.client || !inventoryServices) {
       return null;
@@ -115,6 +156,7 @@ export function usePurchaserList() {
   const [items, setItems] = useState<readonly PurchaseListItemRecord[]>([]);
   const [locations, setLocations] = useState<readonly InventoryCatalogLocation[]>([]);
   const [drafts, setDrafts] = useState<Record<string, ProgressDraft>>({});
+  const [receiptOcr, setReceiptOcr] = useState<Record<string, ReceiptOcrState>>({});
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [submittingItemId, setSubmittingItemId] = useState<string | null>(null);
@@ -146,6 +188,9 @@ export function usePurchaserList() {
         if (isActive) {
           setItems(nextItems);
           setDrafts(Object.fromEntries(nextItems.map((item) => [item.id, createDraft(item)])));
+          setReceiptOcr(
+            Object.fromEntries(nextItems.map((item) => [item.id, createEmptyReceiptOcrState()]))
+          );
           setIsLoading(false);
         }
       } catch (loadError) {
@@ -185,6 +230,54 @@ export function usePurchaserList() {
         ...patch
       }
     }));
+  }
+
+  function updateReceiptOcr(itemId: string, patch: Partial<ReceiptOcrState>) {
+    setReceiptOcr((currentState) => ({
+      ...currentState,
+      [itemId]: {
+        ...(currentState[itemId] ?? createEmptyReceiptOcrState()),
+        ...patch
+      }
+    }));
+  }
+
+  async function parseReceipt(itemId: string) {
+    const draft = drafts[itemId];
+
+    if (!draft?.receiptFile || receiptOcr[itemId]?.isParsing) {
+      return;
+    }
+
+    updateReceiptOcr(itemId, {
+      error: null,
+      isParsing: true,
+      result: null
+    });
+
+    try {
+      const result = await receiptOcrService.parseReceiptImage({ file: draft.receiptFile });
+
+      updateDraft(itemId, {
+        notes: draft.notes.trim() ? draft.notes : buildOcrNotes(result),
+        purchaseDate: draft.purchaseDate || result.purchaseDate || "",
+        totalCostText:
+          draft.totalCostText || result.totalCost === null || result.totalCost === undefined
+            ? draft.totalCostText
+            : String(result.totalCost)
+      });
+      updateReceiptOcr(itemId, {
+        error: null,
+        isParsing: false,
+        result
+      });
+    } catch (parseError) {
+      updateReceiptOcr(itemId, {
+        error: parseError instanceof Error ? parseError.message : "Receipt OCR failed.",
+        isParsing: false,
+        result: null
+      });
+    }
   }
 
   async function updateProgress(itemId: string, status: PurchaseListItemProgressStatus) {
@@ -371,7 +464,9 @@ export function usePurchaserList() {
     isLoading,
     items,
     locations,
+    parseReceipt,
     receiveIntoInventory,
+    receiptOcr,
     setDraftNotes(itemId: string, notes: string) {
       updateDraft(itemId, { notes });
     },

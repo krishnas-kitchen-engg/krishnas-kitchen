@@ -34,6 +34,8 @@ Only `VITE_` variables are exposed to the browser bundle.
 | `VITE_APP_URL` | Yes | `http://localhost:5173` | Staging Vercel URL | Production URL | Must match Supabase Auth site URL and redirect allow list. |
 | `VITE_SUPABASE_URL` | Yes | Local or staging Supabase URL | Staging project URL | Production project URL | Public project URL from Supabase API settings. |
 | `VITE_SUPABASE_ANON_KEY` | Yes | Local or staging anon key | Staging anon key | Production anon key | Browser-safe anon key. Authorization remains in RLS. |
+| `OPENAI_API_KEY` | Receipt OCR only | Optional local server value | Staging OCR key | Production OCR key | Server-only Vercel Function secret. Never expose as a `VITE_` variable. |
+| `OPENAI_RECEIPT_OCR_MODEL` | No | `gpt-4.1-mini` | `gpt-4.1-mini` | `gpt-4.1-mini` | Server-only model override for receipt OCR. |
 
 Do not add Supabase service-role keys to Vercel client environment variables.
 
@@ -106,6 +108,7 @@ Manual hosted-project steps still required:
    - Build command: `corepack pnpm@9.15.4 build`
    - Output directory: `apps/web/dist` for repository root, or `dist` for `apps/web`.
 5. Add environment variables for the selected Vercel environment.
+   - Add `OPENAI_API_KEY` only to Vercel server environment variables, not to browser `VITE_` variables.
 6. Deploy a preview.
 7. Promote to production only after the smoke tests pass.
 
@@ -187,13 +190,14 @@ Run these against demo/staging after deployment. Prioritize this list; it is des
 18. Open Low Stock Center and confirm dashboard low-stock counts are consistent.
 19. Submit, approve, publish, and purchase a procurement request.
 20. Upload a purchase receipt and confirm it is visible in receipt review.
-21. Archive and restore a test location.
-22. Archive and restore a test inventory item.
-23. Refresh the browser and confirm session/context recovery.
-24. Sign out and sign in as validation volunteer.
-25. Confirm volunteer permissions do not expose manager-only administration or reversal actions.
-26. Scan or manually enter a known validation barcode.
-27. Confirm offline shell behavior by loading the app once, disabling network, and refreshing the installed or browser app.
+21. Parse a purchase receipt with OCR, confirm date/total/line suggestions appear, and confirm inventory is not updated by OCR.
+22. Archive and restore a test location.
+23. Archive and restore a test inventory item.
+24. Refresh the browser and confirm session/context recovery.
+25. Sign out and sign in as validation volunteer.
+26. Confirm volunteer permissions do not expose manager-only administration or reversal actions.
+27. Scan or manually enter a known validation barcode.
+28. Confirm offline shell behavior by loading the app once, disabling network, and refreshing the installed or browser app.
 
 ## Missing Infrastructure Items
 
@@ -203,6 +207,7 @@ Run these against demo/staging after deployment. Prioritize this list; it is des
 - Content Security Policy is not configured in `vercel.json` because the Supabase project host changes by environment. Add an environment-specific CSP before public production launch.
 - Offline behavior is limited to the generated PWA shell unless online Supabase operations have already loaded and cached assets. Data mutation while offline is not a production capability in this release.
 - Receipt uploads require Supabase Storage to be enabled in each hosted environment. The migration creates the `purchase-receipts` bucket, but hosted project storage availability should still be verified during setup.
+- Receipt OCR requires a server-side `OPENAI_API_KEY` in Vercel. If it is not configured, receipt upload and manual finance review still work, but OCR suggestions are unavailable.
 
 ## Demo/Staging Recommendation
 

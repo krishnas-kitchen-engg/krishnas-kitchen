@@ -40,6 +40,10 @@ export {
   PurchaseReceiptValidationError
 } from "./application/purchaseReceiptService";
 export {
+  createPurchaseReceiptOcrService,
+  PurchaseReceiptOcrValidationError
+} from "./application/purchaseReceiptOcrService";
+export {
   createPurchaseReceiptCsv,
   createPurchaseReceiptExportFilename
 } from "./application/purchaseReceiptExport";
@@ -55,6 +59,7 @@ export { createSupabasePurchaseListRepository } from "./infrastructure/supabase/
 export { createSupabasePurchaseReceiptRepository } from "./infrastructure/supabase/supabasePurchaseReceiptRepository";
 export { createSupabasePurchaserListRepository } from "./infrastructure/supabase/supabasePurchaserListRepository";
 export { createSupabaseProcurementAdminRepository } from "./infrastructure/supabase/supabaseProcurementAdminRepository";
+export { createHttpPurchaseReceiptOcrRepository } from "./infrastructure/http/httpPurchaseReceiptOcrRepository";
 export {
   createSupabasePurchaseRequestCatalogRepository,
   createSupabasePurchaseRequestRepository
@@ -85,6 +90,10 @@ export type {
   PurchaseInventoryReceivingService
 } from "./application/purchaseInventoryReceivingService";
 export type { PurchaseReceiptService } from "./application/purchaseReceiptService";
+export type {
+  PurchaseReceiptOcrRepository,
+  PurchaseReceiptOcrService
+} from "./application/purchaseReceiptOcrService";
 export type { PurchaseReceiptReviewService } from "./application/purchaseReceiptReviewService";
 export type { PurchaserListService } from "./application/purchaserListService";
 export {
@@ -113,6 +122,9 @@ export type {
   PurchasePublishMode,
   PurchaseReceiptReviewDecision,
   PurchaseReceiptReviewInput,
+  PurchaseReceiptOcrInput,
+  PurchaseReceiptOcrLine,
+  PurchaseReceiptOcrResult,
   PurchaseReceiptStatus,
   PurchaseReceiptUploadInput,
   PurchaseRequestInput,

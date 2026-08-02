@@ -9,9 +9,11 @@
       "@krishnas-kitchen/ui": ["../../packages/ui/src/index.ts"],
       "@krishnas-kitchen/utils": ["../../packages/utils/src/index.ts"]
     },
-    "tsBuildInfoFile": "./tsconfig.tsbuildinfo"
+    "tsBuildInfoFile": "./tsconfig.tsbuildinfo",
+    "types": ["node"]
   },
   "include": [
+    "api",
     "src",
     "../../vitest.shared.ts",
     "vite.config.ts",

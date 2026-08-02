@@ -68,6 +68,7 @@ export function PurchaserListScreen() {
             const draft = purchaserList.drafts[item.id];
             const isSubmitting = purchaserList.submittingItemId === item.id;
             const isReceiveSubmitting = purchaserList.submittingItemId === `receive:${item.id}`;
+            const receiptOcr = purchaserList.receiptOcr[item.id];
             const isReceived =
               item.status === "received_into_inventory" || Boolean(item.inventoryTransactionId);
             const canReceiveItem =
@@ -165,7 +166,8 @@ export function PurchaserListScreen() {
                   <div>
                     <p className="text-xs font-semibold uppercase text-stone-500">Receipt</p>
                     <p className="mt-1 text-sm text-stone-600">
-                      Upload a receipt photo for audit. This does not receive inventory.
+                      Upload a receipt photo for audit. OCR can suggest date, total, and line
+                      details, but it does not receive inventory.
                     </p>
                   </div>
                   <input
@@ -179,6 +181,63 @@ export function PurchaserListScreen() {
                     }
                     type="file"
                   />
+                  <button
+                    className="min-h-11 w-full rounded-md border border-brand-300 bg-white px-3 text-sm font-semibold text-brand-900 disabled:text-stone-400"
+                    disabled={!draft?.receiptFile || Boolean(receiptOcr?.isParsing)}
+                    onClick={() => {
+                      void purchaserList.parseReceipt(item.id);
+                    }}
+                    type="button"
+                  >
+                    {receiptOcr?.isParsing ? "Parsing receipt..." : "Parse receipt"}
+                  </button>
+                  {receiptOcr?.error ? (
+                    <p className="rounded-md border border-amber-200 bg-amber-50 p-2 text-sm text-amber-800">
+                      {receiptOcr.error}
+                    </p>
+                  ) : null}
+                  {receiptOcr?.result ? (
+                    <div className="space-y-2 rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-950">
+                      <p className="font-semibold">
+                        OCR suggestions ready ({receiptOcr.result.confidence} confidence)
+                      </p>
+                      <dl className="grid grid-cols-2 gap-2">
+                        <div>
+                          <dt className="text-xs font-semibold uppercase text-emerald-800">
+                            Store
+                          </dt>
+                          <dd>{receiptOcr.result.merchantName ?? "Not detected"}</dd>
+                        </div>
+                        <div>
+                          <dt className="text-xs font-semibold uppercase text-emerald-800">
+                            Total
+                          </dt>
+                          <dd>
+                            {receiptOcr.result.totalCost === null ||
+                            receiptOcr.result.totalCost === undefined
+                              ? "Not detected"
+                              : `$${receiptOcr.result.totalCost.toFixed(2)}`}
+                          </dd>
+                        </div>
+                      </dl>
+                      {receiptOcr.result.lines.length > 0 ? (
+                        <ul className="space-y-1">
+                          {receiptOcr.result.lines.slice(0, 5).map((line, index) => (
+                            <li key={`${line.description}-${index}`}>
+                              {line.description}
+                              {line.lineTotal === null || line.lineTotal === undefined
+                                ? ""
+                                : ` - $${line.lineTotal.toFixed(2)}`}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+                      <p className="text-xs text-emerald-800">
+                        Review these suggestions before uploading. Inventory is updated only through
+                        receiving.
+                      </p>
+                    </div>
+                  ) : null}
                   <button
                     className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-sm font-semibold text-stone-800 disabled:text-stone-400"
                     disabled={
