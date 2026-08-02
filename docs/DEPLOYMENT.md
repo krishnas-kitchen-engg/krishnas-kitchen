@@ -35,7 +35,7 @@ Only `VITE_` variables are exposed to the browser bundle.
 | `VITE_SUPABASE_URL` | Yes | Local or staging Supabase URL | Staging project URL | Production project URL | Public project URL from Supabase API settings. |
 | `VITE_SUPABASE_ANON_KEY` | Yes | Local or staging anon key | Staging anon key | Production anon key | Browser-safe anon key. Authorization remains in RLS. |
 | `OPENAI_API_KEY` | Receipt OCR only | Optional local server value | Staging OCR key | Production OCR key | Server-only Vercel Function secret. Never expose as a `VITE_` variable. |
-| `OPENAI_RECEIPT_OCR_MODEL` | No | `gpt-4.1-mini` | `gpt-4.1-mini` | `gpt-4.1-mini` | Server-only model override for receipt OCR. |
+| `OPENAI_RECEIPT_OCR_MODEL` | No | `gpt-5-nano` | `gpt-5-nano` | `gpt-5-nano` | Server-only cost-efficient model override for receipt OCR. |
 
 Do not add Supabase service-role keys to Vercel client environment variables.
 

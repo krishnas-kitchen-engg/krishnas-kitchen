@@ -148,7 +148,7 @@ export default async function handler(request: Request): Promise<Response> {
     return jsonResponse({ error: "Receipt photo must be 10 MB or smaller." }, 400);
   }
 
-  const model = process.env.OPENAI_RECEIPT_OCR_MODEL ?? "gpt-4.1-mini";
+  const model = process.env.OPENAI_RECEIPT_OCR_MODEL ?? "gpt-5-nano";
   const imageUrl = await fileToDataUrl(file);
 
   const response = await fetch("https://api.openai.com/v1/responses", {
