@@ -1,22 +1,7 @@
 const allowedReceiptMimeTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
 const maxReceiptFileSizeBytes = 10 * 1024 * 1024;
 
-type ReceiptOcrResult = {
-  confidence: "high" | "low" | "medium";
-  lines: Array<{
-    description: string;
-    lineTotal?: number | null;
-    quantity?: number | null;
-    unitPrice?: number | null;
-  }>;
-  merchantName?: string | null;
-  purchaseDate?: string | null;
-  rawText?: string | null;
-  totalCost?: number | null;
-  warnings: string[];
-};
-
-function jsonResponse(body: unknown, status = 200): Response {
+function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
     headers: {
       "Cache-Control": "no-store",
@@ -26,35 +11,27 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
-function getStringFromResponsePayload(payload: unknown): string | null {
+function getStringFromResponsePayload(payload) {
   if (!payload || typeof payload !== "object") {
     return null;
   }
 
-  const maybeOutputText = (payload as { output_text?: unknown }).output_text;
-
-  if (typeof maybeOutputText === "string") {
-    return maybeOutputText;
+  if (typeof payload.output_text === "string") {
+    return payload.output_text;
   }
 
-  const output = (payload as { output?: unknown }).output;
-
-  if (!Array.isArray(output)) {
+  if (!Array.isArray(payload.output)) {
     return null;
   }
 
-  for (const outputItem of output) {
-    const content = (outputItem as { content?: unknown }).content;
-
-    if (!Array.isArray(content)) {
+  for (const outputItem of payload.output) {
+    if (!Array.isArray(outputItem?.content)) {
       continue;
     }
 
-    for (const contentItem of content) {
-      const text = (contentItem as { text?: unknown }).text;
-
-      if (typeof text === "string") {
-        return text;
+    for (const contentItem of outputItem.content) {
+      if (typeof contentItem?.text === "string") {
+        return contentItem.text;
       }
     }
   }
@@ -62,8 +39,8 @@ function getStringFromResponsePayload(payload: unknown): string | null {
   return null;
 }
 
-function parseReceiptResult(value: string): ReceiptOcrResult {
-  const parsed = JSON.parse(value) as Partial<ReceiptOcrResult>;
+function parseReceiptResult(value) {
+  const parsed = JSON.parse(value);
 
   return {
     confidence:
@@ -79,7 +56,7 @@ function parseReceiptResult(value: string): ReceiptOcrResult {
   };
 }
 
-async function fileToDataUrl(file: File): Promise<string> {
+async function fileToDataUrl(file) {
   const arrayBuffer = await file.arrayBuffer();
   const bytes = new Uint8Array(arrayBuffer);
   let binary = "";
@@ -91,7 +68,7 @@ async function fileToDataUrl(file: File): Promise<string> {
   return `data:${file.type};base64,${btoa(binary)}`;
 }
 
-async function isAuthenticatedRequest(request: Request): Promise<boolean> {
+async function isAuthenticatedRequest(request) {
   const authorization = request.headers.get("Authorization");
   const supabaseUrl = process.env.VITE_SUPABASE_URL;
   const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
@@ -114,7 +91,7 @@ export const config = {
   runtime: "edge"
 };
 
-export default async function handler(request: Request): Promise<Response> {
+export default async function handler(request) {
   if (request.method !== "POST") {
     return jsonResponse({ error: "Method not allowed." }, 405);
   }
@@ -230,8 +207,7 @@ export default async function handler(request: Request): Promise<Response> {
     return jsonResponse({ error: "Receipt OCR provider failed." }, 502);
   }
 
-  const payload = (await response.json()) as unknown;
-  const outputText = getStringFromResponsePayload(payload);
+  const outputText = getStringFromResponsePayload(await response.json());
 
   if (!outputText) {
     return jsonResponse({ error: "Receipt OCR returned no readable output." }, 502);
