@@ -91,9 +91,10 @@ describe("AdminManagementScreen", () => {
 
     assert.match(markup, /Users and temples/);
     assert.match(markup, /Create temple/);
-    assert.match(markup, /Add app profile/);
+    assert.match(markup, /Create login account/);
     assert.match(markup, /Grant access/);
-    assert.match(markup, /Supabase Auth User UID/);
+    assert.match(markup, /Temporary password/);
+    assert.doesNotMatch(markup, /Supabase Auth User UID/);
   });
 
   it("offers every app role for admin assignment", () => {

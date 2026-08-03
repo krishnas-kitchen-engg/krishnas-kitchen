@@ -60,7 +60,10 @@ export function useAdminManagement() {
   const [userForm, setUserForm] = useState({
     email: "",
     fullName: "",
-    userId: ""
+    password: "",
+    role: "volunteer" as AppRole,
+    scope: "temple" as "organization" | "temple",
+    templeId: ""
   });
   const [roleForm, setRoleForm] = useState<AdminRoleFormState>({
     role: "volunteer",
@@ -215,8 +218,8 @@ export function useAdminManagement() {
     [refresh, scope, service]
   );
 
-  const upsertUser = useCallback(async () => {
-    if (!service || !scope) {
+  const createUser = useCallback(async () => {
+    if (!auth.session?.access_token || !scope) {
       return;
     }
 
@@ -225,27 +228,54 @@ export function useAdminManagement() {
     setSuccess(null);
 
     try {
-      await service.upsertUser({
-        ...scope,
-        email: userForm.email,
-        fullName: userForm.fullName,
-        userId: userForm.userId
+      const response = await fetch("/api/admin-users", {
+        body: JSON.stringify({
+          email: userForm.email,
+          fullName: userForm.fullName,
+          organizationId: scope.organizationId,
+          password: userForm.password,
+          role: userForm.role,
+          templeId: userForm.scope === "organization" ? null : userForm.templeId
+        }),
+        headers: {
+          Authorization: `Bearer ${auth.session.access_token}`,
+          "Content-Type": "application/json"
+        },
+        method: "POST"
       });
+
+      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+
+      if (!response.ok) {
+        throw new Error(payload?.error ?? "User account could not be created.");
+      }
+
       setUserForm({
         email: "",
         fullName: "",
-        userId: ""
+        password: "",
+        role: "volunteer",
+        scope: "temple",
+        templeId: ""
       });
-      setSuccess(
-        "User profile saved. Ask the user to sign out and sign in again after roles are assigned."
-      );
+      setSuccess("User account created. Share the temporary password and ask the user to sign in.");
       await refresh();
     } catch (caughtError) {
-      setError(getAdminErrorMessage(caughtError, "User profile could not be saved."));
+      setError(getAdminErrorMessage(caughtError, "User account could not be created."));
     } finally {
       setIsSubmitting(false);
     }
-  }, [refresh, scope, service, userForm.email, userForm.fullName, userForm.userId]);
+  }, [
+    auth.session?.access_token,
+    refresh,
+    scope,
+    userForm.email,
+    userForm.fullName,
+    userForm.password,
+    userForm.role,
+    userForm.scope,
+    userForm.templeId
+  ]);
 
   const setUserArchived = useCallback(
     async (user: AdminUserRecord, shouldArchive: boolean) => {
@@ -332,6 +362,7 @@ export function useAdminManagement() {
     activeTemples,
     assignRole,
     canManageAdmin,
+    createUser,
     editTemple,
     editingTempleId,
     error,
@@ -354,7 +385,6 @@ export function useAdminManagement() {
     success,
     templeName,
     templesById,
-    upsertUser,
     userForm,
     userSearch,
     usersById

@@ -104,9 +104,10 @@ export function AdminManagementScreen() {
   const admin = useAdminManagement();
   const canSaveTemple = Boolean(admin.templeName.trim()) && !admin.isSubmitting;
   const canSaveUser =
-    Boolean(admin.userForm.userId.trim()) &&
     Boolean(admin.userForm.fullName.trim()) &&
     Boolean(admin.userForm.email.trim()) &&
+    Boolean(admin.userForm.password.trim()) &&
+    (admin.userForm.scope === "organization" || Boolean(admin.userForm.templeId)) &&
     !admin.isSubmitting;
   const canAssignRole =
     Boolean(admin.roleForm.userId) &&
@@ -238,23 +239,12 @@ export function AdminManagementScreen() {
       <section className="space-y-4 rounded-md border border-stone-200 bg-white p-4">
         <div>
           <p className="text-xs font-semibold uppercase text-stone-500">User onboarding</p>
-          <h2 className="mt-1 text-lg font-semibold text-stone-950">Add app profile</h2>
+          <h2 className="mt-1 text-lg font-semibold text-stone-950">Create login account</h2>
           <p className="mt-2 text-sm leading-6 text-stone-600">
-            Create the Supabase Auth account first, then paste its User UID here to connect app
-            access.
+            Create a Supabase login, app profile, and initial role in one step. Share the temporary
+            password directly with the user.
           </p>
         </div>
-        <label className="block text-sm font-medium text-stone-800">
-          Supabase Auth User UID
-          <input
-            className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
-            onChange={(event) =>
-              admin.setUserForm({ ...admin.userForm, userId: event.target.value })
-            }
-            placeholder="00000000-0000-4000-8000-000000000000"
-            value={admin.userForm.userId}
-          />
-        </label>
         <label className="block text-sm font-medium text-stone-800">
           Full name
           <input
@@ -278,15 +268,80 @@ export function AdminManagementScreen() {
             value={admin.userForm.email}
           />
         </label>
+        <label className="block text-sm font-medium text-stone-800">
+          Temporary password
+          <input
+            autoComplete="new-password"
+            className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
+            minLength={8}
+            onChange={(event) =>
+              admin.setUserForm({ ...admin.userForm, password: event.target.value })
+            }
+            placeholder="At least 8 characters"
+            type="password"
+            value={admin.userForm.password}
+          />
+        </label>
+        <label className="block text-sm font-medium text-stone-800">
+          Initial role
+          <select
+            className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+            onChange={(event) =>
+              admin.setUserForm({ ...admin.userForm, role: event.target.value as AppRole })
+            }
+            value={admin.userForm.role}
+          >
+            {admin.manageableRoles.map((role) => (
+              <option key={role} value={role}>
+                {formatRole(role)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block text-sm font-medium text-stone-800">
+          Initial access scope
+          <select
+            className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+            onChange={(event) =>
+              admin.setUserForm({
+                ...admin.userForm,
+                scope: event.target.value as "organization" | "temple"
+              })
+            }
+            value={admin.userForm.scope}
+          >
+            <option value="temple">Specific temple</option>
+            <option value="organization">All active temples</option>
+          </select>
+        </label>
+        {admin.userForm.scope === "temple" ? (
+          <label className="block text-sm font-medium text-stone-800">
+            Initial temple
+            <select
+              className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+              onChange={(event) =>
+                admin.setUserForm({ ...admin.userForm, templeId: event.target.value })
+              }
+              value={admin.userForm.templeId}
+            >
+              <option value="">Choose active temple</option>
+              {admin.activeTemples.map((temple) => (
+                <option key={temple.id} value={temple.id}>
+                  {temple.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
         <button
           className="min-h-11 w-full rounded-md bg-brand-900 px-4 text-sm font-semibold text-white disabled:bg-stone-300"
           disabled={!canSaveUser}
           onClick={() => {
-            void admin.upsertUser();
+            void admin.createUser();
           }}
           type="button"
         >
-          {admin.isSubmitting ? "Saving..." : "Save app profile"}
+          {admin.isSubmitting ? "Creating..." : "Create user"}
         </button>
       </section>
 
