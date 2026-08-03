@@ -2,6 +2,8 @@ import type { AppPath } from "@/app/routes/router";
 import type { InventoryLowStockAlert, UnknownBarcodeRecord } from "@/domains/inventory";
 
 export type VolunteerHomeQuickAction = {
+  description: string;
+  group: "administration" | "inventory" | "kitchen" | "procurement" | "purchasing" | "volunteer";
   label: string;
   path: AppPath;
   requiredPermission:
@@ -17,7 +19,8 @@ export type VolunteerHomeQuickAction = {
     | "procurement.receipts.review"
     | "procurement.requests.review"
     | "procurement.requests.create"
-    | "recipes.read";
+    | "recipes.read"
+    | "users.manage";
 };
 
 export type VolunteerHomeActivityItem = {

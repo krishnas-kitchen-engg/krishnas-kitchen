@@ -21,87 +21,128 @@ function getVisibleQuickActions(
 ) {
   const actions: VolunteerHomeQuickAction[] = [
     {
+      description: "Look up an item by barcode or manual search.",
+      group: "inventory",
       label: "Scan",
       path: "/scan",
       requiredPermission: "inventory.read"
     },
     {
+      description: "Add newly delivered stock into inventory.",
+      group: "inventory",
       label: "Receive",
       path: "/receive",
       requiredPermission: "inventory.receive"
     },
     {
+      description: "Record ingredients used by kitchen operations.",
+      group: "inventory",
       label: "Consume",
       path: "/consume",
       requiredPermission: "inventory.consume"
     },
     {
+      description: "Correct balances after a physical count.",
+      group: "inventory",
       label: "Adjust",
       path: "/adjust",
       requiredPermission: "inventory.adjust"
     },
     {
+      description: "Review inventory health and today's activity.",
+      group: "inventory",
       label: "Dashboard",
       path: "/dashboard",
       requiredPermission: "inventory.adjust"
     },
     {
+      description: "Find items that need replenishment.",
+      group: "inventory",
       label: "Low Stock",
       path: "/low-stock",
       requiredPermission: "inventory.adjust"
     },
     {
+      description: "Manage pantry, fridge, freezer, and storage areas.",
+      group: "administration",
       label: "Locations",
       path: "/locations",
       requiredPermission: "inventory.adjust"
     },
     {
+      description: "Manage item names, units, categories, and thresholds.",
+      group: "administration",
       label: "Items",
       path: "/items",
       requiredPermission: "items.edit"
     },
     {
+      description: "Move stock between storage locations.",
+      group: "inventory",
       label: "Transfer",
       path: "/transfer",
       requiredPermission: "inventory.transfer"
     },
     {
+      description: "Return stock from service back to storage.",
+      group: "inventory",
       label: "Return",
       path: "/return",
       requiredPermission: "inventory.return"
     },
     {
+      description: "Search current balances and transaction history.",
+      group: "inventory",
       label: "Inventory",
       path: "/inventory",
       requiredPermission: "inventory.read"
     },
     {
+      description: "Create recipes and plan ingredient needs.",
+      group: "kitchen",
       label: "Recipes",
       path: "/recipes",
       requiredPermission: "recipes.read"
     },
     {
-      label: "Request",
+      description: "Ask purchasers to buy an item for the temple.",
+      group: "volunteer",
+      label: "Request items",
       path: "/purchase-requests",
       requiredPermission: "procurement.requests.create"
     },
     {
+      description: "See assigned items grouped by purchase source.",
+      group: "purchasing",
       label: "My Purchases",
       path: "/my-purchases",
       requiredPermission: "procurement.purchases.read_assigned"
     },
     {
-      label: "Review",
+      description: "Approve requests and publish buyer lists.",
+      group: "procurement",
+      label: "Review Requests",
       path: "/purchase-review",
       requiredPermission: "procurement.requests.review"
     },
     {
-      label: "Receipts",
+      description: "Review receipt uploads and export finance evidence.",
+      group: "procurement",
+      label: "Receipt Review",
       path: "/receipt-review",
       requiredPermission: "procurement.receipts.review"
     },
     {
-      label: "Procurement",
+      description: "Onboard users, assign roles, and manage temple access.",
+      group: "administration",
+      label: "Users & Temples",
+      path: "/admin",
+      requiredPermission: "users.manage"
+    },
+    {
+      description: "Configure stores and item purchasing preferences.",
+      group: "administration",
+      label: "Procurement Setup",
       path: "/procurement-admin",
       requiredPermission: "procurement.admin"
     }
@@ -134,6 +175,10 @@ function getVisibleQuickActions(
 
     if (action.requiredPermission === "recipes.read") {
       return hasPermission(authPermissions, "recipes.read");
+    }
+
+    if (action.requiredPermission === "users.manage") {
+      return hasPermission(authPermissions, "users.manage");
     }
 
     if (action.requiredPermission === "procurement.admin") {

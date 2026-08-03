@@ -1,12 +1,14 @@
 import { Button } from "@krishnas-kitchen/ui";
 
 import { navigateTo } from "@/app/routes/router";
+import { hasPermission } from "@/features/auth/lib/permissions";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
 export function TempleSelectionScreen() {
   const auth = useAuth();
   const temples = auth.profile?.temples ?? [];
   const isPendingApproval = auth.status === "authenticated" && temples.length === 0;
+  const canOpenAdminSetup = hasPermission(auth.permissions, "users.manage");
 
   function handleSelectTemple(templeId: string) {
     auth.selectTemple(templeId);
@@ -33,19 +35,27 @@ export function TempleSelectionScreen() {
         <div className="space-y-2">
           {temples.length > 0 ? (
             temples.map((temple) => (
-              <Button
-                className="w-full justify-start bg-white text-stone-950 ring-1 ring-stone-200 hover:bg-stone-100"
+              <button
+                className="min-h-11 w-full rounded-md border border-stone-200 bg-white px-4 py-2 text-left text-sm font-semibold text-stone-950 shadow-sm transition-colors hover:bg-stone-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
                 key={temple.id}
                 onClick={() => handleSelectTemple(temple.id)}
+                style={{ backgroundColor: "#ffffff", color: "#0c0a09" }}
                 type="button"
               >
-                {temple.name}
-              </Button>
+                <span style={{ color: "#0c0a09" }}>{temple.name}</span>
+              </button>
             ))
           ) : (
-            <p className="rounded-md border border-stone-200 bg-white px-3 py-3 text-sm text-stone-700">
-              No temple assignments were found on this session.
-            </p>
+            <div className="space-y-3">
+              <p className="rounded-md border border-stone-200 bg-white px-3 py-3 text-sm text-stone-700">
+                No temple assignments were found on this session.
+              </p>
+              {canOpenAdminSetup ? (
+                <Button className="w-full" onClick={() => navigateTo("/admin")} type="button">
+                  Open admin setup
+                </Button>
+              ) : null}
+            </div>
           )}
         </div>
 

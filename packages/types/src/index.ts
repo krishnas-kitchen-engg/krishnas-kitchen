@@ -111,6 +111,102 @@ export type VolunteerSessionStatus = "active" | "expired" | "revoked";
 export type Database = {
   public: {
     Tables: {
+      organizations: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          name: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          name: string;
+          updated_at?: string;
+        };
+        Update: {
+          deleted_at?: string | null;
+          name?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      temples: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          name: string;
+          organization_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          name: string;
+          organization_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          deleted_at?: string | null;
+          name?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      user_roles: {
+        Row: {
+          created_at: string;
+          id: string;
+          organization_id: string;
+          role: AppRole;
+          temple_id: string | null;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          organization_id: string;
+          role: AppRole;
+          temple_id?: string | null;
+          user_id: string;
+        };
+        Update: {
+          role?: AppRole;
+          temple_id?: string | null;
+        };
+        Relationships: [];
+      };
+      users: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          email: string;
+          full_name: string;
+          id: string;
+          organization_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          email: string;
+          full_name: string;
+          id: string;
+          organization_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          deleted_at?: string | null;
+          email?: string;
+          full_name?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       item_barcodes: {
         Row: {
           archived_at: string | null;
@@ -963,6 +1059,21 @@ export type Database = {
         };
         Returns: Database["public"]["Tables"]["purchase_lists"]["Row"];
       };
+      admin_refresh_user_app_metadata: {
+        Args: {
+          p_actor_user_id: string;
+          p_organization_id: string;
+          p_user_id: string;
+        };
+        Returns: undefined;
+      };
+      admin_refresh_organization_app_metadata: {
+        Args: {
+          p_actor_user_id: string;
+          p_organization_id: string;
+        };
+        Returns: undefined;
+      };
       mark_purchase_list_item_received: {
         Args: {
           p_inventory_transaction_id: string;
@@ -1029,6 +1140,7 @@ export type Database = {
       inventory_transaction_type: InventoryTransactionType;
       item_unit: ItemUnit;
       temp_volunteer_role: TemporaryVolunteerRole;
+      user_role: AppRole;
       unknown_barcode_status: UnknownBarcodeStatus;
       volunteer_session_status: VolunteerSessionStatus;
     };

@@ -109,12 +109,14 @@ describe("HomeScreen", () => {
     assert.match(markup, /Return/);
     assert.match(markup, /Inventory/);
     assert.match(markup, /Recipes/);
+    assert.match(markup, /Inventory operations/);
+    assert.match(markup, /Kitchen planning/);
     assert.ok(markup.indexOf("Scan") < markup.indexOf("Receive"));
     assert.ok(markup.indexOf("Receive") < markup.indexOf("Consume"));
     assert.ok(markup.indexOf("Consume") < markup.indexOf("Transfer"));
     assert.ok(markup.indexOf("Transfer") < markup.indexOf("Return"));
-    assert.ok(markup.indexOf("Return") < markup.indexOf("Inventory"));
-    assert.ok(markup.indexOf("Inventory") < markup.indexOf("Recipes"));
+    assert.ok(markup.indexOf("Return stock from service") < markup.indexOf("Search current"));
+    assert.ok(markup.indexOf("Search current") < markup.indexOf("Kitchen planning"));
   });
 
   it("hides unauthorized quick actions", () => {
@@ -131,6 +133,18 @@ describe("HomeScreen", () => {
     assert.doesNotMatch(markup, />Transfer</);
     assert.doesNotMatch(markup, />Return</);
     assert.doesNotMatch(markup, />Recipes</);
+    assert.doesNotMatch(markup, /Users &amp; Temples/);
+  });
+
+  it("shows user and temple administration to authorized admins", () => {
+    const markup = renderHome(
+      createAuthValue({
+        permissions: ["inventory.read", "users.manage"]
+      })
+    );
+
+    assert.match(markup, /Users &amp; Temples/);
+    assert.match(markup, /Onboard users, assign roles, and manage temple access/);
   });
 
   it("renders pending unknown barcode empty state", () => {

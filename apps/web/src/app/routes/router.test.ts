@@ -71,6 +71,13 @@ describe("router", () => {
       path: "/receive"
     });
 
+    stubWindow("/admin");
+    assert.equal(getCurrentPath(), "/admin");
+    assert.deepEqual(getCurrentRoute(), {
+      name: "admin",
+      path: "/admin"
+    });
+
     stubWindow("/adjust");
     assert.equal(getCurrentPath(), "/adjust");
     assert.deepEqual(getCurrentRoute(), {

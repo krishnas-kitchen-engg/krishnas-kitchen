@@ -7,6 +7,10 @@ import { BottomNavigation } from "./BottomNavigation";
 import { MobileTopBar } from "./MobileTopBar";
 
 function getRouteTitle(routeName: ReturnType<typeof useCurrentRoute>["name"]): string {
+  if (routeName === "admin") {
+    return "Admin";
+  }
+
   if (routeName === "adjust") {
     return "Adjust";
   }

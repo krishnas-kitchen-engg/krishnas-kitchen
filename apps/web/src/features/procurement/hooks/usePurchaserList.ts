@@ -6,10 +6,13 @@ import {
   createPurchaseInventoryReceivingService,
   createPurchaseReceiptOcrService,
   createPurchaseReceiptService,
+  createProcurementAdminService,
   createPurchaserListService,
+  createSupabaseProcurementAdminRepository,
   createSupabasePurchaseReceiptRepository,
   createSupabasePurchaserListRepository,
   type ProcurementActor,
+  type PurchaseLocationRecord,
   type PurchaseListItemProgressStatus,
   type PurchaseListItemRecord,
   type PurchaseReceiptOcrResult
@@ -152,9 +155,17 @@ export function usePurchaserList() {
       repository: createSupabasePurchaserListRepository(auth.client)
     });
   }, [auth.client, inventoryServices]);
+  const procurementAdminService = useMemo(() => {
+    if (!auth.client) {
+      return null;
+    }
+
+    return createProcurementAdminService(createSupabaseProcurementAdminRepository(auth.client));
+  }, [auth.client]);
   const [refreshIndex, setRefreshIndex] = useState(0);
   const [items, setItems] = useState<readonly PurchaseListItemRecord[]>([]);
   const [locations, setLocations] = useState<readonly InventoryCatalogLocation[]>([]);
+  const [purchaseLocations, setPurchaseLocations] = useState<readonly PurchaseLocationRecord[]>([]);
   const [drafts, setDrafts] = useState<Record<string, ProgressDraft>>({});
   const [receiptOcr, setReceiptOcr] = useState<Record<string, ReceiptOcrState>>({});
   const [error, setError] = useState<string | null>(null);
@@ -209,6 +220,44 @@ export function usePurchaserList() {
       isActive = false;
     };
   }, [canUsePurchaserList, organizationId, purchaserUserId, refreshIndex, service, templeId]);
+
+  useEffect(() => {
+    if (!canUsePurchaserList || !organizationId || !templeId || !procurementAdminService) {
+      setPurchaseLocations([]);
+      return;
+    }
+
+    let isActive = true;
+    const currentOrganizationId = organizationId;
+    const currentProcurementAdminService = procurementAdminService;
+    const currentTempleId = templeId;
+
+    async function loadPurchaseLocations() {
+      try {
+        const nextPurchaseLocations = await currentProcurementAdminService.listPurchaseLocations({
+          organizationId: currentOrganizationId,
+          templeId: currentTempleId
+        });
+
+        if (isActive) {
+          setPurchaseLocations(nextPurchaseLocations);
+        }
+      } catch (loadError) {
+        if (isActive) {
+          setError(
+            loadError instanceof Error ? loadError.message : "Purchase locations failed to load."
+          );
+          setPurchaseLocations([]);
+        }
+      }
+    }
+
+    void loadPurchaseLocations();
+
+    return () => {
+      isActive = false;
+    };
+  }, [canUsePurchaserList, organizationId, procurementAdminService, templeId]);
 
   function refresh() {
     setRefreshIndex((currentIndex) => currentIndex + 1);
@@ -465,6 +514,7 @@ export function usePurchaserList() {
     items,
     locations,
     parseReceipt,
+    purchaseLocations,
     receiveIntoInventory,
     receiptOcr,
     setDraftNotes(itemId: string, notes: string) {

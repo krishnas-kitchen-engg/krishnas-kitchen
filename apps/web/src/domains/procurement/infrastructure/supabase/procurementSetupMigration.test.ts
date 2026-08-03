@@ -85,7 +85,6 @@ describe("procurement setup migration", () => {
     expect(migration).toMatch(/reviewed_by_actor_type = 'user'/i);
     expect(migration).toMatch(/reviewed_by_actor_user_id = auth\.uid\(\)/i);
     expect(migration).toMatch(/'senior_cook'/i);
-    expect(migration).toMatch(/and included_purchase_list_item_id is null/i);
     expect(migration).toMatch(
       /status in \(\s*'approved',\s*'needs_clarification',\s*'rejected'\s*\)/i
     );
@@ -98,6 +97,7 @@ describe("procurement setup migration", () => {
     expect(migration).toMatch(/security definer/i);
     expect(migration).toMatch(/approved_request_ids uuid\[\]/i);
     expect(migration).toMatch(/array_agg\(locked_request\.id\)/i);
+    expect(migration).toMatch(/and request\.included_purchase_list_item_id is null/i);
     expect(migration).toMatch(/for update/i);
     expect(migration).toMatch(/status = 'included_in_published_list'/i);
     expect(migration).toMatch(

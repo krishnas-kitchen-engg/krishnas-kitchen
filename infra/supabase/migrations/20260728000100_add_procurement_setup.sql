@@ -149,11 +149,6 @@ create policy "Authenticated procurement admins can update purchase locations"
   using (
     public.is_authenticated_user_in_organization(organization_id)
     and public.is_authenticated_user_assigned_to_temple(temple_id)
-    and status in (
-      'submitted',
-      'needs_clarification'
-    )
-    and included_purchase_list_item_id is null
     and exists (
       select 1
       from public.current_authenticated_user_roles() authenticated_role

@@ -120,6 +120,73 @@ describe("AppRoutes", () => {
     assert.match(markup, /Inventory unavailable/);
   });
 
+  it("renders authenticated admin route inside the mobile shell", () => {
+    stubWindow("/admin");
+
+    const markup = renderToStaticMarkup(
+      <AuthContext.Provider
+        value={createAuthValue({
+          permissions: ["users.manage", "temple.manage", "roles.manage"],
+          profile: {
+            authUserId: "admin-user-1",
+            displayName: "Admin User",
+            email: "admin@example.com",
+            id: "admin-user-1",
+            organization: {
+              id: "org-1",
+              name: "Krishna's Kitchen"
+            },
+            roles: ["super_admin"],
+            temples: [
+              {
+                id: "temple-1",
+                name: "Main Temple",
+                organizationId: "org-1"
+              }
+            ]
+          },
+          roles: ["super_admin"]
+        })}
+      >
+        <AppRoutes />
+      </AuthContext.Provider>
+    );
+
+    assert.match(markup, /Admin/);
+    assert.match(markup, /Users and temples/);
+  });
+
+  it("allows authenticated admins to open admin route before selecting a temple", () => {
+    stubWindow("/admin");
+
+    const markup = renderToStaticMarkup(
+      <AuthContext.Provider
+        value={createAuthValue({
+          currentTemple: null,
+          permissions: ["users.manage", "temple.manage", "roles.manage"],
+          profile: {
+            authUserId: "admin-user-1",
+            displayName: "Admin User",
+            email: "admin@example.com",
+            id: "admin-user-1",
+            organization: {
+              id: "org-1",
+              name: "Krishna's Kitchen"
+            },
+            roles: ["super_admin"],
+            temples: []
+          },
+          roles: ["super_admin"]
+        })}
+      >
+        <AppRoutes />
+      </AuthContext.Provider>
+    );
+
+    assert.doesNotMatch(markup, /Checking your session/);
+    assert.match(markup, /Users and temples/);
+  });
+
   it("renders authenticated adjust route inside the mobile shell", () => {
     stubWindow("/adjust");
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 export type AppPath =
   | "/"
+  | "/admin"
   | "/adjust"
   | "/consume"
   | "/dashboard"
@@ -29,6 +30,7 @@ export type AppPath =
 
 const appPaths = [
   "/",
+  "/admin",
   "/adjust",
   "/consume",
   "/dashboard",
@@ -54,6 +56,10 @@ const appPaths = [
 ] satisfies string[];
 
 export type AppRoute =
+  | {
+      name: "admin";
+      path: "/admin";
+    }
   | {
       name: "adjust";
       path: "/adjust";
@@ -197,6 +203,13 @@ export function getCurrentRoute(): AppRoute {
     if (pathname === "/adjust") {
       return {
         name: "adjust",
+        path: pathname
+      };
+    }
+
+    if (pathname === "/admin") {
+      return {
+        name: "admin",
         path: pathname
       };
     }

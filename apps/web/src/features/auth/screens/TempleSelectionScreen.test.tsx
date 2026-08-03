@@ -67,4 +67,25 @@ describe("TempleSelectionScreen", () => {
     assert.match(markup, /admin still needs to assign temple access and roles/);
     assert.match(markup, /No temple assignments were found/);
   });
+
+  it("offers admin setup when an admin has no temple assignments yet", () => {
+    vi.stubGlobal("window", {
+      location: {
+        pathname: "/select-temple"
+      }
+    });
+
+    const markup = renderToStaticMarkup(
+      <AuthContext.Provider
+        value={createAuthValue({
+          permissions: ["users.manage"],
+          roles: ["super_admin"]
+        })}
+      >
+        <TempleSelectionScreen />
+      </AuthContext.Provider>
+    );
+
+    assert.match(markup, /Open admin setup/);
+  });
 });

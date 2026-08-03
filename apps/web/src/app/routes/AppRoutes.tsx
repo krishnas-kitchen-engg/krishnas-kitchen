@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { HomeScreen } from "@/app/screens/HomeScreen";
 import { MobileAppShell } from "@/app/shell/MobileAppShell";
+import { AdminManagementScreen } from "@/features/admin";
 import {
   AuthLoadingScreen,
   LoginScreen,
@@ -85,6 +86,16 @@ function AuthenticatedRoutes() {
       <InventoryAvailabilityBoundary>
         <InventoryLookupScreen />
       </InventoryAvailabilityBoundary>
+    );
+  }
+
+  if (route.name === "admin") {
+    return (
+      <RouteGuard requireAuth>
+        <MobileAppShell>
+          <AdminManagementScreen />
+        </MobileAppShell>
+      </RouteGuard>
     );
   }
 
