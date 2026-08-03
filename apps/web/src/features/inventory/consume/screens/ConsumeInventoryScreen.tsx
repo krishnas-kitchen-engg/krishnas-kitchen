@@ -3,6 +3,7 @@ import type {
   InventoryCatalogLocation,
   InventoryTransaction
 } from "@/domains/inventory";
+import type { ItemUnit } from "@krishnas-kitchen/types";
 
 import { InventoryBalanceList } from "../../components/InventoryBalanceList";
 import { InventoryTransactionList } from "../../components/InventoryTransactionList";
@@ -44,7 +45,7 @@ type UnitSelectProps = {
   value: ConsumeUnitValue;
 };
 
-type ConsumeUnitValue = "" | "g" | "kg" | "ml" | "l" | "unit";
+type ConsumeUnitValue = "" | ItemUnit;
 
 function UnitSelect({ error, onChange, units, value }: UnitSelectProps) {
   return (

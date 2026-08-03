@@ -1,6 +1,8 @@
 import type { ItemUnit } from "@krishnas-kitchen/types";
 import { isNonEmptyString } from "@krishnas-kitchen/utils";
 
+import { ITEM_UNITS } from "@/shared/domain/itemUnits";
+
 import type {
   PurchaseItemReference,
   PurchaseRequestInput,
@@ -10,13 +12,7 @@ import type {
 
 export const PROCUREMENT_QUANTITY_DECIMAL_PLACES = 6;
 
-export const PROCUREMENT_ITEM_UNITS = [
-  "g",
-  "kg",
-  "ml",
-  "l",
-  "unit"
-] as const satisfies readonly ItemUnit[];
+export const PROCUREMENT_ITEM_UNITS = ITEM_UNITS;
 
 export type ProcurementValidationErrorCode =
   | "ACTOR_REQUIRED"

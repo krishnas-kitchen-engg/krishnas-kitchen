@@ -13,6 +13,7 @@ import {
   type InventoryTransaction
 } from "@/domains/inventory";
 import { useAuth } from "@/features/auth";
+import { ITEM_UNITS } from "@/shared/domain/itemUnits";
 
 import type {
   AdjustWorkflowUiState,
@@ -20,7 +21,7 @@ import type {
 } from "../types/adjustWorkflowUiTypes";
 
 const adjustmentOptionLimit = 25;
-const itemUnits = ["g", "kg", "ml", "l", "unit"] as const satisfies readonly ItemUnit[];
+const itemUnits = ITEM_UNITS;
 
 type AdjustWorkflowAction =
   | { error: string; type: "load_failed" }

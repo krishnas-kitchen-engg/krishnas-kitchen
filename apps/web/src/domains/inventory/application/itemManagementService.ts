@@ -1,8 +1,10 @@
 import type { EntityId, ItemUnit } from "@krishnas-kitchen/types";
 
+import { ITEM_UNITS } from "@/shared/domain/itemUnits";
+
 import type { InventoryActor } from "../domain/types";
 
-export const ITEM_MANAGEMENT_UNITS = ["g", "kg", "ml", "l", "unit"] as const;
+export const ITEM_MANAGEMENT_UNITS = ITEM_UNITS;
 
 export type ManagedInventoryItem = {
   category: string | null;

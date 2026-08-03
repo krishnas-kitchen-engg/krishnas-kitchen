@@ -83,7 +83,24 @@ export type TemporaryVolunteerSession = {
 
 export type Json = boolean | null | number | string | Json[] | { [key: string]: Json | undefined };
 
-export type ItemUnit = "g" | "kg" | "ml" | "l" | "unit";
+export type ItemUnit =
+  | "g"
+  | "kg"
+  | "lb"
+  | "oz"
+  | "ml"
+  | "l"
+  | "fl_oz"
+  | "cup"
+  | "pt"
+  | "qt"
+  | "gal"
+  | "tsp"
+  | "tbsp"
+  | "unit"
+  | "case"
+  | "box"
+  | "bag";
 
 export type InventoryTransactionType =
   | "received"

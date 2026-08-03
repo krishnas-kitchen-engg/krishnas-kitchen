@@ -1,6 +1,8 @@
 import type { EntityId, ItemUnit } from "@krishnas-kitchen/types";
 import { isNonEmptyString } from "@krishnas-kitchen/utils";
 
+import { ITEM_UNITS } from "@/shared/domain/itemUnits";
+
 import type {
   CreateReceivingTransactionInput,
   InventoryActor,
@@ -10,13 +12,7 @@ import type {
 
 export const RECEIVING_MAX_QUANTITY = 1_000_000;
 
-export const RECEIVING_UNITS = [
-  "g",
-  "kg",
-  "ml",
-  "l",
-  "unit"
-] as const satisfies readonly ItemUnit[];
+export const RECEIVING_UNITS = ITEM_UNITS;
 
 export type ReceivingValidationErrorCode =
   | "ACTOR_INVALID"

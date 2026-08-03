@@ -125,7 +125,7 @@ describe("recipe definition validation", () => {
       {
         itemId: "",
         quantity: Number.POSITIVE_INFINITY,
-        unit: "cup" as RecipeIngredientInput["unit"]
+        unit: "stone" as RecipeIngredientInput["unit"]
       },
       0
     );

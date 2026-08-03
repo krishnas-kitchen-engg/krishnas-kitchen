@@ -63,7 +63,7 @@ describe("consumption validation", () => {
       {
         ...validInput,
         quantity: 0,
-        unit: "box" as typeof validInput.unit
+        unit: "stone" as typeof validInput.unit
       },
       {
         availableQuantity: 10,

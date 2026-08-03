@@ -1,6 +1,8 @@
 import type { EntityId, ItemUnit } from "@krishnas-kitchen/types";
 import { isNonEmptyString } from "@krishnas-kitchen/utils";
 
+import { ITEM_UNITS } from "@/shared/domain/itemUnits";
+
 import type {
   CreateInventoryAdjustmentInput,
   InventoryActor,
@@ -10,13 +12,7 @@ import type {
 
 export const ADJUSTMENT_MAX_PHYSICAL_QUANTITY = 1_000_000;
 
-export const ADJUSTMENT_UNITS = [
-  "g",
-  "kg",
-  "ml",
-  "l",
-  "unit"
-] as const satisfies readonly ItemUnit[];
+export const ADJUSTMENT_UNITS = ITEM_UNITS;
 
 export type AdjustmentValidationErrorCode =
   | "ACTOR_INVALID"

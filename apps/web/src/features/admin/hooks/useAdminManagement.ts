@@ -18,6 +18,24 @@ const emptyState: AdminManagementState = {
   users: []
 };
 
+function getAdminErrorMessage(caughtError: unknown, fallback: string): string {
+  if (caughtError instanceof Error && caughtError.message) {
+    return caughtError.message;
+  }
+
+  if (caughtError && typeof caughtError === "object") {
+    const errorRecord = caughtError as Record<string, unknown>;
+    const message = typeof errorRecord.message === "string" ? errorRecord.message : null;
+    const details = typeof errorRecord.details === "string" ? errorRecord.details : null;
+    const hint = typeof errorRecord.hint === "string" ? errorRecord.hint : null;
+    const code = typeof errorRecord.code === "string" ? errorRecord.code : null;
+
+    return [message, details, hint, code ? `Code: ${code}` : null].filter(Boolean).join(" ");
+  }
+
+  return fallback;
+}
+
 export type AdminRoleFormState = {
   role: AppRole;
   scope: "organization" | "temple";
@@ -80,7 +98,7 @@ export function useAdminManagement() {
     try {
       setState(await service.listState(scope));
     } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "Admin data could not load.");
+      setError(getAdminErrorMessage(caughtError, "Admin data could not load."));
     } finally {
       setIsLoading(false);
     }
@@ -159,7 +177,7 @@ export function useAdminManagement() {
       setEditingTempleId(null);
       await refresh();
     } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "Temple could not be saved.");
+      setError(getAdminErrorMessage(caughtError, "Temple could not be saved."));
     } finally {
       setIsSubmitting(false);
     }
@@ -189,9 +207,7 @@ export function useAdminManagement() {
         setSuccess(shouldArchive ? "Temple archived." : "Temple restored.");
         await refresh();
       } catch (caughtError) {
-        setError(
-          caughtError instanceof Error ? caughtError.message : "Temple status could not be updated."
-        );
+        setError(getAdminErrorMessage(caughtError, "Temple status could not be updated."));
       } finally {
         setIsSubmitting(false);
       }
@@ -225,9 +241,7 @@ export function useAdminManagement() {
       );
       await refresh();
     } catch (caughtError) {
-      setError(
-        caughtError instanceof Error ? caughtError.message : "User profile could not be saved."
-      );
+      setError(getAdminErrorMessage(caughtError, "User profile could not be saved."));
     } finally {
       setIsSubmitting(false);
     }
@@ -252,9 +266,7 @@ export function useAdminManagement() {
         setSuccess(shouldArchive ? "User archived." : "User restored.");
         await refresh();
       } catch (caughtError) {
-        setError(
-          caughtError instanceof Error ? caughtError.message : "User status could not be updated."
-        );
+        setError(getAdminErrorMessage(caughtError, "User status could not be updated."));
       } finally {
         setIsSubmitting(false);
       }
@@ -283,7 +295,7 @@ export function useAdminManagement() {
       );
       await refresh();
     } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "Role could not be assigned.");
+      setError(getAdminErrorMessage(caughtError, "Role could not be assigned."));
     } finally {
       setIsSubmitting(false);
     }
@@ -308,7 +320,7 @@ export function useAdminManagement() {
         setSuccess("Role removed. The user should sign out and sign in again.");
         await refresh();
       } catch (caughtError) {
-        setError(caughtError instanceof Error ? caughtError.message : "Role could not be removed.");
+        setError(getAdminErrorMessage(caughtError, "Role could not be removed."));
       } finally {
         setIsSubmitting(false);
       }
