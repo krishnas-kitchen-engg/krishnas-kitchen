@@ -12,6 +12,8 @@ export const ITEM_UNITS = [
   "pt",
   "qt",
   "gal",
+  "tsp",
+  "tbsp",
   "unit",
   "case",
   "box",
