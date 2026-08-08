@@ -7,7 +7,13 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      includeAssets: ["favicon.svg", "pwa-192.svg", "pwa-512.svg"],
+      includeAssets: [
+        "apple-touch-icon.png",
+        "favicon.png",
+        "peacock-feather-accent.png",
+        "pwa-192.png",
+        "pwa-512.png"
+      ],
       manifest: {
         name: "Krishna's Kitchen",
         short_name: "Kitchen",
@@ -20,15 +26,15 @@ export default defineConfig({
         start_url: "/",
         icons: [
           {
-            src: "/pwa-192.svg",
+            src: "/pwa-192.png",
             sizes: "192x192",
-            type: "image/svg+xml",
+            type: "image/png",
             purpose: "any"
           },
           {
-            src: "/pwa-512.svg",
+            src: "/pwa-512.png",
             sizes: "512x512",
-            type: "image/svg+xml",
+            type: "image/png",
             purpose: "any maskable"
           }
         ]

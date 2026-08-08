@@ -77,14 +77,23 @@ export function LoginScreen() {
   return (
     <main className="min-h-dvh bg-stone-50 px-5 py-6 text-stone-950">
       <section className="mx-auto flex min-h-[calc(100dvh-3rem)] w-full max-w-sm flex-col justify-center gap-6">
-        <div className="space-y-2">
-          <p className="text-sm font-medium uppercase tracking-wide text-brand-700">
-            Krishna&apos;s Kitchen
-          </p>
-          <h1 className="text-3xl font-semibold text-brand-900">Sign in</h1>
-          <p className="text-sm leading-6 text-stone-700">
-            Use your kitchen account, or start a restricted volunteer session for temporary access.
-          </p>
+        <div className="relative overflow-hidden pb-2 pr-28">
+          <img
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute right-0 top-0 h-32 w-24 object-contain opacity-90"
+            src="/peacock-feather-accent.png"
+          />
+          <div className="space-y-2">
+            <p className="text-sm font-medium uppercase tracking-wide text-brand-700">
+              Krishna&apos;s Kitchen
+            </p>
+            <h1 className="text-3xl font-semibold text-brand-900">Sign in</h1>
+            <p className="text-sm leading-6 text-stone-700">
+              Use your kitchen account, or start a restricted volunteer session for temporary
+              access.
+            </p>
+          </div>
         </div>
 
         {errorMessage ? (
