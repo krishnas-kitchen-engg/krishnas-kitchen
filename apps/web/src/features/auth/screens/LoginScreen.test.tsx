@@ -62,6 +62,7 @@ describe("LoginScreen", () => {
       /New accounts stay pending until an admin assigns temple access and roles/
     );
     assert.match(markup, /Request access/);
+    assert.match(markup, /Show password/);
     assert.match(markup, /Display name/);
     assert.match(markup, /Join code/);
     assert.doesNotMatch(markup, /Organization ID/);

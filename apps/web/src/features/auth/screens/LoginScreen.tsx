@@ -4,6 +4,48 @@ import { Button } from "@krishnas-kitchen/ui";
 import { navigateTo } from "@/app/routes/router";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
+type PasswordFieldProps = {
+  autocomplete?: string;
+  label?: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  value: string;
+};
+
+function PasswordField({
+  autocomplete,
+  label = "Password",
+  onChange,
+  placeholder,
+  value
+}: PasswordFieldProps) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <label className="block space-y-1 text-sm font-medium text-stone-800">
+      <span>{label}</span>
+      <span className="flex min-h-11 w-full items-center rounded-md border border-stone-300 bg-white focus-within:border-brand-700">
+        <input
+          autoComplete={autocomplete}
+          className="min-h-11 min-w-0 flex-1 rounded-md bg-transparent px-3 text-base outline-none"
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={placeholder}
+          type={isVisible ? "text" : "password"}
+          value={value}
+        />
+        <button
+          aria-label={isVisible ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
+          className="min-h-11 px-3 text-sm font-semibold text-brand-800"
+          onClick={() => setIsVisible((current) => !current)}
+          type="button"
+        >
+          {isVisible ? "Hide" : "Show"}
+        </button>
+      </span>
+    </label>
+  );
+}
+
 export function LoginScreen() {
   const auth = useAuth();
   const [email, setEmail] = useState("");
@@ -118,15 +160,7 @@ export function LoginScreen() {
               value={email}
             />
           </label>
-          <label className="block space-y-1 text-sm font-medium text-stone-800">
-            <span>Password</span>
-            <input
-              className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
-              onChange={(event) => setPassword(event.target.value)}
-              type="password"
-              value={password}
-            />
-          </label>
+          <PasswordField autocomplete="current-password" onChange={setPassword} value={password} />
           <Button className="w-full" disabled={!auth.isConfigured} type="submit">
             Sign in
           </Button>
@@ -161,11 +195,10 @@ export function LoginScreen() {
             type="email"
             value={signupEmail}
           />
-          <input
-            className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
-            onChange={(event) => setSignupPassword(event.target.value)}
+          <PasswordField
+            autocomplete="new-password"
+            onChange={setSignupPassword}
             placeholder="Password"
-            type="password"
             value={signupPassword}
           />
           <Button className="w-full bg-brand-900 hover:bg-brand-800" type="submit">
