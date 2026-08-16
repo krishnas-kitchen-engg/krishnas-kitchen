@@ -91,6 +91,7 @@ describe("ProcurementAdminSetupScreen", () => {
     assert.match(markup, /Purchase setup/);
     assert.match(markup, /Add store or supplier/);
     assert.match(markup, /Tag item to purchase source/);
+    assert.match(markup, /Minimum order quantity/);
     assert.match(markup, /No purchase locations are configured yet/);
   });
 });

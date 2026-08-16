@@ -56,6 +56,8 @@ export type PurchaseReceiptReviewDecision =
 
 export type PurchasePublishMode = "manual" | "scheduled";
 
+export type PurchaseListGenerationGrouping = "purchase_location" | "purchaser";
+
 export type PurchaseItemReference =
   | {
       itemId: EntityId;
@@ -133,6 +135,7 @@ export type ItemPurchasePreferenceInput = ProcurementScope & {
   createdBy: ProcurementActor;
   estimatedUnitCost?: number | null;
   itemId: EntityId;
+  minimumOrderQuantity?: number | null;
   notes?: string | null;
   packSize?: number | null;
   preferredPurchaseLocationId: EntityId;
@@ -148,11 +151,13 @@ export type PurchaseListInput = ProcurementScope & {
 };
 
 export type PurchaseListPublishInput = ProcurementScope & {
+  generationGrouping: PurchaseListGenerationGrouping;
   name: string;
   publishedBy: ProcurementActor;
 };
 
 export type PurchaseListScheduleInput = ProcurementScope & {
+  generationGrouping: PurchaseListGenerationGrouping;
   name: string;
   scheduledBy: ProcurementActor;
   scheduledPublishAt: string;

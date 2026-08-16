@@ -3,6 +3,7 @@ import type { Database } from "@krishnas-kitchen/types";
 
 import type {
   ProcurementAdminRepository,
+  ProcurementPurchaserCandidate,
   UpdatePurchaseLocationInput
 } from "../../application/procurementAdminService";
 import type {
@@ -17,6 +18,7 @@ type PurchaseLocationUpdate = Database["public"]["Tables"]["purchase_locations"]
 type ItemPurchasePreferenceRow = Database["public"]["Tables"]["item_purchase_preferences"]["Row"];
 type ItemPurchasePreferenceInsert =
   Database["public"]["Tables"]["item_purchase_preferences"]["Insert"];
+type UserRow = Database["public"]["Tables"]["users"]["Row"];
 
 function actorColumns(actor: ProcurementActor): {
   created_by_actor_temp_session_id: string | null;
@@ -88,6 +90,7 @@ function mapItemPurchasePreference(row: ItemPurchasePreferenceRow): ItemPurchase
     estimatedUnitCost: row.estimated_unit_cost,
     id: row.id,
     itemId: row.item_id,
+    minimumOrderQuantity: row.minimum_order_quantity,
     notes: row.notes,
     organizationId: row.organization_id,
     packSize: row.pack_size,
@@ -96,6 +99,15 @@ function mapItemPurchasePreference(row: ItemPurchasePreferenceRow): ItemPurchase
     purchaserUserId: row.purchaser_user_id,
     templeId: row.temple_id,
     updatedAt: row.updated_at
+  };
+}
+
+function mapPurchaserCandidate(row: UserRow): ProcurementPurchaserCandidate {
+  return {
+    deletedAt: row.deleted_at,
+    email: row.email,
+    fullName: row.full_name,
+    id: row.id
   };
 }
 
@@ -142,6 +154,7 @@ function toItemPurchasePreferenceInsert(
     backup_purchase_location_id: input.backupPurchaseLocationId ?? null,
     estimated_unit_cost: input.estimatedUnitCost ?? null,
     item_id: input.itemId,
+    minimum_order_quantity: input.minimumOrderQuantity ?? null,
     notes: input.notes ?? null,
     organization_id: input.organizationId,
     pack_size: input.packSize ?? null,
@@ -216,6 +229,22 @@ export function createSupabaseProcurementAdminRepository(
       }
 
       return data.map(mapPurchaseLocation);
+    },
+
+    async listPurchaserCandidates(scope) {
+      const { data, error } = await client
+        .from("users")
+        .select("*")
+        .eq("organization_id", scope.organizationId)
+        .is("deleted_at", null)
+        .order("full_name", { ascending: true })
+        .order("id", { ascending: true });
+
+      if (error) {
+        throw error;
+      }
+
+      return data.map(mapPurchaserCandidate);
     },
 
     async updatePurchaseLocation(input) {

@@ -27,6 +27,13 @@ const receiptReviewMigration = readFileSync(
   ),
   "utf8"
 );
+const planningControlsMigration = readFileSync(
+  resolve(
+    process.cwd(),
+    "infra/supabase/migrations/20260815000100_add_procurement_planning_controls.sql"
+  ),
+  "utf8"
+);
 
 describe("procurement setup migration", () => {
   it("creates purchase setup tables with tenant and temple scope", () => {
@@ -194,5 +201,21 @@ describe("procurement setup migration", () => {
     expect(receiptReviewMigration).toMatch(
       /grant execute on function public\.review_purchase_receipt/i
     );
+  });
+
+  it("adds explicit procurement planning controls for grouping and minimum order quantity", () => {
+    expect(planningControlsMigration).toMatch(/generation_grouping text not null default/i);
+    expect(planningControlsMigration).toMatch(/minimum_order_quantity numeric\(12, 3\)/i);
+    expect(planningControlsMigration).toMatch(
+      /item_purchase_preferences_minimum_order_quantity_positive/i
+    );
+    expect(planningControlsMigration).toMatch(/p_generation_grouping text default/i);
+    expect(planningControlsMigration).toMatch(
+      /coalesce\(p_generation_grouping, ''\) not in \('purchase_location', 'purchaser'\)/i
+    );
+    expect(planningControlsMigration).toMatch(
+      /greatest\(request\.quantity, preference\.minimum_order_quantity\)/i
+    );
+    expect(planningControlsMigration).toMatch(/scheduled_list\.generation_grouping/i);
   });
 });

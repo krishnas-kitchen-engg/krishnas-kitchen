@@ -34,6 +34,36 @@ function formatMoney(value: number) {
   }).format(value);
 }
 
+function formatGenerationGrouping(value: "purchase_location" | "purchaser") {
+  return value === "purchaser" ? "By purchaser" : "By store/source";
+}
+
+function summarizePurchaseListGroups(
+  items: ReturnType<typeof usePurchaseRequestReview>["purchaseListItems"],
+  listId: string,
+  generationGrouping: "purchase_location" | "purchaser"
+) {
+  const groups = new Map<string, number>();
+
+  for (const item of items) {
+    if (item.purchaseListId !== listId) {
+      continue;
+    }
+
+    const groupName =
+      generationGrouping === "purchaser"
+        ? (item.assignedPurchaserUserId ?? "Unassigned purchaser")
+        : (item.purchaseLocationId ?? "Unassigned source");
+
+    groups.set(groupName, (groups.get(groupName) ?? 0) + 1);
+  }
+
+  return Array.from(groups.entries()).map(([name, count]) => ({
+    count,
+    name
+  }));
+}
+
 export function PurchaseRequestReviewScreen() {
   const review = usePurchaseRequestReview();
   const listSummaries = summarizePurchaseListProgress(review.purchaseListItems);
@@ -300,6 +330,37 @@ export function PurchaseRequestReviewScreen() {
             value={review.listName}
           />
         </label>
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-stone-800">Generate list</p>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              className={`min-h-11 rounded-md border px-3 text-sm font-semibold ${
+                review.generationGrouping === "purchase_location"
+                  ? "border-brand-900 bg-brand-900 text-white"
+                  : "border-stone-300 text-stone-800"
+              }`}
+              onClick={() => review.setGenerationGrouping("purchase_location")}
+              type="button"
+            >
+              By store/source
+            </button>
+            <button
+              className={`min-h-11 rounded-md border px-3 text-sm font-semibold ${
+                review.generationGrouping === "purchaser"
+                  ? "border-brand-900 bg-brand-900 text-white"
+                  : "border-stone-300 text-stone-800"
+              }`}
+              onClick={() => review.setGenerationGrouping("purchaser")}
+              type="button"
+            >
+              By purchaser
+            </button>
+          </div>
+          <p className="text-xs leading-5 text-stone-600">
+            Store/source groups help shopping by vendor. Purchaser groups help each buyer see
+            ownership clearly.
+          </p>
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <button
             className={`min-h-11 rounded-md border px-3 text-sm font-semibold ${
@@ -484,6 +545,11 @@ export function PurchaseRequestReviewScreen() {
             >
               {(() => {
                 const summary = listSummaries[list.id] ?? createEmptyPurchaseListProgressSummary();
+                const groups = summarizePurchaseListGroups(
+                  review.purchaseListItems,
+                  list.id,
+                  list.generationGrouping
+                );
 
                 return (
                   <>
@@ -496,6 +562,9 @@ export function PurchaseRequestReviewScreen() {
                             : list.publishedAt
                               ? new Date(list.publishedAt).toLocaleString()
                               : "Not published"}
+                        </p>
+                        <p className="mt-1 text-xs font-medium text-stone-500">
+                          Generated {formatGenerationGrouping(list.generationGrouping)}
                         </p>
                       </div>
                       <span className="rounded-md border border-green-200 bg-green-50 px-2 py-1 text-xs font-semibold text-green-800">
@@ -513,6 +582,23 @@ export function PurchaseRequestReviewScreen() {
                         - Spend {formatMoney(summary.totalCost)}
                       </p>
                     </div>
+                    {groups.length > 0 ? (
+                      <div className="rounded-md border border-stone-200 bg-stone-50 p-3 text-sm text-stone-700">
+                        <p className="font-semibold">
+                          {formatGenerationGrouping(list.generationGrouping)} groups
+                        </p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {groups.map((group) => (
+                            <span
+                              className="rounded-md border border-stone-300 bg-white px-2 py-1 text-xs font-semibold text-stone-700"
+                              key={group.name}
+                            >
+                              {group.name}: {group.count}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
                   </>
                 );
               })()}

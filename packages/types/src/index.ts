@@ -472,6 +472,7 @@ export type Database = {
           estimated_unit_cost: number | null;
           id: string;
           item_id: string;
+          minimum_order_quantity: number | null;
           notes: string | null;
           organization_id: string;
           pack_size: number | null;
@@ -491,6 +492,7 @@ export type Database = {
           estimated_unit_cost?: number | null;
           id?: string;
           item_id: string;
+          minimum_order_quantity?: number | null;
           notes?: string | null;
           organization_id: string;
           pack_size?: number | null;
@@ -504,6 +506,7 @@ export type Database = {
           archived_at?: string | null;
           backup_purchase_location_id?: string | null;
           estimated_unit_cost?: number | null;
+          minimum_order_quantity?: number | null;
           notes?: string | null;
           pack_size?: number | null;
           preferred_purchase_location_id?: string;
@@ -653,6 +656,7 @@ export type Database = {
           created_by_actor_temp_session_id: string | null;
           created_by_actor_type: ActorType;
           created_by_actor_user_id: string | null;
+          generation_grouping: "purchase_location" | "purchaser";
           id: string;
           name: string;
           organization_id: string;
@@ -677,6 +681,7 @@ export type Database = {
           created_by_actor_temp_session_id?: string | null;
           created_by_actor_type: ActorType;
           created_by_actor_user_id?: string | null;
+          generation_grouping?: "purchase_location" | "purchaser";
           id?: string;
           name: string;
           organization_id: string;
@@ -691,6 +696,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          generation_grouping?: "purchase_location" | "purchaser";
           published_at?: string | null;
           published_by_actor_temp_session_id?: string | null;
           published_by_actor_type?: ActorType | null;
@@ -1069,6 +1075,7 @@ export type Database = {
     Functions: {
       publish_approved_purchase_requests: {
         Args: {
+          p_generation_grouping?: "purchase_location" | "purchaser";
           p_name: string;
           p_organization_id: string;
           p_published_by_user_id: string;
@@ -1141,6 +1148,7 @@ export type Database = {
       };
       schedule_approved_purchase_requests: {
         Args: {
+          p_generation_grouping?: "purchase_location" | "purchaser";
           p_name: string;
           p_organization_id: string;
           p_scheduled_by_user_id: string;

@@ -17,6 +17,7 @@ const publishedList: PurchaseListRecord = {
     type: "user",
     userId: "publisher-1"
   },
+  generationGrouping: "purchase_location",
   id: "list-1",
   name: "Sunday Purchases",
   organizationId: "org-1",
@@ -59,6 +60,7 @@ const publishedListItem: PurchaseListItemRecord = {
 };
 
 function createRepository(): PurchaseListPublishRepository & {
+  generationGrouping: string | null;
   publishedName: string | null;
   scheduledAt: string | null;
 } {
@@ -69,9 +71,11 @@ function createRepository(): PurchaseListPublishRepository & {
     listPurchaseLists() {
       return Promise.resolve([publishedList]);
     },
+    generationGrouping: null,
     publishScheduledPurchaseList(input) {
       return Promise.resolve({
         ...publishedList,
+        generationGrouping: "purchaser",
         id: "published-scheduled-list",
         name: "Scheduled Purchases",
         publishedBy: input.publishedBy
@@ -79,17 +83,21 @@ function createRepository(): PurchaseListPublishRepository & {
     },
     publishedName: null,
     publishApprovedPurchaseRequests(input) {
+      this.generationGrouping = input.generationGrouping;
       this.publishedName = input.name;
       return Promise.resolve({
         ...publishedList,
+        generationGrouping: input.generationGrouping,
         name: input.name
       });
     },
     scheduledAt: null,
     scheduleApprovedPurchaseRequests(input) {
+      this.generationGrouping = input.generationGrouping;
       this.scheduledAt = input.scheduledPublishAt;
       return Promise.resolve({
         ...publishedList,
+        generationGrouping: input.generationGrouping,
         name: input.name,
         publishMode: "scheduled",
         publishedAt: null,
@@ -120,6 +128,7 @@ describe("createPurchaseListPublishService", () => {
 
     const result = await service.publishApprovedPurchaseRequests({
       name: "  Sunday Purchases  ",
+      generationGrouping: "purchaser",
       organizationId: "org-1",
       publishedBy: {
         type: "user",
@@ -129,7 +138,9 @@ describe("createPurchaseListPublishService", () => {
     });
 
     assert.equal(result.name, "Sunday Purchases");
+    assert.equal(result.generationGrouping, "purchaser");
     assert.equal(repository.publishedName, "Sunday Purchases");
+    assert.equal(repository.generationGrouping, "purchaser");
   });
 
   it("rejects blank names", () => {
@@ -139,6 +150,7 @@ describe("createPurchaseListPublishService", () => {
       () =>
         service.publishApprovedPurchaseRequests({
           name: " ",
+          generationGrouping: "purchase_location",
           organizationId: "org-1",
           publishedBy: {
             type: "user",
@@ -157,6 +169,7 @@ describe("createPurchaseListPublishService", () => {
       () =>
         service.publishApprovedPurchaseRequests({
           name: "Sunday Purchases",
+          generationGrouping: "purchase_location",
           organizationId: "org-1",
           publishedBy: {
             type: "system"
@@ -174,6 +187,7 @@ describe("createPurchaseListPublishService", () => {
 
     const result = await service.scheduleApprovedPurchaseRequests({
       name: "  Festival Purchases  ",
+      generationGrouping: "purchaser",
       organizationId: "org-1",
       scheduledBy: {
         type: "user",
@@ -184,6 +198,7 @@ describe("createPurchaseListPublishService", () => {
     });
 
     assert.equal(result.name, "Festival Purchases");
+    assert.equal(result.generationGrouping, "purchaser");
     assert.equal(result.publishMode, "scheduled");
     assert.equal(result.status, "ready_to_publish");
     assert.equal(repository.scheduledAt, scheduledPublishAt);
@@ -196,6 +211,7 @@ describe("createPurchaseListPublishService", () => {
       () =>
         service.scheduleApprovedPurchaseRequests({
           name: "Festival Purchases",
+          generationGrouping: "purchase_location",
           organizationId: "org-1",
           scheduledBy: {
             type: "user",

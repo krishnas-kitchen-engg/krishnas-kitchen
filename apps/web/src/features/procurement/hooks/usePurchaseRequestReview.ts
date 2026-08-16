@@ -13,6 +13,7 @@ import {
   PROCUREMENT_ITEM_UNITS,
   type CatalogItemSummary,
   type PurchaseListItemRecord,
+  type PurchaseListGenerationGrouping,
   type ProcurementActor,
   type PurchaseListRecord,
   type PurchaseRequestRecord,
@@ -131,6 +132,8 @@ export function usePurchaseRequestReview() {
   const [addCatalogItems, setAddCatalogItems] = useState<readonly CatalogItemSummary[]>([]);
   const [addForm, setAddForm] = useState<QueueAddForm>(initialQueueAddForm);
   const [listName, setListName] = useState("Next Purchase List");
+  const [generationGrouping, setGenerationGrouping] =
+    useState<PurchaseListGenerationGrouping>("purchase_location");
   const [publishMode, setPublishMode] = useState<"manual" | "scheduled">("manual");
   const [purchaseLists, setPurchaseLists] = useState<readonly PurchaseListRecord[]>([]);
   const [purchaseListItems, setPurchaseListItems] = useState<readonly PurchaseListItemRecord[]>([]);
@@ -483,6 +486,7 @@ export function usePurchaseRequestReview() {
 
     try {
       await purchaseListService.publishApprovedPurchaseRequests({
+        generationGrouping,
         name: listName,
         organizationId,
         publishedBy: procurementActor,
@@ -522,6 +526,7 @@ export function usePurchaseRequestReview() {
 
     try {
       await purchaseListService.scheduleApprovedPurchaseRequests({
+        generationGrouping,
         name: listName,
         organizationId,
         scheduledBy: procurementActor,
@@ -590,6 +595,7 @@ export function usePurchaseRequestReview() {
     canReviewRequests,
     drafts,
     error,
+    generationGrouping,
     isLoading,
     listName,
     publishApprovedRequests,
@@ -603,6 +609,7 @@ export function usePurchaseRequestReview() {
     scheduleApprovedRequests,
     scheduledLists,
     scheduledPublishAt,
+    setGenerationGrouping,
     setAddCategory(category: string) {
       setAddForm((currentForm) => ({
         ...currentForm,

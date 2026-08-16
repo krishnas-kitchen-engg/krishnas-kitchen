@@ -33,10 +33,20 @@ export type ProcurementAdminRepository = {
     scope: ProcurementScope
   ) => Promise<readonly ItemPurchasePreferenceRecord[]>;
   listPurchaseLocations: (scope: ProcurementScope) => Promise<readonly PurchaseLocationRecord[]>;
+  listPurchaserCandidates: (
+    scope: ProcurementScope
+  ) => Promise<readonly ProcurementPurchaserCandidate[]>;
   updatePurchaseLocation: (input: UpdatePurchaseLocationInput) => Promise<PurchaseLocationRecord>;
   updatePurchaseLocationArchivedState: (
     input: PurchaseLocationArchiveInput & { archivedAt: string | null }
   ) => Promise<PurchaseLocationRecord>;
+};
+
+export type ProcurementPurchaserCandidate = {
+  deletedAt?: string | null;
+  email: string;
+  fullName: string;
+  id: EntityId;
 };
 
 export type ProcurementAdminService = {
@@ -51,6 +61,9 @@ export type ProcurementAdminService = {
     scope: ProcurementScope
   ) => Promise<readonly ItemPurchasePreferenceRecord[]>;
   listPurchaseLocations: (scope: ProcurementScope) => Promise<readonly PurchaseLocationRecord[]>;
+  listPurchaserCandidates: (
+    scope: ProcurementScope
+  ) => Promise<readonly ProcurementPurchaserCandidate[]>;
   restorePurchaseLocation: (
     input: Omit<PurchaseLocationArchiveInput, "archived">
   ) => Promise<PurchaseLocationRecord>;
@@ -223,10 +236,18 @@ export function createProcurementAdminService(
           input.estimatedUnitCost,
           "Estimated unit cost"
         ),
+        minimumOrderQuantity: assertValidOptionalPositiveNumber(
+          input.minimumOrderQuantity,
+          "Minimum order quantity"
+        ),
         notes: assertValidOptionalText(input.notes, "Preference notes", 500),
         packSize: assertValidOptionalPositiveNumber(input.packSize, "Pack size"),
         preferredPurchaseUnit: input.preferredPurchaseUnit ?? null
       });
+    },
+
+    listPurchaserCandidates(scope) {
+      return repository.listPurchaserCandidates(scope);
     },
 
     async createPurchaseLocation(input) {

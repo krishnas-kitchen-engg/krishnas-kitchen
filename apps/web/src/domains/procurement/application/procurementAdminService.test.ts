@@ -57,6 +57,7 @@ function createRepository(
         estimatedUnitCost: input.estimatedUnitCost ?? null,
         id: `preference-${preferences.length + 1}`,
         itemId: input.itemId,
+        minimumOrderQuantity: input.minimumOrderQuantity ?? null,
         notes: input.notes ?? null,
         organizationId: input.organizationId,
         packSize: input.packSize ?? null,
@@ -88,6 +89,16 @@ function createRepository(
     },
     listPurchaseLocations() {
       return Promise.resolve(locations);
+    },
+    listPurchaserCandidates() {
+      return Promise.resolve([
+        {
+          deletedAt: null,
+          email: "purchaser@krishnas-kitchen.test",
+          fullName: "Demo Purchaser",
+          id: "purchaser-1"
+        }
+      ]);
     },
     updatePurchaseLocation(input) {
       const index = locations.findIndex((location) => location.id === input.id);
@@ -196,6 +207,7 @@ describe("procurement admin service", () => {
         createdBy: actor,
         estimatedUnitCost: -1,
         itemId: "item-1",
+        minimumOrderQuantity: 0,
         packSize: 0,
         preferredPurchaseLocationId: "purchase-location-1",
         preferredPurchaseUnit: "kg"
@@ -213,6 +225,7 @@ describe("procurement admin service", () => {
         createdBy: actor,
         estimatedUnitCost: 12.5,
         itemId: "item-1",
+        minimumOrderQuantity: 10,
         notes: "Best for bulk rice",
         packSize: 25,
         preferredPurchaseLocationId: "purchase-location-1",
@@ -223,6 +236,7 @@ describe("procurement admin service", () => {
       createdBy: actor,
       estimatedUnitCost: 12.5,
       itemId: "item-1",
+      minimumOrderQuantity: 10,
       packSize: 25,
       preferredPurchaseLocationId: "purchase-location-1",
       purchaserUserId: "purchaser-1"

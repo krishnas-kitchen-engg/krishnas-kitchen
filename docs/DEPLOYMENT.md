@@ -188,16 +188,19 @@ Run these against demo/staging after deployment. Prioritize this list; it is des
 16. Execute a production run with sufficient stock.
 17. Confirm production run history and inventory balances update.
 18. Open Low Stock Center and confirm dashboard low-stock counts are consistent.
-19. Submit, approve, publish, and purchase a procurement request.
-20. Upload a purchase receipt and confirm it is visible in receipt review.
-21. Parse a purchase receipt with OCR, confirm date/total/line suggestions appear, and confirm inventory is not updated by OCR.
-22. Archive and restore a test location.
-23. Archive and restore a test inventory item.
-24. Refresh the browser and confirm session/context recovery.
-25. Sign out and sign in as validation volunteer.
-26. Confirm volunteer permissions do not expose manager-only administration or reversal actions.
-27. Scan or manually enter a known validation barcode.
-28. Confirm offline shell behavior by loading the app once, disabling network, and refreshing the installed or browser app.
+19. Configure one purchase location, default purchaser, item preference, reorder point, and optional minimum order quantity.
+20. Submit, approve, publish, and purchase a procurement request grouped by store/source.
+21. Submit, approve, publish, and purchase a procurement request grouped by purchaser.
+22. Confirm generated purchase-list quantities respect the configured minimum order quantity where applicable.
+23. Upload a purchase receipt and confirm it is visible in receipt review.
+24. Parse a purchase receipt with OCR, confirm date/total/line suggestions appear, and confirm inventory is not updated by OCR.
+25. Archive and restore a test location.
+26. Archive and restore a test inventory item.
+27. Refresh the browser and confirm session/context recovery.
+28. Sign out and sign in as validation volunteer.
+29. Confirm volunteer permissions do not expose manager-only administration or reversal actions.
+30. Scan or manually enter a known validation barcode.
+31. Confirm offline shell behavior by loading the app once, disabling network, and refreshing the installed or browser app.
 
 ## Missing Infrastructure Items
 

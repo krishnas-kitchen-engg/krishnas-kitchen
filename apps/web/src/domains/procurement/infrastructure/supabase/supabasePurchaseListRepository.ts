@@ -47,6 +47,7 @@ function mapPurchaseList(row: PurchaseListRow): PurchaseListRecord {
       actor_user_id: row.created_by_actor_user_id
     }) ?? { type: "system" },
     id: row.id,
+    generationGrouping: row.generation_grouping,
     name: row.name,
     organizationId: row.organization_id,
     publishMode: row.publish_mode,
@@ -103,6 +104,7 @@ export function createSupabasePurchaseListRepository(
     async publishApprovedPurchaseRequests(input) {
       const { data, error } = await client.rpc("publish_approved_purchase_requests", {
         p_name: input.name,
+        p_generation_grouping: input.generationGrouping,
         p_organization_id: input.organizationId,
         p_published_by_user_id: input.publishedBy.userId ?? "",
         p_temple_id: input.templeId
@@ -133,6 +135,7 @@ export function createSupabasePurchaseListRepository(
     async scheduleApprovedPurchaseRequests(input) {
       const { data, error } = await client.rpc("schedule_approved_purchase_requests", {
         p_name: input.name,
+        p_generation_grouping: input.generationGrouping,
         p_organization_id: input.organizationId,
         p_scheduled_by_user_id: input.scheduledBy.userId ?? "",
         p_scheduled_publish_at: input.scheduledPublishAt,

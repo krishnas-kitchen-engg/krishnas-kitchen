@@ -1,4 +1,5 @@
 import type {
+  PurchaseListGenerationGrouping,
   PurchaseListPublishInput,
   PurchaseListScheduleInput,
   ScheduledPurchaseListPublishInput
@@ -15,6 +16,11 @@ export class PurchaseListPublishValidationError extends Error {
     this.name = "PurchaseListPublishValidationError";
   }
 }
+
+const purchaseListGenerationGroupings = [
+  "purchase_location",
+  "purchaser"
+] satisfies readonly PurchaseListGenerationGrouping[];
 
 export type PurchaseListPublishService = {
   listPurchaseListItems: (
@@ -54,10 +60,15 @@ function assertValidPublishInput(input: PurchaseListPublishInput) {
   if (input.publishedBy.type !== "user" || !input.publishedBy.userId?.trim()) {
     throw new PurchaseListPublishValidationError("A signed-in publisher is required.");
   }
+
+  if (!purchaseListGenerationGroupings.includes(input.generationGrouping)) {
+    throw new PurchaseListPublishValidationError("Purchase list generation grouping is invalid.");
+  }
 }
 
 function assertValidScheduleInput(input: PurchaseListScheduleInput) {
   assertValidPublishInput({
+    generationGrouping: input.generationGrouping,
     name: input.name,
     organizationId: input.organizationId,
     publishedBy: input.scheduledBy,
@@ -110,6 +121,7 @@ export function createPurchaseListPublishService(
 
       return repository.publishApprovedPurchaseRequests({
         ...input,
+        generationGrouping: input.generationGrouping,
         name: input.name.trim()
       });
     },
@@ -125,6 +137,7 @@ export function createPurchaseListPublishService(
 
       return repository.scheduleApprovedPurchaseRequests({
         ...input,
+        generationGrouping: input.generationGrouping,
         name: input.name.trim(),
         scheduledPublishAt: new Date(input.scheduledPublishAt).toISOString()
       });

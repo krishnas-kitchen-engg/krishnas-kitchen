@@ -67,6 +67,7 @@ export {
 export type {
   ProcurementAdminRepository,
   ProcurementAdminService,
+  ProcurementPurchaserCandidate,
   PurchaseLocationArchiveInput,
   UpdatePurchaseLocationInput
 } from "./application/procurementAdminService";
@@ -113,6 +114,7 @@ export type {
   PurchaseItemReference,
   PurchaseInventoryReceiveInput,
   PurchaseListInput,
+  PurchaseListGenerationGrouping,
   PurchaseListItemProgressInput,
   PurchaseListItemProgressStatus,
   PurchaseListItemStatus,

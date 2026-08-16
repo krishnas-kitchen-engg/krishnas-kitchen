@@ -112,12 +112,12 @@ export function ItemManagementScreen() {
         </div>
 
         <label className="block text-sm font-medium text-stone-800">
-          Reorder threshold
+          Reorder point / low stock threshold
           <input
             className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
             inputMode="decimal"
             onChange={(event) => management.setReorderThresholdText(event.target.value)}
-            placeholder="Optional"
+            placeholder="Optional minimum on hand"
             type="number"
             value={management.form.reorderThresholdText}
           />
@@ -183,7 +183,7 @@ export function ItemManagementScreen() {
                 </div>
                 <p className="text-sm text-stone-600">{item.description || "No description"}</p>
                 <p className="text-sm font-medium text-stone-700">
-                  Reorder threshold:{" "}
+                  Reorder point:{" "}
                   {typeof item.reorderThreshold === "number"
                     ? `${item.reorderThreshold} ${item.defaultUnit}`
                     : "Not set"}

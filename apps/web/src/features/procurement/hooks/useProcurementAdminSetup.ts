@@ -13,6 +13,7 @@ import {
   createSupabaseProcurementAdminRepository,
   type ItemPurchasePreferenceRecord,
   type ProcurementActor,
+  type ProcurementPurchaserCandidate,
   type PurchaseLocationRecord
 } from "@/domains/procurement";
 import { hasPermission, useAuth } from "@/features/auth";
@@ -27,6 +28,7 @@ type PurchaseLocationForm = {
 type ItemPreferenceForm = {
   estimatedUnitCostText: string;
   itemId: string;
+  minimumOrderQuantityText: string;
   notes: string;
   packSizeText: string;
   preferredPurchaseLocationId: string;
@@ -43,6 +45,7 @@ export type ProcurementAdminSetupState = {
   locationForm: PurchaseLocationForm;
   purchaseLocations: readonly PurchaseLocationRecord[];
   purchasePreferences: readonly ItemPurchasePreferenceRecord[];
+  purchaserCandidates: readonly ProcurementPurchaserCandidate[];
 };
 
 const initialLocationForm: PurchaseLocationForm = {
@@ -55,6 +58,7 @@ const initialLocationForm: PurchaseLocationForm = {
 const initialItemPreferenceForm: ItemPreferenceForm = {
   estimatedUnitCostText: "",
   itemId: "",
+  minimumOrderQuantityText: "",
   notes: "",
   packSizeText: "",
   preferredPurchaseLocationId: "",
@@ -72,6 +76,22 @@ function optionalNumber(value: string): number | null {
   const trimmedValue = value.trim();
 
   return trimmedValue ? Number(trimmedValue) : null;
+}
+
+function toError(reason: unknown): Error {
+  return reason instanceof Error ? reason : new Error("Procurement setup failed to load.");
+}
+
+function getRejectedReason<T>(result: PromiseSettledResult<T>): Error | null {
+  return result.status === "rejected" ? toError(result.reason) : null;
+}
+
+function getFulfilledValue<T>(result: PromiseSettledResult<T>): T {
+  if (result.status === "rejected") {
+    throw toError(result.reason);
+  }
+
+  return result.value;
 }
 
 function toProcurementActor(actor: ReturnType<typeof useInventoryActor>): ProcurementActor | null {
@@ -129,7 +149,8 @@ export function useProcurementAdminSetup() {
     items: [],
     locationForm: initialLocationForm,
     purchaseLocations: [],
-    purchasePreferences: []
+    purchasePreferences: [],
+    purchaserCandidates: []
   });
 
   const activeItems = useMemo(() => state.items.filter((item) => !item.deletedAt), [state.items]);
@@ -152,7 +173,8 @@ export function useProcurementAdminSetup() {
         isLoading: false,
         items: [],
         purchaseLocations: [],
-        purchasePreferences: []
+        purchasePreferences: [],
+        purchaserCandidates: []
       }));
       return;
     }
@@ -173,20 +195,35 @@ export function useProcurementAdminSetup() {
       }));
 
       try {
-        const [purchaseLocations, purchasePreferences, items] = await Promise.all([
-          currentProcurementService.listPurchaseLocations(scope),
-          currentProcurementService.listItemPurchasePreferences(scope),
-          currentItemService.listItems(scope)
-        ]);
+        const [purchaseLocations, purchasePreferences, items, purchaserCandidatesResult] =
+          await Promise.allSettled([
+            currentProcurementService.listPurchaseLocations(scope),
+            currentProcurementService.listItemPurchasePreferences(scope),
+            currentItemService.listItems(scope),
+            currentProcurementService.listPurchaserCandidates(scope)
+          ]);
+
+        const blockingLoadError =
+          getRejectedReason(purchaseLocations) ??
+          getRejectedReason(purchasePreferences) ??
+          getRejectedReason(items);
+
+        if (blockingLoadError) {
+          throw blockingLoadError;
+        }
+
+        const purchaserCandidates =
+          purchaserCandidatesResult.status === "fulfilled" ? purchaserCandidatesResult.value : [];
 
         if (isActive) {
           setState((currentState) => ({
             ...currentState,
             error: null,
             isLoading: false,
-            items,
-            purchaseLocations,
-            purchasePreferences
+            items: getFulfilledValue(items),
+            purchaseLocations: getFulfilledValue(purchaseLocations),
+            purchasePreferences: getFulfilledValue(purchasePreferences),
+            purchaserCandidates
           }));
         }
       } catch (error) {
@@ -346,6 +383,7 @@ export function useProcurementAdminSetup() {
         createdBy: procurementActor,
         estimatedUnitCost: optionalNumber(state.itemPreferenceForm.estimatedUnitCostText),
         itemId: state.itemPreferenceForm.itemId,
+        minimumOrderQuantity: optionalNumber(state.itemPreferenceForm.minimumOrderQuantityText),
         notes: state.itemPreferenceForm.notes,
         organizationId,
         packSize: optionalNumber(state.itemPreferenceForm.packSizeText),
@@ -395,6 +433,15 @@ export function useProcurementAdminSetup() {
         itemPreferenceForm: {
           ...currentState.itemPreferenceForm,
           itemId
+        }
+      }));
+    },
+    setItemPreferenceMinimumOrderQuantityText(minimumOrderQuantityText: string) {
+      setState((currentState) => ({
+        ...currentState,
+        itemPreferenceForm: {
+          ...currentState.itemPreferenceForm,
+          minimumOrderQuantityText
         }
       }));
     },

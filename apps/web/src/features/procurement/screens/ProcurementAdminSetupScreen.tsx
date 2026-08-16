@@ -18,6 +18,10 @@ function StatusBadge({ archivedAt }: { archivedAt?: string | null | undefined })
   );
 }
 
+function formatPurchaserLabel(user: { email: string; fullName: string; id: string }) {
+  return `${user.fullName} (${user.email})`;
+}
+
 export function ProcurementAdminSetupScreen() {
   const setup = useProcurementAdminSetup();
   const canCreateLocation = Boolean(setup.locationForm.name.trim()) && !setup.isSubmitting;
@@ -92,13 +96,28 @@ export function ProcurementAdminSetupScreen() {
         </label>
 
         <label className="block text-sm font-medium text-stone-800">
-          Default purchaser user ID
-          <input
-            className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
-            onChange={(event) => setup.setLocationDefaultPurchaserUserId(event.target.value)}
-            placeholder="Optional until user management is connected"
-            value={setup.locationForm.defaultPurchaserUserId}
-          />
+          Default purchaser
+          {setup.purchaserCandidates.length > 0 ? (
+            <select
+              className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+              onChange={(event) => setup.setLocationDefaultPurchaserUserId(event.target.value)}
+              value={setup.locationForm.defaultPurchaserUserId}
+            >
+              <option value="">No default purchaser</option>
+              {setup.purchaserCandidates.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {formatPurchaserLabel(user)}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
+              onChange={(event) => setup.setLocationDefaultPurchaserUserId(event.target.value)}
+              placeholder="Optional purchaser user ID"
+              value={setup.locationForm.defaultPurchaserUserId}
+            />
+          )}
         </label>
 
         <button
@@ -193,15 +212,48 @@ export function ProcurementAdminSetupScreen() {
             />
           </label>
           <label className="block text-sm font-medium text-stone-800">
-            Purchaser user ID
+            Minimum order quantity
             <input
               className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
-              onChange={(event) => setup.setItemPreferencePurchaserUserId(event.target.value)}
+              inputMode="decimal"
+              onChange={(event) =>
+                setup.setItemPreferenceMinimumOrderQuantityText(event.target.value)
+              }
               placeholder="Optional"
-              value={setup.itemPreferenceForm.purchaserUserId}
+              type="number"
+              value={setup.itemPreferenceForm.minimumOrderQuantityText}
             />
           </label>
         </div>
+
+        <label className="block text-sm font-medium text-stone-800">
+          Assigned purchaser
+          {setup.purchaserCandidates.length > 0 ? (
+            <select
+              className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+              onChange={(event) => setup.setItemPreferencePurchaserUserId(event.target.value)}
+              value={setup.itemPreferenceForm.purchaserUserId}
+            >
+              <option value="">Use purchase location default</option>
+              {setup.purchaserCandidates.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {formatPurchaserLabel(user)}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
+              onChange={(event) => setup.setItemPreferencePurchaserUserId(event.target.value)}
+              placeholder="Optional purchaser user ID"
+              value={setup.itemPreferenceForm.purchaserUserId}
+            />
+          )}
+          <span className="mt-1 block text-xs leading-5 text-stone-600">
+            Minimum order quantity keeps generated purchase quantities from falling below the
+            smallest practical purchase amount.
+          </span>
+        </label>
 
         <label className="block text-sm font-medium text-stone-800">
           Notes
@@ -267,6 +319,9 @@ export function ProcurementAdminSetupScreen() {
           setup.purchasePreferences.map((preference) => {
             const item = itemsById.get(preference.itemId);
             const location = locationsById.get(preference.preferredPurchaseLocationId);
+            const purchaser = preference.purchaserUserId
+              ? setup.purchaserCandidates.find((user) => user.id === preference.purchaserUserId)
+              : null;
 
             return (
               <article
@@ -289,10 +344,22 @@ export function ProcurementAdminSetupScreen() {
                   {preference.preferredPurchaseUnit ?? item?.defaultUnit ?? ""}
                 </p>
                 <p className="text-sm text-stone-600">
+                  Minimum order: {preference.minimumOrderQuantity ?? "Not set"}{" "}
+                  {preference.preferredPurchaseUnit ?? item?.defaultUnit ?? ""}
+                </p>
+                <p className="text-sm text-stone-600">
                   Estimated unit cost:{" "}
                   {typeof preference.estimatedUnitCost === "number"
                     ? `$${preference.estimatedUnitCost.toFixed(2)}`
                     : "Not set"}
+                </p>
+                <p className="text-sm text-stone-600">
+                  Assigned purchaser:{" "}
+                  {purchaser
+                    ? formatPurchaserLabel(purchaser)
+                    : preference.purchaserUserId
+                      ? preference.purchaserUserId
+                      : "Purchase location default"}
                 </p>
               </article>
             );

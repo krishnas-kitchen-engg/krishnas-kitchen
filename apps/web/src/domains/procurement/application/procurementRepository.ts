@@ -20,7 +20,8 @@ import type {
   PurchaseReceiptStatus,
   PurchaseRequestInput,
   PurchaseRequestReviewInput,
-  PurchaseRequestStatus
+  PurchaseRequestStatus,
+  PurchaseListGenerationGrouping
 } from "../domain/types";
 
 export type PurchaseRequestRecord = TimestampFields &
@@ -57,6 +58,7 @@ export type ItemPurchasePreferenceRecord = TimestampFields &
     estimatedUnitCost?: number | null;
     id: EntityId;
     itemId: EntityId;
+    minimumOrderQuantity?: number | null;
     notes?: string | null;
     packSize?: number | null;
     preferredPurchaseLocationId: EntityId;
@@ -67,6 +69,7 @@ export type ItemPurchasePreferenceRecord = TimestampFields &
 export type PurchaseListRecord = TimestampFields &
   ProcurementScope & {
     createdBy: ProcurementActor;
+    generationGrouping: PurchaseListGenerationGrouping;
     id: EntityId;
     name: string;
     publishMode: PurchasePublishMode;
