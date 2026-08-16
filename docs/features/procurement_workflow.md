@@ -553,8 +553,8 @@ Status: Complete for server-assisted receipt parsing suggestions. OCR can sugges
 
 | Requirement | Planned Owner | First Slice | Status |
 |---|---|---|---|
-| Admin can make all procurement setup decisions | Admin View | Slice 2 | Partial |
-| Admin UI is intuitive and sectioned | Admin View | Slice 2 | Partial |
+| Admin can make all procurement setup decisions | Admin View | Slice 2 | Complete |
+| Admin UI is intuitive and sectioned | Admin View | Slice 2 | Complete |
 | Staff can self-register or request access | Auth / Admin View | Auth access slice | Complete |
 | Staff can request existing item purchase | User Request View | Slice 3 | Complete |
 | Staff can search/filter existing items | User Request View | Slice 3 | Complete |

@@ -38,12 +38,37 @@ export function TasksScreen() {
       {tasks.lowStock.status === "unavailable" ? (
         <TasksErrorState message="Low stock tasks are unavailable." />
       ) : null}
+      {tasks.actionError ? (
+        <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-800">
+          {tasks.actionError}
+        </div>
+      ) : null}
+      {tasks.actionSuccess ? (
+        <div className="rounded-md border border-green-200 bg-green-50 p-3 text-sm font-medium text-green-800">
+          {tasks.actionSuccess}
+        </div>
+      ) : null}
       {tasks.allTasks.length === 0 &&
       tasks.unknownBarcodes.status === "loaded" &&
       tasks.lowStock.status === "loaded" ? (
         <TasksEmptyState />
       ) : (
-        <TaskList tasks={tasks.filteredTasks} />
+        <TaskList
+          canResolveUnknownBarcodes={tasks.canResolveUnknownBarcodes}
+          catalogItems={tasks.catalogItems}
+          dismissReasonsById={tasks.dismissReasonsById}
+          isSubmittingAction={tasks.isSubmittingAction}
+          linkItemIdsById={tasks.linkItemIdsById}
+          onDismissReasonChange={tasks.setDismissReason}
+          onDismissUnknownBarcode={(unknownBarcodeId) => {
+            void tasks.dismissUnknownBarcode(unknownBarcodeId);
+          }}
+          onLinkItemChange={tasks.setLinkItemId}
+          onLinkUnknownBarcode={(unknownBarcodeId) => {
+            void tasks.linkUnknownBarcode(unknownBarcodeId);
+          }}
+          tasks={tasks.filteredTasks}
+        />
       )}
       <FutureTaskPlaceholder />
     </section>

@@ -1,5 +1,7 @@
 # Unknown Barcode Management
 
+Status: Complete for UAT
+
 # Objective
 
 Capture and manage unknown barcodes discovered during inventory operations.
@@ -114,6 +116,7 @@ Do not create duplicate records.
 Inventory manager views:
 
 * pending unknown barcodes
+* unknown barcode tasks in the Tasks workflow
 
 Inventory manager may:
 

@@ -1,6 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 
 import type {
+  InventoryCatalogItem,
   InventoryLowStockAlert,
   InventoryVisibilityService,
   UnknownBarcodeManagementService,
@@ -12,6 +13,7 @@ import {
   InventoryIntegrationContext
 } from "@/domains/inventory/integration/inventoryContextValue";
 import { useAuth } from "@/features/auth";
+import { createUuid } from "@/shared/lib/uuid";
 
 import type {
   LowStockReviewTask,
@@ -64,6 +66,7 @@ export function projectUnknownBarcodeTasks(
   records: readonly UnknownBarcodeRecord[]
 ): UnknownBarcodeReviewTask[] {
   return records.map((record) => ({
+    barcode: record.barcode,
     barcodeLabel: `${record.barcode.format}: ${record.barcode.value}`,
     category: "unknown_barcode",
     description: `Seen ${record.scanCount} time${record.scanCount === 1 ? "" : "s"}. Review and link when the item is known.`,
@@ -137,21 +140,55 @@ function filterTasks(
 
 export function useVolunteerTasks(): VolunteerTasksState & {
   allTasks: readonly VolunteerTask[];
+  catalogItems: readonly InventoryCatalogItem[];
+  actionError: string | null;
+  actionSuccess: string | null;
   canReadTasks: boolean;
+  canResolveUnknownBarcodes: boolean;
+  dismissReasonsById: Readonly<Record<string, string>>;
   filteredTasks: readonly VolunteerTask[];
+  isSubmittingAction: boolean;
+  linkItemIdsById: Readonly<Record<string, string>>;
+  dismissUnknownBarcode: (unknownBarcodeId: string) => Promise<void>;
+  linkUnknownBarcode: (unknownBarcodeId: string) => Promise<void>;
+  setDismissReason: (unknownBarcodeId: string, reason: string) => void;
+  setLinkItemId: (unknownBarcodeId: string, itemId: string) => void;
   setSelectedCategory: (category: VolunteerTaskCategory) => void;
 } {
   const auth = useAuth();
   const permissions = useInventoryPermissions();
+  const actor = useMemo(
+    () =>
+      auth.isTemporaryVolunteer && auth.temporaryVolunteerSession
+        ? {
+            tempSessionId: auth.temporaryVolunteerSession.id,
+            type: "temporary_volunteer" as const
+          }
+        : auth.profile
+          ? {
+              type: "user" as const,
+              userId: auth.profile.id
+            }
+          : null,
+    [auth.isTemporaryVolunteer, auth.profile, auth.temporaryVolunteerSession]
+  );
   const availability = useContext(InventoryAvailabilityContext);
   const integration = useContext(InventoryIntegrationContext);
   const organizationId = auth.currentOrganization?.id;
   const templeId = auth.currentTemple?.id;
   const [state, setState] = useState<VolunteerTasksState>(initialVolunteerTasksState);
+  const [catalogItems, setCatalogItems] = useState<readonly InventoryCatalogItem[]>([]);
+  const [linkItemIdsById, setLinkItemIdsById] = useState<Record<string, string>>({});
+  const [dismissReasonsById, setDismissReasonsById] = useState<Record<string, string>>({});
+  const [isSubmittingAction, setIsSubmittingAction] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [actionSuccess, setActionSuccess] = useState<string | null>(null);
+  const canResolveUnknownBarcodes = permissions.canEditItems;
 
   useEffect(() => {
     if (!permissions.canReadInventory || !organizationId || !templeId) {
       setState(initialVolunteerTasksState);
+      setCatalogItems([]);
       return;
     }
 
@@ -162,11 +199,12 @@ export function useVolunteerTasks(): VolunteerTasksState & {
         lowStock: toUnavailableSection("Inventory services are unavailable."),
         unknownBarcodes: toUnavailableSection("Inventory services are unavailable.")
       }));
+      setCatalogItems([]);
       return;
     }
 
     let isActive = true;
-    const { unknownBarcodes, visibility } = integration.services;
+    const { catalogQueries, unknownBarcodes, visibility } = integration.services;
     const currentOrganizationId = organizationId;
     const currentTempleId = templeId;
 
@@ -176,22 +214,37 @@ export function useVolunteerTasks(): VolunteerTasksState & {
         isLoading: true
       }));
 
-      const tasks = await loadVolunteerTasks({
-        organizationId: currentOrganizationId,
-        templeId: currentTempleId,
-        unknownBarcodes,
-        visibility
-      });
+      const [tasksResult, itemsResult] = await Promise.allSettled([
+        loadVolunteerTasks({
+          organizationId: currentOrganizationId,
+          templeId: currentTempleId,
+          unknownBarcodes,
+          visibility
+        }),
+        catalogQueries.searchItems({
+          organizationId: currentOrganizationId,
+          searchText: ""
+        })
+      ]);
 
       if (!isActive) {
         return;
       }
 
+      if (tasksResult.status === "rejected") {
+        throw tasksResult.reason;
+      }
+
       setState((currentState) => ({
         ...currentState,
         isLoading: false,
-        ...tasks
+        ...tasksResult.value
       }));
+      setCatalogItems(
+        itemsResult.status === "fulfilled"
+          ? itemsResult.value.filter((item) => !item.deletedAt)
+          : []
+      );
     }
 
     void load();
@@ -216,15 +269,162 @@ export function useVolunteerTasks(): VolunteerTasksState & {
     [allTasks, state.selectedCategory]
   );
 
+  async function refreshTasks() {
+    if (
+      !permissions.canReadInventory ||
+      availability.status !== "ready" ||
+      !integration?.services ||
+      !organizationId ||
+      !templeId
+    ) {
+      return;
+    }
+
+    const tasks = await loadVolunteerTasks({
+      organizationId,
+      templeId,
+      unknownBarcodes: integration.services.unknownBarcodes,
+      visibility: integration.services.visibility
+    });
+
+    setState((currentState) => ({
+      ...currentState,
+      ...tasks
+    }));
+  }
+
+  function findUnknownBarcodeTask(unknownBarcodeId: string): UnknownBarcodeReviewTask | null {
+    return (
+      state.unknownBarcodes.items.find((task) => task.unknownBarcodeId === unknownBarcodeId) ?? null
+    );
+  }
+
   return {
     ...state,
+    actionError,
+    actionSuccess,
     allTasks,
+    canResolveUnknownBarcodes,
+    catalogItems,
+    dismissReasonsById,
     canReadTasks: permissions.canReadInventory,
     filteredTasks,
+    isSubmittingAction,
+    linkItemIdsById,
+    async dismissUnknownBarcode(unknownBarcodeId) {
+      if (
+        !canResolveUnknownBarcodes ||
+        !actor ||
+        !integration?.services ||
+        !organizationId ||
+        isSubmittingAction
+      ) {
+        return;
+      }
+
+      const reason = dismissReasonsById[unknownBarcodeId]?.trim() ?? "";
+      if (!reason) {
+        setActionError("Enter a dismissal reason before dismissing this barcode.");
+        return;
+      }
+
+      setIsSubmittingAction(true);
+      setActionError(null);
+      setActionSuccess(null);
+
+      try {
+        await integration.services.unknownBarcodes.dismissUnknownBarcode(unknownBarcodeId, {
+          actor,
+          dismissedAt: new Date().toISOString(),
+          organizationId,
+          reason
+        });
+        setDismissReasonsById((currentReasons) => ({
+          ...currentReasons,
+          [unknownBarcodeId]: ""
+        }));
+        setActionSuccess("Unknown barcode dismissed.");
+        await refreshTasks();
+      } catch (error) {
+        setActionError(
+          error instanceof Error ? error.message : "Unknown barcode could not be dismissed."
+        );
+      } finally {
+        setIsSubmittingAction(false);
+      }
+    },
     setSelectedCategory(category) {
       setState((currentState) => ({
         ...currentState,
         selectedCategory: category
+      }));
+    },
+    async linkUnknownBarcode(unknownBarcodeId) {
+      if (
+        !canResolveUnknownBarcodes ||
+        !actor ||
+        !integration?.services ||
+        !organizationId ||
+        isSubmittingAction
+      ) {
+        return;
+      }
+
+      const task = findUnknownBarcodeTask(unknownBarcodeId);
+      const itemId = linkItemIdsById[unknownBarcodeId]?.trim() ?? "";
+      if (!task || !itemId) {
+        setActionError("Choose an active item before linking this barcode.");
+        return;
+      }
+
+      setIsSubmittingAction(true);
+      setActionError(null);
+      setActionSuccess(null);
+
+      try {
+        const now = new Date().toISOString();
+        const mapping = await integration.services.barcodeCatalog.createBarcodeMapping({
+          actor,
+          clientId: createUuid(),
+          createdAt: now,
+          format: task.barcode.format,
+          itemId,
+          organizationId,
+          rawValue: task.barcode.value,
+          sourceUnknownBarcodeId: unknownBarcodeId
+        });
+
+        await integration.services.unknownBarcodes.linkUnknownBarcode(unknownBarcodeId, {
+          actor,
+          itemId,
+          linkedAt: now,
+          linkedBarcodeMappingId: mapping.id,
+          organizationId
+        });
+        setLinkItemIdsById((currentItemIds) => ({
+          ...currentItemIds,
+          [unknownBarcodeId]: ""
+        }));
+        setActionSuccess("Unknown barcode linked to item.");
+        await refreshTasks();
+      } catch (error) {
+        setActionError(
+          error instanceof Error ? error.message : "Unknown barcode could not be linked."
+        );
+      } finally {
+        setIsSubmittingAction(false);
+      }
+    },
+    setDismissReason(unknownBarcodeId, reason) {
+      setDismissReasonsById((currentReasons) => ({
+        ...currentReasons,
+        [unknownBarcodeId]: reason
+      }));
+    },
+    setLinkItemId(unknownBarcodeId, itemId) {
+      setLinkItemIdsById((currentItemIds) => ({
+        ...currentItemIds,
+        [unknownBarcodeId]: itemId
       }));
     }
   };

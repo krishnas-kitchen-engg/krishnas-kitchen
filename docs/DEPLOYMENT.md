@@ -200,7 +200,8 @@ Run these against demo/staging after deployment. Prioritize this list; it is des
 28. Sign out and sign in as validation volunteer.
 29. Confirm volunteer permissions do not expose manager-only administration or reversal actions.
 30. Scan or manually enter a known validation barcode.
-31. Confirm offline shell behavior by loading the app once, disabling network, and refreshing the installed or browser app.
+31. Scan or manually enter an unknown barcode, then resolve it from Tasks by linking it to an active item or dismissing it with a reason.
+32. Confirm offline shell behavior by loading the app once, disabling network, and refreshing the installed or browser app.
 
 ## Missing Infrastructure Items
 

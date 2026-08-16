@@ -115,6 +115,10 @@ describe("volunteer task projections", () => {
     const tasks = projectUnknownBarcodeTasks([unknownBarcode]);
 
     assert.equal(tasks[0]?.category, "unknown_barcode");
+    assert.deepEqual(tasks[0]?.barcode, {
+      format: "qr",
+      value: "mystery-code"
+    });
     assert.equal(tasks[0]?.barcodeLabel, "qr: mystery-code");
     assert.equal(tasks[0]?.unknownBarcodeId, "unknown-1");
   });

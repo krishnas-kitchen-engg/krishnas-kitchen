@@ -1,4 +1,8 @@
-import type { InventoryLowStockAlert, UnknownBarcodeRecord } from "@/domains/inventory";
+import type {
+  InventoryBarcode,
+  InventoryLowStockAlert,
+  UnknownBarcodeRecord
+} from "@/domains/inventory";
 
 export type VolunteerTaskCategory =
   | "all"
@@ -19,6 +23,7 @@ export type BaseVolunteerTask = {
 };
 
 export type UnknownBarcodeReviewTask = BaseVolunteerTask & {
+  barcode: InventoryBarcode;
   barcodeLabel: string;
   category: "unknown_barcode";
   scanCount: number;
