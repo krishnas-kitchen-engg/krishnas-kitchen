@@ -86,13 +86,17 @@ describe("AdminManagementScreen", () => {
     assert.doesNotMatch(markup, /Users and temples/);
   });
 
-  it("renders temple, user, and role administration for authorized admins", () => {
+  it("renders sectioned administration workspace for authorized admins", () => {
     const markup = renderScreen(createAuthValue());
 
     assert.match(markup, /Users and temples/);
-    assert.match(markup, /Create temple/);
+    assert.match(markup, /People/);
+    assert.match(markup, /Roles/);
+    assert.match(markup, /Temples/);
+    assert.match(markup, /Setup/);
+    assert.match(markup, /Audit/);
     assert.match(markup, /Create login account/);
-    assert.match(markup, /Grant access/);
+    assert.match(markup, /Create accounts, search users, and archive or restore access/);
     assert.match(markup, /Temporary password/);
     assert.doesNotMatch(markup, /Supabase Auth User UID/);
   });

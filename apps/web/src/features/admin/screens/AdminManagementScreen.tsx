@@ -1,8 +1,44 @@
+import { useState } from "react";
 import type { AppRole } from "@krishnas-kitchen/types";
 
+import { navigateTo, type AppPath } from "@/app/routes/router";
 import type { AdminTempleRecord, AdminUserRecord, AdminUserRoleRecord } from "@/domains/admin";
 
 import { useAdminManagement } from "../hooks/useAdminManagement";
+
+type AdminSection = "audit" | "people" | "roles" | "setup" | "temples";
+
+const adminSections = [
+  {
+    description: "Create accounts, search users, and archive or restore access.",
+    label: "People",
+    value: "people"
+  },
+  {
+    description: "Grant role access across the organization or a specific temple.",
+    label: "Roles",
+    value: "roles"
+  },
+  {
+    description: "Create, edit, archive, and restore temple records.",
+    label: "Temples",
+    value: "temples"
+  },
+  {
+    description: "Manage inventory catalog, storage areas, and purchase setup.",
+    label: "Setup",
+    value: "setup"
+  },
+  {
+    description: "Review purchase approvals, receipt evidence, and finance support.",
+    label: "Audit",
+    value: "audit"
+  }
+] satisfies Array<{
+  description: string;
+  label: string;
+  value: AdminSection;
+}>;
 
 function StatusBadge({ archivedAt }: { archivedAt?: string | null }) {
   const isArchived = Boolean(archivedAt);
@@ -25,6 +61,65 @@ function formatRole(role: AppRole): string {
     .split("_")
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
+}
+
+function AdminSectionTabs({
+  selectedSection,
+  onSelect
+}: {
+  onSelect: (section: AdminSection) => void;
+  selectedSection: AdminSection;
+}) {
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+        {adminSections.map((section) => {
+          const isSelected = selectedSection === section.value;
+
+          return (
+            <button
+              aria-pressed={isSelected}
+              className={[
+                "min-h-11 rounded-md border px-3 text-sm font-semibold",
+                isSelected
+                  ? "border-brand-900 bg-brand-900 text-white"
+                  : "border-stone-300 bg-white text-stone-800"
+              ].join(" ")}
+              key={section.value}
+              onClick={() => onSelect(section.value)}
+              type="button"
+            >
+              {section.label}
+            </button>
+          );
+        })}
+      </div>
+      <p className="rounded-md border border-stone-200 bg-white p-3 text-sm leading-6 text-stone-700">
+        {adminSections.find((section) => section.value === selectedSection)?.description}
+      </p>
+    </div>
+  );
+}
+
+function AdminShortcut({
+  description,
+  label,
+  path
+}: {
+  description: string;
+  label: string;
+  path: AppPath;
+}) {
+  return (
+    <button
+      className="rounded-md border border-stone-200 bg-white p-4 text-left hover:border-brand-700"
+      onClick={() => navigateTo(path)}
+      type="button"
+    >
+      <span className="block text-base font-semibold text-stone-950">{label}</span>
+      <span className="mt-1 block text-sm leading-6 text-stone-600">{description}</span>
+    </button>
+  );
 }
 
 type UserCardProps = {
@@ -102,6 +197,7 @@ function UserCard({
 
 export function AdminManagementScreen() {
   const admin = useAdminManagement();
+  const [selectedSection, setSelectedSection] = useState<AdminSection>("people");
   const canSaveTemple = Boolean(admin.templeName.trim()) && !admin.isSubmitting;
   const canSaveUser =
     Boolean(admin.userForm.fullName.trim()) &&
@@ -160,313 +256,365 @@ export function AdminManagementScreen() {
         </div>
       ) : null}
 
-      <section className="space-y-4 rounded-md border border-stone-200 bg-white p-4">
-        <div>
-          <p className="text-xs font-semibold uppercase text-stone-500">Temple setup</p>
-          <h2 className="mt-1 text-lg font-semibold text-stone-950">
-            {admin.editingTempleId ? "Edit temple" : "Create temple"}
-          </h2>
-        </div>
-        <label className="block text-sm font-medium text-stone-800">
-          Temple name
-          <input
-            className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
-            onChange={(event) => admin.setTempleName(event.target.value)}
-            placeholder="ISKCON Sammamish"
-            value={admin.templeName}
-          />
-        </label>
-        <button
-          className="min-h-11 w-full rounded-md bg-brand-900 px-4 text-sm font-semibold text-white disabled:bg-stone-300"
-          disabled={!canSaveTemple}
-          onClick={() => {
-            void admin.submitTemple();
-          }}
-          type="button"
-        >
-          {admin.isSubmitting
-            ? "Saving..."
-            : admin.editingTempleId
-              ? "Update temple"
-              : "Create temple"}
-        </button>
-      </section>
+      <AdminSectionTabs selectedSection={selectedSection} onSelect={setSelectedSection} />
 
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-stone-950">Temples</h2>
-        {admin.state.temples.length > 0 ? (
-          admin.state.temples.map((temple) => (
-            <article
-              className="space-y-3 rounded-md border border-stone-200 bg-white p-4"
-              key={temple.id}
+      {selectedSection === "temples" ? (
+        <>
+          <section className="space-y-4 rounded-md border border-stone-200 bg-white p-4">
+            <div>
+              <p className="text-xs font-semibold uppercase text-stone-500">Temple setup</p>
+              <h2 className="mt-1 text-lg font-semibold text-stone-950">
+                {admin.editingTempleId ? "Edit temple" : "Create temple"}
+              </h2>
+            </div>
+            <label className="block text-sm font-medium text-stone-800">
+              Temple name
+              <input
+                className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
+                onChange={(event) => admin.setTempleName(event.target.value)}
+                placeholder="ISKCON Sammamish"
+                value={admin.templeName}
+              />
+            </label>
+            <button
+              className="min-h-11 w-full rounded-md bg-brand-900 px-4 text-sm font-semibold text-white disabled:bg-stone-300"
+              disabled={!canSaveTemple}
+              onClick={() => {
+                void admin.submitTemple();
+              }}
+              type="button"
             >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h3 className="text-base font-semibold text-stone-950">{temple.name}</h3>
-                  <p className="mt-1 break-all text-xs text-stone-500">{temple.id}</p>
-                </div>
-                <StatusBadge archivedAt={temple.deletedAt} />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  className="min-h-10 rounded-md border border-stone-300 px-3 text-sm font-semibold text-stone-800 disabled:text-stone-400"
-                  disabled={admin.isSubmitting}
-                  onClick={() => admin.editTemple(temple)}
-                  type="button"
+              {admin.isSubmitting
+                ? "Saving..."
+                : admin.editingTempleId
+                  ? "Update temple"
+                  : "Create temple"}
+            </button>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-stone-950">Temples</h2>
+            {admin.state.temples.length > 0 ? (
+              admin.state.temples.map((temple) => (
+                <article
+                  className="space-y-3 rounded-md border border-stone-200 bg-white p-4"
+                  key={temple.id}
                 >
-                  Edit
-                </button>
-                <button
-                  className="min-h-10 rounded-md bg-stone-900 px-3 text-sm font-semibold text-white disabled:bg-stone-300"
-                  disabled={admin.isSubmitting}
-                  onClick={() => {
-                    void admin.setTempleArchived(temple, !temple.deletedAt);
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="text-base font-semibold text-stone-950">{temple.name}</h3>
+                      <p className="mt-1 break-all text-xs text-stone-500">{temple.id}</p>
+                    </div>
+                    <StatusBadge archivedAt={temple.deletedAt} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      className="min-h-10 rounded-md border border-stone-300 px-3 text-sm font-semibold text-stone-800 disabled:text-stone-400"
+                      disabled={admin.isSubmitting}
+                      onClick={() => admin.editTemple(temple)}
+                      type="button"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="min-h-10 rounded-md bg-stone-900 px-3 text-sm font-semibold text-white disabled:bg-stone-300"
+                      disabled={admin.isSubmitting}
+                      onClick={() => {
+                        void admin.setTempleArchived(temple, !temple.deletedAt);
+                      }}
+                      type="button"
+                    >
+                      {temple.deletedAt ? "Restore" : "Archive"}
+                    </button>
+                  </div>
+                </article>
+              ))
+            ) : (
+              <p className="rounded-md border border-stone-200 bg-white p-4 text-sm text-stone-600">
+                No temples are configured yet.
+              </p>
+            )}
+          </section>
+        </>
+      ) : null}
+
+      {selectedSection === "people" ? (
+        <>
+          <section className="space-y-4 rounded-md border border-stone-200 bg-white p-4">
+            <div>
+              <p className="text-xs font-semibold uppercase text-stone-500">User onboarding</p>
+              <h2 className="mt-1 text-lg font-semibold text-stone-950">Create login account</h2>
+              <p className="mt-2 text-sm leading-6 text-stone-600">
+                Create a Supabase login, app profile, and initial role in one step. Share the
+                temporary password directly with the user.
+              </p>
+            </div>
+            <label className="block text-sm font-medium text-stone-800">
+              Full name
+              <input
+                className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
+                onChange={(event) =>
+                  admin.setUserForm({ ...admin.userForm, fullName: event.target.value })
+                }
+                placeholder="Volunteer name"
+                value={admin.userForm.fullName}
+              />
+            </label>
+            <label className="block text-sm font-medium text-stone-800">
+              Email
+              <input
+                className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
+                onChange={(event) =>
+                  admin.setUserForm({ ...admin.userForm, email: event.target.value })
+                }
+                placeholder="volunteer@example.com"
+                type="email"
+                value={admin.userForm.email}
+              />
+            </label>
+            <label className="block text-sm font-medium text-stone-800">
+              Temporary password
+              <input
+                autoComplete="new-password"
+                className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
+                minLength={8}
+                onChange={(event) =>
+                  admin.setUserForm({ ...admin.userForm, password: event.target.value })
+                }
+                placeholder="At least 8 characters"
+                type="password"
+                value={admin.userForm.password}
+              />
+            </label>
+            <label className="block text-sm font-medium text-stone-800">
+              Initial role
+              <select
+                className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+                onChange={(event) =>
+                  admin.setUserForm({ ...admin.userForm, role: event.target.value as AppRole })
+                }
+                value={admin.userForm.role}
+              >
+                {admin.manageableRoles.map((role) => (
+                  <option key={role} value={role}>
+                    {formatRole(role)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="block text-sm font-medium text-stone-800">
+              Initial access scope
+              <select
+                className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+                onChange={(event) =>
+                  admin.setUserForm({
+                    ...admin.userForm,
+                    scope: event.target.value as "organization" | "temple"
+                  })
+                }
+                value={admin.userForm.scope}
+              >
+                <option value="temple">Specific temple</option>
+                <option value="organization">All active temples</option>
+              </select>
+            </label>
+            {admin.userForm.scope === "temple" ? (
+              <label className="block text-sm font-medium text-stone-800">
+                Initial temple
+                <select
+                  className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+                  onChange={(event) =>
+                    admin.setUserForm({ ...admin.userForm, templeId: event.target.value })
+                  }
+                  value={admin.userForm.templeId}
+                >
+                  <option value="">Choose active temple</option>
+                  {admin.activeTemples.map((temple) => (
+                    <option key={temple.id} value={temple.id}>
+                      {temple.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
+            <button
+              className="min-h-11 w-full rounded-md bg-brand-900 px-4 text-sm font-semibold text-white disabled:bg-stone-300"
+              disabled={!canSaveUser}
+              onClick={() => {
+                void admin.createUser();
+              }}
+              type="button"
+            >
+              {admin.isSubmitting ? "Creating..." : "Create user"}
+            </button>
+          </section>
+
+          <section className="space-y-3">
+            <div>
+              <h2 className="text-lg font-semibold text-stone-950">Users</h2>
+              <label className="mt-3 block text-sm font-medium text-stone-800">
+                Search
+                <input
+                  className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
+                  onChange={(event) => admin.setUserSearch(event.target.value)}
+                  placeholder="Search by name, email, or user ID"
+                  value={admin.userSearch}
+                />
+              </label>
+            </div>
+            {admin.filteredUsers.length > 0 ? (
+              admin.filteredUsers.map((user) => (
+                <UserCard
+                  isSubmitting={admin.isSubmitting}
+                  key={user.id}
+                  onRemoveRole={(role) => {
+                    void admin.removeRole(role);
                   }}
-                  type="button"
-                >
-                  {temple.deletedAt ? "Restore" : "Archive"}
-                </button>
-              </div>
-            </article>
-          ))
-        ) : (
-          <p className="rounded-md border border-stone-200 bg-white p-4 text-sm text-stone-600">
-            No temples are configured yet.
-          </p>
-        )}
-      </section>
+                  onSetArchived={(selectedUser, shouldArchive) => {
+                    void admin.setUserArchived(selectedUser, shouldArchive);
+                  }}
+                  roles={admin.rolesByUserId.get(user.id) ?? []}
+                  templesById={admin.templesById}
+                  user={user}
+                />
+              ))
+            ) : (
+              <p className="rounded-md border border-stone-200 bg-white p-4 text-sm text-stone-600">
+                No users match this search.
+              </p>
+            )}
+          </section>
+        </>
+      ) : null}
 
-      <section className="space-y-4 rounded-md border border-stone-200 bg-white p-4">
-        <div>
-          <p className="text-xs font-semibold uppercase text-stone-500">User onboarding</p>
-          <h2 className="mt-1 text-lg font-semibold text-stone-950">Create login account</h2>
-          <p className="mt-2 text-sm leading-6 text-stone-600">
-            Create a Supabase login, app profile, and initial role in one step. Share the temporary
-            password directly with the user.
-          </p>
-        </div>
-        <label className="block text-sm font-medium text-stone-800">
-          Full name
-          <input
-            className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
-            onChange={(event) =>
-              admin.setUserForm({ ...admin.userForm, fullName: event.target.value })
-            }
-            placeholder="Volunteer name"
-            value={admin.userForm.fullName}
-          />
-        </label>
-        <label className="block text-sm font-medium text-stone-800">
-          Email
-          <input
-            className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
-            onChange={(event) =>
-              admin.setUserForm({ ...admin.userForm, email: event.target.value })
-            }
-            placeholder="volunteer@example.com"
-            type="email"
-            value={admin.userForm.email}
-          />
-        </label>
-        <label className="block text-sm font-medium text-stone-800">
-          Temporary password
-          <input
-            autoComplete="new-password"
-            className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
-            minLength={8}
-            onChange={(event) =>
-              admin.setUserForm({ ...admin.userForm, password: event.target.value })
-            }
-            placeholder="At least 8 characters"
-            type="password"
-            value={admin.userForm.password}
-          />
-        </label>
-        <label className="block text-sm font-medium text-stone-800">
-          Initial role
-          <select
-            className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
-            onChange={(event) =>
-              admin.setUserForm({ ...admin.userForm, role: event.target.value as AppRole })
-            }
-            value={admin.userForm.role}
-          >
-            {admin.manageableRoles.map((role) => (
-              <option key={role} value={role}>
-                {formatRole(role)}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block text-sm font-medium text-stone-800">
-          Initial access scope
-          <select
-            className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
-            onChange={(event) =>
-              admin.setUserForm({
-                ...admin.userForm,
-                scope: event.target.value as "organization" | "temple"
-              })
-            }
-            value={admin.userForm.scope}
-          >
-            <option value="temple">Specific temple</option>
-            <option value="organization">All active temples</option>
-          </select>
-        </label>
-        {admin.userForm.scope === "temple" ? (
+      {selectedSection === "roles" ? (
+        <section className="space-y-4 rounded-md border border-stone-200 bg-white p-4">
+          <div>
+            <p className="text-xs font-semibold uppercase text-stone-500">Role assignment</p>
+            <h2 className="mt-1 text-lg font-semibold text-stone-950">Grant access</h2>
+          </div>
           <label className="block text-sm font-medium text-stone-800">
-            Initial temple
+            User
             <select
               className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
               onChange={(event) =>
-                admin.setUserForm({ ...admin.userForm, templeId: event.target.value })
+                admin.setRoleForm({ ...admin.roleForm, userId: event.target.value })
               }
-              value={admin.userForm.templeId}
+              value={admin.roleForm.userId}
             >
-              <option value="">Choose active temple</option>
-              {admin.activeTemples.map((temple) => (
-                <option key={temple.id} value={temple.id}>
-                  {temple.name}
+              <option value="">Choose user</option>
+              {admin.state.users
+                .filter((user) => !user.deletedAt)
+                .map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.fullName} ({user.email})
+                  </option>
+                ))}
+            </select>
+          </label>
+          <label className="block text-sm font-medium text-stone-800">
+            Role
+            <select
+              className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+              onChange={(event) =>
+                admin.setRoleForm({ ...admin.roleForm, role: event.target.value as AppRole })
+              }
+              value={admin.roleForm.role}
+            >
+              {admin.manageableRoles.map((role) => (
+                <option key={role} value={role}>
+                  {formatRole(role)}
                 </option>
               ))}
             </select>
           </label>
-        ) : null}
-        <button
-          className="min-h-11 w-full rounded-md bg-brand-900 px-4 text-sm font-semibold text-white disabled:bg-stone-300"
-          disabled={!canSaveUser}
-          onClick={() => {
-            void admin.createUser();
-          }}
-          type="button"
-        >
-          {admin.isSubmitting ? "Creating..." : "Create user"}
-        </button>
-      </section>
-
-      <section className="space-y-4 rounded-md border border-stone-200 bg-white p-4">
-        <div>
-          <p className="text-xs font-semibold uppercase text-stone-500">Role assignment</p>
-          <h2 className="mt-1 text-lg font-semibold text-stone-950">Grant access</h2>
-        </div>
-        <label className="block text-sm font-medium text-stone-800">
-          User
-          <select
-            className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
-            onChange={(event) =>
-              admin.setRoleForm({ ...admin.roleForm, userId: event.target.value })
-            }
-            value={admin.roleForm.userId}
-          >
-            <option value="">Choose user</option>
-            {admin.state.users
-              .filter((user) => !user.deletedAt)
-              .map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.fullName} ({user.email})
-                </option>
-              ))}
-          </select>
-        </label>
-        <label className="block text-sm font-medium text-stone-800">
-          Role
-          <select
-            className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
-            onChange={(event) =>
-              admin.setRoleForm({ ...admin.roleForm, role: event.target.value as AppRole })
-            }
-            value={admin.roleForm.role}
-          >
-            {admin.manageableRoles.map((role) => (
-              <option key={role} value={role}>
-                {formatRole(role)}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block text-sm font-medium text-stone-800">
-          Scope
-          <select
-            className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
-            onChange={(event) =>
-              admin.setRoleForm({
-                ...admin.roleForm,
-                scope: event.target.value as "organization" | "temple"
-              })
-            }
-            value={admin.roleForm.scope}
-          >
-            <option value="temple">Specific temple</option>
-            <option value="organization">All active temples</option>
-          </select>
-        </label>
-        {admin.roleForm.scope === "temple" ? (
           <label className="block text-sm font-medium text-stone-800">
-            Temple
+            Scope
             <select
               className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
               onChange={(event) =>
-                admin.setRoleForm({ ...admin.roleForm, templeId: event.target.value })
+                admin.setRoleForm({
+                  ...admin.roleForm,
+                  scope: event.target.value as "organization" | "temple"
+                })
               }
-              value={admin.roleForm.templeId}
+              value={admin.roleForm.scope}
             >
-              <option value="">Choose active temple</option>
-              {admin.activeTemples.map((temple) => (
-                <option key={temple.id} value={temple.id}>
-                  {temple.name}
-                </option>
-              ))}
+              <option value="temple">Specific temple</option>
+              <option value="organization">All active temples</option>
             </select>
           </label>
-        ) : null}
-        <button
-          className="min-h-11 w-full rounded-md bg-brand-900 px-4 text-sm font-semibold text-white disabled:bg-stone-300"
-          disabled={!canAssignRole}
-          onClick={() => {
-            void admin.assignRole();
-          }}
-          type="button"
-        >
-          {admin.isSubmitting ? "Assigning..." : "Assign role"}
-        </button>
-      </section>
+          {admin.roleForm.scope === "temple" ? (
+            <label className="block text-sm font-medium text-stone-800">
+              Temple
+              <select
+                className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base text-stone-950"
+                onChange={(event) =>
+                  admin.setRoleForm({ ...admin.roleForm, templeId: event.target.value })
+                }
+                value={admin.roleForm.templeId}
+              >
+                <option value="">Choose active temple</option>
+                {admin.activeTemples.map((temple) => (
+                  <option key={temple.id} value={temple.id}>
+                    {temple.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
+          <button
+            className="min-h-11 w-full rounded-md bg-brand-900 px-4 text-sm font-semibold text-white disabled:bg-stone-300"
+            disabled={!canAssignRole}
+            onClick={() => {
+              void admin.assignRole();
+            }}
+            type="button"
+          >
+            {admin.isSubmitting ? "Assigning..." : "Assign role"}
+          </button>
+        </section>
+      ) : null}
 
-      <section className="space-y-3">
-        <div>
-          <h2 className="text-lg font-semibold text-stone-950">Users</h2>
-          <label className="mt-3 block text-sm font-medium text-stone-800">
-            Search
-            <input
-              className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
-              onChange={(event) => admin.setUserSearch(event.target.value)}
-              placeholder="Search by name, email, or user ID"
-              value={admin.userSearch}
-            />
-          </label>
-        </div>
-        {admin.filteredUsers.length > 0 ? (
-          admin.filteredUsers.map((user) => (
-            <UserCard
-              isSubmitting={admin.isSubmitting}
-              key={user.id}
-              onRemoveRole={(role) => {
-                void admin.removeRole(role);
-              }}
-              onSetArchived={(selectedUser, shouldArchive) => {
-                void admin.setUserArchived(selectedUser, shouldArchive);
-              }}
-              roles={admin.rolesByUserId.get(user.id) ?? []}
-              templesById={admin.templesById}
-              user={user}
-            />
-          ))
-        ) : (
-          <p className="rounded-md border border-stone-200 bg-white p-4 text-sm text-stone-600">
-            No users match this search.
-          </p>
-        )}
-      </section>
+      {selectedSection === "setup" ? (
+        <section className="space-y-3">
+          <AdminShortcut
+            description="Create and archive inventory items, units, categories, and reorder points."
+            label="Inventory items"
+            path="/items"
+          />
+          <AdminShortcut
+            description="Create and archive storage areas such as pantry, refrigerator, freezer, and trailers."
+            label="Storage locations"
+            path="/locations"
+          />
+          <AdminShortcut
+            description="Configure purchase stores, default purchasers, item preferences, pack sizes, and minimum order quantities."
+            label="Procurement setup"
+            path="/procurement-admin"
+          />
+        </section>
+      ) : null}
+
+      {selectedSection === "audit" ? (
+        <section className="space-y-3">
+          <AdminShortcut
+            description="Review, edit, approve, schedule, and publish staff purchase requests."
+            label="Purchase request review"
+            path="/purchase-review"
+          />
+          <AdminShortcut
+            description="Review receipt uploads, OCR suggestions, finance notes, and CSV export evidence."
+            label="Receipt and finance review"
+            path="/receipt-review"
+          />
+          <AdminShortcut
+            description="Review inventory balances, transaction history, and reversal evidence."
+            label="Inventory visibility"
+            path="/inventory"
+          />
+        </section>
+      ) : null}
     </section>
   );
 }
