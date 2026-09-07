@@ -223,6 +223,7 @@ describe("inventory visibility projections", () => {
         locationId: "pantry",
         minimumQuantity: 10,
         organizationId: "org-1",
+        targetQuantity: 20,
         templeId: "temple-1",
         unit: "kg"
       },
@@ -243,10 +244,41 @@ describe("inventory visibility projections", () => {
         minimumQuantity: 10,
         organizationId: "org-1",
         shortageQuantity: 5,
+        targetQuantity: 20,
         templeId: "temple-1",
         unit: "kg"
       }
     ]);
+  });
+
+  it("detects stock at the reorder point and preserves the target quantity", () => {
+    const alerts = detectLowStock(
+      [
+        {
+          itemId: "mustard-seed",
+          locationId: "pantry",
+          organizationId: "org-1",
+          quantity: 5,
+          templeId: "temple-1",
+          unit: "lb"
+        }
+      ],
+      [
+        {
+          itemId: "mustard-seed",
+          locationId: "pantry",
+          minimumQuantity: 5,
+          organizationId: "org-1",
+          targetQuantity: 20,
+          templeId: "temple-1",
+          unit: "lb"
+        }
+      ]
+    );
+
+    assert.equal(alerts.length, 1);
+    assert.equal(alerts[0]?.currentQuantity, 5);
+    assert.equal(alerts[0]?.targetQuantity, 20);
   });
 
   it("detects low stock when a threshold exists but current balance is zero", () => {

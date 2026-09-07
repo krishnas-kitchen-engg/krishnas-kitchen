@@ -1,7 +1,9 @@
 export { AuthProvider } from "./providers/AuthProvider";
 export { useAuth } from "./hooks/useAuth";
 export { AuthLoadingScreen } from "./components/AuthLoadingScreen";
+export { AccessRequestStatusScreen } from "./screens/AccessRequestStatusScreen";
 export { LoginScreen } from "./screens/LoginScreen";
+export { ResetPasswordScreen } from "./screens/ResetPasswordScreen";
 export { TempleSelectionScreen } from "./screens/TempleSelectionScreen";
 export { UnauthorizedScreen } from "./screens/UnauthorizedScreen";
 export {

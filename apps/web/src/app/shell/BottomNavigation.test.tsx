@@ -7,7 +7,12 @@ import { bottomNavigationItems } from "./bottomNavigationItems";
 
 describe("BottomNavigation", () => {
   it("renders volunteer shell navigation with active route state", () => {
-    const markup = renderToStaticMarkup(<BottomNavigation currentPath="/inventory" />);
+    const markup = renderToStaticMarkup(
+      <BottomNavigation
+        currentPath="/inventory"
+        permissions={["inventory.read", "inventory.receive"]}
+      />
+    );
 
     assert.match(markup, /Home/);
     assert.match(markup, /Inventory/);
@@ -22,7 +27,8 @@ describe("BottomNavigation", () => {
       bottomNavigationItems.find((item) => item.label === "Scan"),
       {
         label: "Scan",
-        path: "/scan"
+        path: "/scan",
+        requiredPermission: "inventory.read"
       }
     );
   });
@@ -32,5 +38,14 @@ describe("BottomNavigation", () => {
       bottomNavigationItems.map((item) => item.label),
       ["Home", "Inventory", "Scan", "Receive", "Tasks"]
     );
+  });
+
+  it("hides actions the current role cannot use", () => {
+    const markup = renderToStaticMarkup(
+      <BottomNavigation currentPath="/" permissions={["inventory.read"]} />
+    );
+
+    assert.match(markup, /Inventory/);
+    assert.doesNotMatch(markup, /Receive/);
   });
 });

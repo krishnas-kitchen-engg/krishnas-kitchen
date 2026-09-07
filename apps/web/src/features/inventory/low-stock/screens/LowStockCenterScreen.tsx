@@ -34,7 +34,7 @@ function LowStockCard({ item }: { item: LowStockCenterItem }) {
         </span>
       </div>
 
-      <dl className="grid grid-cols-3 gap-2 text-sm">
+      <dl className="grid grid-cols-2 gap-2 text-sm">
         <div className="rounded-md bg-stone-50 p-2">
           <dt className="text-stone-500">Current</dt>
           <dd className="mt-1 font-semibold text-stone-950">
@@ -42,15 +42,25 @@ function LowStockCard({ item }: { item: LowStockCenterItem }) {
           </dd>
         </div>
         <div className="rounded-md bg-stone-50 p-2">
-          <dt className="text-stone-500">Threshold</dt>
+          <dt className="text-stone-500">Reorder at</dt>
           <dd className="mt-1 font-semibold text-stone-950">
             {item.minimumQuantity} {item.unit}
           </dd>
         </div>
         <div className="rounded-md bg-stone-50 p-2">
-          <dt className="text-stone-500">Shortage</dt>
+          <dt className="text-stone-500">Target</dt>
           <dd className="mt-1 font-semibold text-stone-950">
-            {item.shortageQuantity} {item.unit}
+            {typeof item.targetQuantity === "number"
+              ? `${item.targetQuantity} ${item.unit}`
+              : "Not set"}
+          </dd>
+        </div>
+        <div className="rounded-md bg-stone-50 p-2">
+          <dt className="text-stone-500">To reach target</dt>
+          <dd className="mt-1 font-semibold text-stone-950">
+            {typeof item.targetQuantity === "number"
+              ? `${Math.max(item.targetQuantity - item.currentQuantity, 0)} ${item.unit}`
+              : "Set target"}
           </dd>
         </div>
       </dl>
@@ -185,6 +195,10 @@ export function LowStockCenterScreen() {
           <h2 className="text-lg font-semibold text-stone-950">Needs replenishment</h2>
           <span className="text-sm font-medium text-stone-500">{center.items.length}</span>
         </div>
+        <p className="text-sm leading-6 text-stone-600">
+          Amounts here show the gap to each target. Purchase Review subtracts quantities already
+          planned and applies order rules before recommending what to buy.
+        </p>
         {center.items.length > 0 ? (
           <div className="space-y-3">
             {center.items.map((item) => (

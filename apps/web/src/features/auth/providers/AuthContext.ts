@@ -21,6 +21,8 @@ export type SignUpWithEmailInput = {
   displayName: string;
   email: string;
   password: string;
+  organizationId: string;
+  templeId: string;
 };
 
 export type AuthContextValue = {

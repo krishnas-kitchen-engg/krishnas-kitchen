@@ -2,14 +2,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@krishnas-kitchen/types";
 
 import type {
-  PurchaseListItemProgressUpdate,
   PurchaseListItemRecord,
   PurchaserListRepository
 } from "../../application/procurementRepository";
 import type { ProcurementActor } from "../../domain/types";
 
 type PurchaseListItemRow = Database["public"]["Tables"]["purchase_list_items"]["Row"];
-type PurchaseListItemUpdate = Database["public"]["Tables"]["purchase_list_items"]["Update"];
 
 function mapActor(row: {
   actor_temp_session_id: string | null;
@@ -78,25 +76,6 @@ export function mapPurchaseListItem(row: PurchaseListItemRow): PurchaseListItemR
   };
 }
 
-function toProgressUpdate(input: PurchaseListItemProgressUpdate): PurchaseListItemUpdate {
-  return {
-    notes: input.notes ?? null,
-    purchase_date: input.purchaseDate ?? null,
-    purchased_at: input.purchasedAt,
-    purchased_by_actor_temp_session_id:
-      input.purchasedBy.type === "temporary_volunteer"
-        ? (input.purchasedBy.tempSessionId ?? null)
-        : null,
-    purchased_by_actor_type: input.purchasedBy.type,
-    purchased_by_actor_user_id:
-      input.purchasedBy.type === "user" ? (input.purchasedBy.userId ?? null) : null,
-    purchased_quantity: input.purchasedQuantity ?? null,
-    status: input.status,
-    total_cost: input.totalCost ?? null,
-    unit_cost: input.unitCost ?? null
-  };
-}
-
 export function createSupabasePurchaserListRepository(
   client: SupabaseClient<Database>
 ): PurchaserListRepository {
@@ -151,14 +130,20 @@ export function createSupabasePurchaserListRepository(
     },
 
     async updatePurchaseListItemProgress(input) {
-      const { data, error } = await client
-        .from("purchase_list_items")
-        .update(toProgressUpdate(input))
-        .eq("organization_id", input.organizationId)
-        .eq("temple_id", input.templeId)
-        .eq("id", input.itemId)
-        .select("*")
-        .single();
+      const { data, error } = await client.rpc("update_assigned_purchase_list_item_progress", {
+        p_notes: input.notes ?? null,
+        p_organization_id: input.organizationId,
+        p_purchase_date: input.purchaseDate ?? null,
+        p_purchase_list_item_id: input.itemId,
+        p_purchased_at: input.purchasedAt,
+        p_purchased_by_user_id:
+          input.purchasedBy.type === "user" ? (input.purchasedBy.userId ?? "") : "",
+        p_purchased_quantity: input.purchasedQuantity ?? null,
+        p_status: input.status,
+        p_temple_id: input.templeId,
+        p_total_cost: input.totalCost ?? null,
+        p_unit_cost: input.unitCost ?? null
+      });
 
       if (error || !data) {
         throw error ?? new Error("Purchase list item update returned no row.");

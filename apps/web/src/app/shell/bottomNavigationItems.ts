@@ -1,8 +1,10 @@
 import type { AppPath } from "@/app/routes/router";
+import type { Permission } from "@krishnas-kitchen/types";
 
 export type BottomNavigationItem = {
   label: string;
   path: AppPath;
+  requiredPermission?: Permission;
 };
 
 export const bottomNavigationItems = [
@@ -12,18 +14,22 @@ export const bottomNavigationItems = [
   },
   {
     label: "Inventory",
-    path: "/inventory"
+    path: "/inventory",
+    requiredPermission: "inventory.read"
   },
   {
     label: "Scan",
-    path: "/scan"
+    path: "/scan",
+    requiredPermission: "inventory.read"
   },
   {
     label: "Receive",
-    path: "/receive"
+    path: "/receive",
+    requiredPermission: "inventory.receive"
   },
   {
     label: "Tasks",
-    path: "/tasks"
+    path: "/tasks",
+    requiredPermission: "inventory.read"
   }
 ] satisfies BottomNavigationItem[];

@@ -18,6 +18,7 @@ type ItemFormState = {
   editingItemId: string | null;
   name: string;
   reorderThresholdText: string;
+  targetStockLevelText: string;
 };
 
 export type ItemManagementUiState = {
@@ -35,7 +36,8 @@ const initialForm: ItemFormState = {
   description: "",
   editingItemId: null,
   name: "",
-  reorderThresholdText: ""
+  reorderThresholdText: "",
+  targetStockLevelText: ""
 };
 
 function toReorderThreshold(value: string): number | null {
@@ -175,6 +177,7 @@ export function useItemManagement() {
         name: state.form.name,
         organizationId,
         reorderThreshold: toReorderThreshold(state.form.reorderThresholdText),
+        targetStockLevel: toReorderThreshold(state.form.targetStockLevelText),
         templeId
       };
 
@@ -309,7 +312,9 @@ export function useItemManagement() {
           editingItemId: item.id,
           name: item.name,
           reorderThresholdText:
-            typeof item.reorderThreshold === "number" ? String(item.reorderThreshold) : ""
+            typeof item.reorderThreshold === "number" ? String(item.reorderThreshold) : "",
+          targetStockLevelText:
+            typeof item.targetStockLevel === "number" ? String(item.targetStockLevel) : ""
         }
       }));
     },
@@ -328,6 +333,15 @@ export function useItemManagement() {
         form: {
           ...currentState.form,
           reorderThresholdText
+        }
+      }));
+    },
+    setTargetStockLevelText(targetStockLevelText: string) {
+      setState((currentState) => ({
+        ...currentState,
+        form: {
+          ...currentState.form,
+          targetStockLevelText
         }
       }));
     },

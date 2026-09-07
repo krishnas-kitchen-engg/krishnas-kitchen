@@ -158,7 +158,7 @@ async function buildUserMetadata(serviceClient, userId, organizationId, fullName
     readOrganizationName(serviceClient, organizationId),
     serviceClient
       .from("user_roles")
-      .select("role")
+      .select("role, temple_id")
       .eq("user_id", userId)
       .eq("organization_id", organizationId),
     serviceClient
@@ -174,6 +174,9 @@ async function buildUserMetadata(serviceClient, userId, organizationId, fullName
   }
 
   const uniqueRoles = [...new Set((roles ?? []).map((role) => role.role))].sort();
+  const scopedTemples = (temples ?? []).filter((temple) =>
+    (roles ?? []).some((role) => role.temple_id === null || role.temple_id === temple.id)
+  );
 
   return {
     appMetadata: {
@@ -181,7 +184,7 @@ async function buildUserMetadata(serviceClient, userId, organizationId, fullName
       organization_name: organizationName,
       profile_id: userId,
       roles: uniqueRoles,
-      temples: (temples ?? []).map((temple) => ({
+      temples: scopedTemples.map((temple) => ({
         id: temple.id,
         name: temple.name
       }))
@@ -218,12 +221,20 @@ async function findExistingAuthUserId(serviceClient, email) {
   return null;
 }
 
+async function removePartiallyCreatedUser(serviceClient, userId) {
+  await Promise.resolve(serviceClient.from("user_roles").delete().eq("user_id", userId)).catch(
+    () => null
+  );
+  await Promise.resolve(serviceClient.from("users").delete().eq("id", userId)).catch(() => null);
+  await serviceClient.auth.admin.deleteUser(userId).catch(() => null);
+}
+
 export const config = {
   runtime: "edge"
 };
 
 export default async function handler(request) {
-  if (request.method !== "POST") {
+  if (request.method !== "POST" && request.method !== "PATCH") {
     return jsonResponse({ error: "Method not allowed." }, 405);
   }
 
@@ -249,9 +260,69 @@ export default async function handler(request) {
   }
 
   const body = await request.json().catch(() => null);
+  const organizationId = normalizeText(body?.organizationId);
+
+  if (request.method === "PATCH") {
+    const userId = normalizeText(body?.userId);
+    const temporaryPassword =
+      typeof body?.temporaryPassword === "string" ? body.temporaryPassword : "";
+
+    if (!organizationId || !userId || temporaryPassword.length < 8) {
+      return jsonResponse(
+        {
+          error:
+            "User, organization, and a temporary password of at least 8 characters are required."
+        },
+        400
+      );
+    }
+
+    try {
+      const actor = await readActor(serviceClient, authData.user.id, organizationId);
+      if (!actor || assertCanCreateUser(actor, "volunteer")) {
+        return jsonResponse(
+          { error: "Only organization admins can set temporary passwords." },
+          403
+        );
+      }
+
+      const { data: targetProfile, error: targetError } = await serviceClient
+        .from("users")
+        .select("id")
+        .eq("id", userId)
+        .eq("organization_id", organizationId)
+        .is("deleted_at", null)
+        .maybeSingle();
+      if (targetError) throw targetError;
+      if (!targetProfile)
+        return jsonResponse({ error: "Active user was not found in this organization." }, 404);
+
+      const { data: authUserData, error: authUserError } =
+        await serviceClient.auth.admin.getUserById(userId);
+      if (authUserError || !authUserData.user)
+        throw authUserError ?? new Error("Auth user not found.");
+
+      const { error: updateError } = await serviceClient.auth.admin.updateUserById(userId, {
+        app_metadata: { ...authUserData.user.app_metadata, must_change_password: true },
+        password: temporaryPassword
+      });
+      if (updateError) throw updateError;
+      return jsonResponse({ success: true });
+    } catch (caughtError) {
+      return jsonResponse(
+        {
+          error:
+            caughtError instanceof Error
+              ? caughtError.message
+              : "Temporary password could not be set."
+        },
+        500
+      );
+    }
+  }
+
   const email = normalizeEmail(body?.email);
   const fullName = normalizeText(body?.fullName);
-  const organizationId = normalizeText(body?.organizationId);
   const password = typeof body?.password === "string" ? body.password : "";
   const role = normalizeText(body?.role);
   const templeId = normalizeText(body?.templeId) || null;
@@ -347,7 +418,7 @@ export default async function handler(request) {
     });
 
     if (profileError) {
-      await serviceClient.auth.admin.deleteUser(userId).catch(() => null);
+      await removePartiallyCreatedUser(serviceClient, userId);
       throw profileError;
     }
 
@@ -360,17 +431,18 @@ export default async function handler(request) {
     });
 
     if (roleError) {
-      await serviceClient.auth.admin.deleteUser(userId).catch(() => null);
+      await removePartiallyCreatedUser(serviceClient, userId);
       throw roleError;
     }
 
     const metadata = await buildUserMetadata(serviceClient, userId, organizationId, fullName);
     const { error: metadataError } = await serviceClient.auth.admin.updateUserById(userId, {
-      app_metadata: metadata.appMetadata,
+      app_metadata: { ...metadata.appMetadata, must_change_password: true },
       user_metadata: metadata.userMetadata
     });
 
     if (metadataError) {
+      await removePartiallyCreatedUser(serviceClient, userId);
       throw metadataError;
     }
 

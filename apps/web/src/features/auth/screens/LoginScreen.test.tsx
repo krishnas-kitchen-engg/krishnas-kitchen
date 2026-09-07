@@ -42,7 +42,7 @@ function createAuthValue(overrides: Partial<AuthContextValue> = {}): AuthContext
 }
 
 describe("LoginScreen", () => {
-  it("renders temporary volunteer login with display name and join code only", () => {
+  it("renders simplified account access modes and password recovery", () => {
     vi.stubGlobal("window", {
       location: {
         pathname: "/"
@@ -55,16 +55,11 @@ describe("LoginScreen", () => {
       </AuthContext.Provider>
     );
 
-    assert.match(markup, /Temporary volunteer/);
-    assert.match(markup, /Request account/);
-    assert.match(
-      markup,
-      /New accounts stay pending until an admin assigns temple access and roles/
-    );
+    assert.match(markup, /Account access/);
     assert.match(markup, /Request access/);
+    assert.match(markup, /Volunteer/);
+    assert.match(markup, /Forgot password/);
     assert.match(markup, /Show password/);
-    assert.match(markup, /Display name/);
-    assert.match(markup, /Join code/);
     assert.doesNotMatch(markup, /Organization ID/);
     assert.doesNotMatch(markup, /Temple ID/);
   });

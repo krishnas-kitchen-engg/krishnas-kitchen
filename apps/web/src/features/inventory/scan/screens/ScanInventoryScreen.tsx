@@ -1,6 +1,6 @@
 import { RecentScansList } from "../components/RecentScansList";
 import { ScanBarcodeEntry } from "../components/ScanBarcodeEntry";
-import { ScanCameraPlaceholder } from "../components/ScanCameraPlaceholder";
+import { ScanCamera } from "../components/ScanCamera";
 import { ScanManualItemFallback } from "../components/ScanManualItemFallback";
 import { ScanResultPanel } from "../components/ScanResultPanel";
 import { useGenericScanWorkflow } from "../hooks/useGenericScanWorkflow";
@@ -51,7 +51,11 @@ export function ScanInventoryScreen() {
         rawValue={state.barcode.rawValue}
       />
 
-      <ScanCameraPlaceholder cameraAvailable={workflow.cameraAvailable} />
+      <ScanCamera
+        onDetected={(value, format) => {
+          void workflow.resolveCameraBarcode(value, format);
+        }}
+      />
 
       {state.step === "result" ? <ScanResultPanel state={state} /> : null}
 

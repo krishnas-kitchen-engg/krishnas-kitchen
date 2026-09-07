@@ -31,6 +31,12 @@ export {
   createEmptyPurchaseListProgressSummary,
   summarizePurchaseListProgress
 } from "./application/purchaseListProgress";
+export { buildReplenishmentRecommendations } from "./application/replenishmentRecommendation";
+export type {
+  ReplenishmentCatalogItem,
+  ReplenishmentRecommendation,
+  ReplenishmentRecommendationInput
+} from "./application/replenishmentRecommendation";
 export {
   createPurchaseInventoryReceivingService,
   PurchaseInventoryReceivingValidationError

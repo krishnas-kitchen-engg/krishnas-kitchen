@@ -79,6 +79,10 @@ function getRouteTitle(routeName: ReturnType<typeof useCurrentRoute>["name"]): s
     return "Return";
   }
 
+  if (routeName === "reset_password") {
+    return "Reset password";
+  }
+
   if (routeName === "recipes") {
     return "Recipes";
   }
@@ -110,7 +114,7 @@ export function MobileAppShell({ children }: PropsWithChildren) {
         title={getRouteTitle(currentRoute.name)}
       />
       <main className="mx-auto w-full max-w-md px-5 pb-28 pt-5">{children}</main>
-      <BottomNavigation currentPath={currentRoute.path} />
+      <BottomNavigation currentPath={currentRoute.path} permissions={auth.permissions} />
     </div>
   );
 }

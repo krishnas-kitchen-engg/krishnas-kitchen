@@ -43,14 +43,14 @@ const procurementPurchaserPermissions = [
 const procurementApprovalPermissions = [
   "procurement.requests.review",
   "procurement.lists.manage",
-  "procurement.lists.publish",
-  "procurement.receipts.review"
+  "procurement.lists.publish"
 ] satisfies Permission[];
 
 const procurementAdminPermissions = [
   ...procurementRequestPermissions,
   ...procurementPurchaserPermissions,
   ...procurementApprovalPermissions,
+  "procurement.receipts.review",
   "procurement.admin",
   "procurement.audit.read"
 ] satisfies Permission[];

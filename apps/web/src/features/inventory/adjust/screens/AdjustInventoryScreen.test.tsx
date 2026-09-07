@@ -99,6 +99,8 @@ describe("AdjustInventoryScreen", () => {
 
     assert.match(markup, /Inventory adjustment/);
     assert.match(markup, /Reconcile physical count/);
-    assert.match(markup, /Adjustment reason/);
+    assert.match(markup, /Quantity physically counted/);
+    assert.match(markup, /app calculates the correction for you/);
+    assert.match(markup, /Reason for correction/);
   });
 });

@@ -1,8 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ItemUnit } from "@krishnas-kitchen/types";
 
-import { useInventoryActor } from "@/domains/inventory";
 import {
+  useInventoryActor,
+  useInventoryCatalogQueries,
+  useInventoryVisibility,
+  type InventoryCatalogItem,
+  type InventoryLowStockAlert
+} from "@/domains/inventory";
+import {
+  buildReplenishmentRecommendations,
   createPurchaseListPublishService,
   createPurchaseRequestQueueService,
   createPurchaseRequestService,
@@ -10,14 +17,17 @@ import {
   createSupabasePurchaseListRepository,
   createSupabasePurchaseRequestCatalogRepository,
   createSupabasePurchaseRequestRepository,
+  createSupabaseProcurementAdminRepository,
   PROCUREMENT_ITEM_UNITS,
   type CatalogItemSummary,
   type PurchaseListItemRecord,
   type PurchaseListGenerationGrouping,
   type ProcurementActor,
+  type ItemPurchasePreferenceRecord,
   type PurchaseListRecord,
   type PurchaseRequestRecord,
-  type PurchaseRequestReviewDecision
+  type PurchaseRequestReviewDecision,
+  type ReplenishmentRecommendation
 } from "@/domains/procurement";
 import { hasPermission, useAuth } from "@/features/auth";
 
@@ -88,6 +98,8 @@ function createDraft(request: PurchaseRequestRecord): ReviewDraft {
 export function usePurchaseRequestReview() {
   const auth = useAuth();
   const inventoryActor = useInventoryActor();
+  const inventoryCatalog = useInventoryCatalogQueries();
+  const inventoryVisibility = useInventoryVisibility();
   const procurementActor = useMemo(() => toProcurementActor(inventoryActor), [inventoryActor]);
   const organizationId = auth.currentOrganization?.id;
   const templeId = auth.currentTemple?.id;
@@ -128,6 +140,10 @@ export function usePurchaseRequestReview() {
 
     return createPurchaseListPublishService(createSupabasePurchaseListRepository(auth.client));
   }, [auth.client]);
+  const procurementAdminRepository = useMemo(
+    () => (auth.client ? createSupabaseProcurementAdminRepository(auth.client) : null),
+    [auth.client]
+  );
   const [refreshIndex, setRefreshIndex] = useState(0);
   const [addCatalogItems, setAddCatalogItems] = useState<readonly CatalogItemSummary[]>([]);
   const [addForm, setAddForm] = useState<QueueAddForm>(initialQueueAddForm);
@@ -137,6 +153,11 @@ export function usePurchaseRequestReview() {
   const [publishMode, setPublishMode] = useState<"manual" | "scheduled">("manual");
   const [purchaseLists, setPurchaseLists] = useState<readonly PurchaseListRecord[]>([]);
   const [purchaseListItems, setPurchaseListItems] = useState<readonly PurchaseListItemRecord[]>([]);
+  const [inventoryItems, setInventoryItems] = useState<readonly InventoryCatalogItem[]>([]);
+  const [lowStockAlerts, setLowStockAlerts] = useState<readonly InventoryLowStockAlert[]>([]);
+  const [purchasePreferences, setPurchasePreferences] = useState<
+    readonly ItemPurchasePreferenceRecord[]
+  >([]);
   const [requests, setRequests] = useState<readonly PurchaseRequestRecord[]>([]);
   const [scheduledPublishAt, setScheduledPublishAt] = useState("");
   const [drafts, setDrafts] = useState<Record<string, ReviewDraft>>({});
@@ -153,6 +174,17 @@ export function usePurchaseRequestReview() {
   const approvedRequests = useMemo(
     () => requests.filter((request) => request.status === "approved"),
     [requests]
+  );
+  const replenishmentRecommendations = useMemo(
+    () =>
+      buildReplenishmentRecommendations({
+        alerts: lowStockAlerts,
+        items: inventoryItems,
+        preferences: purchasePreferences,
+        purchaseListItems,
+        requests
+      }),
+    [inventoryItems, lowStockAlerts, purchaseListItems, purchasePreferences, requests]
   );
   const canAddApprovedRequest =
     canReviewRequests &&
@@ -183,6 +215,9 @@ export function usePurchaseRequestReview() {
       setDrafts({});
       setPurchaseLists([]);
       setPurchaseListItems([]);
+      setInventoryItems([]);
+      setLowStockAlerts([]);
+      setPurchasePreferences([]);
       return;
     }
 
@@ -199,16 +234,29 @@ export function usePurchaseRequestReview() {
       setError(null);
 
       try {
-        const [nextRequests, nextPurchaseLists, nextPurchaseListItems] = await Promise.all([
+        const [
+          nextRequests,
+          nextPurchaseLists,
+          nextPurchaseListItems,
+          nextLowStockAlerts,
+          nextInventoryItems,
+          nextPurchasePreferences
+        ] = await Promise.all([
           currentRequestReviewService.listRequestsForReview(scope),
           currentPurchaseListService.listPurchaseLists(scope),
-          currentPurchaseListService.listPurchaseListItems(scope)
+          currentPurchaseListService.listPurchaseListItems(scope),
+          inventoryVisibility.getLowStockAlerts(scope),
+          inventoryCatalog.searchItems({ organizationId: scope.organizationId }),
+          procurementAdminRepository?.listItemPurchasePreferences(scope) ?? Promise.resolve([])
         ]);
 
         if (isActive) {
           setRequests(nextRequests);
           setPurchaseLists(nextPurchaseLists);
           setPurchaseListItems(nextPurchaseListItems);
+          setInventoryItems(nextInventoryItems);
+          setLowStockAlerts(nextLowStockAlerts);
+          setPurchasePreferences(nextPurchasePreferences);
           setDrafts(
             Object.fromEntries(nextRequests.map((request) => [request.id, createDraft(request)]))
           );
@@ -231,7 +279,10 @@ export function usePurchaseRequestReview() {
     };
   }, [
     canReviewRequests,
+    inventoryCatalog,
+    inventoryVisibility,
     organizationId,
+    procurementAdminRepository,
     purchaseListService,
     refreshIndex,
     requestReviewService,
@@ -466,6 +517,52 @@ export function usePurchaseRequestReview() {
     }
   }
 
+  async function addReplenishmentRecommendation(recommendation: ReplenishmentRecommendation) {
+    if (
+      submitLock.current ||
+      submittingRequestId ||
+      !canReviewRequests ||
+      !canCreateRequests ||
+      !organizationId ||
+      !templeId ||
+      !procurementActor ||
+      procurementActor.type !== "user" ||
+      !requestQueueService
+    ) {
+      return;
+    }
+
+    submitLock.current = true;
+    setError(null);
+    setSubmittingRequestId(`replenish:${recommendation.itemId}`);
+
+    try {
+      await requestQueueService.addApprovedPurchaseRequest({
+        approvedBy: procurementActor,
+        item: {
+          itemId: recommendation.itemId,
+          type: "existing_item"
+        },
+        notes: `Replenishment recommendation: ${recommendation.currentQuantity} ${recommendation.unit} on hand, ${recommendation.targetStockLevel} ${recommendation.unit} target, ${recommendation.alreadyPlannedQuantity} ${recommendation.unit} already planned.`,
+        organizationId,
+        quantity: recommendation.suggestedQuantity,
+        replenishmentKey: `${templeId}:${recommendation.itemId}:${recommendation.unit}`,
+        templeId,
+        unit: recommendation.unit
+      });
+
+      setSubmittingRequestId(null);
+      refresh();
+    } catch (addError) {
+      setError(
+        addError instanceof Error ? addError.message : "Replenishment request creation failed."
+      );
+      setSubmittingRequestId(null);
+    } finally {
+      submitLock.current = false;
+    }
+  }
+
   async function publishApprovedRequests() {
     if (
       submitLock.current ||
@@ -588,6 +685,7 @@ export function usePurchaseRequestReview() {
 
   return {
     addApprovedRequest,
+    addReplenishmentRecommendation,
     addCatalogItems,
     addForm,
     approvedRequests,
@@ -603,6 +701,7 @@ export function usePurchaseRequestReview() {
     publishScheduledList,
     purchaseListItems,
     purchaseLists,
+    replenishmentRecommendations,
     removeApprovedRequest,
     reviewRequest,
     reviewableRequests,

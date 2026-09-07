@@ -15,6 +15,7 @@ export type ManagedInventoryItem = {
   name: string;
   organizationId: EntityId;
   reorderThreshold: number | null;
+  targetStockLevel: number | null;
 };
 
 export type ItemManagementScope = {
@@ -29,6 +30,7 @@ export type CreateManagedItemInput = ItemManagementScope & {
   description?: string | null;
   name: string;
   reorderThreshold?: number | null;
+  targetStockLevel?: number | null;
 };
 
 export type UpdateManagedItemInput = CreateManagedItemInput & {
@@ -43,7 +45,10 @@ export type ItemManagementRepository = {
     templeId: EntityId;
   }) => Promise<void>;
   createItem: (
-    input: Omit<CreateManagedItemInput, "actor" | "reorderThreshold" | "templeId">
+    input: Omit<
+      CreateManagedItemInput,
+      "actor" | "reorderThreshold" | "targetStockLevel" | "templeId"
+    >
   ) => Promise<ManagedInventoryItem>;
   listItems: (scope: ItemManagementScope) => Promise<ManagedInventoryItem[]>;
   restoreItemThreshold: (input: {
@@ -52,10 +57,14 @@ export type ItemManagementRepository = {
     minimumQuantity: number;
     organizationId: EntityId;
     templeId: EntityId;
+    targetQuantity: number | null;
     unit: ItemUnit;
   }) => Promise<void>;
   updateItem: (
-    input: Omit<UpdateManagedItemInput, "actor" | "reorderThreshold" | "templeId">
+    input: Omit<
+      UpdateManagedItemInput,
+      "actor" | "reorderThreshold" | "targetStockLevel" | "templeId"
+    >
   ) => Promise<ManagedInventoryItem>;
   updateItemArchivedState: (input: {
     deletedAt: string | null;
@@ -141,6 +150,37 @@ function assertValidReorderThreshold(value: number | null | undefined): number |
   return value;
 }
 
+function assertValidTargetStockLevel(
+  value: number | null | undefined,
+  reorderThreshold: number | null
+): number | null {
+  if (value === null || typeof value === "undefined") {
+    return null;
+  }
+
+  if (!Number.isFinite(value) || value <= 0) {
+    throw new ItemManagementValidationError("Target stock level must be greater than zero.");
+  }
+
+  if (value > 1_000_000) {
+    throw new ItemManagementValidationError("Target stock level must be 1000000 or less.");
+  }
+
+  if (reorderThreshold === null) {
+    throw new ItemManagementValidationError(
+      "Set a minimum stock level before setting a target stock level."
+    );
+  }
+
+  if (value <= reorderThreshold) {
+    throw new ItemManagementValidationError(
+      "Target stock level must be greater than the minimum stock level."
+    );
+  }
+
+  return value;
+}
+
 function findDuplicateActiveItem(
   items: readonly ManagedInventoryItem[],
   input: { id?: EntityId; name: string }
@@ -187,6 +227,7 @@ export function createItemManagementService(
     itemId: EntityId;
     organizationId: EntityId;
     reorderThreshold: number | null;
+    targetStockLevel: number | null;
     templeId: EntityId;
     unit: ItemUnit;
   }) {
@@ -201,6 +242,7 @@ export function createItemManagementService(
       minimumQuantity: input.reorderThreshold,
       organizationId: input.organizationId,
       templeId: input.templeId,
+      targetQuantity: input.targetStockLevel,
       unit: input.unit
     });
   }
@@ -227,6 +269,10 @@ export function createItemManagementService(
       const category = assertValidOptionalText(input.category, "Item category", 120);
       const defaultUnit = assertValidUnit(input.defaultUnit);
       const reorderThreshold = assertValidReorderThreshold(input.reorderThreshold);
+      const targetStockLevel = assertValidTargetStockLevel(
+        input.targetStockLevel,
+        reorderThreshold
+      );
       await assertNoDuplicateActiveName({
         name,
         organizationId: input.organizationId,
@@ -245,13 +291,15 @@ export function createItemManagementService(
         itemId: item.id,
         organizationId: input.organizationId,
         reorderThreshold,
+        targetStockLevel,
         templeId: input.templeId,
         unit: defaultUnit
       });
 
       return {
         ...item,
-        reorderThreshold
+        reorderThreshold,
+        targetStockLevel
       };
     },
 
@@ -290,6 +338,10 @@ export function createItemManagementService(
       const category = assertValidOptionalText(input.category, "Item category", 120);
       const defaultUnit = assertValidUnit(input.defaultUnit);
       const reorderThreshold = assertValidReorderThreshold(input.reorderThreshold);
+      const targetStockLevel = assertValidTargetStockLevel(
+        input.targetStockLevel,
+        reorderThreshold
+      );
       await assertNoDuplicateActiveName({
         id: input.id,
         name,
@@ -309,13 +361,15 @@ export function createItemManagementService(
         itemId: item.id,
         organizationId: input.organizationId,
         reorderThreshold,
+        targetStockLevel,
         templeId: input.templeId,
         unit: defaultUnit
       });
 
       return {
         ...item,
-        reorderThreshold
+        reorderThreshold,
+        targetStockLevel
       };
     }
   };

@@ -6,6 +6,7 @@ import { describe, it, vi } from "vitest";
 
 import { AuthContext } from "@/features/auth/providers/AuthContext";
 import type { AuthContextValue } from "@/features/auth/providers/AuthContext";
+import { getPermissionsForRoles } from "@/features/auth/lib/permissions";
 
 import { AppRoutes } from "./AppRoutes";
 
@@ -25,7 +26,7 @@ function createAuthValue(overrides: Partial<AuthContextValue> = {}): AuthContext
     isConfigured: true,
     isLoading: false,
     isTemporaryVolunteer: false,
-    permissions: ["inventory.read"],
+    permissions: getPermissionsForRoles(["super_admin"]),
     profile: null,
     roles: ["volunteer"],
     selectTemple() {},

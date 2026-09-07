@@ -4,6 +4,7 @@ import type { Database } from "@krishnas-kitchen/types";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, it } from "vitest";
 
+import { InventoryIntegrationProvider, type InventoryServiceBundle } from "@/domains/inventory";
 import { AuthContext } from "@/features/auth/providers/AuthContext";
 import type { AuthContextValue } from "@/features/auth/providers/AuthContext";
 
@@ -66,9 +67,16 @@ function createAuthValue(overrides: Partial<AuthContextValue> = {}): AuthContext
 }
 
 function renderScreen(auth: AuthContextValue) {
+  const services = {
+    catalogQueries: {},
+    visibility: {}
+  } as InventoryServiceBundle;
+
   return renderToStaticMarkup(
     <AuthContext.Provider value={auth}>
-      <PurchaseRequestReviewScreen />
+      <InventoryIntegrationProvider services={services}>
+        <PurchaseRequestReviewScreen />
+      </InventoryIntegrationProvider>
     </AuthContext.Provider>
   );
 }
@@ -92,6 +100,7 @@ describe("PurchaseRequestReviewScreen", () => {
     assert.match(markup, /Approver view/);
     assert.match(markup, /Add to queue/);
     assert.match(markup, /Add approved request/);
+    assert.match(markup, /Recommended purchases/);
     assert.match(markup, /Manual/);
     assert.match(markup, /Scheduled/);
     assert.match(markup, /Generate list/);

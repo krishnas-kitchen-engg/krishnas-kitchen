@@ -26,11 +26,23 @@ export function createSupabaseInventoryTransactionRepository(
     insert: InventoryTransactionInsert,
     operation: InventoryTransactionOperation
   ): Promise<InventoryTransaction> {
-    const { data, error } = await client
-      .from("inventory_transactions")
-      .insert(insert)
-      .select("*")
-      .single();
+    const { data, error } = await client.rpc("append_inventory_transaction", {
+      p_actor_temp_session_id: insert.actor_temp_session_id ?? null,
+      p_actor_type: insert.actor_type,
+      p_actor_user_id: insert.actor_user_id ?? null,
+      p_audit_metadata: insert.audit_metadata ?? {},
+      p_destination_location_id: insert.destination_location_id ?? null,
+      p_item_id: insert.item_id,
+      p_notes: insert.notes ?? null,
+      p_organization_id: insert.organization_id,
+      p_quantity: insert.quantity,
+      p_quantity_effect: insert.quantity_effect,
+      p_reversal_of_transaction_id: insert.reversal_of_transaction_id ?? null,
+      p_source_location_id: insert.source_location_id ?? null,
+      p_temple_id: insert.temple_id,
+      p_transaction_type: insert.transaction_type,
+      p_unit: insert.unit
+    });
 
     if (error) {
       throw new InventoryPersistenceError(

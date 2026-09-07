@@ -264,13 +264,16 @@ export function useGenericScanWorkflow() {
   const organizationId = auth.currentOrganization?.id;
   const templeId = auth.currentTemple?.id;
 
-  async function resolveBarcode() {
+  async function resolveBarcode(input?: { format: InventoryBarcodeFormat; rawValue: string }) {
     if (!permissions.canReadInventory) {
       dispatch({ error: "You do not have permission to scan inventory.", type: "scan_invalid" });
       return;
     }
 
-    if (!organizationId || !state.barcode.format) {
+    const format = input?.format ?? state.barcode.format;
+    const rawValue = input?.rawValue ?? state.barcode.rawValue;
+
+    if (!organizationId || !format) {
       dispatch({ error: "Organization and barcode format are required.", type: "scan_invalid" });
       return;
     }
@@ -280,8 +283,8 @@ export function useGenericScanWorkflow() {
 
     try {
       const result = await barcodeLookup.lookupScan(organizationId, {
-        format: state.barcode.format,
-        rawValue: state.barcode.rawValue,
+        format,
+        rawValue,
         recentScans: state.recentScans,
         scannedAt
       });
@@ -347,6 +350,11 @@ export function useGenericScanWorkflow() {
     canScanInventory: permissions.canReadInventory,
     dispatch,
     resolveBarcode,
+    resolveCameraBarcode(rawValue: string, format: InventoryBarcodeFormat) {
+      dispatch({ format, type: "set_barcode_format" });
+      dispatch({ rawValue, type: "set_barcode_raw_value" });
+      return resolveBarcode({ format, rawValue });
+    },
     resetWorkflow() {
       dispatch({ type: "reset" });
     },

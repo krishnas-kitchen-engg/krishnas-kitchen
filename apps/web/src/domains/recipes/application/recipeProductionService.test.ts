@@ -18,6 +18,7 @@ import type {
 } from "./recipeProductionRepository";
 import {
   createRecipeProductionService,
+  RecipeProductionRollbackError,
   RecipeProductionValidationError
 } from "./recipeProductionService";
 
@@ -81,6 +82,7 @@ function createService(options: {
   balances: readonly InventoryBalance[];
   failConsumptionForItemId?: string;
   failProductionRun?: boolean;
+  failReversalForTransactionId?: string;
   itemOverrides?: Map<string, InventoryCatalogItem | null>;
 }) {
   const reversals: string[] = [];
@@ -126,6 +128,10 @@ function createService(options: {
       },
       undoTransaction(transactionId: string) {
         reversals.push(transactionId);
+
+        if (transactionId === options.failReversalForTransactionId) {
+          return Promise.reject(new Error("Reversal write failed."));
+        }
 
         return Promise.resolve({
           ...transactions.find((transaction) => transaction.id === transactionId)!,
@@ -402,6 +408,50 @@ describe("recipe production service", () => {
     );
     assert.deepEqual(reversals, ["tx-2", "tx-1"]);
     assert.equal(productionRuns.length, 0);
+  });
+
+  it("attempts every rollback and reports incomplete compensation", async () => {
+    const { reversals, service } = createService({
+      balances: [
+        {
+          itemId: "item-rice",
+          locationId: "pantry",
+          organizationId: "org-1",
+          quantity: 10,
+          templeId: "temple-1",
+          unit: "kg"
+        },
+        {
+          itemId: "item-dal",
+          locationId: "pantry",
+          organizationId: "org-1",
+          quantity: 10,
+          templeId: "temple-1",
+          unit: "kg"
+        }
+      ],
+      failProductionRun: true,
+      failReversalForTransactionId: "tx-2"
+    });
+
+    await assert.rejects(
+      () =>
+        service.executeProductionRun({
+          actor,
+          locationId: "pantry",
+          organizationId: "org-1",
+          permission: "granted",
+          recipe,
+          targetServings: 50,
+          templeId: "temple-1"
+        }),
+      (error: unknown) =>
+        error instanceof RecipeProductionRollbackError &&
+        error.failedTransactionIds.join(",") === "tx-2" &&
+        error.cause instanceof Error &&
+        error.cause.message === "Production run write failed."
+    );
+    assert.deepEqual(reversals, ["tx-2", "tx-1"]);
   });
 
   it("rejects denied production permission before consuming inventory", async () => {

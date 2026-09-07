@@ -20,6 +20,7 @@ describe("low stock threshold mapper", () => {
       location_id: "pantry",
       minimum_quantity: 5,
       organization_id: "org-1",
+      target_quantity: 10,
       temple_id: "temple-1",
       unit: "kg",
       updated_at: "2026-06-06T08:00:00.000Z"
@@ -30,6 +31,7 @@ describe("low stock threshold mapper", () => {
       locationId: "pantry",
       minimumQuantity: 5,
       organizationId: "org-1",
+      targetQuantity: 10,
       templeId: "temple-1",
       unit: "kg"
     });
@@ -50,6 +52,7 @@ describe("low stock threshold mapper", () => {
       location_id: null,
       minimum_quantity: 5,
       organization_id: "org-1",
+      target_quantity: null,
       temple_id: null,
       unit: "kg",
       updated_at: "2026-06-06T08:00:00.000Z"

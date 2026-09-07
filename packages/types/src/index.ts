@@ -120,6 +120,7 @@ export type ActorType = "user" | "temporary_volunteer" | "system";
 export type BarcodeFormat = "ean_13" | "ean_8" | "qr" | "upc_a" | "upc_e";
 
 export type UnknownBarcodeStatus = "dismissed" | "linked" | "pending";
+export type RegistrationRequestStatus = "approved" | "pending" | "rejected";
 
 export type TemporaryVolunteerRole = "temp_helper" | "temp_picker" | "temp_receiver";
 
@@ -147,6 +148,44 @@ export type Database = {
           deleted_at?: string | null;
           name?: string;
           updated_at?: string;
+        };
+        Relationships: [];
+      };
+      registration_requests: {
+        Row: {
+          approved_role: AppRole | null;
+          auth_user_id: string;
+          email: string;
+          full_name: string;
+          id: string;
+          organization_id: string;
+          requested_at: string;
+          review_note: string | null;
+          reviewed_at: string | null;
+          reviewed_by_user_id: string | null;
+          status: RegistrationRequestStatus;
+          temple_id: string;
+        };
+        Insert: {
+          approved_role?: AppRole | null;
+          auth_user_id: string;
+          email: string;
+          full_name: string;
+          id?: string;
+          organization_id: string;
+          requested_at?: string;
+          review_note?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by_user_id?: string | null;
+          status?: RegistrationRequestStatus;
+          temple_id: string;
+        };
+        Update: {
+          approved_role?: AppRole | null;
+          review_note?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by_user_id?: string | null;
+          status?: RegistrationRequestStatus;
         };
         Relationships: [];
       };
@@ -332,6 +371,7 @@ export type Database = {
           location_id: string | null;
           minimum_quantity: number;
           organization_id: string;
+          target_quantity: number | null;
           temple_id: string | null;
           unit: ItemUnit;
           updated_at: string;
@@ -350,6 +390,7 @@ export type Database = {
           location_id?: string | null;
           minimum_quantity: number;
           organization_id: string;
+          target_quantity?: number | null;
           temple_id?: string | null;
           unit: ItemUnit;
           updated_at?: string;
@@ -360,6 +401,7 @@ export type Database = {
           archived_by_actor_type?: ActorType | null;
           archived_by_actor_user_id?: string | null;
           minimum_quantity?: number;
+          target_quantity?: number | null;
           unit?: ItemUnit;
           updated_at?: string;
         };
@@ -785,6 +827,7 @@ export type Database = {
           notes: string | null;
           organization_id: string;
           quantity: number;
+          replenishment_key: string | null;
           requested_by_actor_temp_session_id: string | null;
           requested_by_actor_type: ActorType;
           requested_by_actor_user_id: string | null;
@@ -816,6 +859,7 @@ export type Database = {
           notes?: string | null;
           organization_id: string;
           quantity: number;
+          replenishment_key?: string | null;
           requested_by_actor_temp_session_id?: string | null;
           requested_by_actor_type: ActorType;
           requested_by_actor_user_id?: string | null;
@@ -835,6 +879,7 @@ export type Database = {
           needed_by?: string | null;
           notes?: string | null;
           quantity?: number;
+          replenishment_key?: string | null;
           reviewed_at?: string | null;
           reviewed_by_actor_temp_session_id?: string | null;
           reviewed_by_actor_type?: ActorType | null;
@@ -1073,6 +1118,34 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      approve_registration_request: {
+        Args: {
+          p_request_id: string;
+          p_review_note?: string | null;
+          p_role: AppRole;
+        };
+        Returns: Database["public"]["Tables"]["registration_requests"]["Row"];
+      };
+      append_inventory_transaction: {
+        Args: {
+          p_actor_temp_session_id: string | null;
+          p_actor_type: ActorType;
+          p_actor_user_id: string | null;
+          p_audit_metadata: Json;
+          p_destination_location_id: string | null;
+          p_item_id: string;
+          p_notes: string | null;
+          p_organization_id: string;
+          p_quantity: number;
+          p_quantity_effect: InventoryQuantityEffect;
+          p_reversal_of_transaction_id: string | null;
+          p_source_location_id: string | null;
+          p_temple_id: string;
+          p_transaction_type: InventoryTransactionType;
+          p_unit: ItemUnit;
+        };
+        Returns: Database["public"]["Tables"]["inventory_transactions"]["Row"];
+      };
       publish_approved_purchase_requests: {
         Args: {
           p_generation_grouping?: "purchase_location" | "purchaser";
@@ -1097,6 +1170,26 @@ export type Database = {
           p_organization_id: string;
         };
         Returns: undefined;
+      };
+      complete_temporary_password_change: {
+        Args: Record<string, never>;
+        Returns: undefined;
+      };
+      list_registration_destinations: {
+        Args: Record<string, never>;
+        Returns: Array<{
+          organization_id: string;
+          organization_name: string;
+          temple_id: string;
+          temple_name: string;
+        }>;
+      };
+      reject_registration_request: {
+        Args: {
+          p_request_id: string;
+          p_review_note?: string | null;
+        };
+        Returns: Database["public"]["Tables"]["registration_requests"]["Row"];
       };
       mark_purchase_list_item_received: {
         Args: {
@@ -1156,6 +1249,22 @@ export type Database = {
           p_temple_id: string;
         };
         Returns: Database["public"]["Tables"]["purchase_lists"]["Row"];
+      };
+      update_assigned_purchase_list_item_progress: {
+        Args: {
+          p_notes: string | null;
+          p_organization_id: string;
+          p_purchase_date: string | null;
+          p_purchase_list_item_id: string;
+          p_purchased_at: string;
+          p_purchased_by_user_id: string;
+          p_purchased_quantity: number | null;
+          p_status: "bought" | "partially_bought" | "substituted" | "unavailable";
+          p_temple_id: string;
+          p_total_cost: number | null;
+          p_unit_cost: number | null;
+        };
+        Returns: Database["public"]["Tables"]["purchase_list_items"]["Row"];
       };
     };
     Enums: {

@@ -22,6 +22,7 @@ export type AppPath =
   | "/receive"
   | "/return"
   | "/recipes"
+  | "/reset-password"
   | "/scan"
   | "/select-temple"
   | "/tasks"
@@ -48,6 +49,7 @@ const appPaths = [
   "/receive",
   "/return",
   "/recipes",
+  "/reset-password",
   "/scan",
   "/select-temple",
   "/tasks",
@@ -141,6 +143,10 @@ export type AppRoute =
   | {
       name: "recipes";
       path: "/recipes";
+    }
+  | {
+      name: "reset_password";
+      path: "/reset-password";
     }
   | {
       name: "scan";
@@ -322,6 +328,13 @@ export function getCurrentRoute(): AppRoute {
     if (pathname === "/recipes") {
       return {
         name: "recipes",
+        path: pathname
+      };
+    }
+
+    if (pathname === "/reset-password") {
+      return {
+        name: "reset_password",
         path: pathname
       };
     }

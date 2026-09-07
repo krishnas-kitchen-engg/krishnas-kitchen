@@ -10,10 +10,7 @@ import {
   createTransferTransaction
 } from "../../domain/transactionHelpers";
 import type { InventoryTransaction, InventoryTransactionDraft } from "../../domain/types";
-import type {
-  InventoryTransactionInsert,
-  InventoryTransactionRow
-} from "./inventoryTransactionMapper";
+import type { InventoryTransactionRow } from "./inventoryTransactionMapper";
 import { InventoryPersistenceError } from "./receivingPersistence";
 import { createSupabaseInventoryTransactionRepository } from "./supabaseInventoryTransactionRepository";
 
@@ -26,36 +23,20 @@ type InsertResult = {
   error: SupabaseError | null;
 };
 
-class InsertQuery {
-  inserted: InventoryTransactionInsert | null = null;
+class SupabaseClientStub {
+  readonly calls: Array<{ args: Record<string, unknown>; functionName: string }> = [];
+  readonly tables: string[] = [];
 
   constructor(private readonly result: InsertResult) {}
 
-  insert(payload: InventoryTransactionInsert): this {
-    this.inserted = payload;
-    return this;
-  }
-
-  select(_columns: string): this {
-    return this;
-  }
-
-  single(): Promise<InsertResult> {
-    return Promise.resolve(this.result);
-  }
-}
-
-class SupabaseClientStub {
-  readonly insertQuery: InsertQuery;
-  readonly tables: string[] = [];
-
-  constructor(result: InsertResult) {
-    this.insertQuery = new InsertQuery(result);
-  }
-
-  from(table: string): InsertQuery {
+  from(table: string): never {
     this.tables.push(table);
-    return this.insertQuery;
+    throw new Error(`Unexpected table query: ${table}`);
+  }
+
+  rpc(functionName: string, args: Record<string, unknown>): Promise<InsertResult> {
+    this.calls.push({ args, functionName });
+    return Promise.resolve(this.result);
   }
 }
 
@@ -140,7 +121,7 @@ function createRepository(stub: SupabaseClientStub) {
 }
 
 describe("Supabase inventory transaction repository", () => {
-  it("persists receiving transactions through one append-only insert", async () => {
+  it("persists receiving transactions through the guarded append function", async () => {
     const stub = new SupabaseClientStub({
       data: receivingRow,
       error: null
@@ -149,14 +130,15 @@ describe("Supabase inventory transaction repository", () => {
 
     const transaction = await repository.createReceivingTransaction(receivingDraft);
 
-    assert.deepEqual(stub.tables, ["inventory_transactions"]);
-    assert.equal(stub.insertQuery.inserted?.transaction_type, "received");
-    assert.equal(stub.insertQuery.inserted?.quantity_effect, "increase");
-    assert.equal(stub.insertQuery.inserted?.quantity, 25);
-    assert.equal(stub.insertQuery.inserted?.source_location_id, null);
-    assert.equal(stub.insertQuery.inserted?.destination_location_id, "pantry");
-    assert.equal(stub.insertQuery.inserted?.organization_id, "org-1");
-    assert.deepEqual(stub.insertQuery.inserted?.audit_metadata, receivingRow.audit_metadata);
+    assert.deepEqual(stub.tables, []);
+    assert.equal(stub.calls[0]?.functionName, "append_inventory_transaction");
+    assert.equal(stub.calls[0]?.args.p_transaction_type, "received");
+    assert.equal(stub.calls[0]?.args.p_quantity_effect, "increase");
+    assert.equal(stub.calls[0]?.args.p_quantity, 25);
+    assert.equal(stub.calls[0]?.args.p_source_location_id, null);
+    assert.equal(stub.calls[0]?.args.p_destination_location_id, "pantry");
+    assert.equal(stub.calls[0]?.args.p_organization_id, "org-1");
+    assert.deepEqual(stub.calls[0]?.args.p_audit_metadata, receivingRow.audit_metadata);
     assert.equal(transaction.transactionType, "received");
     assert.equal(transaction.auditMetadata.clientRequestId, receivingDraft.clientId);
   });
@@ -183,10 +165,10 @@ describe("Supabase inventory transaction repository", () => {
 
     const transaction = await repository.createTransaction(draft);
 
-    assert.equal(stub.insertQuery.inserted?.transaction_type, "transfer");
-    assert.equal(stub.insertQuery.inserted?.quantity_effect, "transfer");
-    assert.equal(stub.insertQuery.inserted?.source_location_id, "trailer");
-    assert.equal(stub.insertQuery.inserted?.destination_location_id, "pantry");
+    assert.equal(stub.calls[0]?.args.p_transaction_type, "transfer");
+    assert.equal(stub.calls[0]?.args.p_quantity_effect, "transfer");
+    assert.equal(stub.calls[0]?.args.p_source_location_id, "trailer");
+    assert.equal(stub.calls[0]?.args.p_destination_location_id, "pantry");
     assert.equal(transaction.transactionType, "transfer");
   });
 
@@ -212,10 +194,10 @@ describe("Supabase inventory transaction repository", () => {
 
     const transaction = await repository.createTransaction(draft);
 
-    assert.equal(stub.insertQuery.inserted?.transaction_type, "returned");
-    assert.equal(stub.insertQuery.inserted?.quantity_effect, "transfer");
-    assert.equal(stub.insertQuery.inserted?.source_location_id, "kitchen");
-    assert.equal(stub.insertQuery.inserted?.destination_location_id, "pantry");
+    assert.equal(stub.calls[0]?.args.p_transaction_type, "returned");
+    assert.equal(stub.calls[0]?.args.p_quantity_effect, "transfer");
+    assert.equal(stub.calls[0]?.args.p_source_location_id, "kitchen");
+    assert.equal(stub.calls[0]?.args.p_destination_location_id, "pantry");
     assert.equal(transaction.transactionType, "returned");
   });
 
@@ -250,11 +232,11 @@ describe("Supabase inventory transaction repository", () => {
 
     const transaction = await repository.createTransaction(draft);
 
-    assert.equal(stub.insertQuery.inserted?.transaction_type, "reversal");
-    assert.equal(stub.insertQuery.inserted?.quantity_effect, "transfer");
-    assert.equal(stub.insertQuery.inserted?.source_location_id, "pantry");
-    assert.equal(stub.insertQuery.inserted?.destination_location_id, "trailer");
-    assert.equal(stub.insertQuery.inserted?.reversal_of_transaction_id, "transfer-1");
+    assert.equal(stub.calls[0]?.args.p_transaction_type, "reversal");
+    assert.equal(stub.calls[0]?.args.p_quantity_effect, "transfer");
+    assert.equal(stub.calls[0]?.args.p_source_location_id, "pantry");
+    assert.equal(stub.calls[0]?.args.p_destination_location_id, "trailer");
+    assert.equal(stub.calls[0]?.args.p_reversal_of_transaction_id, "transfer-1");
     assert.equal(transaction.transactionType, "reversal");
     assert.equal(transaction.reversalOfTransactionId, "transfer-1");
   });

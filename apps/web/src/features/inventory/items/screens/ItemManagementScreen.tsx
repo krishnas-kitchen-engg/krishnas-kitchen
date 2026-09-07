@@ -112,15 +112,49 @@ export function ItemManagementScreen() {
         </div>
 
         <label className="block text-sm font-medium text-stone-800">
-          Reorder point / low stock threshold
+          Minimum stock level (reorder point)
           <input
+            aria-describedby="minimum-stock-level-help"
             className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
             inputMode="decimal"
+            max="1000000"
+            min="0"
             onChange={(event) => management.setReorderThresholdText(event.target.value)}
-            placeholder="Optional minimum on hand"
+            placeholder="Optional"
+            step="any"
             type="number"
             value={management.form.reorderThresholdText}
           />
+          <span
+            className="mt-2 block text-xs font-normal leading-5 text-stone-600"
+            id="minimum-stock-level-help"
+          >
+            Optional. When stock reaches or falls below this level, the item appears in Low Stock
+            and on the Dashboard. You can change or remove it at any time.
+          </span>
+        </label>
+
+        <label className="block text-sm font-medium text-stone-800">
+          Target stock level
+          <input
+            aria-describedby="target-stock-level-help"
+            className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
+            inputMode="decimal"
+            max="1000000"
+            min="0"
+            onChange={(event) => management.setTargetStockLevelText(event.target.value)}
+            placeholder="Optional"
+            step="any"
+            type="number"
+            value={management.form.targetStockLevelText}
+          />
+          <span
+            className="mt-2 block text-xs font-normal leading-5 text-stone-600"
+            id="target-stock-level-help"
+          >
+            Optional. When stock reaches the reorder point, purchasing is recommended up to this
+            level.
+          </span>
         </label>
 
         <label className="block text-sm font-medium text-stone-800">
@@ -183,9 +217,15 @@ export function ItemManagementScreen() {
                 </div>
                 <p className="text-sm text-stone-600">{item.description || "No description"}</p>
                 <p className="text-sm font-medium text-stone-700">
-                  Reorder point:{" "}
+                  Minimum stock level:{" "}
                   {typeof item.reorderThreshold === "number"
                     ? `${item.reorderThreshold} ${item.defaultUnit}`
+                    : "Not set"}
+                </p>
+                <p className="text-sm font-medium text-stone-700">
+                  Target stock level:{" "}
+                  {typeof item.targetStockLevel === "number"
+                    ? `${item.targetStockLevel} ${item.defaultUnit}`
                     : "Not set"}
                 </p>
                 <div className="grid grid-cols-3 gap-2">

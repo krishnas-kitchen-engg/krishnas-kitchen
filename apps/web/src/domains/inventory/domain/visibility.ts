@@ -168,7 +168,7 @@ export function detectLowStock(
         0
       );
 
-      if (currentQuantity >= threshold.minimumQuantity) {
+      if (currentQuantity > threshold.minimumQuantity) {
         return null;
       }
 

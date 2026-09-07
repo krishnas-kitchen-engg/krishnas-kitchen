@@ -5,10 +5,16 @@ import { navigateTo, type AppPath } from "@/app/routes/router";
 import type { AdminTempleRecord, AdminUserRecord, AdminUserRoleRecord } from "@/domains/admin";
 
 import { useAdminManagement } from "../hooks/useAdminManagement";
+import { RegistrationRequestQueue } from "../components/RegistrationRequestQueue";
 
-type AdminSection = "audit" | "people" | "roles" | "setup" | "temples";
+type AdminSection = "audit" | "people" | "requests" | "roles" | "setup" | "temples";
 
 const adminSections = [
+  {
+    description: "Approve or reject new user requests for your temples.",
+    label: "Requests",
+    value: "requests"
+  },
   {
     description: "Create accounts, search users, and archive or restore access.",
     label: "People",
@@ -72,7 +78,7 @@ function AdminSectionTabs({
 }) {
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {adminSections.map((section) => {
           const isSelected = selectedSection === section.value;
 
@@ -126,6 +132,7 @@ type UserCardProps = {
   isSubmitting: boolean;
   onRemoveRole: (role: AdminUserRoleRecord) => void;
   onSetArchived: (user: AdminUserRecord, shouldArchive: boolean) => void;
+  onSetTemporaryPassword: (userId: string, password: string) => void;
   roles: AdminUserRoleRecord[];
   templesById: Map<string, AdminTempleRecord>;
   user: AdminUserRecord;
@@ -135,10 +142,13 @@ function UserCard({
   isSubmitting,
   onRemoveRole,
   onSetArchived,
+  onSetTemporaryPassword,
   roles,
   templesById,
   user
 }: UserCardProps) {
+  const [temporaryPassword, setTemporaryPassword] = useState("");
+
   return (
     <article className="space-y-3 rounded-md border border-stone-200 bg-white p-4">
       <div className="flex items-start justify-between gap-3">
@@ -191,13 +201,42 @@ function UserCard({
       >
         {user.deletedAt ? "Restore user" : "Archive user"}
       </button>
+      {!user.deletedAt ? (
+        <details className="rounded-md border border-stone-200 p-3">
+          <summary className="cursor-pointer text-sm font-semibold text-stone-800">
+            Set temporary password
+          </summary>
+          <div className="mt-3 space-y-2">
+            <input
+              autoComplete="new-password"
+              className="min-h-11 w-full rounded-md border border-stone-300 px-3"
+              minLength={8}
+              onChange={(event) => setTemporaryPassword(event.target.value)}
+              placeholder="At least 8 characters"
+              type="password"
+              value={temporaryPassword}
+            />
+            <button
+              className="min-h-10 w-full rounded-md bg-brand-900 px-3 text-sm font-semibold text-white disabled:opacity-50"
+              disabled={isSubmitting || temporaryPassword.length < 8}
+              onClick={() => {
+                onSetTemporaryPassword(user.id, temporaryPassword);
+                setTemporaryPassword("");
+              }}
+              type="button"
+            >
+              Save temporary password
+            </button>
+          </div>
+        </details>
+      ) : null}
     </article>
   );
 }
 
 export function AdminManagementScreen() {
   const admin = useAdminManagement();
-  const [selectedSection, setSelectedSection] = useState<AdminSection>("people");
+  const [selectedSection, setSelectedSection] = useState<AdminSection>("requests");
   const canSaveTemple = Boolean(admin.templeName.trim()) && !admin.isSubmitting;
   const canSaveUser =
     Boolean(admin.userForm.fullName.trim()) &&
@@ -257,6 +296,10 @@ export function AdminManagementScreen() {
       ) : null}
 
       <AdminSectionTabs selectedSection={selectedSection} onSelect={setSelectedSection} />
+
+      {selectedSection === "requests" ? (
+        <RegistrationRequestQueue templesById={admin.templesById} />
+      ) : null}
 
       {selectedSection === "temples" ? (
         <>
@@ -472,6 +515,9 @@ export function AdminManagementScreen() {
                   }}
                   onSetArchived={(selectedUser, shouldArchive) => {
                     void admin.setUserArchived(selectedUser, shouldArchive);
+                  }}
+                  onSetTemporaryPassword={(userId, password) => {
+                    void admin.setTemporaryPassword(userId, password);
                   }}
                   roles={admin.rolesByUserId.get(user.id) ?? []}
                   templesById={admin.templesById}

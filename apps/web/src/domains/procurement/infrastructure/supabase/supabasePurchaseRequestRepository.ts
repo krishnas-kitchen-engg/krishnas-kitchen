@@ -111,6 +111,7 @@ function toPurchaseRequestInsert(input: PurchaseRequestInput): PurchaseRequestIn
     notes: input.notes ?? null,
     organization_id: input.organizationId,
     quantity: input.quantity,
+    replenishment_key: input.replenishmentKey ?? null,
     status: "submitted",
     suggested_item_category:
       input.item.type === "new_item_suggestion" ? (input.item.category ?? null) : null,

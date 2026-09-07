@@ -142,6 +142,7 @@ const thresholdRow: InventoryLowStockThresholdRow = {
   location_id: "pantry",
   minimum_quantity: 10,
   organization_id: "org-from-session",
+  target_quantity: null,
   temple_id: "temple-from-session",
   unit: "kg",
   updated_at: "2026-06-07T08:00:00.000Z"

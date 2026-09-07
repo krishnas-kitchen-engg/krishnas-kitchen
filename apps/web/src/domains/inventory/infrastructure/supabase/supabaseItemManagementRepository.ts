@@ -28,12 +28,16 @@ function mapItemRow(
     id: row.id,
     name: row.name,
     organizationId: row.organization_id,
-    reorderThreshold: threshold?.minimum_quantity ?? null
+    reorderThreshold: threshold?.minimum_quantity ?? null,
+    targetStockLevel: threshold?.target_quantity ?? null
   };
 }
 
 function mapItemInsert(
-  input: Omit<CreateManagedItemInput, "actor" | "reorderThreshold" | "templeId">
+  input: Omit<
+    CreateManagedItemInput,
+    "actor" | "reorderThreshold" | "targetStockLevel" | "templeId"
+  >
 ): ItemInsert {
   return {
     category: input.category ?? null,
@@ -49,7 +53,10 @@ function mapItemInsert(
 }
 
 function mapItemUpdate(
-  input: Omit<UpdateManagedItemInput, "actor" | "reorderThreshold" | "templeId">
+  input: Omit<
+    UpdateManagedItemInput,
+    "actor" | "reorderThreshold" | "targetStockLevel" | "templeId"
+  >
 ): ItemUpdate {
   return {
     category: input.category ?? null,
@@ -201,6 +208,7 @@ export function createSupabaseItemManagementRepository(
           .from("inventory_low_stock_thresholds")
           .update({
             minimum_quantity: input.minimumQuantity,
+            target_quantity: input.targetQuantity,
             unit: input.unit
           })
           .eq("id", activeThreshold.id);
@@ -223,6 +231,7 @@ export function createSupabaseItemManagementRepository(
         minimum_quantity: input.minimumQuantity,
         organization_id: input.organizationId,
         temple_id: input.templeId,
+        target_quantity: input.targetQuantity,
         unit: input.unit
       });
 

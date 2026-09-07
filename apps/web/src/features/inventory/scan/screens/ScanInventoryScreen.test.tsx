@@ -91,12 +91,13 @@ function renderScreen(auth: AuthContextValue) {
 }
 
 describe("ScanInventoryScreen", () => {
-  it("renders barcode entry, camera placeholder, and recent scans for inventory readers", () => {
+  it("renders barcode entry, camera controls, and recent scans for inventory readers", () => {
     const markup = renderScreen(createAuthValue());
 
     assert.match(markup, /Inventory scan/);
     assert.match(markup, /Barcode entry/);
     assert.match(markup, /Camera scan/);
+    assert.match(markup, /Open camera/);
     assert.match(markup, /Recent scans/);
   });
 

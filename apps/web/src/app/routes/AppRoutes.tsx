@@ -4,8 +4,10 @@ import { HomeScreen } from "@/app/screens/HomeScreen";
 import { MobileAppShell } from "@/app/shell/MobileAppShell";
 import { AdminManagementScreen } from "@/features/admin";
 import {
+  AccessRequestStatusScreen,
   AuthLoadingScreen,
   LoginScreen,
+  ResetPasswordScreen,
   TempleSelectionScreen,
   UnauthorizedScreen,
   useAuth
@@ -54,6 +56,7 @@ export function AppRoutes() {
 }
 
 function AuthenticatedRoutes() {
+  const auth = useAuth();
   const route = useCurrentRoute();
   const path = route.path;
 
@@ -65,6 +68,16 @@ function AuthenticatedRoutes() {
 
   if (path === "/login") {
     return <AuthLoadingScreen />;
+  }
+
+  const appMetadata = auth.session?.user.app_metadata as Record<string, unknown> | undefined;
+  const accessRequestStatus = appMetadata?.access_request_status;
+  if (!auth.currentOrganization && accessRequestStatus === "pending") {
+    return <AccessRequestStatusScreen status="pending" />;
+  }
+
+  if (!auth.currentOrganization && accessRequestStatus === "rejected") {
+    return <AccessRequestStatusScreen status="rejected" />;
   }
 
   if (path === "/select-temple") {
@@ -79,6 +92,17 @@ function AuthenticatedRoutes() {
     return <UnauthorizedScreen />;
   }
 
+  if (
+    auth.session?.user.app_metadata.must_change_password === true &&
+    route.name !== "reset_password"
+  ) {
+    return <ResetPasswordScreen />;
+  }
+
+  if (route.name === "reset_password") {
+    return <ResetPasswordScreen />;
+  }
+
   let screen = <HomeScreen />;
 
   if (route.name === "inventory") {
@@ -91,7 +115,7 @@ function AuthenticatedRoutes() {
 
   if (route.name === "admin") {
     return (
-      <RouteGuard requireAuth>
+      <RouteGuard requireAuth requirePermission="users.manage">
         <MobileAppShell>
           <AdminManagementScreen />
         </MobileAppShell>
@@ -236,10 +260,51 @@ function AuthenticatedRoutes() {
   }
 
   return (
-    <RouteGuard requireAuth requireTemple>
+    <RouteGuard requireAnyPermission={getRequiredPermissions(route.name)} requireAuth requireTemple>
       <MobileAppShell>{screen}</MobileAppShell>
     </RouteGuard>
   );
+}
+
+function getRequiredPermissions(routeName: ReturnType<typeof useCurrentRoute>["name"]) {
+  switch (routeName) {
+    case "inventory":
+    case "inventory_item":
+    case "inventory_location":
+    case "scan":
+    case "tasks":
+      return ["inventory.read"] as const;
+    case "receive":
+      return ["inventory.receive"] as const;
+    case "adjust":
+    case "dashboard":
+    case "low_stock":
+      return ["inventory.adjust"] as const;
+    case "consume":
+      return ["inventory.consume"] as const;
+    case "items":
+      return ["items.create", "items.edit", "items.archive"] as const;
+    case "locations":
+      return ["locations.create", "locations.edit"] as const;
+    case "transfer":
+      return ["inventory.transfer"] as const;
+    case "return":
+      return ["inventory.return"] as const;
+    case "recipes":
+      return ["recipes.read"] as const;
+    case "procurement_admin":
+      return ["procurement.admin"] as const;
+    case "purchase_review":
+      return ["procurement.requests.review"] as const;
+    case "receipt_review":
+      return ["procurement.receipts.review"] as const;
+    case "purchase_requests":
+      return ["procurement.requests.create"] as const;
+    case "my_purchases":
+      return ["procurement.purchases.read_assigned"] as const;
+    default:
+      return [] as const;
+  }
 }
 
 function ShellPlaceholder({ title }: { title: string }) {

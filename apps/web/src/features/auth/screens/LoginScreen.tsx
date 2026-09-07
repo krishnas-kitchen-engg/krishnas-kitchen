@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@krishnas-kitchen/ui";
 
 import { navigateTo } from "@/app/routes/router";
@@ -48,15 +48,63 @@ function PasswordField({
 
 export function LoginScreen() {
   const auth = useAuth();
+  const [mode, setMode] = useState<"signin" | "signup" | "volunteer">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [signupDisplayName, setSignupDisplayName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [signupDestination, setSignupDestination] = useState("");
+  const [signupDestinations, setSignupDestinations] = useState<
+    Array<{
+      organization_id: string;
+      organization_name: string;
+      temple_id: string;
+      temple_name: string;
+    }>
+  >([]);
   const [volunteerName, setVolunteerName] = useState("");
   const [joinCode, setJoinCode] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!auth.client) return;
+
+    void auth.client.rpc("list_registration_destinations").then(({ data, error }) => {
+      if (!error && data) setSignupDestinations(data);
+    });
+  }, [auth.client]);
+
+  async function handlePasswordReset() {
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    const normalizedEmail = email.trim();
+    if (!normalizedEmail) {
+      setErrorMessage("Enter your email address first.");
+      return;
+    }
+
+    if (!auth.client) {
+      setErrorMessage("Supabase is not configured.");
+      return;
+    }
+
+    try {
+      const { error } = await auth.client.auth.resetPasswordForEmail(normalizedEmail, {
+        redirectTo: `${window.location.origin}/reset-password`
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      setSuccessMessage("Password reset email sent. Open the link in that email to continue.");
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Unable to send reset email.");
+    }
+  }
 
   async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -99,18 +147,29 @@ export function LoginScreen() {
     setErrorMessage(null);
     setSuccessMessage(null);
 
+    const destination = signupDestinations.find(
+      (candidate) => candidate.temple_id === signupDestination
+    );
+    if (!destination) {
+      setErrorMessage("Choose the temple where you need access.");
+      return;
+    }
+
     try {
       await auth.signUpWithEmail({
         displayName: signupDisplayName,
         email: signupEmail,
-        password: signupPassword
+        organizationId: destination.organization_id,
+        password: signupPassword,
+        templeId: destination.temple_id
       });
       setSuccessMessage(
-        "Account request submitted. After an admin approves your temple access, sign in with this email."
+        "Request submitted. A temple admin or super admin can now approve or reject it in the app."
       );
       setSignupDisplayName("");
       setSignupEmail("");
       setSignupPassword("");
+      setSignupDestination("");
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Unable to request account.");
     }
@@ -149,84 +208,133 @@ export function LoginScreen() {
           </p>
         ) : null}
 
-        <form className="space-y-3" onSubmit={(event) => void handleLogin(event)}>
-          <label className="block space-y-1 text-sm font-medium text-stone-800">
-            <span>Email</span>
+        <div aria-label="Account access" className="grid grid-cols-3 gap-2" role="tablist">
+          {[
+            ["signin", "Sign in"],
+            ["signup", "Request access"],
+            ["volunteer", "Volunteer"]
+          ].map(([value, label]) => (
+            <button
+              aria-selected={mode === value}
+              className={`min-h-11 rounded-md border px-2 text-sm font-semibold ${
+                mode === value
+                  ? "border-brand-900 bg-brand-900 text-white"
+                  : "border-stone-300 bg-white text-stone-700"
+              }`}
+              key={value}
+              onClick={() => setMode(value as typeof mode)}
+              role="tab"
+              type="button"
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {mode === "signin" ? (
+          <form className="space-y-3" onSubmit={(event) => void handleLogin(event)}>
+            <label className="block space-y-1 text-sm font-medium text-stone-800">
+              <span>Email</span>
+              <input
+                className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
+                inputMode="email"
+                onChange={(event) => setEmail(event.target.value)}
+                type="email"
+                value={email}
+              />
+            </label>
+            <PasswordField
+              autocomplete="current-password"
+              onChange={setPassword}
+              value={password}
+            />
+            <Button className="w-full" disabled={!auth.isConfigured} type="submit">
+              Sign in
+            </Button>
+            <button
+              className="min-h-11 w-full text-sm font-semibold text-brand-800 underline-offset-4 hover:underline"
+              onClick={() => void handlePasswordReset()}
+              type="button"
+            >
+              Forgot password?
+            </button>
+            {!auth.isConfigured ? (
+              <p className="text-xs leading-5 text-stone-600">
+                Supabase environment variables are not configured yet.
+              </p>
+            ) : null}
+          </form>
+        ) : null}
+
+        {mode === "signup" ? (
+          <form className="space-y-3" onSubmit={(event) => void handleSignUp(event)}>
+            <div>
+              <p className="text-sm font-semibold text-stone-900">Request account</p>
+              <p className="mt-1 text-xs leading-5 text-stone-600">
+                Choose your temple so the request reaches the correct admins.
+              </p>
+            </div>
+            <input
+              className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
+              onChange={(event) => setSignupDisplayName(event.target.value)}
+              placeholder="Full name"
+              value={signupDisplayName}
+            />
             <input
               className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
               inputMode="email"
-              onChange={(event) => setEmail(event.target.value)}
+              onChange={(event) => setSignupEmail(event.target.value)}
+              placeholder="Email"
               type="email"
-              value={email}
+              value={signupEmail}
             />
-          </label>
-          <PasswordField autocomplete="current-password" onChange={setPassword} value={password} />
-          <Button className="w-full" disabled={!auth.isConfigured} type="submit">
-            Sign in
-          </Button>
-          {!auth.isConfigured ? (
-            <p className="text-xs leading-5 text-stone-600">
-              Supabase environment variables are not configured yet.
-            </p>
-          ) : null}
-        </form>
+            <PasswordField
+              autocomplete="new-password"
+              onChange={setSignupPassword}
+              placeholder="Password"
+              value={signupPassword}
+            />
+            <label className="block text-sm font-medium text-stone-800">
+              Temple
+              <select
+                className="mt-1 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base"
+                onChange={(event) => setSignupDestination(event.target.value)}
+                value={signupDestination}
+              >
+                <option value="">Choose temple</option>
+                {signupDestinations.map((destination) => (
+                  <option key={destination.temple_id} value={destination.temple_id}>
+                    {destination.organization_name} — {destination.temple_name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <Button className="w-full bg-brand-900 hover:bg-brand-800" type="submit">
+              Request access
+            </Button>
+          </form>
+        ) : null}
 
-        <form
-          className="space-y-3 border-t border-stone-200 pt-5"
-          onSubmit={(event) => void handleSignUp(event)}
-        >
-          <div>
-            <p className="text-sm font-semibold text-stone-900">Request account</p>
-            <p className="mt-1 text-xs leading-5 text-stone-600">
-              New accounts stay pending until an admin assigns temple access and roles.
-            </p>
-          </div>
-          <input
-            className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
-            onChange={(event) => setSignupDisplayName(event.target.value)}
-            placeholder="Full name"
-            value={signupDisplayName}
-          />
-          <input
-            className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
-            inputMode="email"
-            onChange={(event) => setSignupEmail(event.target.value)}
-            placeholder="Email"
-            type="email"
-            value={signupEmail}
-          />
-          <PasswordField
-            autocomplete="new-password"
-            onChange={setSignupPassword}
-            placeholder="Password"
-            value={signupPassword}
-          />
-          <Button className="w-full bg-brand-900 hover:bg-brand-800" type="submit">
-            Request access
-          </Button>
-        </form>
-
-        <form
-          className="space-y-3 border-t border-stone-200 pt-5"
-          onSubmit={(event) => void handleTemporaryVolunteer(event)}
-        >
-          <p className="text-sm font-semibold text-stone-900">Temporary volunteer</p>
-          <input
-            className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
-            onChange={(event) => setVolunteerName(event.target.value)}
-            placeholder="Display name"
-            value={volunteerName}
-          />
-          <input
-            className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
-            onChange={(event) => setJoinCode(event.target.value)}
-            placeholder="Join code"
-            value={joinCode}
-          />
-          <Button className="w-full bg-stone-900 hover:bg-stone-700" type="submit">
-            Continue restricted
-          </Button>
-        </form>
+        {mode === "volunteer" ? (
+          <form className="space-y-3" onSubmit={(event) => void handleTemporaryVolunteer(event)}>
+            <p className="text-sm font-semibold text-stone-900">Temporary volunteer</p>
+            <input
+              className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
+              onChange={(event) => setVolunteerName(event.target.value)}
+              placeholder="Display name"
+              value={volunteerName}
+            />
+            <input
+              className="min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base outline-none focus:border-brand-700"
+              onChange={(event) => setJoinCode(event.target.value)}
+              placeholder="Join code"
+              value={joinCode}
+            />
+            <Button className="w-full bg-stone-900 hover:bg-stone-700" type="submit">
+              Continue restricted
+            </Button>
+          </form>
+        ) : null}
       </section>
     </main>
   );

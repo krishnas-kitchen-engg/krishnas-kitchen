@@ -18,6 +18,7 @@ describe("procurement permissions", () => {
     expect(seniorCookPermissions).toContain("procurement.requests.review");
     expect(seniorCookPermissions).toContain("procurement.lists.manage");
     expect(seniorCookPermissions).toContain("procurement.lists.publish");
+    expect(seniorCookPermissions).not.toContain("procurement.receipts.review");
   });
 
   it("allows inventory managers and admins to manage procurement setup and audit", () => {
@@ -26,6 +27,7 @@ describe("procurement permissions", () => {
 
     expect(managerPermissions).toContain("procurement.admin");
     expect(managerPermissions).toContain("procurement.audit.read");
+    expect(managerPermissions).toContain("procurement.receipts.review");
     expect(adminPermissions).toContain("procurement.admin");
     expect(adminPermissions).toContain("procurement.audit.read");
   });

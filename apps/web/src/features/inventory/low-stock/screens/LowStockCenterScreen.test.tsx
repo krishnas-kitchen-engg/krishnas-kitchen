@@ -82,5 +82,7 @@ describe("LowStockCenterScreen", () => {
     assert.match(markup, /Low Stock Center/);
     assert.match(markup, /Search item/);
     assert.match(markup, /Out of Stock/);
+    assert.match(markup, /Replenishment priorities/);
+    assert.match(markup, /Purchase Review subtracts quantities already planned/);
   });
 });

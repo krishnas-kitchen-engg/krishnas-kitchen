@@ -119,6 +119,7 @@ export type InventoryLowStockThreshold = {
   locationId?: EntityId;
   minimumQuantity: number;
   organizationId: EntityId;
+  targetQuantity?: number | null;
   templeId?: EntityId;
   unit: ItemUnit;
 };

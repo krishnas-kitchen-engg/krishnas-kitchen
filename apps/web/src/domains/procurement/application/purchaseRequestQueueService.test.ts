@@ -34,14 +34,19 @@ const createdRequest: PurchaseRequestRecord = {
 };
 
 function createServices(): {
-  requestService: PurchaseRequestService & { createdByUserId: string | null };
+  requestService: PurchaseRequestService & {
+    createdByUserId: string | null;
+    createdReplenishmentKey: string | null;
+  };
   reviewService: PurchaseRequestReviewService & { reviewedRequestId: string | null };
 } {
   return {
     requestService: {
       createdByUserId: null,
+      createdReplenishmentKey: null,
       createPurchaseRequest(input) {
         this.createdByUserId = input.requestedBy.userId ?? null;
+        this.createdReplenishmentKey = input.replenishmentKey ?? null;
         return Promise.resolve({
           ...createdRequest,
           item: input.item,
@@ -101,12 +106,14 @@ describe("createPurchaseRequestQueueService", () => {
       notes: "Manager added",
       organizationId: "org-1",
       quantity: 12,
+      replenishmentKey: "temple-1:item-1:kg",
       templeId: "temple-1",
       unit: "kg"
     });
 
     assert.equal(result.status, "approved");
     assert.equal(services.requestService.createdByUserId, "approver-1");
+    assert.equal(services.requestService.createdReplenishmentKey, "temple-1:item-1:kg");
     assert.equal(services.reviewService.reviewedRequestId, "request-1");
   });
 

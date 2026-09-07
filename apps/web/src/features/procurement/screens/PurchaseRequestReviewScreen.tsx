@@ -95,6 +95,69 @@ export function PurchaseRequestReviewScreen() {
         </div>
       ) : null}
 
+      <section className="space-y-3">
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase text-brand-800">Stock replenishment</p>
+            <h2 className="mt-1 text-lg font-semibold text-stone-950">Recommended purchases</h2>
+            <p className="mt-1 text-sm leading-6 text-stone-600">
+              Suggestions use current stock, target levels, and quantities already being purchased.
+            </p>
+          </div>
+          <span className="text-sm font-medium text-stone-500">
+            {review.replenishmentRecommendations.length}
+          </span>
+        </div>
+
+        {review.replenishmentRecommendations.length > 0 ? (
+          review.replenishmentRecommendations.map((recommendation) => (
+            <article
+              className="space-y-3 rounded-md border border-amber-200 bg-amber-50 p-4"
+              key={`${recommendation.itemId}:${recommendation.unit}`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-semibold text-stone-950">{recommendation.itemName}</h3>
+                  <p className="mt-1 text-sm text-stone-700">
+                    {recommendation.currentQuantity} {recommendation.unit} on hand / target{" "}
+                    {recommendation.targetStockLevel} {recommendation.unit}
+                  </p>
+                </div>
+                <span className="rounded-md border border-amber-300 bg-white px-2 py-1 text-sm font-semibold text-amber-900">
+                  Buy {recommendation.suggestedQuantity} {recommendation.unit}
+                </span>
+              </div>
+              {recommendation.alreadyPlannedQuantity > 0 ? (
+                <p className="text-sm text-stone-700">
+                  Already planned: {recommendation.alreadyPlannedQuantity} {recommendation.unit}
+                </p>
+              ) : null}
+              {recommendation.orderRuleApplied ? (
+                <p className="text-xs leading-5 text-stone-600">
+                  The suggestion was rounded using the configured minimum order or pack size.
+                </p>
+              ) : null}
+              <button
+                className="min-h-10 w-full rounded-md bg-brand-900 px-3 text-sm font-semibold text-white disabled:bg-stone-300"
+                disabled={review.submittingRequestId !== null}
+                onClick={() => {
+                  void review.addReplenishmentRecommendation(recommendation);
+                }}
+                type="button"
+              >
+                {review.submittingRequestId === `replenish:${recommendation.itemId}`
+                  ? "Adding..."
+                  : "Add to approved queue"}
+              </button>
+            </article>
+          ))
+        ) : (
+          <p className="rounded-md border border-stone-200 bg-white p-4 text-sm text-stone-600">
+            No unplanned stock replenishment is currently recommended.
+          </p>
+        )}
+      </section>
+
       <section className="space-y-4 rounded-md border border-stone-200 bg-white p-4">
         <div>
           <p className="text-xs font-semibold uppercase text-stone-500">Manual publish</p>

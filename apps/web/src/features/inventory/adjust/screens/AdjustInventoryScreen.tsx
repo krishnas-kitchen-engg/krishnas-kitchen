@@ -4,18 +4,23 @@ import { InventoryBalanceList } from "../../components/InventoryBalanceList";
 import { InventoryTransactionList } from "../../components/InventoryTransactionList";
 import { useAdjustInventoryWorkflowForm } from "../hooks/useAdjustInventoryWorkflowForm";
 
-function formatDelta(delta: number | null, unit: ItemUnit | ""): string {
-  if (delta === null || !unit) {
+function formatAdjustmentPreview(
+  currentQuantity: number | null,
+  physicalQuantityText: string,
+  delta: number | null,
+  unit: ItemUnit | ""
+): string {
+  if (currentQuantity === null || delta === null || !unit || !physicalQuantityText.trim()) {
     return "Select item, location, unit, and count to preview the correction.";
   }
 
   if (delta === 0) {
-    return "Projected inventory already matches the physical count.";
+    return `No correction needed. Inventory already shows ${currentQuantity} ${unit}.`;
   }
 
   const direction = delta > 0 ? "increase" : "decrease";
 
-  return `Inventory will ${direction} by ${Math.abs(delta)} ${unit}.`;
+  return `Inventory will change from ${currentQuantity} ${unit} to ${physicalQuantityText} ${unit} (${direction} of ${Math.abs(delta)} ${unit}).`;
 }
 
 export function AdjustInventoryScreen() {
@@ -156,15 +161,23 @@ export function AdjustInventoryScreen() {
 
           <div className="grid grid-cols-[1fr_6.5rem] gap-2">
             <label className="block text-sm font-medium text-stone-800">
-              Physical count
+              Quantity physically counted
               <input
+                aria-describedby="physical-count-help"
                 className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
                 inputMode="decimal"
+                min="0"
                 onChange={(event) => workflow.setPhysicalQuantityText(event.target.value)}
                 placeholder="0"
                 type="number"
                 value={state.physicalQuantityText}
               />
+              <span
+                className="mt-1 block text-xs leading-5 text-stone-600"
+                id="physical-count-help"
+              >
+                Enter the total quantity remaining. The app calculates the correction for you.
+              </span>
             </label>
             <label className="block text-sm font-medium text-stone-800">
               Unit
@@ -192,13 +205,21 @@ export function AdjustInventoryScreen() {
           ) : null}
 
           <label className="block text-sm font-medium text-stone-800">
-            Adjustment reason
-            <textarea
-              className="mt-2 min-h-24 w-full rounded-md border border-stone-300 px-3 py-2 text-base text-stone-950"
+            Reason for correction
+            <input
+              className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
+              list="adjustment-reasons"
               onChange={(event) => workflow.setReason(event.target.value)}
-              placeholder="Monthly count, damaged packaging, count correction..."
+              placeholder="Initial stock count, routine physical count, unrecorded usage..."
               value={state.reason}
             />
+            <datalist id="adjustment-reasons">
+              <option value="Initial stock count" />
+              <option value="Routine physical count" />
+              <option value="Unrecorded kitchen usage" />
+              <option value="Spoilage or damage" />
+              <option value="Measurement correction" />
+            </datalist>
             {state.validationErrors.reason ? (
               <span className="mt-1 block text-sm font-medium text-red-700">
                 {state.validationErrors.reason}
@@ -207,7 +228,12 @@ export function AdjustInventoryScreen() {
           </label>
 
           <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm font-medium text-amber-900">
-            {formatDelta(workflow.projectedDelta, state.unit)}
+            {formatAdjustmentPreview(
+              state.currentQuantity,
+              state.physicalQuantityText,
+              workflow.projectedDelta,
+              state.unit
+            )}
           </div>
 
           <button
@@ -234,20 +260,25 @@ export function AdjustInventoryScreen() {
           </div>
           <dl className="grid grid-cols-2 gap-3 text-sm">
             <div className="rounded-md bg-stone-50 p-3">
-              <dt className="font-medium text-stone-600">Projected</dt>
+              <dt className="font-medium text-stone-600">App balance</dt>
               <dd className="mt-1 text-base font-semibold text-stone-950">
                 {state.currentQuantity ?? 0} {state.unit}
               </dd>
             </div>
             <div className="rounded-md bg-stone-50 p-3">
-              <dt className="font-medium text-stone-600">Physical</dt>
+              <dt className="font-medium text-stone-600">Your count</dt>
               <dd className="mt-1 text-base font-semibold text-stone-950">
                 {state.physicalQuantityText || "0"} {state.unit}
               </dd>
             </div>
           </dl>
           <p className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm font-medium text-amber-900">
-            {formatDelta(workflow.projectedDelta, state.unit)}
+            {formatAdjustmentPreview(
+              state.currentQuantity,
+              state.physicalQuantityText,
+              workflow.projectedDelta,
+              state.unit
+            )}
           </p>
           <p className="text-sm leading-6 text-stone-700">Reason: {state.reason.trim()}</p>
           <div className="grid grid-cols-2 gap-2">

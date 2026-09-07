@@ -36,6 +36,24 @@ Thumbs.db
 # Local caches
 .eslintcache
 .stylelintcache
+tmp/
+output/
+outputs/
+
+# Working release documents and manually applied SQL (not deployable code)
+docs/ITEM_BULK_IMPORT.sql
+docs/ITEM_BULK_IMPORT_GUIDE.md
+docs/ROLE_ACCESS_MATRIX.md
+docs/USER_GUIDE_BY_ROLE.md
+infra/supabase/migrations/20260906000100_add_target_stock_levels.sql
+infra/supabase/migrations/20260906000200_harden_release_security.sql
+infra/supabase/migrations/20260906000300_add_registration_approval_workflow.sql
+
+# Local validators for the excluded manual SQL files
+apps/web/src/domains/inventory/infrastructure/supabase/itemBulkImportScript.test.ts
+apps/web/src/domains/inventory/infrastructure/supabase/releaseSecurityMigration.test.ts
+apps/web/src/domains/inventory/infrastructure/supabase/targetStockLevelMigration.test.ts
+apps/web/src/features/auth/infrastructure/supabase/registrationApprovalMigration.test.ts
 
 # Supabase local development
 .branches/

@@ -13,6 +13,7 @@ export function mapInventoryLowStockThresholdRow(
     ...(row.location_id ? { locationId: row.location_id } : {}),
     minimumQuantity: row.minimum_quantity,
     organizationId: row.organization_id,
+    targetQuantity: row.target_quantity,
     ...(row.temple_id ? { templeId: row.temple_id } : {}),
     unit: row.unit
   };

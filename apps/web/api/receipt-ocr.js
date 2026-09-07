@@ -1,5 +1,12 @@
 const allowedReceiptMimeTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
 const maxReceiptFileSizeBytes = 10 * 1024 * 1024;
+const receiptOcrRoles = new Set([
+  "cook",
+  "senior_cook",
+  "inventory_manager",
+  "temple_admin",
+  "super_admin"
+]);
 
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -68,23 +75,64 @@ async function fileToDataUrl(file) {
   return `data:${file.type};base64,${btoa(binary)}`;
 }
 
-async function isAuthenticatedRequest(request) {
+export function hasReceiptOcrPermission(roles) {
+  return (
+    Array.isArray(roles) &&
+    roles.some((value) => {
+      const role = typeof value === "string" ? value : value?.role;
+
+      return typeof role === "string" && receiptOcrRoles.has(role);
+    })
+  );
+}
+
+async function readAuthenticatedSession(request) {
   const authorization = request.headers.get("Authorization");
   const supabaseUrl = process.env.VITE_SUPABASE_URL;
   const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
 
   if (!authorization?.startsWith("Bearer ") || !supabaseUrl || !supabaseAnonKey) {
-    return false;
+    return null;
   }
 
-  const response = await fetch(`${supabaseUrl.replace(/\/+$/g, "")}/auth/v1/user`, {
-    headers: {
-      Authorization: authorization,
-      apikey: supabaseAnonKey
-    }
+  const normalizedSupabaseUrl = supabaseUrl.replace(/\/+$/g, "");
+  const headers = {
+    Authorization: authorization,
+    apikey: supabaseAnonKey
+  };
+  const response = await fetch(`${normalizedSupabaseUrl}/auth/v1/user`, {
+    headers
   }).catch(() => null);
 
-  return Boolean(response?.ok);
+  if (!response?.ok) {
+    return null;
+  }
+
+  const user = await response.json().catch(() => null);
+
+  if (!user || typeof user !== "object" || typeof user.id !== "string") {
+    return null;
+  }
+
+  const rolesResponse = await fetch(
+    `${normalizedSupabaseUrl}/rest/v1/rpc/current_authenticated_user_roles`,
+    {
+      body: "{}",
+      headers: {
+        ...headers,
+        "Content-Type": "application/json"
+      },
+      method: "POST"
+    }
+  ).catch(() => null);
+
+  if (!rolesResponse?.ok) {
+    return null;
+  }
+
+  const roles = await rolesResponse.json().catch(() => null);
+
+  return Array.isArray(roles) ? { roles, user } : null;
 }
 
 export const config = {
@@ -96,8 +144,14 @@ export default async function handler(request) {
     return jsonResponse({ error: "Method not allowed." }, 405);
   }
 
-  if (!(await isAuthenticatedRequest(request))) {
+  const session = await readAuthenticatedSession(request);
+
+  if (!session) {
     return jsonResponse({ error: "Receipt OCR requires a signed-in purchaser session." }, 401);
+  }
+
+  if (!hasReceiptOcrPermission(session.roles)) {
+    return jsonResponse({ error: "Your role cannot use receipt OCR." }, 403);
   }
 
   const apiKey = process.env.OPENAI_API_KEY;

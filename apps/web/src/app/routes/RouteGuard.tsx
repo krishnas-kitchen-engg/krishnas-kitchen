@@ -7,6 +7,7 @@ import { AuthLoadingScreen, hasPermission, useAuth } from "@/features/auth";
 import { navigateTo } from "./router";
 
 type RouteGuardProps = PropsWithChildren<{
+  requireAnyPermission?: readonly Permission[];
   requireAuth?: boolean;
   requirePermission?: Permission;
   requireTemple?: boolean;
@@ -14,6 +15,7 @@ type RouteGuardProps = PropsWithChildren<{
 
 export function RouteGuard({
   children,
+  requireAnyPermission = [],
   requireAuth = false,
   requirePermission,
   requireTemple = false
@@ -22,6 +24,9 @@ export function RouteGuard({
   const isMissingAuth = requireAuth && !auth.isAuthenticated;
   const isMissingTemple = requireTemple && auth.isAuthenticated && !auth.currentTemple;
   const isMissingPermission = !hasPermission(auth.permissions, requirePermission);
+  const isMissingAnyPermission =
+    requireAnyPermission.length > 0 &&
+    !requireAnyPermission.some((permission) => hasPermission(auth.permissions, permission));
 
   useEffect(() => {
     if (auth.isLoading) {
@@ -38,12 +43,18 @@ export function RouteGuard({
       return;
     }
 
-    if (isMissingPermission) {
+    if (isMissingPermission || isMissingAnyPermission) {
       navigateTo("/unauthorized");
     }
-  }, [auth.isLoading, isMissingAuth, isMissingPermission, isMissingTemple]);
+  }, [auth.isLoading, isMissingAnyPermission, isMissingAuth, isMissingPermission, isMissingTemple]);
 
-  if (auth.isLoading || isMissingAuth || isMissingTemple || isMissingPermission) {
+  if (
+    auth.isLoading ||
+    isMissingAuth ||
+    isMissingTemple ||
+    isMissingPermission ||
+    isMissingAnyPermission
+  ) {
     return <AuthLoadingScreen />;
   }
 

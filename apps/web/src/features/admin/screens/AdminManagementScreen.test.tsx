@@ -91,28 +91,21 @@ describe("AdminManagementScreen", () => {
 
     assert.match(markup, /Users and temples/);
     assert.match(markup, /People/);
+    assert.match(markup, /Requests/);
     assert.match(markup, /Roles/);
     assert.match(markup, /Temples/);
     assert.match(markup, /Setup/);
     assert.match(markup, /Audit/);
-    assert.match(markup, /Create login account/);
-    assert.match(markup, /Create accounts, search users, and archive or restore access/);
-    assert.match(markup, /Temporary password/);
+    assert.match(markup, /Registration requests/);
+    assert.match(markup, /Approve or reject requests routed to temples you administer/);
     assert.doesNotMatch(markup, /Supabase Auth User UID/);
   });
 
-  it("offers every app role for admin assignment", () => {
+  it("keeps manual user and role management available alongside requests", () => {
     const markup = renderScreen(createAuthValue());
 
-    for (const roleLabel of [
-      "Volunteer",
-      "Cook",
-      "Senior Cook",
-      "Inventory Manager",
-      "Temple Admin",
-      "Super Admin"
-    ]) {
-      assert.match(markup, new RegExp(roleLabel));
-    }
+    assert.match(markup, /People/);
+    assert.match(markup, /Roles/);
+    assert.match(markup, /Temples/);
   });
 });

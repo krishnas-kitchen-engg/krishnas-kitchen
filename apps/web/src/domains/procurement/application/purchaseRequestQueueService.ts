@@ -40,6 +40,7 @@ export function createPurchaseRequestQueueService(options: {
         notes,
         organizationId: input.organizationId,
         quantity: input.quantity,
+        ...(input.replenishmentKey ? { replenishmentKey: input.replenishmentKey } : {}),
         requestedBy: input.approvedBy,
         templeId: input.templeId,
         unit: input.unit

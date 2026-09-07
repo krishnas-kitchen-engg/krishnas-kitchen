@@ -46,6 +46,7 @@ const alerts: InventoryLowStockAlert[] = [
     minimumQuantity: 5,
     organizationId: "org-1",
     shortageQuantity: 3,
+    targetQuantity: 10,
     templeId: "temple-1",
     unit: "kg"
   },
@@ -56,6 +57,7 @@ const alerts: InventoryLowStockAlert[] = [
     minimumQuantity: 4,
     organizationId: "org-1",
     shortageQuantity: 4,
+    targetQuantity: 8,
     templeId: "temple-1",
     unit: "kg"
   },

@@ -73,6 +73,11 @@ describe("ItemManagementScreen", () => {
 
     assert.match(markup, /Manage item catalog/);
     assert.match(markup, /Create item/);
+    assert.match(markup, /Minimum stock level \(reorder point\)/);
+    assert.match(markup, /Optional\. When stock reaches or falls below this level/);
+    assert.match(markup, /change or remove it at any time/);
+    assert.match(markup, /Target stock level/);
+    assert.match(markup, /purchasing is recommended up to this level/);
     assert.match(markup, /Search items/);
   });
 });

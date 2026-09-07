@@ -26,6 +26,19 @@ export class RecipeProductionValidationError extends Error {
   }
 }
 
+export class RecipeProductionRollbackError extends Error {
+  readonly failedTransactionIds: readonly EntityId[];
+
+  constructor(failedTransactionIds: readonly EntityId[], cause: unknown) {
+    super(
+      `Production failed and inventory rollback was incomplete for ${failedTransactionIds.length} transaction(s).`,
+      { cause }
+    );
+    this.failedTransactionIds = failedTransactionIds;
+    this.name = "RecipeProductionRollbackError";
+  }
+}
+
 export type RecipeProductionCatalog = {
   findProductionItem: (
     organizationId: EntityId,
@@ -208,15 +221,25 @@ export function createRecipeProductionService(options: {
           transactions
         };
       } catch (error) {
+        const failedRollbackTransactionIds: EntityId[] = [];
+
         for (const transaction of [...transactions].reverse()) {
-          await options.inventoryService.undoTransaction(transaction.id, {
-            actor: input.actor,
-            auditMetadata: {
-              reason: "recipe_production_run_rollback",
-              source: "online"
-            },
-            notes: `Rollback production run: ${input.recipe.name}`
-          });
+          try {
+            await options.inventoryService.undoTransaction(transaction.id, {
+              actor: input.actor,
+              auditMetadata: {
+                reason: "recipe_production_run_rollback",
+                source: "online"
+              },
+              notes: `Rollback production run: ${input.recipe.name}`
+            });
+          } catch {
+            failedRollbackTransactionIds.push(transaction.id);
+          }
+        }
+
+        if (failedRollbackTransactionIds.length > 0) {
+          throw new RecipeProductionRollbackError(failedRollbackTransactionIds, error);
         }
 
         throw error;

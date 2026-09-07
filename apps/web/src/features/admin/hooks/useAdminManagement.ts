@@ -358,6 +358,34 @@ export function useAdminManagement() {
     [refresh, scope, service]
   );
 
+  const setTemporaryPassword = useCallback(
+    async (userId: string, temporaryPassword: string) => {
+      if (!auth.session?.access_token || !scope) return;
+      setIsSubmitting(true);
+      setError(null);
+      setSuccess(null);
+
+      try {
+        const response = await fetch("/api/admin-users", {
+          body: JSON.stringify({ organizationId: scope.organizationId, temporaryPassword, userId }),
+          headers: {
+            Authorization: `Bearer ${auth.session.access_token}`,
+            "Content-Type": "application/json"
+          },
+          method: "PATCH"
+        });
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        if (!response.ok) throw new Error(payload?.error ?? "Temporary password could not be set.");
+        setSuccess("Temporary password set. The user must choose a new password after signing in.");
+      } catch (caughtError) {
+        setError(getAdminErrorMessage(caughtError, "Temporary password could not be set."));
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [auth.session?.access_token, scope]
+  );
+
   return {
     activeTemples,
     assignRole,
@@ -377,6 +405,7 @@ export function useAdminManagement() {
     setRoleForm,
     setTempleArchived,
     setTempleName,
+    setTemporaryPassword,
     setUserArchived,
     setUserForm,
     setUserSearch,

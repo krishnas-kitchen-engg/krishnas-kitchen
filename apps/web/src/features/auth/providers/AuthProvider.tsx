@@ -27,7 +27,7 @@ import { useSupabaseAuth } from "@/shared/integrations/supabase";
 import { createUuid } from "@/shared/lib/uuid";
 
 import { AuthContext } from "./AuthContext";
-import type { AuthStatus, StartTemporaryVolunteerInput } from "./AuthContext";
+import type { AuthStatus, SignUpWithEmailInput, StartTemporaryVolunteerInput } from "./AuthContext";
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const supabaseAuth = useSupabaseAuth();
@@ -207,7 +207,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   );
 
   const signUpWithEmail = useCallback(
-    async (input: { displayName: string; email: string; password: string }) => {
+    async (input: SignUpWithEmailInput) => {
       if (!supabaseAuth.client) {
         throw new Error("Supabase is not configured.");
       }
@@ -227,18 +227,28 @@ export function AuthProvider({ children }: PropsWithChildren) {
         throw new Error("Password must be at least 8 characters.");
       }
 
-      const { error } = await supabaseAuth.client.auth.signUp({
+      if (!input.organizationId || !input.templeId) {
+        throw new Error("Choose the temple where you need access.");
+      }
+
+      const { data, error } = await supabaseAuth.client.auth.signUp({
         email,
         password: input.password,
         options: {
           data: {
-            display_name: displayName
+            display_name: displayName,
+            requested_organization_id: input.organizationId,
+            requested_temple_id: input.templeId
           }
         }
       });
 
       if (error) {
         throw error;
+      }
+
+      if (data.session) {
+        await supabaseAuth.client.auth.signOut();
       }
     },
     [supabaseAuth.client]

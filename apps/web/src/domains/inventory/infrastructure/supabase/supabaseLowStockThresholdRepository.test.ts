@@ -114,7 +114,8 @@ function createRow(
     temple_id: "temple-1",
     unit: "kg",
     updated_at: "2026-06-06T08:00:00.000Z",
-    ...overrides
+    ...overrides,
+    target_quantity: overrides.target_quantity ?? null
   };
 }
 

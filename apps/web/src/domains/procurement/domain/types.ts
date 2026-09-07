@@ -74,6 +74,7 @@ export type PurchaseRequestInput = ProcurementScope & {
   neededBy?: string | null;
   notes?: string | null;
   quantity: number;
+  replenishmentKey?: string | null;
   requestedBy: ProcurementActor;
   unit: ItemUnit;
 };

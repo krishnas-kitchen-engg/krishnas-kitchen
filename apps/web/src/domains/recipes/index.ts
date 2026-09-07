@@ -3,7 +3,11 @@ export {
   type RecipeIngredientCatalog,
   type RecipeService
 } from "./application/recipeService";
-export { createRecipeProductionService } from "./application/recipeProductionService";
+export {
+  createRecipeProductionService,
+  RecipeProductionRollbackError,
+  RecipeProductionValidationError
+} from "./application/recipeProductionService";
 export { RecipeProviderBridge } from "./integration/RecipeIntegrationContext";
 export { RecipeIntegrationContext } from "./integration/recipeContextValue";
 export type { RecipeIntegrationContextValue } from "./integration/recipeContextValue";
