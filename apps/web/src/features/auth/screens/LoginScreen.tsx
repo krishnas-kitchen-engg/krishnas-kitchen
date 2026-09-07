@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@krishnas-kitchen/ui";
 
 import { navigateTo } from "@/app/routes/router";
@@ -63,18 +63,45 @@ export function LoginScreen() {
       temple_name: string;
     }>
   >([]);
+  const [signupDestinationsError, setSignupDestinationsError] = useState<string | null>(null);
+  const [isLoadingSignupDestinations, setIsLoadingSignupDestinations] = useState(
+    Boolean(auth.client)
+  );
   const [volunteerName, setVolunteerName] = useState("");
   const [joinCode, setJoinCode] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!auth.client) return;
+  const loadSignupDestinations = useCallback(async () => {
+    if (!auth.client) {
+      setSignupDestinationsError("Supabase is not configured.");
+      return;
+    }
 
-    void auth.client.rpc("list_registration_destinations").then(({ data, error }) => {
-      if (!error && data) setSignupDestinations(data);
-    });
+    setIsLoadingSignupDestinations(true);
+    setSignupDestinationsError(null);
+
+    try {
+      const { data, error } = await auth.client.rpc("list_registration_destinations");
+
+      if (error) {
+        throw error;
+      }
+
+      setSignupDestinations(data ?? []);
+    } catch {
+      setSignupDestinations([]);
+      setSignupDestinationsError(
+        "Temple choices could not be loaded. Check your connection and try again."
+      );
+    } finally {
+      setIsLoadingSignupDestinations(false);
+    }
   }, [auth.client]);
+
+  useEffect(() => {
+    void loadSignupDestinations();
+  }, [loadSignupDestinations]);
 
   async function handlePasswordReset() {
     setErrorMessage(null);
@@ -299,9 +326,12 @@ export function LoginScreen() {
               <select
                 className="mt-1 min-h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-base"
                 onChange={(event) => setSignupDestination(event.target.value)}
+                disabled={isLoadingSignupDestinations || Boolean(signupDestinationsError)}
                 value={signupDestination}
               >
-                <option value="">Choose temple</option>
+                <option value="">
+                  {isLoadingSignupDestinations ? "Loading temples..." : "Choose temple"}
+                </option>
                 {signupDestinations.map((destination) => (
                   <option key={destination.temple_id} value={destination.temple_id}>
                     {destination.organization_name} — {destination.temple_name}
@@ -309,7 +339,32 @@ export function LoginScreen() {
                 ))}
               </select>
             </label>
-            <Button className="w-full bg-brand-900 hover:bg-brand-800" type="submit">
+            {signupDestinationsError ? (
+              <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+                <p>{signupDestinationsError}</p>
+                <button
+                  className="mt-2 min-h-10 font-semibold underline underline-offset-4"
+                  onClick={() => void loadSignupDestinations()}
+                  type="button"
+                >
+                  Try loading temples again
+                </button>
+              </div>
+            ) : !isLoadingSignupDestinations && signupDestinations.length === 0 ? (
+              <p className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                No active temples are available for registration. Ask a super admin to restore or
+                create a temple first.
+              </p>
+            ) : null}
+            <Button
+              className="w-full bg-brand-900 hover:bg-brand-800"
+              disabled={
+                isLoadingSignupDestinations ||
+                Boolean(signupDestinationsError) ||
+                signupDestinations.length === 0
+              }
+              type="submit"
+            >
               Request access
             </Button>
           </form>

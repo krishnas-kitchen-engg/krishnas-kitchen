@@ -97,6 +97,10 @@ export function RegistrationRequestQueue({
           <p className="mt-1 text-sm text-stone-600">
             Approve or reject requests routed to temples you administer.
           </p>
+          <p className="mt-1 text-xs leading-5 text-stone-500">
+            Someone who registered before this queue was enabled may not appear here. Use People and
+            their exact registered email to link that login.
+          </p>
         </div>
         <button
           className="min-h-10 rounded-md border border-stone-300 px-3 text-sm font-semibold"

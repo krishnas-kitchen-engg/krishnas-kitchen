@@ -108,6 +108,7 @@ describe("AdminManagementScreen", () => {
     assert.match(markup, /Audit/);
     assert.match(markup, /Registration requests/);
     assert.match(markup, /Approve or reject requests routed to temples you administer/);
+    assert.match(markup, /registered before this queue was enabled/);
     assert.doesNotMatch(markup, /Supabase Auth User UID/);
   });
 

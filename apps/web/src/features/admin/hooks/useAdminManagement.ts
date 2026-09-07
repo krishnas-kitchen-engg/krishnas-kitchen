@@ -90,6 +90,16 @@ export function useAdminManagement() {
     };
   }, [auth.currentOrganization?.id, auth.profile?.authUserId]);
 
+  const refreshCurrentSession = useCallback(async () => {
+    if (!auth.client) {
+      return true;
+    }
+
+    const { error: sessionRefreshError } = await auth.client.auth.refreshSession();
+
+    return !sessionRefreshError;
+  }, [auth.client]);
+
   const refresh = useCallback(async () => {
     if (!service || !scope || !canManageAdmin) {
       return;
@@ -179,12 +189,17 @@ export function useAdminManagement() {
       setTempleName("");
       setEditingTempleId(null);
       await refresh();
+      if (!(await refreshCurrentSession())) {
+        setSuccess(
+          "Temple saved, but your app session could not refresh. Reload before continuing."
+        );
+      }
     } catch (caughtError) {
       setError(getAdminErrorMessage(caughtError, "Temple could not be saved."));
     } finally {
       setIsSubmitting(false);
     }
-  }, [editingTempleId, refresh, scope, service, templeName]);
+  }, [editingTempleId, refresh, refreshCurrentSession, scope, service, templeName]);
 
   const editTemple = useCallback((temple: AdminTempleRecord) => {
     setEditingTempleId(temple.id);
@@ -209,13 +224,18 @@ export function useAdminManagement() {
         });
         setSuccess(shouldArchive ? "Temple archived." : "Temple restored.");
         await refresh();
+        if (!(await refreshCurrentSession())) {
+          setSuccess(
+            `Temple ${shouldArchive ? "archived" : "restored"}, but your app session could not refresh. Reload before continuing.`
+          );
+        }
       } catch (caughtError) {
         setError(getAdminErrorMessage(caughtError, "Temple status could not be updated."));
       } finally {
         setIsSubmitting(false);
       }
     },
-    [refresh, scope, service]
+    [refresh, refreshCurrentSession, scope, service]
   );
 
   const createUser = useCallback(async () => {
@@ -330,16 +350,36 @@ export function useAdminManagement() {
         templeId: roleForm.scope === "organization" ? null : roleForm.templeId,
         userId: roleForm.userId
       });
-      setSuccess(
-        "Role assigned. The user should sign out and sign in again to receive the updated app session."
-      );
+      const changedCurrentUser = roleForm.userId === auth.profile?.authUserId;
       await refresh();
+      if (changedCurrentUser) {
+        const sessionRefreshed = await refreshCurrentSession();
+        setSuccess(
+          sessionRefreshed
+            ? "Role assigned and your current app session was refreshed."
+            : "Role assigned, but your app session could not refresh. Reload before continuing."
+        );
+      } else {
+        setSuccess(
+          "Role assigned. The user should sign out and sign in again to receive the updated app session."
+        );
+      }
     } catch (caughtError) {
       setError(getAdminErrorMessage(caughtError, "Role could not be assigned."));
     } finally {
       setIsSubmitting(false);
     }
-  }, [refresh, roleForm.role, roleForm.scope, roleForm.templeId, roleForm.userId, scope, service]);
+  }, [
+    auth.profile?.authUserId,
+    refresh,
+    refreshCurrentSession,
+    roleForm.role,
+    roleForm.scope,
+    roleForm.templeId,
+    roleForm.userId,
+    scope,
+    service
+  ]);
 
   const removeRole = useCallback(
     async (role: AdminUserRoleRecord) => {
@@ -357,15 +397,25 @@ export function useAdminManagement() {
           roleId: role.id,
           userId: role.userId
         });
-        setSuccess("Role removed. The user should sign out and sign in again.");
+        const changedCurrentUser = role.userId === auth.profile?.authUserId;
         await refresh();
+        if (changedCurrentUser) {
+          const sessionRefreshed = await refreshCurrentSession();
+          setSuccess(
+            sessionRefreshed
+              ? "Role removed and your current app session was refreshed."
+              : "Role removed, but your app session could not refresh. Reload before continuing."
+          );
+        } else {
+          setSuccess("Role removed. The user should sign out and sign in again.");
+        }
       } catch (caughtError) {
         setError(getAdminErrorMessage(caughtError, "Role could not be removed."));
       } finally {
         setIsSubmitting(false);
       }
     },
-    [refresh, scope, service]
+    [auth.profile?.authUserId, refresh, refreshCurrentSession, scope, service]
   );
 
   const setTemporaryPassword = useCallback(

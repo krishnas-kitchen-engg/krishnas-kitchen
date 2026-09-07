@@ -16,7 +16,7 @@ const adminSections = [
     value: "requests"
   },
   {
-    description: "Create accounts, search users, and archive or restore access.",
+    description: "Create accounts, link older registrations by email, and manage active users.",
     label: "People",
     value: "people"
   },
@@ -419,10 +419,14 @@ export function AdminManagementScreen() {
           <section className="space-y-4 rounded-md border border-stone-200 bg-white p-4">
             <div>
               <p className="text-xs font-semibold uppercase text-stone-500">User onboarding</p>
-              <h2 className="mt-1 text-lg font-semibold text-stone-950">Create login account</h2>
+              <h2 className="mt-1 text-lg font-semibold text-stone-950">
+                Create or link login account
+              </h2>
               <p className="mt-2 text-sm leading-6 text-stone-600">
-                Create a Supabase login, app profile, and initial role in one step. Share the
-                temporary password directly with the user.
+                For a new user, this creates their login, profile, and initial role. If someone
+                registered before the approval queue was enabled, enter their exact registered email
+                here to link that existing login safely. Share the temporary password directly with
+                the user.
               </p>
             </div>
             <label className="block text-sm font-medium text-stone-800">
@@ -512,7 +516,7 @@ export function AdminManagementScreen() {
               }}
               type="button"
             >
-              {admin.isSubmitting ? "Creating..." : "Create user"}
+              {admin.isSubmitting ? "Saving..." : "Create or link user"}
             </button>
           </section>
 
@@ -562,6 +566,9 @@ export function AdminManagementScreen() {
           <div>
             <p className="text-xs font-semibold uppercase text-stone-500">Role assignment</p>
             <h2 className="mt-1 text-lg font-semibold text-stone-950">Grant access</h2>
+            <p className="mt-2 text-sm leading-6 text-stone-600">
+              Only approved or linked users appear here. Link older registrations in People first.
+            </p>
           </div>
           <label className="block text-sm font-medium text-stone-800">
             User
