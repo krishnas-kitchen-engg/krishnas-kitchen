@@ -69,6 +69,43 @@ function formatRole(role: AppRole): string {
     .join(" ");
 }
 
+export function AdminPasswordField({
+  label,
+  onChange,
+  value
+}: {
+  label: string;
+  onChange: (value: string) => void;
+  value: string;
+}) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <label className="block space-y-2 text-sm font-medium text-stone-800">
+      <span>{label}</span>
+      <span className="flex min-h-11 w-full items-center rounded-md border border-stone-300 bg-white focus-within:border-brand-700">
+        <input
+          autoComplete="new-password"
+          className="min-h-11 min-w-0 flex-1 rounded-md bg-transparent px-3 text-base text-stone-950 outline-none"
+          minLength={8}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder="At least 8 characters"
+          type={isVisible ? "text" : "password"}
+          value={value}
+        />
+        <button
+          aria-label={`${isVisible ? "Hide" : "Show"} ${label.toLowerCase()}`}
+          className="min-h-11 px-3 text-sm font-semibold text-brand-800"
+          onClick={() => setIsVisible((current) => !current)}
+          type="button"
+        >
+          {isVisible ? "Hide" : "Show"}
+        </button>
+      </span>
+    </label>
+  );
+}
+
 function AdminSectionTabs({
   selectedSection,
   onSelect
@@ -207,13 +244,9 @@ function UserCard({
             Set temporary password
           </summary>
           <div className="mt-3 space-y-2">
-            <input
-              autoComplete="new-password"
-              className="min-h-11 w-full rounded-md border border-stone-300 px-3"
-              minLength={8}
-              onChange={(event) => setTemporaryPassword(event.target.value)}
-              placeholder="At least 8 characters"
-              type="password"
+            <AdminPasswordField
+              label="Temporary password"
+              onChange={setTemporaryPassword}
               value={temporaryPassword}
             />
             <button
@@ -415,20 +448,11 @@ export function AdminManagementScreen() {
                 value={admin.userForm.email}
               />
             </label>
-            <label className="block text-sm font-medium text-stone-800">
-              Temporary password
-              <input
-                autoComplete="new-password"
-                className="mt-2 min-h-11 w-full rounded-md border border-stone-300 px-3 text-base text-stone-950"
-                minLength={8}
-                onChange={(event) =>
-                  admin.setUserForm({ ...admin.userForm, password: event.target.value })
-                }
-                placeholder="At least 8 characters"
-                type="password"
-                value={admin.userForm.password}
-              />
-            </label>
+            <AdminPasswordField
+              label="Temporary password"
+              onChange={(password) => admin.setUserForm({ ...admin.userForm, password })}
+              value={admin.userForm.password}
+            />
             <label className="block text-sm font-medium text-stone-800">
               Initial role
               <select

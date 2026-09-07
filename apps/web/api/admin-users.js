@@ -196,7 +196,7 @@ async function buildUserMetadata(serviceClient, userId, organizationId, fullName
   };
 }
 
-async function findExistingAuthUserId(serviceClient, email) {
+async function findExistingAuthUser(serviceClient, email) {
   for (let page = 1; page <= 10; page += 1) {
     const { data, error } = await serviceClient.auth.admin.listUsers({
       page,
@@ -210,7 +210,7 @@ async function findExistingAuthUserId(serviceClient, email) {
     const existingUser = data.users.find((user) => user.email?.toLowerCase() === email);
 
     if (existingUser) {
-      return existingUser.id;
+      return existingUser;
     }
 
     if (data.users.length < 1000) {
@@ -221,12 +221,24 @@ async function findExistingAuthUserId(serviceClient, email) {
   return null;
 }
 
-async function removePartiallyCreatedUser(serviceClient, userId) {
+export function getExistingAuthUserOrganizationConflict(authUser, organizationId) {
+  const assignedOrganizationId = normalizeText(authUser?.app_metadata?.organization_id);
+  const requestedOrganizationId = normalizeText(authUser?.user_metadata?.requested_organization_id);
+  const existingOrganizationId = assignedOrganizationId || requestedOrganizationId;
+
+  return existingOrganizationId && existingOrganizationId !== organizationId
+    ? "The existing Auth account belongs to or requested access for another organization."
+    : null;
+}
+
+async function removePartiallyCreatedUser(serviceClient, userId, deleteAuthUser = true) {
   await Promise.resolve(serviceClient.from("user_roles").delete().eq("user_id", userId)).catch(
     () => null
   );
   await Promise.resolve(serviceClient.from("users").delete().eq("id", userId)).catch(() => null);
-  await serviceClient.auth.admin.deleteUser(userId).catch(() => null);
+  if (deleteAuthUser) {
+    await serviceClient.auth.admin.deleteUser(userId).catch(() => null);
+  }
 }
 
 export const config = {
@@ -379,34 +391,57 @@ export default async function handler(request) {
       return jsonResponse({ error: "A user profile with this email already exists." }, 409);
     }
 
-    const existingAuthUserId = await findExistingAuthUserId(serviceClient, email);
+    const existingAuthUser = await findExistingAuthUser(serviceClient, email);
+    let authUser = existingAuthUser;
+    let linkedExistingAuthUser = Boolean(existingAuthUser);
 
-    if (existingAuthUserId) {
-      return jsonResponse(
-        {
-          error:
-            "An Auth user with this email already exists. Use the existing-user role tools or archive the duplicate first."
-        },
-        409
+    if (existingAuthUser) {
+      const organizationConflict = getExistingAuthUserOrganizationConflict(
+        existingAuthUser,
+        organizationId
       );
+      if (organizationConflict) {
+        return jsonResponse({ error: organizationConflict }, 409);
+      }
+
+      const existingProfile = await serviceClient
+        .from("users")
+        .select("id, organization_id")
+        .eq("id", existingAuthUser.id)
+        .maybeSingle();
+      if (existingProfile.error) throw existingProfile.error;
+      if (existingProfile.data) {
+        return jsonResponse(
+          {
+            error:
+              existingProfile.data.organization_id === organizationId
+                ? "A user profile with this email already exists. Manage their roles below."
+                : "The existing Auth account is already linked to another organization."
+          },
+          409
+        );
+      }
+    } else {
+      const { data: createdAuthUser, error: createAuthError } =
+        await serviceClient.auth.admin.createUser({
+          email,
+          email_confirm: true,
+          password,
+          user_metadata: {
+            display_name: fullName,
+            full_name: fullName
+          }
+        });
+
+      if (createAuthError || !createdAuthUser.user) {
+        throw createAuthError ?? new Error("Auth user creation returned no user.");
+      }
+
+      authUser = createdAuthUser.user;
+      linkedExistingAuthUser = false;
     }
 
-    const { data: createdAuthUser, error: createAuthError } =
-      await serviceClient.auth.admin.createUser({
-        email,
-        email_confirm: true,
-        password,
-        user_metadata: {
-          display_name: fullName,
-          full_name: fullName
-        }
-      });
-
-    if (createAuthError || !createdAuthUser.user) {
-      throw createAuthError ?? new Error("Auth user creation returned no user.");
-    }
-
-    const userId = createdAuthUser.user.id;
+    const userId = authUser.id;
     const createdAt = new Date().toISOString();
 
     const { error: profileError } = await serviceClient.from("users").insert({
@@ -418,7 +453,7 @@ export default async function handler(request) {
     });
 
     if (profileError) {
-      await removePartiallyCreatedUser(serviceClient, userId);
+      await removePartiallyCreatedUser(serviceClient, userId, !linkedExistingAuthUser);
       throw profileError;
     }
 
@@ -431,22 +466,48 @@ export default async function handler(request) {
     });
 
     if (roleError) {
-      await removePartiallyCreatedUser(serviceClient, userId);
+      await removePartiallyCreatedUser(serviceClient, userId, !linkedExistingAuthUser);
       throw roleError;
     }
 
     const metadata = await buildUserMetadata(serviceClient, userId, organizationId, fullName);
     const { error: metadataError } = await serviceClient.auth.admin.updateUserById(userId, {
-      app_metadata: { ...metadata.appMetadata, must_change_password: true },
-      user_metadata: metadata.userMetadata
+      app_metadata: {
+        ...(authUser.app_metadata ?? {}),
+        ...metadata.appMetadata,
+        access_request_status: "approved",
+        must_change_password: true
+      },
+      email_confirm: true,
+      password,
+      user_metadata: { ...(authUser.user_metadata ?? {}), ...metadata.userMetadata }
     });
 
     if (metadataError) {
-      await removePartiallyCreatedUser(serviceClient, userId);
+      await removePartiallyCreatedUser(serviceClient, userId, !linkedExistingAuthUser);
       throw metadataError;
     }
 
+    let requestCleanupPending = false;
+    if (linkedExistingAuthUser) {
+      const { error: requestUpdateError } = await serviceClient
+        .from("registration_requests")
+        .update({
+          approved_role: role,
+          review_note: "Access granted through Admin > People.",
+          reviewed_at: createdAt,
+          reviewed_by_user_id: authData.user.id,
+          status: "approved"
+        })
+        .eq("auth_user_id", userId)
+        .eq("organization_id", organizationId)
+        .eq("status", "pending");
+      requestCleanupPending = Boolean(requestUpdateError);
+    }
+
     return jsonResponse({
+      linkedExistingAuthUser,
+      requestCleanupPending,
       user: {
         email,
         fullName,

@@ -27,7 +27,7 @@ function createAuthValue(): AuthContextValue {
     isTemporaryVolunteer: false,
     permissions: ["inventory.read"],
     profile: null,
-    roles: ["volunteer"],
+    roles: ["super_admin"],
     selectTemple() {},
     session: null,
     signInWithEmail() {
@@ -66,7 +66,7 @@ describe("MobileAppShell", () => {
     );
 
     assert.match(markup, /Krishna&#x27;s Kitchen/);
-    assert.match(markup, /Main Temple/);
+    assert.match(markup, /Super admin · Viewing Main Temple/);
     assert.match(markup, /Shell content/);
     assert.match(markup, /Home/);
     assert.match(markup, /Inventory/);

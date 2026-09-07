@@ -7,7 +7,7 @@ import { describe, it } from "vitest";
 import { AuthContext } from "@/features/auth/providers/AuthContext";
 import type { AuthContextValue } from "@/features/auth/providers/AuthContext";
 
-import { AdminManagementScreen } from "./AdminManagementScreen";
+import { AdminManagementScreen, AdminPasswordField } from "./AdminManagementScreen";
 
 function createAuthValue(overrides: Partial<AuthContextValue> = {}): AuthContextValue {
   return {
@@ -74,6 +74,16 @@ function renderScreen(auth: AuthContextValue) {
 }
 
 describe("AdminManagementScreen", () => {
+  it("offers a password visibility control for admin password fields", () => {
+    const markup = renderToStaticMarkup(
+      <AdminPasswordField label="Temporary password" onChange={() => undefined} value="secret123" />
+    );
+
+    assert.match(markup, /type="password"/);
+    assert.match(markup, /Show temporary password/);
+    assert.match(markup, />Show</);
+  });
+
   it("blocks users without administration permissions", () => {
     const markup = renderScreen(
       createAuthValue({

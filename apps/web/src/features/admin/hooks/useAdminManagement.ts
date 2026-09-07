@@ -244,7 +244,11 @@ export function useAdminManagement() {
         method: "POST"
       });
 
-      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+        linkedExistingAuthUser?: boolean;
+        requestCleanupPending?: boolean;
+      } | null;
 
       if (!response.ok) {
         throw new Error(payload?.error ?? "User account could not be created.");
@@ -258,7 +262,13 @@ export function useAdminManagement() {
         scope: "temple",
         templeId: ""
       });
-      setSuccess("User account created. Share the temporary password and ask the user to sign in.");
+      setSuccess(
+        payload?.requestCleanupPending
+          ? "Existing registration linked successfully, but its old request could not be cleared. The user can sign in with the temporary password; refresh Requests before reviewing it again."
+          : payload?.linkedExistingAuthUser
+            ? "Existing registration linked successfully. Share the temporary password and ask the user to sign in and change it."
+            : "User account created. Share the temporary password and ask the user to sign in."
+      );
       await refresh();
     } catch (caughtError) {
       setError(getAdminErrorMessage(caughtError, "User account could not be created."));

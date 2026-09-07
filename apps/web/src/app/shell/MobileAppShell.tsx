@@ -105,12 +105,17 @@ function getRouteTitle(routeName: ReturnType<typeof useCurrentRoute>["name"]): s
 export function MobileAppShell({ children }: PropsWithChildren) {
   const auth = useAuth();
   const currentRoute = useCurrentRoute();
+  const templeContext = auth.currentTemple?.name
+    ? auth.roles.includes("super_admin")
+      ? `Super admin · Viewing ${auth.currentTemple.name}`
+      : auth.currentTemple.name
+    : undefined;
 
   return (
     <div className="min-h-dvh bg-stone-50 text-stone-950">
       <MobileTopBar
         organizationName={auth.currentOrganization?.name}
-        templeName={auth.currentTemple?.name}
+        templeName={templeContext}
         title={getRouteTitle(currentRoute.name)}
       />
       <main className="mx-auto w-full max-w-md px-5 pb-28 pt-5">{children}</main>
