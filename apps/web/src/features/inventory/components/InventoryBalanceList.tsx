@@ -32,10 +32,12 @@ export function InventoryBalanceList({ balances, items = [] }: InventoryBalanceL
               {stock?.primary ?? formatInventoryQuantity(balance.quantity, balance.unit)}
             </span>
             {stock?.secondary ? (
-              <span className="mt-1 block text-stone-600">{stock.secondary} equivalent</span>
+              <span className="mt-1 block text-stone-600">
+                {stock.secondary} = {stock.primary}
+              </span>
             ) : null}
-            {packageDefinition ? (
-              <span className="mt-1 block text-stone-600">Each: {packageDefinition}</span>
+            {!stock?.secondary && packageDefinition ? (
+              <span className="mt-1 block text-stone-600">Package: {packageDefinition}</span>
             ) : null}
             {!item ? <span className="ml-2 text-stone-600">at {balance.locationId}</span> : null}
           </li>

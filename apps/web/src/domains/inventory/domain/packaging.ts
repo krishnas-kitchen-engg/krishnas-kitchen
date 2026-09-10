@@ -132,10 +132,16 @@ export function formatInventoryStock(
   unit: ItemUnit,
   item: InventoryCatalogItem
 ): { handlingQuantity: number | null; primary: string; secondary: string | null } {
+  const baseQuantity = formatPackageEquivalent({
+    label: item.contentsLabel ?? null,
+    quantity,
+    unit
+  });
+
   if (!item.handlingUnit || !item.contentsQuantity || item.contentsUnit !== unit) {
     return {
       handlingQuantity: item.handlingUnit === unit ? quantity : null,
-      primary: formatInventoryQuantity(quantity, unit),
+      primary: baseQuantity,
       secondary: null
     };
   }
@@ -148,16 +154,28 @@ export function formatInventoryStock(
   const exactPackages = Math.abs(looseQuantity) < 0.0001;
   const formatBaseQuantity = (value: number) =>
     formatPackageEquivalent({ label: item.contentsLabel ?? null, quantity: value, unit });
-  const primary = exactPackages
-    ? formatInventoryQuantity(fullHandlingUnits, item.handlingUnit)
-    : fullHandlingUnits > 0
-      ? `${formatInventoryQuantity(fullHandlingUnits, item.handlingUnit)} + ${formatBaseQuantity(looseQuantity)} loose`
-      : `${formatBaseQuantity(quantity)} loose`;
+  const handlingUnit = formatInventoryUnit(item.handlingUnit, 1);
+  const defaultDefinition = `${formatBaseQuantity(item.contentsQuantity)} per ${handlingUnit}`;
+  const savedDefinition = item.packageDescription?.trim();
+  const packageDefinition =
+    savedDefinition && savedDefinition.toLocaleLowerCase() !== defaultDefinition.toLocaleLowerCase()
+      ? `${formatInventoryQuantity(fullHandlingUnits, item.handlingUnit)} × (${savedDefinition})`
+      : `${formatBaseQuantity(item.contentsQuantity)} ${handlingUnit} × ${formatInventoryNumber(
+          fullHandlingUnits
+        )}`;
+  const secondary =
+    quantity <= 0
+      ? null
+      : exactPackages
+        ? packageDefinition
+        : fullHandlingUnits > 0
+          ? `${packageDefinition} + ${formatBaseQuantity(looseQuantity)} loose`
+          : `${formatBaseQuantity(quantity)} loose`;
 
   return {
     handlingQuantity: exactPackages ? roundedHandlingQuantity : null,
-    primary,
-    secondary: formatBaseQuantity(quantity)
+    primary: baseQuantity,
+    secondary
   };
 }
 

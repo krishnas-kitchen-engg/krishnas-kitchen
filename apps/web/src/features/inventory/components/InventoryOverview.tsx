@@ -1,6 +1,31 @@
 import { navigateToInventoryItem, navigateToInventoryLocation } from "@/app/routes/router";
-import { formatInventoryStock, formatPackageDefinition } from "@/domains/inventory";
+import {
+  formatInventoryStock,
+  formatPackageDefinition,
+  formatPackageEquivalent
+} from "@/domains/inventory";
 import type { InventoryOverviewRow } from "../hooks/useInventoryOverview";
+
+function formatProductTotal(row: InventoryOverviewRow): string {
+  const totals = new Map<
+    string,
+    { label: string | null; quantity: number; unit: (typeof row.packages)[number]["unit"] }
+  >();
+
+  for (const packageRow of row.packages) {
+    const key = `${packageRow.unit}:${packageRow.contentsLabel ?? ""}`;
+    const existing = totals.get(key);
+    totals.set(key, {
+      label: packageRow.contentsLabel,
+      quantity: (existing?.quantity ?? 0) + packageRow.quantity,
+      unit: packageRow.unit
+    });
+  }
+
+  return Array.from(totals.values())
+    .map((total) => formatPackageEquivalent(total))
+    .join(" + ");
+}
 
 export function InventoryOverview({ rows }: { rows: readonly InventoryOverviewRow[] }) {
   if (rows.length === 0) {
@@ -15,7 +40,9 @@ export function InventoryOverview({ rows }: { rows: readonly InventoryOverviewRo
     <div className="space-y-3">
       {rows.map((row) => (
         <article className="rounded-md border border-stone-200 bg-white p-4" key={row.productName}>
-          <h2 className="text-base font-semibold text-stone-950">{row.productName}</h2>
+          <h2 className="text-base font-semibold text-stone-950">
+            {row.productName} — {formatProductTotal(row)} total
+          </h2>
           <div className="mt-3 space-y-3 border-t border-stone-100 pt-3">
             {row.packages.map((packageRow) => {
               const item = {
@@ -33,6 +60,7 @@ export function InventoryOverview({ rows }: { rows: readonly InventoryOverviewRo
               } as const;
               const packageDefinition = formatPackageDefinition(item);
               const stock = formatInventoryStock(packageRow.quantity, packageRow.unit, item);
+              const hasMultiplePackages = row.packages.length > 1;
 
               return (
                 <section className="rounded-md bg-stone-50 p-3" key={packageRow.itemId}>
@@ -41,20 +69,19 @@ export function InventoryOverview({ rows }: { rows: readonly InventoryOverviewRo
                     onClick={() => navigateToInventoryItem(packageRow.itemId)}
                     type="button"
                   >
-                    <span className="block font-semibold text-stone-950">{stock.primary}</span>
-                    {packageRow.itemName !== row.productName ? (
+                    {hasMultiplePackages && packageRow.itemName !== row.productName ? (
                       <span className="mt-1 block text-sm text-stone-700">
                         {packageRow.itemName}
                       </span>
                     ) : null}
-                    {packageDefinition ? (
+                    <span className="block font-semibold text-stone-950">
+                      {stock.secondary
+                        ? `${stock.secondary}${hasMultiplePackages ? ` = ${stock.primary}` : ""}`
+                        : stock.primary}
+                    </span>
+                    {!stock.secondary && packageDefinition ? (
                       <span className="mt-1 block text-sm text-stone-600">
-                        Each: {packageDefinition}
-                      </span>
-                    ) : null}
-                    {stock.secondary ? (
-                      <span className="mt-1 block text-sm text-stone-600">
-                        {stock.secondary} equivalent
+                        Package: {packageDefinition}
                       </span>
                     ) : null}
                   </button>
@@ -73,8 +100,10 @@ export function InventoryOverview({ rows }: { rows: readonly InventoryOverviewRo
                           type="button"
                         >
                           <span className="text-stone-700">{location.locationName}</span>
-                          <span className="font-semibold text-stone-950">
-                            {locationStock.primary}
+                          <span className="text-right font-semibold text-stone-950">
+                            {locationStock.secondary
+                              ? `${locationStock.secondary} = ${locationStock.primary}`
+                              : locationStock.primary}
                           </span>
                         </button>
                       );

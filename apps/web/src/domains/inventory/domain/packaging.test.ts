@@ -48,8 +48,31 @@ describe("inventory packaging", () => {
     assert.equal(convertInventoryBaseToEntry(24000, "unit", cups, "box"), 3);
     assert.deepEqual(formatInventoryStock(24000, "unit", cups), {
       handlingQuantity: 3,
-      primary: "3 boxes",
-      secondary: "24,000 cups"
+      primary: "24,000 cups",
+      secondary: "3 boxes × (20 sleeves × 400 cups per box)"
+    });
+  });
+
+  it("shows base totals with a reusable package calculation", () => {
+    const peas = {
+      ...cups,
+      contentsLabel: null,
+      contentsQuantity: 25,
+      contentsUnit: "lb" as const,
+      defaultUnit: "lb" as const,
+      handlingUnit: "bag" as const,
+      packageDescription: "25 lb per bag"
+    };
+
+    assert.deepEqual(formatInventoryStock(125, "lb", peas), {
+      handlingQuantity: 5,
+      primary: "125 lb",
+      secondary: "25 lb bag × 5"
+    });
+    assert.deepEqual(formatInventoryStock(49, "lb", peas), {
+      handlingQuantity: null,
+      primary: "49 lb",
+      secondary: "25 lb bag × 1 + 24 lb loose"
     });
   });
 
