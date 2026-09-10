@@ -2,6 +2,8 @@ import { useReducer, useRef } from "react";
 import type { ItemUnit } from "@krishnas-kitchen/types";
 
 import {
+  convertInventoryEntryToBase,
+  getInventoryEntryUnits,
   useConsumptionWorkflow,
   useInventoryActor,
   useInventoryCatalogQueries,
@@ -77,7 +79,10 @@ export const initialConsumeWorkflowState: ConsumeWorkflowUiState = {
 };
 
 function getConsumptionUnits(item: InventoryCatalogItem): readonly ItemUnit[] {
-  return item.consumptionUnits?.length ? item.consumptionUnits : [item.defaultUnit];
+  return getInventoryEntryUnits(
+    item,
+    item.consumptionUnits?.length ? item.consumptionUnits : [item.defaultUnit]
+  );
 }
 
 function getDefaultUnit(units: readonly ItemUnit[]): ItemUnit | "" {
@@ -261,8 +266,12 @@ export function consumeWorkflowReducer(
 
 function validateSubmit(state: ConsumeWorkflowUiState, hasActor: boolean, canConsume: boolean) {
   const errors: ConsumeWorkflowValidationErrors = {};
-  const quantity = Number(state.quantityText);
-  const availableQuantity = getAvailableQuantity(state.locationBalances, state.unit);
+  const enteredQuantity = Number(state.quantityText);
+  const converted =
+    state.resolvedItem && state.unit
+      ? convertInventoryEntryToBase(enteredQuantity, state.unit, state.resolvedItem.item)
+      : { conversionFactor: null, quantity: enteredQuantity, unit: state.unit };
+  const availableQuantity = getAvailableQuantity(state.locationBalances, converted.unit);
 
   if (!canConsume) {
     errors.permission = "You do not have permission to consume inventory.";
@@ -280,10 +289,10 @@ function validateSubmit(state: ConsumeWorkflowUiState, hasActor: boolean, canCon
     errors.locationId = "Select a location.";
   }
 
-  if (!Number.isFinite(quantity) || quantity <= 0) {
+  if (!Number.isFinite(enteredQuantity) || enteredQuantity <= 0) {
     errors.quantity = "Enter a quantity greater than zero.";
-  } else if (availableQuantity !== null && quantity > availableQuantity) {
-    errors.quantity = `Only ${availableQuantity} ${state.unit} is available.`;
+  } else if (availableQuantity !== null && converted.quantity > availableQuantity) {
+    errors.quantity = `Only ${availableQuantity} ${converted.unit} is available.`;
   }
 
   if (!state.unit) {
@@ -292,8 +301,11 @@ function validateSubmit(state: ConsumeWorkflowUiState, hasActor: boolean, canCon
 
   return {
     errors,
+    conversionFactor: converted.conversionFactor,
+    enteredQuantity,
     ok: Object.keys(errors).length === 0,
-    quantity
+    quantity: converted.quantity,
+    unit: converted.unit
   };
 }
 
@@ -444,13 +456,20 @@ export function useConsumeWorkflowForm() {
         actor,
         auditMetadata: {
           ...(input.clientRequestId ? { clientRequestId: input.clientRequestId } : {}),
+          ...(validation.conversionFactor
+            ? {
+                conversionFactor: validation.conversionFactor,
+                handlingQuantity: validation.enteredQuantity,
+                handlingUnit: state.unit
+              }
+            : {}),
           source: "online"
         },
         locationId: state.locationId,
         quantity: validation.quantity,
         resolvedItem: state.resolvedItem,
         templeId,
-        unit: state.unit,
+        unit: validation.unit as ItemUnit,
         ...(notes ? { notes } : {})
       });
       const [recentItemTransactions, recentLocationTransactions] = await Promise.all([

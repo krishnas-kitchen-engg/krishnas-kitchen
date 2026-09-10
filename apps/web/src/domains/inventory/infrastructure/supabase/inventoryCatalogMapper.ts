@@ -22,12 +22,18 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryCatalogItem
   return {
     barcodes: [],
     category: row.category,
+    contentsLabel: row.contents_label ?? null,
+    contentsQuantity: row.contents_quantity ?? null,
+    contentsUnit: row.contents_unit ?? null,
     defaultUnit: row.default_unit,
     description: row.description,
     deletedAt: row.deleted_at,
+    handlingUnit: row.handling_unit ?? null,
     id: row.id,
     name: row.name,
     organizationId: row.organization_id,
+    packageDescription: row.package_description ?? null,
+    productName: row.product_name ?? null,
     ...(row.receiving_units ? { receivingUnits: row.receiving_units } : {}),
     ...(row.return_units ? { returnUnits: row.return_units } : {}),
     ...(row.transfer_units ? { transferUnits: row.transfer_units } : {})

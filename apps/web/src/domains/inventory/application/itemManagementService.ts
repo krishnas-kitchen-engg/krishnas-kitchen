@@ -8,12 +8,18 @@ export const ITEM_MANAGEMENT_UNITS = ITEM_UNITS;
 
 export type ManagedInventoryItem = {
   category: string | null;
+  contentsLabel?: string | null;
+  contentsQuantity?: number | null;
+  contentsUnit?: ItemUnit | null;
   defaultUnit: ItemUnit;
   deletedAt: string | null;
   description: string | null;
+  handlingUnit?: ItemUnit | null;
   id: EntityId;
   name: string;
   organizationId: EntityId;
+  packageDescription?: string | null;
+  productName?: string | null;
   reorderThreshold: number | null;
   targetStockLevel: number | null;
 };
@@ -26,9 +32,15 @@ export type ItemManagementScope = {
 export type CreateManagedItemInput = ItemManagementScope & {
   actor: InventoryActor;
   category?: string | null;
+  contentsLabel?: string | null;
+  contentsQuantity?: number | null;
+  contentsUnit?: ItemUnit | null;
   defaultUnit: ItemUnit;
   description?: string | null;
+  handlingUnit?: ItemUnit | null;
   name: string;
+  packageDescription?: string | null;
+  productName?: string | null;
   reorderThreshold?: number | null;
   targetStockLevel?: number | null;
 };
@@ -132,6 +144,32 @@ function assertValidUnit(unit: ItemUnit): ItemUnit {
   }
 
   return unit;
+}
+
+function assertValidContents(input: {
+  quantity: number | null | undefined;
+  unit: ItemUnit | null | undefined;
+}): { quantity: number | null; unit: ItemUnit | null } {
+  const quantity = input.quantity ?? null;
+  const unit = input.unit ?? null;
+
+  if (quantity === null && unit === null) {
+    return { quantity: null, unit: null };
+  }
+
+  if (quantity === null || unit === null) {
+    throw new ItemManagementValidationError(
+      "Contents quantity and contents unit must be provided together."
+    );
+  }
+
+  if (!Number.isFinite(quantity) || quantity <= 0 || quantity > 1_000_000_000) {
+    throw new ItemManagementValidationError(
+      "Contents quantity must be greater than zero and no more than 1000000000."
+    );
+  }
+
+  return { quantity, unit: assertValidUnit(unit) };
 }
 
 function assertValidReorderThreshold(value: number | null | undefined): number | null {
@@ -267,7 +305,34 @@ export function createItemManagementService(
       const name = assertValidName(input.name);
       const description = assertValidOptionalText(input.description, "Item description", 500);
       const category = assertValidOptionalText(input.category, "Item category", 120);
+      const productName = assertValidOptionalText(input.productName, "Product name", 120);
+      const contentsLabel = assertValidOptionalText(input.contentsLabel, "Contents label", 60);
+      const packageDescription = assertValidOptionalText(
+        input.packageDescription,
+        "Package description",
+        240
+      );
+      const contents = assertValidContents({
+        quantity: input.contentsQuantity,
+        unit: input.contentsUnit
+      });
+      if (contentsLabel && contents.quantity === null) {
+        throw new ItemManagementValidationError(
+          "Contents label requires a contents quantity and unit."
+        );
+      }
       const defaultUnit = assertValidUnit(input.defaultUnit);
+      const handlingUnit = input.handlingUnit ? assertValidUnit(input.handlingUnit) : null;
+      if (contents.quantity !== null && !handlingUnit) {
+        throw new ItemManagementValidationError(
+          "Select a handling unit when contents conversion is provided."
+        );
+      }
+      if (contents.unit && defaultUnit !== contents.unit) {
+        throw new ItemManagementValidationError(
+          "Base inventory unit must match the package contents unit."
+        );
+      }
       const reorderThreshold = assertValidReorderThreshold(input.reorderThreshold);
       const targetStockLevel = assertValidTargetStockLevel(
         input.targetStockLevel,
@@ -281,10 +346,16 @@ export function createItemManagementService(
 
       const item = await repository.createItem({
         category,
+        contentsLabel,
+        contentsQuantity: contents.quantity,
+        contentsUnit: contents.unit,
         defaultUnit,
         description,
+        handlingUnit,
         name,
-        organizationId: input.organizationId
+        organizationId: input.organizationId,
+        packageDescription,
+        productName
       });
       await saveThreshold({
         actor: input.actor,
@@ -336,7 +407,34 @@ export function createItemManagementService(
       const name = assertValidName(input.name);
       const description = assertValidOptionalText(input.description, "Item description", 500);
       const category = assertValidOptionalText(input.category, "Item category", 120);
+      const productName = assertValidOptionalText(input.productName, "Product name", 120);
+      const contentsLabel = assertValidOptionalText(input.contentsLabel, "Contents label", 60);
+      const packageDescription = assertValidOptionalText(
+        input.packageDescription,
+        "Package description",
+        240
+      );
+      const contents = assertValidContents({
+        quantity: input.contentsQuantity,
+        unit: input.contentsUnit
+      });
+      if (contentsLabel && contents.quantity === null) {
+        throw new ItemManagementValidationError(
+          "Contents label requires a contents quantity and unit."
+        );
+      }
       const defaultUnit = assertValidUnit(input.defaultUnit);
+      const handlingUnit = input.handlingUnit ? assertValidUnit(input.handlingUnit) : null;
+      if (contents.quantity !== null && !handlingUnit) {
+        throw new ItemManagementValidationError(
+          "Select a handling unit when contents conversion is provided."
+        );
+      }
+      if (contents.unit && defaultUnit !== contents.unit) {
+        throw new ItemManagementValidationError(
+          "Base inventory unit must match the package contents unit."
+        );
+      }
       const reorderThreshold = assertValidReorderThreshold(input.reorderThreshold);
       const targetStockLevel = assertValidTargetStockLevel(
         input.targetStockLevel,
@@ -350,11 +448,17 @@ export function createItemManagementService(
       });
       const item = await repository.updateItem({
         category,
+        contentsLabel,
+        contentsQuantity: contents.quantity,
+        contentsUnit: contents.unit,
         defaultUnit,
         description,
+        handlingUnit,
         id: input.id,
         name,
-        organizationId: input.organizationId
+        organizationId: input.organizationId,
+        packageDescription,
+        productName
       });
       await saveThreshold({
         actor: input.actor,

@@ -25,7 +25,10 @@ const receivingDraft = createReceivingTransaction({
     userId: "user-1"
   },
   auditMetadata: {
+    conversionFactor: 20,
     deviceId: "phone-1",
+    handlingQuantity: 0,
+    handlingUnit: "bag",
     source: "offline_queue"
   },
   itemId: "item-1",
@@ -121,12 +124,26 @@ describe("inventory transaction mapper", () => {
     assert.equal(insert.destination_location_id, "location-1");
     assert.equal(insert.source_location_id, null);
     assert.equal(insert.reversal_of_transaction_id, null);
-    assert.equal(insert.organization_id, "org-1");
     assert.deepEqual(insert.audit_metadata, {
       clientRequestId: receivingDraft.auditMetadata.clientRequestId,
+      conversionFactor: 20,
       deviceId: "phone-1",
+      handlingQuantity: 0,
+      handlingUnit: "bag",
       source: "offline_queue"
     });
+    assert.deepEqual(
+      mapInventoryTransactionRow(rowFromDraft(receivingDraft, "received-1")).auditMetadata,
+      {
+        clientRequestId: receivingDraft.auditMetadata.clientRequestId,
+        conversionFactor: 20,
+        deviceId: "phone-1",
+        handlingQuantity: 0,
+        handlingUnit: "bag",
+        source: "offline_queue"
+      }
+    );
+    assert.equal(insert.organization_id, "org-1");
   });
 
   it("preserves receiving transaction fields and audit metadata when rows round-trip", () => {

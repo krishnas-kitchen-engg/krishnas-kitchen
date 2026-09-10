@@ -2,6 +2,8 @@ import { useReducer, useRef } from "react";
 import type { ItemUnit } from "@krishnas-kitchen/types";
 
 import {
+  convertInventoryEntryToBase,
+  getInventoryEntryUnits,
   useInventoryActor,
   useInventoryCatalogQueries,
   useInventoryPermissions,
@@ -81,7 +83,10 @@ export const initialReturnWorkflowState: ReturnWorkflowUiState = {
 };
 
 function getReturnUnits(item: InventoryCatalogItem): readonly ItemUnit[] {
-  return item.returnUnits?.length ? item.returnUnits : [item.defaultUnit];
+  return getInventoryEntryUnits(
+    item,
+    item.returnUnits?.length ? item.returnUnits : [item.defaultUnit]
+  );
 }
 
 function getDefaultUnit(units: readonly ItemUnit[]): ItemUnit | "" {
@@ -312,7 +317,11 @@ export function returnWorkflowReducer(
 
 function validateSubmit(state: ReturnWorkflowUiState, hasActor: boolean, canReturn: boolean) {
   const errors: ReturnWorkflowValidationErrors = {};
-  const quantity = Number(state.quantityText);
+  const enteredQuantity = Number(state.quantityText);
+  const converted =
+    state.resolvedItem && state.unit
+      ? convertInventoryEntryToBase(enteredQuantity, state.unit, state.resolvedItem.item)
+      : { conversionFactor: null, quantity: enteredQuantity, unit: state.unit };
   const sameLocationError = getSameLocationError(
     state.sourceLocationId,
     state.destinationLocationId
@@ -342,7 +351,7 @@ function validateSubmit(state: ReturnWorkflowUiState, hasActor: boolean, canRetu
     errors.sameLocation = sameLocationError;
   }
 
-  if (!Number.isFinite(quantity) || quantity <= 0) {
+  if (!Number.isFinite(enteredQuantity) || enteredQuantity <= 0) {
     errors.quantity = "Enter a quantity greater than zero.";
   }
 
@@ -352,8 +361,11 @@ function validateSubmit(state: ReturnWorkflowUiState, hasActor: boolean, canRetu
 
   return {
     errors,
+    conversionFactor: converted.conversionFactor,
+    enteredQuantity,
     ok: Object.keys(errors).length === 0,
-    quantity
+    quantity: converted.quantity,
+    unit: converted.unit
   };
 }
 
@@ -487,6 +499,13 @@ export function useReturnWorkflowForm() {
         actor,
         auditMetadata: {
           ...(input.clientRequestId ? { clientRequestId: input.clientRequestId } : {}),
+          ...(validation.conversionFactor
+            ? {
+                conversionFactor: validation.conversionFactor,
+                handlingQuantity: validation.enteredQuantity,
+                handlingUnit: state.unit
+              }
+            : {}),
           source: "online"
         },
         destinationLocationId: state.destinationLocationId,
@@ -494,7 +513,7 @@ export function useReturnWorkflowForm() {
         resolvedItem: state.resolvedItem,
         sourceLocationId: state.sourceLocationId,
         templeId,
-        unit: state.unit,
+        unit: validation.unit as ItemUnit,
         ...(notes ? { notes } : {})
       });
       const [

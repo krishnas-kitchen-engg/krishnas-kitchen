@@ -14,6 +14,7 @@ export function useInventoryLocationDetail(locationId: string) {
   const [state, setState] = useState<InventoryLocationDetailState>({
     balances: [],
     error: null,
+    items: [],
     isLoading: true,
     location: null,
     transactions: []
@@ -27,6 +28,7 @@ export function useInventoryLocationDetail(locationId: string) {
       setState({
         balances: [],
         error: "Organization and temple context are required.",
+        items: [],
         isLoading: false,
         location: null,
         transactions: []
@@ -46,8 +48,9 @@ export function useInventoryLocationDetail(locationId: string) {
       }));
 
       try {
-        const [location, balances, transactions] = await Promise.all([
+        const [location, items, balances, transactions] = await Promise.all([
           catalogQueries.findLocationById(currentOrganizationId, currentTempleId, locationId),
+          catalogQueries.searchItems({ organizationId: currentOrganizationId }),
           visibility.getVisibleBalances({
             locationId,
             organizationId: currentOrganizationId,
@@ -68,6 +71,7 @@ export function useInventoryLocationDetail(locationId: string) {
         setState({
           balances,
           error: null,
+          items,
           isLoading: false,
           location,
           transactions
@@ -80,6 +84,7 @@ export function useInventoryLocationDetail(locationId: string) {
         setState({
           balances: [],
           error: error instanceof Error ? error.message : "Location detail failed to load.",
+          items: [],
           isLoading: false,
           location: null,
           transactions: []

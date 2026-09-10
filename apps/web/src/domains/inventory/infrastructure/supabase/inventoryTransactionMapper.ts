@@ -1,4 +1,4 @@
-import type { Database, Json } from "@krishnas-kitchen/types";
+import type { Database, ItemUnit, Json } from "@krishnas-kitchen/types";
 
 import type {
   InventoryActor,
@@ -20,7 +20,16 @@ function readAuditMetadata(value: Json): InventoryAuditMetadata {
     ...(typeof value.clientRequestId === "string"
       ? { clientRequestId: value.clientRequestId }
       : {}),
+    ...(typeof value.conversionFactor === "number"
+      ? { conversionFactor: value.conversionFactor }
+      : {}),
     ...(typeof value.deviceId === "string" ? { deviceId: value.deviceId } : {}),
+    ...(typeof value.handlingQuantity === "number"
+      ? { handlingQuantity: value.handlingQuantity }
+      : {}),
+    ...(typeof value.handlingUnit === "string"
+      ? { handlingUnit: value.handlingUnit as ItemUnit }
+      : {}),
     ...(typeof value.reason === "string" ? { reason: value.reason } : {}),
     ...(typeof value.reversedTransactionId === "string"
       ? { reversedTransactionId: value.reversedTransactionId }
@@ -34,7 +43,14 @@ function readAuditMetadata(value: Json): InventoryAuditMetadata {
 function mapAuditMetadata(metadata: InventoryAuditMetadata): Json {
   return {
     ...(metadata.clientRequestId ? { clientRequestId: metadata.clientRequestId } : {}),
+    ...(typeof metadata.conversionFactor === "number"
+      ? { conversionFactor: metadata.conversionFactor }
+      : {}),
     ...(metadata.deviceId ? { deviceId: metadata.deviceId } : {}),
+    ...(typeof metadata.handlingQuantity === "number"
+      ? { handlingQuantity: metadata.handlingQuantity }
+      : {}),
+    ...(metadata.handlingUnit ? { handlingUnit: metadata.handlingUnit } : {}),
     ...(metadata.reason ? { reason: metadata.reason } : {}),
     ...(metadata.reversedTransactionId
       ? { reversedTransactionId: metadata.reversedTransactionId }

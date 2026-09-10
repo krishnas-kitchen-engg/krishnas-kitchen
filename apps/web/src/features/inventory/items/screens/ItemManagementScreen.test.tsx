@@ -7,7 +7,7 @@ import { describe, it } from "vitest";
 import { AuthContext } from "@/features/auth/providers/AuthContext";
 import type { AuthContextValue } from "@/features/auth/providers/AuthContext";
 
-import { ItemManagementScreen } from "./ItemManagementScreen";
+import { ItemForm, ItemManagementScreen } from "./ItemManagementScreen";
 
 function createAuthValue(overrides: Partial<AuthContextValue> = {}): AuthContextValue {
   return {
@@ -68,16 +68,63 @@ describe("ItemManagementScreen", () => {
     assert.doesNotMatch(markup, /Manage item catalog/);
   });
 
-  it("renders create and search controls for authorized managers", () => {
+  it("keeps item creation collapsed so the searchable list stays close to the top", () => {
     const markup = renderScreen(createAuthValue());
 
     assert.match(markup, /Manage item catalog/);
-    assert.match(markup, /Create item/);
-    assert.match(markup, /Minimum stock level \(reorder point\)/);
-    assert.match(markup, /Optional\. When stock reaches or falls below this level/);
-    assert.match(markup, /change or remove it at any time/);
-    assert.match(markup, /Target stock level/);
-    assert.match(markup, /purchasing is recommended up to this level/);
+    assert.match(markup, /Add new inventory item/);
+    assert.match(markup, /Add item/);
+    assert.match(markup, /aria-expanded="false"/);
     assert.match(markup, /Search items/);
+    assert.doesNotMatch(markup, /Item name/);
+  });
+
+  it("renders a complete, prefilled editor with local save and cancel actions", () => {
+    const noOp = () => {};
+    const management = {
+      canCreateItems: true,
+      canEditItems: true,
+      error: null,
+      form: {
+        category: "Grains",
+        contentsLabel: "",
+        contentsQuantityText: "50",
+        contentsUnit: "lb",
+        defaultUnit: "lb",
+        description: "Bulk beans",
+        editingItemId: "item-1",
+        handlingUnit: "bag",
+        name: "Pinto Beans — 50 lb Bag",
+        packageDescription: "50 lb per bag",
+        productName: "Pinto Beans",
+        reorderThresholdText: "100",
+        targetStockLevelText: "250"
+      },
+      isSubmitting: false,
+      setCategory: noOp,
+      setContentsLabel: noOp,
+      setContentsQuantityText: noOp,
+      setContentsUnit: noOp,
+      setDefaultUnit: noOp,
+      setDescription: noOp,
+      setHandlingUnit: noOp,
+      setName: noOp,
+      setPackageDescription: noOp,
+      setProductName: noOp,
+      setReorderThresholdText: noOp,
+      setTargetStockLevelText: noOp,
+      submitItem: () => Promise.resolve(),
+      units: ["bag", "lb"]
+    } as unknown as Parameters<typeof ItemForm>[0]["management"];
+
+    const markup = renderToStaticMarkup(
+      <ItemForm fieldIdPrefix="edit-item-1" management={management} mode="edit" onCancel={noOp} />
+    );
+
+    assert.match(markup, /Pinto Beans — 50 lb Bag/);
+    assert.match(markup, /Package details/);
+    assert.match(markup, /open=""/);
+    assert.match(markup, /Save changes/);
+    assert.match(markup, /Cancel/);
   });
 });

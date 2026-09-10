@@ -1,4 +1,5 @@
 import { navigateToInventoryItem, navigateToInventoryLocation } from "@/app/routes/router";
+import { formatInventoryStock, formatPackageDefinition } from "@/domains/inventory";
 import type { InventoryOverviewRow } from "../hooks/useInventoryOverview";
 
 export function InventoryOverview({ rows }: { rows: readonly InventoryOverviewRow[] }) {
@@ -13,34 +14,75 @@ export function InventoryOverview({ rows }: { rows: readonly InventoryOverviewRo
   return (
     <div className="space-y-3">
       {rows.map((row) => (
-        <article
-          className="rounded-md border border-stone-200 bg-white p-4"
-          key={`${row.itemId}:${row.unit}`}
-        >
-          <button
-            className="w-full text-left"
-            onClick={() => navigateToInventoryItem(row.itemId)}
-            type="button"
-          >
-            <span className="block text-base font-semibold text-stone-950">{row.itemName}</span>
-            <span className="mt-1 block text-2xl font-semibold text-brand-900">
-              {row.quantity} {row.unit} total
-            </span>
-          </button>
-          <div className="mt-3 border-t border-stone-100 pt-2">
-            {row.locations.map((location) => (
-              <button
-                className="flex min-h-10 w-full items-center justify-between gap-3 rounded px-1 text-left text-sm hover:bg-stone-50"
-                key={location.locationId}
-                onClick={() => navigateToInventoryLocation(location.locationId)}
-                type="button"
-              >
-                <span className="text-stone-700">{location.locationName}</span>
-                <span className="font-semibold text-stone-950">
-                  {location.quantity} {row.unit}
-                </span>
-              </button>
-            ))}
+        <article className="rounded-md border border-stone-200 bg-white p-4" key={row.productName}>
+          <h2 className="text-base font-semibold text-stone-950">{row.productName}</h2>
+          <div className="mt-3 space-y-3 border-t border-stone-100 pt-3">
+            {row.packages.map((packageRow) => {
+              const item = {
+                barcodes: [],
+                contentsLabel: packageRow.contentsLabel,
+                contentsQuantity: packageRow.contentsQuantity,
+                contentsUnit: packageRow.contentsUnit,
+                defaultUnit: packageRow.unit,
+                deletedAt: null,
+                handlingUnit: packageRow.handlingUnit,
+                id: packageRow.itemId,
+                name: packageRow.itemName,
+                organizationId: "",
+                packageDescription: packageRow.packageDescription
+              } as const;
+              const packageDefinition = formatPackageDefinition(item);
+              const stock = formatInventoryStock(packageRow.quantity, packageRow.unit, item);
+
+              return (
+                <section className="rounded-md bg-stone-50 p-3" key={packageRow.itemId}>
+                  <button
+                    className="w-full text-left"
+                    onClick={() => navigateToInventoryItem(packageRow.itemId)}
+                    type="button"
+                  >
+                    <span className="block font-semibold text-stone-950">{stock.primary}</span>
+                    {packageRow.itemName !== row.productName ? (
+                      <span className="mt-1 block text-sm text-stone-700">
+                        {packageRow.itemName}
+                      </span>
+                    ) : null}
+                    {packageDefinition ? (
+                      <span className="mt-1 block text-sm text-stone-600">
+                        Each: {packageDefinition}
+                      </span>
+                    ) : null}
+                    {stock.secondary ? (
+                      <span className="mt-1 block text-sm text-stone-600">
+                        {stock.secondary} equivalent
+                      </span>
+                    ) : null}
+                  </button>
+                  <div className="mt-2 border-t border-stone-200 pt-2">
+                    {packageRow.locations.map((location) => {
+                      const locationStock = formatInventoryStock(
+                        location.quantity,
+                        packageRow.unit,
+                        item
+                      );
+                      return (
+                        <button
+                          className="flex min-h-10 w-full items-center justify-between gap-3 rounded px-1 text-left text-sm hover:bg-white"
+                          key={location.locationId}
+                          onClick={() => navigateToInventoryLocation(location.locationId)}
+                          type="button"
+                        >
+                          <span className="text-stone-700">{location.locationName}</span>
+                          <span className="font-semibold text-stone-950">
+                            {locationStock.primary}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </section>
+              );
+            })}
           </div>
         </article>
       ))}

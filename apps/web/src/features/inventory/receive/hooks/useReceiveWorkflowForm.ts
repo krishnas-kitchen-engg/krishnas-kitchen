@@ -2,6 +2,8 @@ import { useReducer, useRef } from "react";
 import type { ItemUnit } from "@krishnas-kitchen/types";
 
 import {
+  convertInventoryEntryToBase,
+  getInventoryEntryUnits,
   useInventoryActor,
   useInventoryCatalogQueries,
   useInventoryPermissions,
@@ -69,7 +71,10 @@ export const initialReceiveWorkflowState: ReceiveWorkflowUiState = {
 };
 
 function getReceivingUnits(item: InventoryCatalogItem): readonly ItemUnit[] {
-  return item.receivingUnits?.length ? item.receivingUnits : [item.defaultUnit];
+  return getInventoryEntryUnits(
+    item,
+    item.receivingUnits?.length ? item.receivingUnits : [item.defaultUnit]
+  );
 }
 
 function getDefaultUnit(units: readonly ItemUnit[]): ItemUnit | "" {
@@ -233,7 +238,11 @@ export function receiveWorkflowReducer(
 
 function validateSubmit(state: ReceiveWorkflowUiState, hasActor: boolean, canReceive: boolean) {
   const errors: ReceiveWorkflowValidationErrors = {};
-  const quantity = Number(state.quantityText);
+  const enteredQuantity = Number(state.quantityText);
+  const converted =
+    state.resolvedItem && state.unit
+      ? convertInventoryEntryToBase(enteredQuantity, state.unit, state.resolvedItem.item)
+      : { conversionFactor: null, quantity: enteredQuantity, unit: state.unit };
 
   if (!canReceive) {
     errors.permission = "You do not have permission to receive inventory.";
@@ -247,7 +256,7 @@ function validateSubmit(state: ReceiveWorkflowUiState, hasActor: boolean, canRec
     errors.item = "Select an item before receiving.";
   }
 
-  if (!Number.isFinite(quantity) || quantity <= 0) {
+  if (!Number.isFinite(enteredQuantity) || enteredQuantity <= 0) {
     errors.quantity = "Enter a quantity greater than zero.";
   }
 
@@ -261,8 +270,11 @@ function validateSubmit(state: ReceiveWorkflowUiState, hasActor: boolean, canRec
 
   return {
     errors,
+    conversionFactor: converted.conversionFactor,
+    enteredQuantity,
     ok: Object.keys(errors).length === 0,
-    quantity
+    quantity: converted.quantity,
+    unit: converted.unit
   };
 }
 
@@ -420,13 +432,20 @@ export function useReceiveWorkflowForm() {
         actor,
         auditMetadata: {
           ...(input.clientRequestId ? { clientRequestId: input.clientRequestId } : {}),
+          ...(validation.conversionFactor
+            ? {
+                conversionFactor: validation.conversionFactor,
+                handlingQuantity: validation.enteredQuantity,
+                handlingUnit: state.unit
+              }
+            : {}),
           source: "online"
         },
         locationId: state.locationId,
         quantity: validation.quantity,
         resolvedItem: state.resolvedItem,
         templeId,
-        unit: state.unit,
+        unit: validation.unit as ItemUnit,
         ...(notes ? { notes } : {})
       });
       const recentTransactions = await visibility.getTransactionHistory({

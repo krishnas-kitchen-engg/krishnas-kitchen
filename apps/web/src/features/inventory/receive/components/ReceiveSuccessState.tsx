@@ -3,6 +3,8 @@ import type {
   InventoryTransaction,
   ReceivingResolvedItem
 } from "@/domains/inventory";
+import { formatInventoryTransactionQuantity } from "@/domains/inventory";
+import { InventoryBalanceList } from "../../components/InventoryBalanceList";
 
 type ReceiveSuccessStateProps = {
   balances: readonly InventoryBalance[];
@@ -25,18 +27,15 @@ export function ReceiveSuccessState({
         <p className="text-sm font-semibold uppercase text-emerald-800">Received</p>
         <h2 className="mt-1 text-xl font-semibold text-stone-950">{item.item.name}</h2>
         <p className="mt-1 text-sm text-stone-700">
-          Transaction {receivedTransaction.id} added to inventory history.
+          {formatInventoryTransactionQuantity(receivedTransaction)} received. Transaction{" "}
+          {receivedTransaction.id} added to inventory history.
         </p>
       </div>
       <div>
         <h3 className="text-sm font-semibold text-stone-950">Current balance</h3>
-        <ul className="mt-2 space-y-2">
-          {balances.map((balance) => (
-            <li className="rounded-md bg-white p-3 text-sm" key={balance.unit}>
-              {balance.quantity} {balance.unit}
-            </li>
-          ))}
-        </ul>
+        <div className="mt-2">
+          <InventoryBalanceList balances={balances} items={[item.item]} />
+        </div>
       </div>
       <div>
         <h3 className="text-sm font-semibold text-stone-950">Item history</h3>

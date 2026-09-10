@@ -1,4 +1,5 @@
 import type { InventoryCatalogItem } from "@/domains/inventory";
+import { InventoryItemPackageSummary } from "./InventoryItemPackageSummary";
 
 type ItemResultRowProps = {
   item: InventoryCatalogItem;
@@ -13,9 +14,9 @@ export function ItemResultRow({ item, onSelect }: ItemResultRowProps) {
       type="button"
     >
       <span className="block font-semibold text-stone-950">{item.name}</span>
+      <InventoryItemPackageSummary item={item} showProductName />
       <span className="mt-1 block text-sm text-stone-600">
-        Default unit: {item.defaultUnit} · {item.barcodes.length} barcode
-        {item.barcodes.length === 1 ? "" : "s"}
+        {item.barcodes.length} barcode{item.barcodes.length === 1 ? "" : "s"}
       </span>
     </button>
   );

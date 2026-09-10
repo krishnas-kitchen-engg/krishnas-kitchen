@@ -1,5 +1,6 @@
 import type { ItemUnit } from "@krishnas-kitchen/types";
 
+import { formatInventoryNumber, formatInventoryQuantity } from "@/domains/inventory";
 import { InventoryBalanceList } from "../../components/InventoryBalanceList";
 import { InventoryTransactionList } from "../../components/InventoryTransactionList";
 import { useAdjustInventoryWorkflowForm } from "../hooks/useAdjustInventoryWorkflowForm";
@@ -15,12 +16,12 @@ function formatAdjustmentPreview(
   }
 
   if (delta === 0) {
-    return `No correction needed. Inventory already shows ${currentQuantity} ${unit}.`;
+    return `No correction needed. Inventory already shows ${formatInventoryQuantity(currentQuantity, unit)}.`;
   }
 
   const direction = delta > 0 ? "increase" : "decrease";
 
-  return `Inventory will change from ${currentQuantity} ${unit} to ${physicalQuantityText} ${unit} (${direction} of ${Math.abs(delta)} ${unit}).`;
+  return `Inventory will change from ${formatInventoryQuantity(currentQuantity, unit)} to ${formatInventoryQuantity(Number(physicalQuantityText), unit)} (${direction} of ${formatInventoryQuantity(Math.abs(delta), unit)}).`;
 }
 
 export function AdjustInventoryScreen() {
@@ -30,6 +31,7 @@ export function AdjustInventoryScreen() {
     state.selectedItemId &&
     state.locationId &&
     state.unit &&
+    state.currentQuantity !== null &&
     state.physicalQuantityText.trim() &&
     state.reason.trim()
   );
@@ -60,7 +62,10 @@ export function AdjustInventoryScreen() {
 
         <section className="space-y-2">
           <h2 className="text-lg font-semibold text-stone-950">Updated balance</h2>
-          <InventoryBalanceList balances={state.updatedBalances} />
+          <InventoryBalanceList
+            balances={state.updatedBalances}
+            items={workflow.selectedItem ? [workflow.selectedItem] : []}
+          />
         </section>
 
         <section className="space-y-2">
@@ -119,7 +124,7 @@ export function AdjustInventoryScreen() {
               <option value="">Select an item</option>
               {state.items.map((item) => (
                 <option key={item.id} value={item.id}>
-                  {item.name} ({item.defaultUnit})
+                  {item.name} ({item.handlingUnit ?? item.defaultUnit})
                 </option>
               ))}
             </select>
@@ -154,8 +159,11 @@ export function AdjustInventoryScreen() {
           <div className="rounded-md border border-stone-200 bg-stone-50 p-3">
             <p className="text-xs font-semibold uppercase text-stone-500">Projected quantity</p>
             <p className="mt-1 text-lg font-semibold text-stone-950">
-              {state.currentQuantity === null ? "Select item and location" : state.currentQuantity}{" "}
-              {state.unit}
+              {state.currentQuantity === null
+                ? "Select item and location"
+                : state.unit
+                  ? formatInventoryQuantity(state.currentQuantity, state.unit)
+                  : formatInventoryNumber(state.currentQuantity)}
             </p>
           </div>
 
@@ -262,13 +270,15 @@ export function AdjustInventoryScreen() {
             <div className="rounded-md bg-stone-50 p-3">
               <dt className="font-medium text-stone-600">App balance</dt>
               <dd className="mt-1 text-base font-semibold text-stone-950">
-                {state.currentQuantity ?? 0} {state.unit}
+                {state.unit ? formatInventoryQuantity(state.currentQuantity ?? 0, state.unit) : "—"}
               </dd>
             </div>
             <div className="rounded-md bg-stone-50 p-3">
               <dt className="font-medium text-stone-600">Your count</dt>
               <dd className="mt-1 text-base font-semibold text-stone-950">
-                {state.physicalQuantityText || "0"} {state.unit}
+                {state.unit
+                  ? formatInventoryQuantity(Number(state.physicalQuantityText || "0"), state.unit)
+                  : "—"}
               </dd>
             </div>
           </dl>

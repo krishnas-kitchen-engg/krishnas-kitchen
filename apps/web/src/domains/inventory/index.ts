@@ -162,6 +162,20 @@ export {
   rankFrequentlyUsedLocations,
   rankRecentItems
 } from "./domain/catalog";
+export {
+  formatInventoryNumber,
+  formatInventoryQuantity,
+  formatInventoryStock,
+  formatInventoryTransactionQuantity,
+  formatInventoryUnit,
+  formatPackageDefinition,
+  formatPackageEquivalent,
+  getInventoryProductName,
+  getInventoryEntryUnits,
+  convertInventoryEntryToBase,
+  convertInventoryBaseToEntry,
+  getPackageEquivalent
+} from "./domain/packaging";
 export type {
   InventoryCatalogBarcode,
   InventoryCatalogItem,

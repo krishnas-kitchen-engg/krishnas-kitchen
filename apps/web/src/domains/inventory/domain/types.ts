@@ -21,7 +21,10 @@ export type InventoryActor =
 
 export type InventoryAuditMetadata = {
   clientRequestId?: string;
+  conversionFactor?: number;
   deviceId?: string;
+  handlingQuantity?: number;
+  handlingUnit?: ItemUnit;
   reason?: string;
   reversedTransactionId?: EntityId;
   source?: "online" | "offline_queue" | "system";

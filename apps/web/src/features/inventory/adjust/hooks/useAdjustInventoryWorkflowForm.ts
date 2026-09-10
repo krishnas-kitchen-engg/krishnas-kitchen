@@ -2,6 +2,9 @@ import { useEffect, useMemo, useReducer, useRef } from "react";
 import type { ItemUnit } from "@krishnas-kitchen/types";
 
 import {
+  convertInventoryBaseToEntry,
+  convertInventoryEntryToBase,
+  getInventoryEntryUnits,
   useInventoryActor,
   useInventoryCatalogQueries,
   useInventoryPermissions,
@@ -13,7 +16,6 @@ import {
   type InventoryTransaction
 } from "@/domains/inventory";
 import { useAuth } from "@/features/auth";
-import { ITEM_UNITS } from "@/shared/domain/itemUnits";
 
 import type {
   AdjustWorkflowUiState,
@@ -21,7 +23,6 @@ import type {
 } from "../types/adjustWorkflowUiTypes";
 
 const adjustmentOptionLimit = 25;
-const itemUnits = ITEM_UNITS;
 
 type AdjustWorkflowAction =
   | { error: string; type: "load_failed" }
@@ -85,12 +86,23 @@ function omitValidationError(
   return nextErrors;
 }
 
-function getCurrentQuantity(balances: readonly InventoryBalance[], unit: ItemUnit | ""): number {
-  if (!unit) {
+function getCurrentQuantity(
+  balances: readonly InventoryBalance[],
+  unit: ItemUnit | "",
+  item: InventoryCatalogItem | null
+): number {
+  if (!unit || !item) {
     return 0;
   }
 
-  return balances.find((balance) => balance.unit === unit)?.quantity ?? 0;
+  for (const balance of balances) {
+    const converted = convertInventoryBaseToEntry(balance.quantity, balance.unit, item, unit);
+    if (converted !== null) {
+      return converted;
+    }
+  }
+
+  return 0;
 }
 
 export function adjustWorkflowReducer(
@@ -331,7 +343,8 @@ export function useAdjustInventoryWorkflowForm() {
   async function loadCurrentQuantity(
     itemId = state.selectedItemId,
     locationId = state.locationId,
-    unit = state.unit
+    unit = state.unit,
+    itemOverride?: InventoryCatalogItem | null
   ) {
     if (!organizationId || !templeId || !itemId || !locationId || !unit) {
       return;
@@ -346,7 +359,11 @@ export function useAdjustInventoryWorkflowForm() {
 
     dispatch({
       balances,
-      currentQuantity: getCurrentQuantity(balances, unit),
+      currentQuantity: getCurrentQuantity(
+        balances,
+        unit,
+        itemOverride ?? state.items.find((item) => item.id === itemId) ?? null
+      ),
       type: "balances_loaded"
     });
   }
@@ -358,7 +375,7 @@ export function useAdjustInventoryWorkflowForm() {
 
     const validation = validateSubmit(state, Boolean(actor), permissions.canAdjustInventory);
 
-    if (!validation.ok || !actor || !organizationId || !templeId || !state.unit) {
+    if (!validation.ok || !actor || !organizationId || !templeId || !state.unit || !selectedItem) {
       dispatch({
         error: "Adjustment form is incomplete.",
         type: "adjust_failed",
@@ -371,19 +388,33 @@ export function useAdjustInventoryWorkflowForm() {
     submitLock.current = true;
 
     try {
+      const converted = convertInventoryEntryToBase(
+        validation.physicalQuantity,
+        state.unit,
+        selectedItem
+      );
       const result = await services.inventory.adjustInventory({
         actor,
         auditMetadata: {
           reason: state.reason.trim(),
-          source: "online"
+          source: "online",
+          ...(converted.conversionFactor
+            ? {
+                conversionFactor: converted.conversionFactor,
+                handlingQuantity: Math.abs(
+                  validation.physicalQuantity - (state.currentQuantity ?? 0)
+                ),
+                handlingUnit: state.unit
+              }
+            : {})
         },
         itemId: state.selectedItemId,
         locationId: state.locationId,
         organizationId,
-        physicalQuantity: validation.physicalQuantity,
+        physicalQuantity: converted.quantity,
         reason: state.reason,
         templeId,
-        unit: state.unit
+        unit: converted.unit
       });
       const [updatedBalances, recentItemTransactions, recentLocationTransactions] =
         await Promise.all([
@@ -409,7 +440,7 @@ export function useAdjustInventoryWorkflowForm() {
 
       dispatch({
         adjustmentTransaction: result.transaction,
-        currentQuantity: result.physicalQuantity,
+        currentQuantity: validation.physicalQuantity,
         recentItemTransactions,
         recentLocationTransactions,
         type: "adjust_succeeded",
@@ -428,7 +459,7 @@ export function useAdjustInventoryWorkflowForm() {
   return {
     canAdjustInventory: permissions.canAdjustInventory,
     dispatch,
-    itemUnits,
+    itemUnits: selectedItem ? getInventoryEntryUnits(selectedItem) : [],
     loadCurrentQuantity,
     projectedDelta,
     resetWorkflow() {
@@ -439,8 +470,9 @@ export function useAdjustInventoryWorkflowForm() {
     setItemId(itemId: string) {
       const item = state.items.find((candidate) => candidate.id === itemId) ?? null;
 
-      dispatch({ itemId, type: "set_item", unit: item?.defaultUnit ?? "" });
-      void loadCurrentQuantity(itemId, state.locationId, item?.defaultUnit ?? "");
+      const unit = item?.handlingUnit ?? item?.defaultUnit ?? "";
+      dispatch({ itemId, type: "set_item", unit });
+      void loadCurrentQuantity(itemId, state.locationId, unit, item);
     },
     setItemSearchText(itemSearchText: string) {
       dispatch({ itemSearchText, type: "set_item_search" });

@@ -29,6 +29,7 @@ export type InventoryItemDetailState = {
 export type InventoryLocationDetailState = {
   balances: InventoryBalance[];
   error: string | null;
+  items: InventoryCatalogItem[];
   isLoading: boolean;
   location: InventoryCatalogLocation | null;
   transactions: InventoryTransaction[];

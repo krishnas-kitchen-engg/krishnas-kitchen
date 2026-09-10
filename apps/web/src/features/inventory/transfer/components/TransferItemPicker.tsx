@@ -1,4 +1,5 @@
 import type { InventoryCatalogItem } from "@/domains/inventory";
+import { InventoryItemPackageSummary } from "../../components/InventoryItemPackageSummary";
 
 type TransferItemPickerProps = {
   items: readonly InventoryCatalogItem[];
@@ -35,9 +36,7 @@ export function TransferItemPicker({
               type="button"
             >
               <span className="block font-semibold text-stone-950">{item.name}</span>
-              <span className="mt-1 block text-sm text-stone-600">
-                Default unit: {item.defaultUnit}
-              </span>
+              <InventoryItemPackageSummary item={item} showProductName />
             </button>
           ))
         ) : (

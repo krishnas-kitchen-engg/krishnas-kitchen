@@ -5,12 +5,18 @@ import type { InventoryBarcode } from "./barcode";
 export type InventoryCatalogItem = {
   barcodes: readonly InventoryBarcode[];
   category?: string | null;
+  contentsLabel?: string | null;
+  contentsQuantity?: number | null;
+  contentsUnit?: ItemUnit | null;
   defaultUnit: ItemUnit;
   description?: string | null;
   deletedAt: string | null;
+  handlingUnit?: ItemUnit | null;
   id: EntityId;
   name: string;
   organizationId: EntityId;
+  packageDescription?: string | null;
+  productName?: string | null;
   consumptionUnits?: readonly ItemUnit[];
   receivingUnits?: readonly ItemUnit[];
   returnUnits?: readonly ItemUnit[];
@@ -82,6 +88,8 @@ export function filterActiveCatalogItems(
     !searchText ||
     matchesCatalogSearch(item.id, searchText) ||
     matchesCatalogSearch(item.name, searchText) ||
+    (item.productName ? matchesCatalogSearch(item.productName, searchText) : false) ||
+    (item.packageDescription ? matchesCatalogSearch(item.packageDescription, searchText) : false) ||
     item.barcodes.some(
       (barcode) =>
         matchesCatalogSearch(barcode.value, searchText) ||

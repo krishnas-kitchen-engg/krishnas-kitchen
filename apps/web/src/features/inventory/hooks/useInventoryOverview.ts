@@ -1,22 +1,34 @@
 import { useEffect, useMemo, useState } from "react";
+import type { ItemUnit } from "@krishnas-kitchen/types";
 import type {
   InventoryBalance,
   InventoryCatalogItem,
   InventoryCatalogLocation
 } from "@/domains/inventory";
 import { useInventoryCatalogQueries, useInventoryVisibility } from "@/domains/inventory";
+import { getInventoryProductName } from "@/domains/inventory";
 import { useAuth } from "@/features/auth";
 
-export type InventoryOverviewRow = {
+export type InventoryOverviewPackageRow = {
+  contentsQuantity: number | null;
+  contentsUnit: ItemUnit | null;
+  contentsLabel: string | null;
+  handlingUnit: ItemUnit | null;
   itemId: string;
   itemName: string;
+  packageDescription: string | null;
   locations: Array<{
     locationId: string;
     locationName: string;
     quantity: number;
   }>;
   quantity: number;
-  unit: string;
+  unit: ItemUnit;
+};
+
+export type InventoryOverviewRow = {
+  packages: InventoryOverviewPackageRow[];
+  productName: string;
 };
 
 export function useInventoryOverview(searchText = "") {
@@ -71,11 +83,12 @@ export function useInventoryOverview(searchText = "") {
   const rows = useMemo(() => {
     const itemsById = new Map(items.map((item) => [item.id, item]));
     const locationsById = new Map(locations.map((location) => [location.id, location]));
-    const groups = new Map<string, InventoryOverviewRow>();
+    const packages = new Map<string, InventoryOverviewPackageRow>();
 
     for (const balance of balances) {
       const key = `${balance.itemId}:${balance.unit}`;
-      const existing = groups.get(key);
+      const existing = packages.get(key);
+      const item = itemsById.get(balance.itemId);
       const location = locationsById.get(balance.locationId);
       const locationBalance = {
         locationId: balance.locationId,
@@ -87,9 +100,14 @@ export function useInventoryOverview(searchText = "") {
         existing.quantity += balance.quantity;
         existing.locations.push(locationBalance);
       } else {
-        groups.set(key, {
+        packages.set(key, {
+          contentsQuantity: item?.contentsQuantity ?? null,
+          contentsUnit: item?.contentsUnit ?? null,
+          contentsLabel: item?.contentsLabel ?? null,
+          handlingUnit: item?.handlingUnit ?? null,
           itemId: balance.itemId,
-          itemName: itemsById.get(balance.itemId)?.name ?? "Unknown item",
+          itemName: item?.name ?? "Unknown item",
+          packageDescription: item?.packageDescription ?? null,
           locations: [locationBalance],
           quantity: balance.quantity,
           unit: balance.unit
@@ -98,25 +116,47 @@ export function useInventoryOverview(searchText = "") {
     }
 
     const query = searchText.trim().toLocaleLowerCase();
-    return Array.from(groups.values())
+    const productGroups = new Map<string, InventoryOverviewPackageRow[]>();
+
+    for (const packageRow of packages.values()) {
+      const item = itemsById.get(packageRow.itemId);
+      const productName = item ? getInventoryProductName(item) : packageRow.itemName;
+      const existing = productGroups.get(productName) ?? [];
+      productGroups.set(productName, [...existing, packageRow]);
+    }
+
+    return Array.from(productGroups.entries())
+      .map(([productName, packageRows]): InventoryOverviewRow => {
+        return {
+          packages: packageRows.sort(
+            (left, right) =>
+              left.itemName.localeCompare(right.itemName) || left.unit.localeCompare(right.unit)
+          ),
+          productName
+        };
+      })
       .filter(
         (row) =>
           !query ||
-          row.itemName.toLocaleLowerCase().includes(query) ||
-          row.locations.some((location) =>
-            location.locationName.toLocaleLowerCase().includes(query)
+          row.productName.toLocaleLowerCase().includes(query) ||
+          row.packages.some(
+            (packageRow) =>
+              packageRow.itemName.toLocaleLowerCase().includes(query) ||
+              packageRow.locations.some((location) =>
+                location.locationName.toLocaleLowerCase().includes(query)
+              )
           )
       )
       .map((row) => ({
         ...row,
-        locations: row.locations.sort((left, right) =>
-          left.locationName.localeCompare(right.locationName)
-        )
+        packages: row.packages.map((packageRow) => ({
+          ...packageRow,
+          locations: packageRow.locations.sort((left, right) =>
+            left.locationName.localeCompare(right.locationName)
+          )
+        }))
       }))
-      .sort(
-        (left, right) =>
-          left.itemName.localeCompare(right.itemName) || left.unit.localeCompare(right.unit)
-      );
+      .sort((left, right) => left.productName.localeCompare(right.productName));
   }, [balances, items, locations, searchText]);
 
   return { error, isLoading, rows };

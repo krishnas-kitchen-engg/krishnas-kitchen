@@ -3,9 +3,11 @@ import type {
   InventoryCatalogLocation,
   InventoryTransaction
 } from "@/domains/inventory";
+import { formatInventoryTransactionQuantity, formatPackageDefinition } from "@/domains/inventory";
 import type { ItemUnit } from "@krishnas-kitchen/types";
 
 import { InventoryBalanceList } from "../../components/InventoryBalanceList";
+import { InventoryItemPackageSummary } from "../../components/InventoryItemPackageSummary";
 import { InventoryTransactionList } from "../../components/InventoryTransactionList";
 import { useConsumeCatalogOptions } from "../hooks/useConsumeCatalogOptions";
 import { useConsumeWorkflowForm } from "../hooks/useConsumeWorkflowForm";
@@ -69,7 +71,8 @@ function UnitSelect({ error, onChange, units, value }: UnitSelectProps) {
 }
 
 function getItemLabel(item: InventoryCatalogItem): string {
-  return `${item.name} (${item.defaultUnit})`;
+  const packageDefinition = formatPackageDefinition(item);
+  return `${item.name} (${item.defaultUnit}${packageDefinition ? ` · ${packageDefinition}` : ""})`;
 }
 
 function SuccessSummary({
@@ -90,7 +93,7 @@ function SuccessSummary({
       <div className="rounded-md border border-green-200 bg-green-50 p-4">
         <p className="text-sm font-semibold uppercase text-green-800">Consumption recorded</p>
         <h1 className="mt-1 text-2xl font-semibold text-green-950">
-          {consumedTransaction.quantity} {consumedTransaction.unit} consumed
+          {formatInventoryTransactionQuantity(consumedTransaction)} consumed
         </h1>
         <p className="mt-2 text-sm text-green-800">
           Transaction {consumedTransaction.id} was added to immutable inventory history.
@@ -99,7 +102,10 @@ function SuccessSummary({
 
       <section className="space-y-2">
         <h2 className="text-lg font-semibold text-stone-950">Updated balance</h2>
-        <InventoryBalanceList balances={workflow.state.locationBalances} />
+        <InventoryBalanceList
+          balances={workflow.state.locationBalances}
+          items={workflow.state.resolvedItem ? [workflow.state.resolvedItem.item] : []}
+        />
       </section>
 
       <section className="space-y-2">
@@ -175,6 +181,7 @@ export function ConsumeInventoryScreen() {
           <h2 className="mt-1 text-lg font-semibold text-stone-950">
             {state.resolvedItem.item.name}
           </h2>
+          <InventoryItemPackageSummary item={state.resolvedItem.item} showProductName />
           <button
             className="mt-3 min-h-11 rounded-md border border-stone-300 px-4 text-sm font-semibold text-stone-800"
             onClick={() => workflow.setStep("select_item")}
@@ -275,7 +282,10 @@ export function ConsumeInventoryScreen() {
             <p className="text-sm font-semibold text-stone-950">
               {selectedLocation ? selectedLocation.name : "Selected location"}
             </p>
-            <InventoryBalanceList balances={state.locationBalances} />
+            <InventoryBalanceList
+              balances={state.locationBalances}
+              items={state.resolvedItem ? [state.resolvedItem.item] : []}
+            />
           </div>
           <label className="block text-sm font-medium text-stone-800">
             Consumed quantity

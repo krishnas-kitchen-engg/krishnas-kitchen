@@ -22,12 +22,18 @@ function mapItemRow(
 ): ManagedInventoryItem {
   return {
     category: row.category,
+    contentsLabel: row.contents_label ?? null,
+    contentsQuantity: row.contents_quantity ?? null,
+    contentsUnit: row.contents_unit ?? null,
     defaultUnit: row.default_unit,
     deletedAt: row.deleted_at,
     description: row.description,
+    handlingUnit: row.handling_unit ?? null,
     id: row.id,
     name: row.name,
     organizationId: row.organization_id,
+    packageDescription: row.package_description ?? null,
+    productName: row.product_name ?? null,
     reorderThreshold: threshold?.minimum_quantity ?? null,
     targetStockLevel: threshold?.target_quantity ?? null
   };
@@ -41,11 +47,17 @@ function mapItemInsert(
 ): ItemInsert {
   return {
     category: input.category ?? null,
+    contents_label: input.contentsLabel ?? null,
+    contents_quantity: input.contentsQuantity ?? null,
+    contents_unit: input.contentsUnit ?? null,
     default_unit: input.defaultUnit,
     deleted_at: null,
     description: input.description ?? null,
+    handling_unit: input.handlingUnit ?? null,
     name: input.name,
     organization_id: input.organizationId,
+    package_description: input.packageDescription ?? null,
+    product_name: input.productName ?? null,
     receiving_units: [input.defaultUnit],
     return_units: [input.defaultUnit],
     transfer_units: [input.defaultUnit]
@@ -60,9 +72,15 @@ function mapItemUpdate(
 ): ItemUpdate {
   return {
     category: input.category ?? null,
+    contents_label: input.contentsLabel ?? null,
+    contents_quantity: input.contentsQuantity ?? null,
+    contents_unit: input.contentsUnit ?? null,
     default_unit: input.defaultUnit,
     description: input.description ?? null,
+    handling_unit: input.handlingUnit ?? null,
     name: input.name,
+    package_description: input.packageDescription ?? null,
+    product_name: input.productName ?? null,
     receiving_units: [input.defaultUnit],
     return_units: [input.defaultUnit],
     transfer_units: [input.defaultUnit]

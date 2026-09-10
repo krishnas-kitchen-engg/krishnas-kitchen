@@ -44,12 +44,18 @@ function createRepository(seed: ManagedInventoryItem[] = []): ItemManagementRepo
     createItem(input) {
       const item: ManagedInventoryItem = {
         category: input.category ?? null,
+        contentsLabel: input.contentsLabel ?? null,
+        contentsQuantity: input.contentsQuantity ?? null,
+        contentsUnit: input.contentsUnit ?? null,
         defaultUnit: input.defaultUnit,
         deletedAt: null,
         description: input.description ?? null,
+        handlingUnit: input.handlingUnit ?? null,
         id: `item-${items.length + 1}`,
         name: input.name,
         organizationId: input.organizationId,
+        packageDescription: input.packageDescription ?? null,
+        productName: input.productName ?? null,
         reorderThreshold: null,
         targetStockLevel: null
       };
@@ -90,9 +96,15 @@ function createRepository(seed: ManagedInventoryItem[] = []): ItemManagementRepo
       items[index] = {
         ...existingItem,
         category: input.category ?? null,
+        contentsLabel: input.contentsLabel ?? null,
+        contentsQuantity: input.contentsQuantity ?? null,
+        contentsUnit: input.contentsUnit ?? null,
         defaultUnit: input.defaultUnit,
         description: input.description ?? null,
-        name: input.name
+        handlingUnit: input.handlingUnit ?? null,
+        name: input.name,
+        packageDescription: input.packageDescription ?? null,
+        productName: input.productName ?? null
       };
 
       return Promise.resolve(items[index]);
@@ -244,6 +256,44 @@ describe("item management service", () => {
         }),
       /Target stock level must be greater than the minimum stock level/
     );
+
+    await assert.rejects(
+      () =>
+        service.createItem({
+          actor,
+          contentsQuantity: 50,
+          defaultUnit: "bag",
+          name: "Pinto Beans — 50 lb Bag",
+          organizationId: "org-1",
+          templeId: "temple-1"
+        }),
+      /Contents quantity and contents unit must be provided together/
+    );
+  });
+
+  it("normalizes package metadata for a handling-unit SKU", async () => {
+    const repository = createRepository();
+    const service = createItemManagementService(repository);
+
+    const item = await service.createItem({
+      actor,
+      contentsQuantity: 50,
+      contentsUnit: "lb",
+      defaultUnit: "lb",
+      handlingUnit: "bag",
+      name: " Pinto Beans — 50 lb Bag ",
+      organizationId: "org-1",
+      packageDescription: " 50 lb per bag ",
+      productName: " Pinto Beans ",
+      templeId: "temple-1"
+    });
+
+    assert.equal(item.contentsQuantity, 50);
+    assert.equal(item.contentsUnit, "lb");
+    assert.equal(item.defaultUnit, "lb");
+    assert.equal(item.handlingUnit, "bag");
+    assert.equal(item.packageDescription, "50 lb per bag");
+    assert.equal(item.productName, "Pinto Beans");
   });
 
   it("updates and removes an optional minimum stock level", async () => {

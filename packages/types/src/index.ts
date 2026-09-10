@@ -100,7 +100,13 @@ export type ItemUnit =
   | "unit"
   | "case"
   | "box"
-  | "bag";
+  | "bag"
+  | "bottle"
+  | "can"
+  | "container"
+  | "pack"
+  | "bundle"
+  | "roll";
 
 export type InventoryTransactionType =
   | "received"
@@ -410,15 +416,21 @@ export type Database = {
       items: {
         Row: {
           category: string | null;
+          contents_label?: string | null;
+          contents_quantity?: number | null;
+          contents_unit?: ItemUnit | null;
           critical_threshold: number | null;
           default_unit: ItemUnit;
           description: string | null;
           deleted_at: string | null;
+          handling_unit?: ItemUnit | null;
           id: string;
           name: string;
           organization_id: string;
+          package_description?: string | null;
           preferred_purchase_unit: string | null;
           preferred_vendor: string | null;
+          product_name?: string | null;
           reorder_threshold: number | null;
           receiving_units: ItemUnit[] | null;
           return_units: ItemUnit[] | null;
@@ -426,15 +438,21 @@ export type Database = {
         };
         Insert: {
           category?: string | null;
+          contents_label?: string | null;
+          contents_quantity?: number | null;
+          contents_unit?: ItemUnit | null;
           critical_threshold?: number | null;
           default_unit: ItemUnit;
           description?: string | null;
           deleted_at?: string | null;
+          handling_unit?: ItemUnit | null;
           id?: string;
           name: string;
           organization_id: string;
+          package_description?: string | null;
           preferred_purchase_unit?: string | null;
           preferred_vendor?: string | null;
+          product_name?: string | null;
           reorder_threshold?: number | null;
           receiving_units?: ItemUnit[] | null;
           return_units?: ItemUnit[] | null;
@@ -442,13 +460,19 @@ export type Database = {
         };
         Update: {
           category?: string | null;
+          contents_label?: string | null;
+          contents_quantity?: number | null;
+          contents_unit?: ItemUnit | null;
           critical_threshold?: number | null;
           default_unit?: ItemUnit;
           description?: string | null;
           deleted_at?: string | null;
+          handling_unit?: ItemUnit | null;
           name?: string;
+          package_description?: string | null;
           preferred_purchase_unit?: string | null;
           preferred_vendor?: string | null;
+          product_name?: string | null;
           reorder_threshold?: number | null;
           receiving_units?: ItemUnit[] | null;
           return_units?: ItemUnit[] | null;

@@ -15,11 +15,17 @@ export type InventoryBarcodeScanInput = {
 
 export type InventoryBarcodeItemReference = {
   barcodes: readonly InventoryBarcode[];
+  contentsLabel?: string | null;
+  contentsQuantity?: number | null;
+  contentsUnit?: ItemUnit | null;
   defaultUnit: ItemUnit;
   deletedAt: string | null;
+  handlingUnit?: ItemUnit | null;
   id: EntityId;
   name: string;
   organizationId: EntityId;
+  packageDescription?: string | null;
+  productName?: string | null;
 };
 
 export type InventoryBarcodeLookupQuery = {

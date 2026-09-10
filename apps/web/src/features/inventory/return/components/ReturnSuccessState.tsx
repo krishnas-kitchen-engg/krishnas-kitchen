@@ -3,6 +3,8 @@ import type {
   InventoryTransaction,
   ReturnResolvedItem
 } from "@/domains/inventory";
+import { formatInventoryTransactionQuantity, type InventoryCatalogItem } from "@/domains/inventory";
+import { InventoryBalanceList } from "../../components/InventoryBalanceList";
 
 type ReturnSuccessStateProps = {
   destinationBalances: readonly InventoryBalance[];
@@ -17,25 +19,19 @@ type ReturnSuccessStateProps = {
 
 function BalanceSummary({
   balances,
+  item,
   title
 }: {
   balances: readonly InventoryBalance[];
+  item: InventoryCatalogItem;
   title: string;
 }) {
   return (
     <div>
       <h3 className="text-sm font-semibold text-stone-950">{title}</h3>
-      <ul className="mt-2 space-y-2">
-        {balances.length > 0 ? (
-          balances.map((balance) => (
-            <li className="rounded-md bg-white p-3 text-sm" key={balance.unit}>
-              {balance.quantity} {balance.unit}
-            </li>
-          ))
-        ) : (
-          <li className="rounded-md bg-white p-3 text-sm text-stone-600">No visible balance.</li>
-        )}
-      </ul>
+      <div className="mt-2">
+        <InventoryBalanceList balances={balances} items={[item]} />
+      </div>
     </div>
   );
 }
@@ -56,11 +52,16 @@ export function ReturnSuccessState({
         <p className="text-sm font-semibold uppercase text-amber-800">Returned</p>
         <h2 className="mt-1 text-xl font-semibold text-stone-950">{item.item.name}</h2>
         <p className="mt-1 text-sm text-stone-700">
-          Return transaction {returnedTransaction.id} added to inventory history.
+          {formatInventoryTransactionQuantity(returnedTransaction)} returned. Transaction{" "}
+          {returnedTransaction.id} added to inventory history.
         </p>
       </div>
-      <BalanceSummary balances={sourceBalances} title="Source balance" />
-      <BalanceSummary balances={destinationBalances} title="Return destination balance" />
+      <BalanceSummary balances={sourceBalances} item={item.item} title="Source balance" />
+      <BalanceSummary
+        balances={destinationBalances}
+        item={item.item}
+        title="Return destination balance"
+      />
       <div className="grid grid-cols-3 gap-2 text-xs text-stone-700">
         <p>{recentItemTransactions.length} item events</p>
         <p>{recentSourceLocationTransactions.length} source events</p>

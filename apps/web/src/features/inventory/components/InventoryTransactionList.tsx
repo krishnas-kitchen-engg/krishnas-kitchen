@@ -1,4 +1,4 @@
-import type { InventoryTransaction } from "@/domains/inventory";
+import { formatInventoryTransactionQuantity, type InventoryTransaction } from "@/domains/inventory";
 
 type InventoryTransactionListProps = {
   canReverse?: boolean;
@@ -73,8 +73,8 @@ export function InventoryTransactionList({
             key={transaction.id}
           >
             <span className="block font-semibold capitalize text-stone-950">
-              {transaction.transactionType.replace("_", " ")} {transaction.quantity}{" "}
-              {transaction.unit}
+              {transaction.transactionType.replace("_", " ")}{" "}
+              {formatInventoryTransactionQuantity(transaction)}
             </span>
             <span className="mt-1 block text-stone-600">
               Item {transaction.itemId} {getLocationLabel(transaction)}

@@ -13,10 +13,16 @@ import { useAuth } from "@/features/auth";
 
 type ItemFormState = {
   category: string;
+  contentsLabel: string;
+  contentsQuantityText: string;
+  contentsUnit: ItemUnit | "";
   defaultUnit: ItemUnit | "";
   description: string;
   editingItemId: string | null;
+  handlingUnit: ItemUnit | "";
   name: string;
+  packageDescription: string;
+  productName: string;
   reorderThresholdText: string;
   targetStockLevelText: string;
 };
@@ -32,10 +38,16 @@ export type ItemManagementUiState = {
 
 const initialForm: ItemFormState = {
   category: "",
+  contentsLabel: "",
+  contentsQuantityText: "",
+  contentsUnit: "",
   defaultUnit: "kg",
   description: "",
   editingItemId: null,
+  handlingUnit: "",
   name: "",
+  packageDescription: "",
+  productName: "",
   reorderThresholdText: "",
   targetStockLevelText: ""
 };
@@ -172,10 +184,16 @@ export function useItemManagement() {
       const input = {
         actor,
         category: state.form.category,
+        contentsLabel: state.form.contentsLabel,
+        contentsQuantity: toReorderThreshold(state.form.contentsQuantityText),
+        contentsUnit: state.form.contentsUnit || null,
         defaultUnit: state.form.defaultUnit,
         description: state.form.description,
+        handlingUnit: state.form.handlingUnit || null,
         name: state.form.name,
         organizationId,
+        packageDescription: state.form.packageDescription,
+        productName: state.form.productName,
         reorderThreshold: toReorderThreshold(state.form.reorderThresholdText),
         targetStockLevel: toReorderThreshold(state.form.targetStockLevelText),
         templeId
@@ -271,6 +289,7 @@ export function useItemManagement() {
     resetForm() {
       setState((currentState) => ({
         ...currentState,
+        error: null,
         form: initialForm
       }));
     },
@@ -282,6 +301,24 @@ export function useItemManagement() {
           ...currentState.form,
           category
         }
+      }));
+    },
+    setContentsQuantityText(contentsQuantityText: string) {
+      setState((currentState) => ({
+        ...currentState,
+        form: { ...currentState.form, contentsQuantityText }
+      }));
+    },
+    setContentsLabel(contentsLabel: string) {
+      setState((currentState) => ({
+        ...currentState,
+        form: { ...currentState.form, contentsLabel }
+      }));
+    },
+    setContentsUnit(contentsUnit: ItemUnit | "") {
+      setState((currentState) => ({
+        ...currentState,
+        form: { ...currentState.form, contentsUnit }
       }));
     },
     setDefaultUnit(defaultUnit: ItemUnit | "") {
@@ -305,12 +342,20 @@ export function useItemManagement() {
     setEditingItem(item: ManagedInventoryItem) {
       setState((currentState) => ({
         ...currentState,
+        error: null,
         form: {
           category: item.category ?? "",
+          contentsLabel: item.contentsLabel ?? "",
+          contentsQuantityText:
+            typeof item.contentsQuantity === "number" ? String(item.contentsQuantity) : "",
+          contentsUnit: item.contentsUnit ?? "",
           defaultUnit: item.defaultUnit,
           description: item.description ?? "",
           editingItemId: item.id,
+          handlingUnit: item.handlingUnit ?? "",
           name: item.name,
+          packageDescription: item.packageDescription ?? "",
+          productName: item.productName ?? "",
           reorderThresholdText:
             typeof item.reorderThreshold === "number" ? String(item.reorderThreshold) : "",
           targetStockLevelText:
@@ -325,6 +370,24 @@ export function useItemManagement() {
           ...currentState.form,
           name
         }
+      }));
+    },
+    setHandlingUnit(handlingUnit: ItemUnit | "") {
+      setState((currentState) => ({
+        ...currentState,
+        form: { ...currentState.form, handlingUnit }
+      }));
+    },
+    setPackageDescription(packageDescription: string) {
+      setState((currentState) => ({
+        ...currentState,
+        form: { ...currentState.form, packageDescription }
+      }));
+    },
+    setProductName(productName: string) {
+      setState((currentState) => ({
+        ...currentState,
+        form: { ...currentState.form, productName }
       }));
     },
     setReorderThresholdText(reorderThresholdText: string) {

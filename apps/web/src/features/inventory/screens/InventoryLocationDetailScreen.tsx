@@ -36,7 +36,7 @@ export function InventoryLocationDetailScreen({ locationId }: InventoryLocationD
 
       <section className="space-y-2">
         <h3 className="text-sm font-semibold uppercase text-stone-600">Current balances</h3>
-        <InventoryBalanceList balances={detail.balances} />
+        <InventoryBalanceList balances={detail.balances} items={detail.items} />
       </section>
 
       <section className="space-y-2">

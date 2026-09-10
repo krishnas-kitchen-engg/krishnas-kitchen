@@ -17,5 +17,11 @@ export const ITEM_UNITS = [
   "unit",
   "case",
   "box",
-  "bag"
+  "bag",
+  "bottle",
+  "can",
+  "container",
+  "pack",
+  "bundle",
+  "roll"
 ] as const satisfies readonly ItemUnit[];

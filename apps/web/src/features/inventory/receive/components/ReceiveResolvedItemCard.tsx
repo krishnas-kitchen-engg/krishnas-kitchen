@@ -1,4 +1,5 @@
 import type { ReceivingResolvedItem } from "@/domains/inventory";
+import { InventoryItemPackageSummary } from "../../components/InventoryItemPackageSummary";
 
 type ReceiveResolvedItemCardProps = {
   item: ReceivingResolvedItem;
@@ -12,7 +13,7 @@ export function ReceiveResolvedItemCard({ item, onChangeItem }: ReceiveResolvedI
         {item.source === "scan" ? "Barcode item" : "Manual item"}
       </p>
       <h2 className="mt-1 text-lg font-semibold text-stone-950">{item.item.name}</h2>
-      <p className="mt-1 text-sm text-stone-700">Default unit: {item.item.defaultUnit}</p>
+      <InventoryItemPackageSummary item={item.item} showProductName />
       <button
         className="mt-3 min-h-10 rounded-md border border-emerald-700 px-3 text-sm font-semibold text-emerald-900"
         onClick={onChangeItem}
